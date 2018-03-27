@@ -1,5 +1,7 @@
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- *   Temp ~ Queue
- *     -Used for development
- *     -Move css into appropriate sass files when ready
+ *   Layout ~ Queue
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.queue {
+  flex: 1;
+  display: flex;
+}
