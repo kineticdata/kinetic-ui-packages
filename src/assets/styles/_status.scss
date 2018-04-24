@@ -1,0 +1,38 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Status ~ Queue
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.package-layout--queue {
+  .status-paragraph {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .queue-status {
+    text-transform: uppercase;
+    @include ms-respond(font-size, -2);
+    margin: 0;
+    line-height: 1.5rem;
+    &.queue-status--cancelled {
+      color: $red;
+    }
+    &.queue-status--complete {
+      color: $blue;
+    }
+    &.queue-status--open {
+      color: $greenTeal;
+    }
+    &.queue-status--pending {
+      color: $orange;
+    }
+    .queue-status--reason {
+      color: $blueSky;
+      margin-left: 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: none;
+      white-space: nowrap;
+    }
+  }
+}
