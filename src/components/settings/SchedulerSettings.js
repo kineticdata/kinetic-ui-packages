@@ -1,32 +1,89 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from '../../redux/store';
 import { compose, lifecycle } from 'recompose';
-import { Link } from '@reach/router';
-import { selectCurrentKapp, Schedulers } from 'common';
+import { Router } from '../../TechBarApp';
+import {
+  selectHasRoleSchedulerAdmin,
+  selectHasRoleSchedulerManager,
+  ErrorUnauthorized,
+  CreateScheduler,
+  Scheduler,
+  SchedulersList,
+} from 'common';
 import { actions } from '../../redux/modules/techBarApp';
-import { I18n } from '@kineticdata/react';
 
-export const SchedulerSettingsComponent = props => (
-  <Schedulers
-    {...props}
-    type="TechBar"
-    breadcrumbs={
-      <Fragment>
-        <Link to="">
-          <I18n>tech bar</I18n>
-        </Link>{' '}
-        /{' '}
-        <Link to="settings">
-          <I18n>settings</I18n>
-        </Link>{' '}
-        /{` `}
-      </Fragment>
-    }
-  />
-);
+export const SchedulerSettingsComponent = ({
+  kapp,
+  isSchedulerAdmin,
+  isSchedulerManager,
+  profile,
+}) =>
+  isSchedulerAdmin || isSchedulerManager ? (
+    <Router>
+      <CreateScheduler
+        path="new"
+        profile={profile}
+        type="TechBar"
+        pathPrefix={`/kapps/${kapp.slug}/settings/schedulers`}
+        breadcrumbs={[
+          {
+            label: 'tech bar',
+            path: `/kapps/${kapp.slug}`,
+          },
+          {
+            label: 'settings',
+            path: `/kapps/${kapp.slug}/settings`,
+          },
+          {
+            label: 'schedulers',
+            path: `/kapps/${kapp.slug}/settings/schedulers`,
+          },
+        ]}
+      />
+      <Scheduler
+        path=":id"
+        profile={profile}
+        pathPrefix={`/kapps/${kapp.slug}/settings/schedulers`}
+        breadcrumbs={[
+          {
+            label: 'tech bar',
+            path: `/kapps/${kapp.slug}`,
+          },
+          {
+            label: 'settings',
+            path: `/kapps/${kapp.slug}/settings`,
+          },
+          {
+            label: 'schedulers',
+            path: `/kapps/${kapp.slug}/settings/schedulers`,
+          },
+        ]}
+      />
+      <SchedulersList
+        default
+        profile={profile}
+        pathPrefix={`/kapps/${kapp.slug}/settings/schedulers`}
+        breadcrumbs={[
+          {
+            label: 'tech bar',
+            path: `/kapps/${kapp.slug}`,
+          },
+          {
+            label: 'settings',
+            path: `/kapps/${kapp.slug}/settings`,
+          },
+        ]}
+      />
+    </Router>
+  ) : (
+    <ErrorUnauthorized />
+  );
 
 export const mapStateToProps = (state, props) => ({
-  kapp: selectCurrentKapp(state),
+  kapp: state.app.kapp,
+  isSchedulerAdmin: selectHasRoleSchedulerAdmin(state.app.profile),
+  isSchedulerManager: selectHasRoleSchedulerManager(state.app.profile),
+  profile: state.app.profile,
 });
 
 export const mapDispatchToProps = {
