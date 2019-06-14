@@ -1,0 +1,17 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Home ~ Space
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.page-container--space-home {
+  display: flex;
+  flex-direction: row;
+  .page-panel--space-home {
+    background-color: transparent;
+    .space-home-title {
+      color: $black;
+      font-size: 1.625rem;
+      font-weight: 600;
+      line-height: 3rem;
+    }
+  }
+}

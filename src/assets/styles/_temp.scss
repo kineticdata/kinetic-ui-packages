@@ -1,0 +1,215 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Temp ~ Space
+ *     -Used for development
+ *     -Move css into appropriate sass files when ready
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+/// Accessibility
+// You forgot the 'alt' attribute
+img[alt=''],
+img:not([alt]) {
+  border: 5px dashed #c00;
+}
+
+input,
+textarea {
+  font-size: initial;
+}
+
+.avatar {
+  img {
+    border-radius: 50%;
+  }
+}
+
+.profile-content .user-admin {
+  display: flex;
+  margin-bottom: 1rem;
+  label {
+    margin-right: 0.8rem;
+  }
+  input[type='checkbox'] {
+    margin-right: 0.3rem;
+  }
+}
+
+.search-lookup {
+  .index-selector-dropdown > .dropdown-menu {
+    transform: inherit !important;
+    top: 48px !important;
+  }
+}
+
+.datastore-searchbar {
+  .simple-search-input-group {
+    input.advanced-open {
+      border-radius: 0.25rem 0 0 0;
+    }
+    button.advanced-dropdown-caret {
+      background-color: transparent;
+      color: inherit;
+      border-left-color: $white;
+      border-top: 1px solid $border-color;
+      border-bottom: 1px solid $border-color;
+    }
+  }
+  .advanced-dropdown-wrapper {
+    border: 1px solid rgba($border-color, 0.5);
+    border-top: 0px;
+    border-bottom-right-radius: $border-radius-base;
+    border-bottom-left-radius: $border-radius-base;
+    padding: 1rem 1.5rem;
+    background-color: $black-3;
+    width: calc(100% - 3.75rem);
+    .advanced-dropdown-header {
+      justify-content: space-between;
+
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    h5 {
+      margin: 0;
+    }
+
+    .direction-selector,
+    .index-selector {
+      margin-bottom: 1rem;
+      align-items: center;
+      strong {
+        color: $black;
+      }
+    }
+
+    .index-part {
+      align-items: center;
+      margin-bottom: 1rem;
+      .index-part-label {
+        //width: 25%;
+        color: $black-50;
+        font-weight: 600;
+        // font-family: 'Open Sans';
+        // font-size: 14px;
+        // font-weight: bold;
+        // line-height: 19px;
+      }
+
+      .index-part-operation {
+        //width: 25%;
+      }
+    }
+
+    .index-part-values {
+      //width: 50%;
+      margin: 0 0.5rem;
+      display: flex;
+      flex-direction: column;
+
+      .index-part-values-group {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        & > input {
+          flex-grow: 1;
+        }
+        input.index-part-value {
+          // height: 32px;
+          // padding: 0.5rem;
+          // color: #7e8083;
+          // border-radius: 3px;
+          // border: 1px solid #dfe3e9;
+          // background-color: #ffffff;
+          // font-size: 13px;
+          // line-height: 18px;
+          // min-width: 0;
+        }
+      }
+    }
+  }
+}
+
+.dropdown-menu.dropdown-multi {
+  font-size: 0.875rem;
+  .dropdown-menu {
+    font-size: 0.875rem;
+  }
+}
+
+.dropdown-submenu {
+  position: relative;
+  > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -0.5rem;
+    margin-left: -3px;
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 0 6px 6px 6px;
+  }
+  &:hover > .dropdown-menu {
+    display: block;
+  }
+  h6 {
+    margin-top: 0;
+  }
+  small.dropdown-header {
+    white-space: normal;
+  }
+}
+
+.notifications-tabs .nav-tabs {
+  margin-bottom: 1rem;
+}
+
+.popover-body.date-range-filter {
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+
+  form {
+    padding: 0.25rem;
+  }
+
+  .date-range-radio {
+    input {
+      margin-right: 0.5rem;
+    }
+
+    margin-bottom: 1rem;
+  }
+
+  .date-range-buttons {
+    display: flex;
+
+    .btn {
+      flex: 1 0 0;
+    }
+  }
+}
+
+.dropzone {
+  display: flex;
+  justify-content: center;
+  .fa {
+    color: $black-50;
+  }
+  &__area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 2px dashed $black-16;
+    border-radius: 0.5rem;
+    flex: 0 1 50%;
+    padding: 2rem;
+    &--disabled {
+      border-color: $red !important;
+      border-style: solid;
+    }
+    &--active {
+      border-color: $green;
+      border-style: solid;
+    }
+  }
+}
