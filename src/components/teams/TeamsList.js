@@ -2,12 +2,13 @@ import React, { Fragment } from 'react';
 import { compose, withHandlers, withState } from 'recompose';
 import { Link } from '@reach/router';
 import { TeamTable, TeamForm, I18n } from '@kineticdata/react';
-import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
-import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import { PageTitle } from '../shared/PageTitle';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { FormComponents, addToast } from '@kineticdata/bundle-common';
+import {
+  FormComponents,
+  TableComponents,
+  addToast,
+} from '@kineticdata/bundle-common';
 
 const FormLayout = ({ fields, error, buttons }) => (
   <Fragment>
@@ -42,7 +43,7 @@ const NameCell = ({ value, row }) => (
   </td>
 );
 
-const EmptyBodyRow = generateEmptyBodyRow({
+const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   loadingMessage: 'Loading Teams...',
   noSearchResultsMessage:
     'No Teams were found - please modify your search criteria',
@@ -51,7 +52,7 @@ const EmptyBodyRow = generateEmptyBodyRow({
   noItemsLinkToMessage: 'Add new Team',
 });
 
-const FilterLayout = generateFilterModalLayout(['name']);
+const FilterLayout = TableComponents.generateFilterModalLayout(['name']);
 
 export const TeamsListComponent = ({
   tableType,
@@ -63,7 +64,7 @@ export const TeamsListComponent = ({
     components={{
       FilterLayout,
       EmptyBodyRow,
-      TableLayout: SettingsTableLayout,
+      TableLayout: TableComponents.SettingsTableLayout,
     }}
     alterColumns={{
       name: { components: { BodyCell: NameCell } },

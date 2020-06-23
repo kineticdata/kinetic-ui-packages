@@ -17,8 +17,8 @@ import {
   addSuccess,
   addError,
   ViewDiscussionsModal,
+  selectDiscussionsEnabled,
 } from '@kineticdata/bundle-common';
-import { selectDiscussionsEnabled } from '@kineticdata/bundle-common/src/redux/modules/common';
 import { PageTitle } from '../shared/PageTitle';
 import {
   selectPrevAndNext,

@@ -5,14 +5,12 @@ import { Link } from '@reach/router';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 import { I18n, FormTable, FormForm } from '@kineticdata/react';
 import { PageTitle } from '../shared/PageTitle';
-import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
-import { TimeAgoCell } from '@kineticdata/bundle-common/src/components/tables/TimeAgoCell';
-import { StatusBadgeCell } from '@kineticdata/bundle-common/src/components/tables/StatusBadgeCell';
-import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
-import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { FormComponents, addToast } from '@kineticdata/bundle-common';
+import {
+  TableComponents,
+  FormComponents,
+  addToast,
+} from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/settingsDatastore';
 
 const FormLayout = ({ fields, error, buttons }) => (
@@ -74,12 +72,12 @@ const FormNameCell = ({ row, value }) => (
   </td>
 );
 
-const FilterLayout = generateFilterModalLayout(
+const FilterLayout = TableComponents.generateFilterModalLayout(
   ['name', 'status'],
   'Filter Forms',
 );
 
-const EmptyBodyRow = generateEmptyBodyRow({
+const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   loadingMessage: 'Loading Datastore Forms...',
   noSearchResultsMessage:
     'No datastore forms were found - please modify your search criteria',
@@ -94,7 +92,7 @@ export const FormListComponent = ({ modalOpen, toggleModal, navigate }) => (
     components={{
       EmptyBodyRow,
       FilterLayout,
-      TableLayout: SettingsTableLayout,
+      TableLayout: TableComponents.SettingsTableLayout,
     }}
     columnSet={['name', 'status', 'updatedAt', 'actions']}
     addColumns={[
@@ -107,10 +105,13 @@ export const FormListComponent = ({ modalOpen, toggleModal, navigate }) => (
       },
     ]}
     alterColumns={{
-      updatedAt: { components: { BodyCell: TimeAgoCell } },
+      updatedAt: { components: { BodyCell: TableComponents.TimeAgoCell } },
       name: { components: { BodyCell: FormNameCell } },
       status: {
-        components: { BodyCell: StatusBadgeCell, Filter: SelectFilter },
+        components: {
+          BodyCell: TableComponents.StatusBadgeCell,
+          Filter: TableComponents.SelectFilter,
+        },
       },
     }}
   >

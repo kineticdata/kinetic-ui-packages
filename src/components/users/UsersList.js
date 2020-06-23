@@ -4,9 +4,6 @@ import { connect } from '../../redux/store';
 import { actions } from '../../redux/modules/settingsUsers';
 import { Link } from '@reach/router';
 import { UserTable, UserForm, fetchUser, I18n } from '@kineticdata/react';
-import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
-import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import {
   UncontrolledDropdown,
   DropdownToggle,
@@ -23,6 +20,7 @@ import {
   addToast,
   addToastAlert,
   FormComponents,
+  TableComponents,
 } from '@kineticdata/bundle-common';
 import { ExportModal } from './ExportModal';
 import { ImportModal } from './ImportModal';
@@ -196,7 +194,7 @@ const ActionsCell = ({ toggleModal }) => ({ row }) => (
   </td>
 );
 
-const EmptyBodyRow = generateEmptyBodyRow({
+const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   loadingMessage: 'Loading Users...',
   noSearchResultsMessage:
     'No Users were found - please modify your search criteria',
@@ -205,7 +203,10 @@ const EmptyBodyRow = generateEmptyBodyRow({
   noItemsLinkToMessage: 'Add new User',
 });
 
-const FilterLayout = generateFilterModalLayout(['username', 'displayName']);
+const FilterLayout = TableComponents.generateFilterModalLayout([
+  'username',
+  'displayName',
+]);
 
 export const UsersListComponent = ({
   tableKey,
@@ -225,7 +226,7 @@ export const UsersListComponent = ({
     components={{
       FilterLayout,
       EmptyBodyRow,
-      TableLayout: SettingsTableLayout,
+      TableLayout: TableComponents.SettingsTableLayout,
     }}
     alterColumns={{
       username: { title: 'Email', components: { BodyCell: NameCell } },
