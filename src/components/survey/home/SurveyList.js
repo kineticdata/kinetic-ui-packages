@@ -17,17 +17,12 @@ import {
 import { I18n, Table, FormForm, fetchForm } from '@kineticdata/react';
 import {
   FormComponents,
+  TableComponents,
   ErrorMessage,
   LoadingMessage,
   addToast,
   openConfirm,
 } from '@kineticdata/bundle-common';
-import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
-import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
-import { TimeAgoCell } from '@kineticdata/bundle-common/src/components/tables/TimeAgoCell';
-import { StatusBadgeCell } from '@kineticdata/bundle-common/src/components/tables/StatusBadgeCell';
-import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
 
 const columns = [
   {
@@ -95,7 +90,7 @@ const FormNameCell = ({ row, value }) => (
   </td>
 );
 
-const FilterLayout = generateFilterModalLayout(
+const FilterLayout = TableComponents.generateFilterModalLayout(
   ['name', 'status'],
   'Filter Surveys',
 );
@@ -185,7 +180,7 @@ const SurveyListComponent = ({
   fetchAppDataRequest,
   navigate,
 }) => {
-  const EmptyBodyRow = generateEmptyBodyRow({
+  const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
     loadingMessage: 'Loading Surveys...',
     noSearchResultsMessage:
       'No surveys were found - please modify your search criteria',
@@ -198,7 +193,7 @@ const SurveyListComponent = ({
         components={{
           EmptyBodyRow,
           FilterLayout,
-          TableLayout: SettingsTableLayout,
+          TableLayout: TableComponents.SettingsTableLayout,
         }}
         columns={columns}
         columnSet={['name', 'createdAt', 'updatedAt', 'status', 'actions']}
@@ -225,18 +220,18 @@ const SurveyListComponent = ({
           },
           createdAt: {
             components: {
-              BodyCell: TimeAgoCell,
+              BodyCell: TableComponents.TimeAgoCell,
             },
           },
           updatedAt: {
             components: {
-              BodyCell: TimeAgoCell,
+              BodyCell: TableComponents.TimeAgoCell,
             },
           },
           status: {
             components: {
-              BodyCell: StatusBadgeCell,
-              Filter: SelectFilter,
+              BodyCell: TableComponents.StatusBadgeCell,
+              Filter: TableComponents.SelectFilter,
             },
             options: () => [
               { value: 'Active', label: 'Active' },

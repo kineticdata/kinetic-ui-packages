@@ -10,17 +10,9 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-import { TimeAgo } from '@kineticdata/bundle-common';
+import { TableComponents, TimeAgo } from '@kineticdata/bundle-common';
 import { ExportModal } from '../export/ExportModal';
 import { PageTitle } from '../../shared/PageTitle';
-import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
-import { BetweenDateFilter } from '@kineticdata/bundle-common/src/components/tables/BetweenDateFilter';
-import { ValuesFilter } from '@kineticdata/bundle-common/src/components/tables/ValuesFilter';
-import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
-import { CoreStateBadgeCell } from '@kineticdata/bundle-common/src/components/tables/CoreStateBadgeCell';
-import { StatusBadge } from '@kineticdata/bundle-common/src/components/tables/StatusBadgeCell';
-import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import { List } from 'immutable';
 
 const LinkCell = ({ row, value }) => (
@@ -79,14 +71,14 @@ export const FormDetailsComponent = ({
   openDropdown,
   toggleDropdown,
 }) => {
-  const EmptyBodyRow = generateEmptyBodyRow({
+  const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
     loadingMessage: 'Loading Submissions...',
     noSearchResultsMessage:
       'No submissions were found - please modify your search criteria',
     noItemsMessage: 'There are no submissions to display.',
   });
 
-  const FilterLayout = generateFilterModalLayout(
+  const FilterLayout = TableComponents.generateFilterModalLayout(
     ['createdAt', 'submittedBy', 'coreState', 'values'],
     'Filter Submissions',
   );
@@ -100,7 +92,7 @@ export const FormDetailsComponent = ({
         components={{
           EmptyBodyRow,
           FilterLayout,
-          TableLayout: SettingsTableLayout,
+          TableLayout: TableComponents.SettingsTableLayout,
         }}
         columnSet={[
           'label',
@@ -139,7 +131,7 @@ export const FormDetailsComponent = ({
             initial: List(['', '']),
             components: {
               BodyCell: TimeAgoCell,
-              Filter: BetweenDateFilter,
+              Filter: TableComponents.BetweenDateFilter,
             },
           },
           submittedAt: {
@@ -148,15 +140,15 @@ export const FormDetailsComponent = ({
             initial: List(['', '']),
             components: {
               BodyCell: TimeAgoCell,
-              Filter: BetweenDateFilter,
+              Filter: TableComponents.BetweenDateFilter,
             },
           },
           coreState: {
             title: 'Status',
             sortable: true,
             components: {
-              BodyCell: CoreStateBadgeCell,
-              Filter: SelectFilter,
+              BodyCell: TableComponents.CoreStateBadgeCell,
+              Filter: TableComponents.SelectFilter,
             },
           },
           values: {
@@ -168,7 +160,7 @@ export const FormDetailsComponent = ({
                 ? form.fields.map(({ name }) => ({ value: name, label: name }))
                 : [],
             components: {
-              Filter: ValuesFilter,
+              Filter: TableComponents.ValuesFilter,
             },
           },
         }}
@@ -224,7 +216,7 @@ export const FormDetailsComponent = ({
                   <dl>
                     <dt>Status</dt>
                     <dd>
-                      <StatusBadge status={form.status} />
+                      <TableComponents.StatusBadge status={form.status} />
                     </dd>
                   </dl>
                   <dl>

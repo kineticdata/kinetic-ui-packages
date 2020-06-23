@@ -19,13 +19,13 @@ import {
   TimeAgo,
   DiscussionsPanel,
   ViewDiscussionsModal,
+  TableComponents,
+  selectDiscussionsEnabled,
 } from '@kineticdata/bundle-common';
-import { selectDiscussionsEnabled } from '@kineticdata/bundle-common/src/redux/modules/common';
 import { actions } from '../../../redux/modules/surveys';
 import { connect } from '../../../redux/store';
 import { I18n } from '@kineticdata/react';
 import { PageTitle } from '../../shared/PageTitle';
-import { CoreStateBadge } from '@kineticdata/bundle-common/src/components/tables/CoreStateBadgeCell';
 
 const CreationForm = ({ onChange, values, errors }) => (
   <div className="form-group">
@@ -133,7 +133,9 @@ export const SubmissionDetailsContainer = ({
               <dl>
                 <dt>Status</dt>
                 <dd>
-                  <CoreStateBadge coreState={submission.coreState} />
+                  <TableComponents.CoreStateBadge
+                    coreState={submission.coreState}
+                  />
                 </dd>
               </dl>
               <dl>
