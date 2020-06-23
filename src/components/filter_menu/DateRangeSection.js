@@ -2,7 +2,7 @@ import React from 'react';
 import { compose, withHandlers } from 'recompose';
 import { ModalBody } from 'reactstrap';
 import { actions } from '../../redux/modules/filterMenu';
-import { DateRangeSelector } from '@kineticdata/bundle-common/src/components/DateRangeSelector';
+import { DateRangeSelector } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import { connect } from '../../redux/store';
 

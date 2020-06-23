@@ -26,12 +26,7 @@ import {
   openConfirm,
 } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
-import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
-import { TimeAgoCell } from '@kineticdata/bundle-common/src/components/tables/TimeAgoCell';
-import { StatusBadgeCell } from '@kineticdata/bundle-common/src/components/tables/StatusBadgeCell';
-import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
-import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
+import { TableComponents } from '@kineticdata/bundle-common';
 import { actions } from '../../../redux/modules/settingsForms';
 import { actions as queueActions } from '../../../redux/modules/settingsQueue';
 
@@ -79,7 +74,7 @@ const FormNameCell = ({ row, value }) => (
   </td>
 );
 
-const FilterLayout = generateFilterModalLayout(
+const FilterLayout = TableComponents.generateFilterModalLayout(
   ['name', 'type', 'status'],
   'Filter Forms',
 );
@@ -174,7 +169,7 @@ export const FormListComponent = ({
   queueSettings,
   loading,
 }) => {
-  const EmptyBodyRow = generateEmptyBodyRow({
+  const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
     loadingMessage: 'Loading Forms...',
     noSearchResultsMessage:
       'No forms were found - please modify your search criteria',
@@ -190,7 +185,7 @@ export const FormListComponent = ({
         components={{
           EmptyBodyRow,
           FilterLayout,
-          TableLayout: SettingsTableLayout,
+          TableLayout: TableComponents.SettingsTableLayout,
         }}
         columnSet={[
           'name',
@@ -216,11 +211,11 @@ export const FormListComponent = ({
           },
         ]}
         alterColumns={{
-          updatedAt: { components: { BodyCell: TimeAgoCell } },
-          createdAt: { components: { BodyCell: TimeAgoCell } },
+          updatedAt: { components: { BodyCell: TableComponents.TimeAgoCell } },
+          createdAt: { components: { BodyCell: TableComponents.TimeAgoCell } },
           name: { components: { BodyCell: FormNameCell } },
           type: {
-            components: { Filter: SelectFilter },
+            components: { Filter: TableComponents.SelectFilter },
             options: () =>
               queueSettings.queueSettingsKapp.formTypes.map(({ name }) => ({
                 value: name,
@@ -228,7 +223,10 @@ export const FormListComponent = ({
               })),
           },
           status: {
-            components: { BodyCell: StatusBadgeCell, Filter: SelectFilter },
+            components: {
+              BodyCell: TableComponents.StatusBadgeCell,
+              Filter: TableComponents.SelectFilter,
+            },
           },
         }}
       >

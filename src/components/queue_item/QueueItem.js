@@ -1,8 +1,10 @@
 import React from 'react';
 import { compose, lifecycle, withProps } from 'recompose';
 import { Link } from '@reach/router';
-import { DiscussionsPanel } from '@kineticdata/bundle-common';
-import { selectDiscussionsEnabled } from '@kineticdata/bundle-common/src/redux/modules/common';
+import {
+  DiscussionsPanel,
+  selectDiscussionsEnabled,
+} from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/queue';
 import { QueueItemDetailsContainer } from './QueueItemDetails';
 import { getFilterByPath } from '../../redux/modules/queueApp';

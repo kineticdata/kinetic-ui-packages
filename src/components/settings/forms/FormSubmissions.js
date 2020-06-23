@@ -3,16 +3,8 @@ import { Link } from '@reach/router';
 import { compose } from 'recompose';
 import { connect } from '../../../redux/store';
 import { I18n, SubmissionTable } from '@kineticdata/react';
-import { TimeAgo } from '@kineticdata/bundle-common';
+import { TimeAgo, TableComponents } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
-import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
-import { TimeAgoCell } from '@kineticdata/bundle-common/src/components/tables/TimeAgoCell';
-import { BetweenDateFilter } from '@kineticdata/bundle-common/src/components/tables/BetweenDateFilter';
-import { ValuesFilter } from '@kineticdata/bundle-common/src/components/tables/ValuesFilter';
-import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
-import { CoreStateBadgeCell } from '@kineticdata/bundle-common/src/components/tables/CoreStateBadgeCell';
-import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import { List } from 'immutable';
 import { ExportModal } from './ExportModal';
 import { actions } from '../../../redux/modules/settingsForms';
@@ -29,14 +21,14 @@ export const FormSubmissionsComponent = ({
   form,
   openModal,
 }) => {
-  const EmptyBodyRow = generateEmptyBodyRow({
+  const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
     loadingMessage: 'Loading Submissions...',
     noSearchResultsMessage:
       'No submissions were found - please modify your search criteria',
     noItemsMessage: 'There are no submissions to display.',
   });
 
-  const FilterLayout = generateFilterModalLayout(
+  const FilterLayout = TableComponents.generateFilterModalLayout(
     ['createdAt', 'submittedBy', 'coreState', 'values'],
     'Filter Submissions',
   );
@@ -49,7 +41,7 @@ export const FormSubmissionsComponent = ({
       components={{
         EmptyBodyRow,
         FilterLayout,
-        TableLayout: SettingsTableLayout,
+        TableLayout: TableComponents.SettingsTableLayout,
       }}
       columnSet={['label', 'createdAt', 'submittedBy', 'coreState']}
       defaultSortColumn={'createdAt'}
@@ -63,8 +55,8 @@ export const FormSubmissionsComponent = ({
           filter: 'between',
           initial: List(['', '']),
           components: {
-            BodyCell: TimeAgoCell,
-            Filter: BetweenDateFilter,
+            BodyCell: TableComponents.TimeAgoCell,
+            Filter: TableComponents.BetweenDateFilter,
           },
         },
         submittedBy: {
@@ -74,8 +66,8 @@ export const FormSubmissionsComponent = ({
           title: 'State',
           sortable: true,
           components: {
-            BodyCell: CoreStateBadgeCell,
-            Filter: SelectFilter,
+            BodyCell: TableComponents.CoreStateBadgeCell,
+            Filter: TableComponents.SelectFilter,
           },
         },
         values: {
@@ -87,7 +79,7 @@ export const FormSubmissionsComponent = ({
               ? form.fields.map(({ name }) => ({ value: name, label: name }))
               : [],
           components: {
-            Filter: ValuesFilter,
+            Filter: TableComponents.ValuesFilter,
           },
         },
       }}
