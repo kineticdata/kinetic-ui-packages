@@ -2,7 +2,7 @@ import React from 'react';
 import { compose, withHandlers, withProps } from 'recompose';
 import { actions } from '../../redux/modules/submission';
 import { connect } from '../../redux/store';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 const CommentButton = props =>

@@ -7,7 +7,7 @@ import {
   updateForm,
   deleteForm,
 } from '@kineticdata/react';
-import { addToast, addToastAlert } from 'common';
+import { addToast, addToastAlert } from '@kineticdata/bundle-common';
 import {
   actions,
   types,

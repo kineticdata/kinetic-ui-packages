@@ -8,7 +8,7 @@ import {
   withState,
 } from 'recompose';
 import { Redirect } from '@reach/router';
-import { ErrorUnexpected, Loading } from 'common';
+import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
 import { connect } from './redux/store';
 
 import { actions as categoriesActions } from './redux/modules/servicesApp';

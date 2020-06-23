@@ -10,7 +10,7 @@ import { CoreForm } from '@kineticdata/react';
 import classNames from 'classnames';
 import { I18n } from '@kineticdata/react';
 
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 export const NavigationControlsComponent = ({
   handleNextPage,

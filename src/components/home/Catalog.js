@@ -5,7 +5,7 @@ import { CategoryCard } from '../shared/CategoryCard';
 import { ServiceCard } from '../shared/ServiceCard';
 import { RequestCard } from '../shared/RequestCard';
 import { PageTitle } from '../shared/PageTitle';
-import { StateListWrapper } from 'common';
+import { StateListWrapper } from '@kineticdata/bundle-common';
 import { getSubmissionPath } from '../../utils';
 import { I18n } from '@kineticdata/react';
 

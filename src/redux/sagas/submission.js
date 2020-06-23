@@ -18,7 +18,7 @@ import {
   createDiscussion,
   sendMessage,
 } from '@kineticdata/react';
-import { addToast, addToastAlert } from 'common';
+import { addToast, addToastAlert } from '@kineticdata/bundle-common';
 import { Map, Seq } from 'immutable';
 
 import { actions, types } from '../modules/submission';

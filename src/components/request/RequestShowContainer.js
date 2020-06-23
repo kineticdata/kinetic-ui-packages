@@ -1,5 +1,5 @@
 import { compose, lifecycle, withState, withHandlers } from 'recompose';
-import { selectDiscussionsEnabled } from 'common/src/redux/modules/common';
+import { selectDiscussionsEnabled } from '@kineticdata/bundle-common/src/redux/modules/common';
 import { actions } from '../../redux/modules/submission';
 import { connect } from '../../redux/store';
 

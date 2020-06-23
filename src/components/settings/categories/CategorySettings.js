@@ -3,7 +3,7 @@ import { compose, lifecycle } from 'recompose';
 import { Router } from '@reach/router';
 import { actions } from '../../../redux/modules/settingsCategories';
 import { connect } from '../../../redux/store';
-import { ErrorMessage } from 'common';
+import { ErrorMessage } from '@kineticdata/bundle-common';
 import { Categories } from './Categories';
 import { Category } from './Category';
 

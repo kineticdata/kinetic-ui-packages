@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { compose, withHandlers } from 'recompose';
-import { openModalForm, selectAdminKappSlug } from 'common';
+import { openModalForm, selectAdminKappSlug } from '@kineticdata/bundle-common';
 import { connect } from '../../redux/store';
 
 import { getFeedbackFormConfig } from '../../utils';

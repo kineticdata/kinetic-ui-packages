@@ -9,7 +9,7 @@ import {
 } from 'recompose';
 import { connect } from '../../../redux/store';
 import { I18n } from '@kineticdata/react';
-import { TimeAgo } from 'common';
+import { TimeAgo } from '@kineticdata/bundle-common';
 import { Modal } from 'reactstrap';
 import { PageTitle } from '../../shared/PageTitle';
 import { SubmissionListItem } from './SubmissionListItem';

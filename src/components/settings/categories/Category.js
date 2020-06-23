@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
 import { compose, lifecycle, withHandlers } from 'recompose';
-import { FormComponents, addToast } from 'common';
+import { FormComponents, addToast } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
 import { actions } from '../../../redux/modules/settingsCategories';
 import { connect } from '../../../redux/store';

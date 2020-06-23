@@ -14,7 +14,7 @@ import {
   Utils,
   addToast,
   selectQueueKappSlug,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import {
   actions,
   buildFormConfigurationObject,

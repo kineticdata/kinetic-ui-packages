@@ -2,7 +2,11 @@ import React, { Fragment } from 'react';
 import moment from 'moment';
 import { Link } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
-import { ErrorMessage, LoadingMessage, TimeAgo } from 'common';
+import {
+  ErrorMessage,
+  LoadingMessage,
+  TimeAgo,
+} from '@kineticdata/bundle-common';
 import { actions } from '../../../redux/modules/settingsForms';
 import { connect } from '../../../redux/store';
 import { I18n } from '@kineticdata/react';

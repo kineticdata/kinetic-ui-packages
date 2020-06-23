@@ -1,8 +1,8 @@
 import React from 'react';
-import { Icon } from 'common';
+import { Icon } from '@kineticdata/bundle-common';
 import { Link, Router } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
-import { ErrorMessage, LoadingMessage } from 'common';
+import { ErrorMessage, LoadingMessage } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { actions as formActions } from '../../redux/modules/settingsForms';
 import { ServicesSettings } from './services_settings/ServicesSettings';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimeAgo } from 'common';
+import { TimeAgo } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 export const StartNode = ({ label, timestamp }) => (

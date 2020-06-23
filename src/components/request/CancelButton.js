@@ -1,6 +1,6 @@
 import React from 'react';
 import { compose, withHandlers, withProps } from 'recompose';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/submission';
 import { connect } from '../../redux/store';
 

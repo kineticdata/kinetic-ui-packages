@@ -4,7 +4,7 @@ import { compose, withHandlers, withState } from 'recompose';
 
 import moment from 'moment';
 
-import { Constants } from 'common';
+import { Constants } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 const MobileSubmissionCard = ({ submission, columns, to }) => (

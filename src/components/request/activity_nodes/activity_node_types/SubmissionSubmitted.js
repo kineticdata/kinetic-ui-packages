@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { TimeAgo } from 'common';
+import { TimeAgo } from '@kineticdata/bundle-common';
 import { activityData } from '../../RequestActivityList';
 import { I18n } from '@kineticdata/react';
 

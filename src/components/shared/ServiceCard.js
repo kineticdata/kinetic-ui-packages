@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from 'common';
+import { Icon } from '@kineticdata/bundle-common';
 import { Link } from '@reach/router';
 
 import { I18n } from '@kineticdata/react';

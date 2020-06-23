@@ -1,6 +1,6 @@
 import { List, Record } from 'immutable';
 import { CategoryHelper, Form } from '../../models';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 const { noPayload, withPayload } = Utils;
 const ns = Utils.namespaceBuilder('services/servicesApp');
 

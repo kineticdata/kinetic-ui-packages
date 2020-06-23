@@ -1,14 +1,17 @@
 {
-  "name": "services",
+  "name": "@kineticdata/bundle-services",
   "version": "0.1.0",
-  "main": "./src/index.js",
+  "main": "./build/index.js",
   "main:src": "./src/index.js",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production babel src --out-dir build"
+  },
   "dependencies": {
     "@kineticdata/react": "5.0.5",
     "@reach/router": "git://github.com/kineticdata/router.git",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.5",
-    "common": "0.1.0",
+    "@kineticdata/bundle-common": "0.1.0",
     "downloadjs": "^1.4.7",
     "font-awesome": "^4.7.0",
     "immutable": "4.0.0-rc.9",
@@ -27,5 +30,18 @@
     "redux-first-history": "^4.0.0-alpha.7",
     "redux-saga": "^0.16.0",
     "rudy-match-path": "^0.3.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.3",
+    "@react-workspaces/react-scripts": "^3.4.0-alpha-01",
+    "cross-env": "^7.0.2"
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   }
 }

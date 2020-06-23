@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { compose } from 'recompose';
-import { ViewDiscussionsModal, Discussion } from 'common';
+import { ViewDiscussionsModal, Discussion } from '@kineticdata/bundle-common';
 import { connect } from '../../redux/store';
 
 export const RequestDiscussionComponent = ({

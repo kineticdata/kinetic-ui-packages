@@ -1,5 +1,5 @@
 import { LOCATION_CHANGE } from 'redux-first-history';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 const ns = Utils.namespaceBuilder('services/search');
 
 export const types = {

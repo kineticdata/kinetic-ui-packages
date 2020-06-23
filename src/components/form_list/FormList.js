@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { ServiceCard } from '../shared/ServiceCard';
 import { Link } from '@reach/router';
 import { PageTitle } from '../shared/PageTitle';
-import { StateListWrapper } from 'common';
+import { StateListWrapper } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 export const FormList = ({

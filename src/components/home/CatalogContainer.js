@@ -1,6 +1,6 @@
 import { compose, lifecycle } from 'recompose';
 import { Catalog } from './Catalog';
-import { selectCurrentKapp } from 'common';
+import { selectCurrentKapp } from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/submissions';
 import { connect } from '../../redux/store';
 

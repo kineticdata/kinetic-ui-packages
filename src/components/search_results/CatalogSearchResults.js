@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
-import { StateListWrapper } from 'common';
+import { StateListWrapper } from '@kineticdata/bundle-common';
 import { ServiceCard } from '../shared/ServiceCard';
 import { PageTitle } from '../shared/PageTitle';
 import { CatalogSearchContainer } from '../shared/CatalogSearchContainer';

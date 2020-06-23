@@ -6,7 +6,7 @@ import {
   Utils as CommonUtils,
   ErrorMessage,
   LoadingMessage,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { bundle } from '@kineticdata/react';
 import { RequestShowConfirmationContainer } from './RequestShowConfirmation';
 import { RequestDiscussion } from './RequestDiscussion';

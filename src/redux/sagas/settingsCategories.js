@@ -1,6 +1,6 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { fetchCategories, updateKapp } from '@kineticdata/react';
-import { addToast, addToastAlert } from 'common';
+import { addToast, addToastAlert } from '@kineticdata/bundle-common';
 import { actions, types } from '../modules/settingsCategories';
 
 export function* fetchCategoriesSaga() {

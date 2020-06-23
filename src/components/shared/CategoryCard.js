@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { Icon } from 'common';
+import { Icon } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 export const CategoryCard = props => (
