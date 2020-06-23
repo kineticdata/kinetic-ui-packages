@@ -1,7 +1,11 @@
 import React, { Fragment } from 'react';
 import { connect } from '../redux/store';
 import { compose, withHandlers, withState } from 'recompose';
-import { selectCurrentKapp, Constants, Utils } from 'common';
+import {
+  selectCurrentKapp,
+  Constants,
+  Utils,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { Link } from '@reach/router';
 import { Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';

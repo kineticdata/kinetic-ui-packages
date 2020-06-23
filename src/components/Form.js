@@ -2,7 +2,11 @@ import React, { Fragment } from 'react';
 import { connect } from '../redux/store';
 import { compose, withHandlers, withProps } from 'recompose';
 import { CoreForm } from '@kineticdata/react';
-import { ErrorNotFound, ErrorUnauthorized, ErrorUnexpected } from 'common';
+import {
+  ErrorNotFound,
+  ErrorUnauthorized,
+  ErrorUnexpected,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { Link } from '@reach/router';
 import { parse } from 'query-string';
@@ -13,7 +17,7 @@ import { I18n } from '@kineticdata/react';
 // forms. Note that we deliberately do this as a const so that it should start
 // immediately without making the application wait but it will likely be ready
 // before users nagivate to the actual forms.
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 export const FormComponent = ({
   formSlug,

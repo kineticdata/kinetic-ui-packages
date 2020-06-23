@@ -12,7 +12,7 @@ import {
   VictoryLine,
   VictoryScatter,
 } from 'victory';
-import { Constants, StateListWrapper } from 'common';
+import { Constants, StateListWrapper } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import moment from 'moment';
 import { Map } from 'immutable';

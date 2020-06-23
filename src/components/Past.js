@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from '../redux/store';
 import { compose, lifecycle } from 'recompose';
-import { Constants, StateListWrapper } from 'common';
+import { Constants, StateListWrapper } from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { Link } from '@reach/router';
 import { actions } from '../redux/modules/appointments';

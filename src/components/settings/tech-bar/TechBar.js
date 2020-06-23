@@ -7,7 +7,7 @@ import {
   selectHasRoleSchedulerAdmin,
   Table,
   LoadingMessage,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
 import { Link } from '@reach/router';
 import moment from 'moment';

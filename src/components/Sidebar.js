@@ -6,7 +6,7 @@ import {
   selectHasRoleSchedulerManager,
   selectHasRoleSchedulerAgent,
   Utils,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { Link } from '@reach/router';
 import {
   Dropdown,

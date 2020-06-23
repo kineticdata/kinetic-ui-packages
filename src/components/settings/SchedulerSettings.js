@@ -9,7 +9,7 @@ import {
   CreateScheduler,
   Scheduler,
   SchedulersList,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/techBarApp';
 
 export const SchedulerSettingsComponent = ({

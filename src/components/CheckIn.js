@@ -7,7 +7,7 @@ import {
   ErrorUnexpected,
   TaskActions,
   addToastAlert,
-} from 'common';
+} from '@kineticdata/bundle-common';
 
 import { DisplayTabs } from './Display';
 import { TIME_FORMAT } from '../constants';
@@ -19,7 +19,7 @@ import { CoreForm, Moment, I18n } from '@kineticdata/react';
 // forms. Note that we deliberately do this as a const so that it should start
 // immediately without making the application wait but it will likely be ready
 // before users nagivate to the actual forms.
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 export const CheckInComponent = ({
   crosslink,

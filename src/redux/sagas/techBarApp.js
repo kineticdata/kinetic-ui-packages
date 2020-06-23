@@ -13,7 +13,7 @@ import {
   SCHEDULER_FORM_SLUG,
   TECH_BAR_SETTINGS_FORM_SLUG,
 } from '../../constants';
-import { addToast, addToastAlert } from 'common';
+import { addToast, addToastAlert } from '@kineticdata/bundle-common';
 import md5 from 'md5';
 
 export function* fetchAppDataRequestSaga() {

@@ -17,7 +17,11 @@ import {
   DropdownItem,
 } from 'reactstrap';
 import { List } from 'immutable';
-import { AttributeSelectors, InfoMessage, StateListWrapper } from 'common';
+import {
+  AttributeSelectors,
+  InfoMessage,
+  StateListWrapper,
+} from '@kineticdata/bundle-common';
 import { actions } from '../../../redux/modules/techBarApp';
 import { I18n } from '@kineticdata/react';
 

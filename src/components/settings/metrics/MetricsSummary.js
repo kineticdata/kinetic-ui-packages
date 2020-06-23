@@ -10,7 +10,7 @@ import {
   VictoryTooltip,
   VictoryAxis,
 } from 'victory';
-import { Constants, Table, StateListWrapper } from 'common';
+import { Constants, Table, StateListWrapper } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import moment from 'moment';
 import { Record } from 'immutable';

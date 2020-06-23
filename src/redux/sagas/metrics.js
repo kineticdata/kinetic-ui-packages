@@ -1,6 +1,6 @@
 import { takeEvery, put, call, select } from 'redux-saga/effects';
 import { searchSubmissions, SubmissionSearch } from '@kineticdata/react';
-import { addToastAlert } from 'common';
+import { addToastAlert } from '@kineticdata/bundle-common';
 import { actions, types } from '../modules/metrics';
 import { METRICS_FORM_SLUG } from '../../constants';
 import isarray from 'isarray';

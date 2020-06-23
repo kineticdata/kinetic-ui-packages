@@ -1,7 +1,11 @@
 import React, { Fragment } from 'react';
 import { connect } from '../../../redux/store';
 import { compose } from 'recompose';
-import { Utils, ErrorNotFound, selectHasRoleSchedulerAdmin } from 'common';
+import {
+  Utils,
+  ErrorNotFound,
+  selectHasRoleSchedulerAdmin,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
 import { Link } from '@reach/router';
 import { CoreForm, I18n } from '@kineticdata/react';
@@ -10,7 +14,7 @@ import { CoreForm, I18n } from '@kineticdata/react';
 // forms. Note that we deliberately do this as a const so that it should start
 // immediately without making the application wait but it will likely be ready
 // before users nagivate to the actual forms.
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 export const AppointmentFormComponent = ({ id, kapp, techBar }) => {
   return techBar ? (

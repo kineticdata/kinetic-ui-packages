@@ -5,7 +5,7 @@ import {
   SubmissionSearch,
 } from '@kineticdata/react';
 import { actions, types } from '../modules/walkIns';
-import { addToastAlert } from 'common';
+import { addToastAlert } from '@kineticdata/bundle-common';
 import { WALK_IN_FORM_SLUG } from '../../constants';
 import moment from 'moment';
 import isarray from 'isarray';

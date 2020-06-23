@@ -5,7 +5,7 @@ import {
   SubmissionSearch,
 } from '@kineticdata/react';
 import { actions, types } from '../modules/appointments';
-import { addToastAlert } from 'common';
+import { addToastAlert } from '@kineticdata/bundle-common';
 import { APPOINTMENT_FORM_SLUG } from '../../constants';
 import moment from 'moment';
 import isarray from 'isarray';

@@ -8,7 +8,7 @@ import {
   selectHasRoleSchedulerAdmin,
   selectHasRoleSchedulerManager,
   selectHasRoleSchedulerAgent,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { SchedulerSettings } from './SchedulerSettings';
 import { TechBarMetrics } from './TechBarMetrics';
 import { TechBarSettings } from './TechBarSettings';

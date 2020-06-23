@@ -2,7 +2,11 @@ import React, { Fragment } from 'react';
 import { connect } from '../redux/store';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { Modal, ModalBody } from 'reactstrap';
-import { Utils, openModalForm, StateListWrapper } from 'common';
+import {
+  Utils,
+  openModalForm,
+  StateListWrapper,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { Link } from '@reach/router';
 import { actions } from '../redux/modules/appointments';

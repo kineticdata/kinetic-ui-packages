@@ -1,7 +1,11 @@
 import React, { Fragment } from 'react';
 import { connect } from '../../redux/store';
 import { compose, lifecycle } from 'recompose';
-import { selectCurrentKapp, Utils, selectHasRoleSchedulerAdmin } from 'common';
+import {
+  selectCurrentKapp,
+  Utils,
+  selectHasRoleSchedulerAdmin,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { Link } from '@reach/router';
 import { actions } from '../../redux/modules/techBarApp';

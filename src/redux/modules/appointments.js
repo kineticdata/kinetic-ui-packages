@@ -1,5 +1,5 @@
 import { Record, List } from 'immutable';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 import moment from 'moment';
 const { noPayload, withPayload } = Utils;
 const ns = Utils.namespaceBuilder('techbar/appointments');

@@ -3,7 +3,11 @@ import { connect } from '../redux/store';
 import { compose, withHandlers } from 'recompose';
 import { CoreForm, I18n } from '@kineticdata/react';
 import { Link } from '@reach/router';
-import { ErrorNotFound, ErrorUnauthorized, ErrorUnexpected } from 'common';
+import {
+  ErrorNotFound,
+  ErrorUnauthorized,
+  ErrorUnexpected,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { APPOINTMENT_FORM_SLUG } from '../constants';
 
@@ -11,7 +15,7 @@ import { APPOINTMENT_FORM_SLUG } from '../constants';
 // forms. Note that we deliberately do this as a const so that it should start
 // immediately without making the application wait but it will likely be ready
 // before users nagivate to the actual forms.
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 export const AppointmentFormComponent = ({
   techBarId,

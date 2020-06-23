@@ -7,7 +7,7 @@ import {
   withProps,
   withState,
 } from 'recompose';
-import { Utils, selectHasRoleSchedulerAdmin } from 'common';
+import { Utils, selectHasRoleSchedulerAdmin } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { isActiveClass } from '../../utils';
 import { Link } from '@reach/router';

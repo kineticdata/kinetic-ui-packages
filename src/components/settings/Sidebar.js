@@ -6,7 +6,7 @@ import {
   selectCurrentKapp,
   selectHasRoleSchedulerAdmin,
   selectHasRoleSchedulerManager,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { isActiveClass } from '../../utils';
 import { I18n } from '@kineticdata/react';
 

@@ -4,7 +4,7 @@ import { compose, withHandlers, withState, withProps } from 'recompose';
 import { DisplayTabs } from './Display';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { createSubmission } from '@kineticdata/react';
-import { selectCurrentKapp, addToastAlert } from 'common';
+import { selectCurrentKapp, addToastAlert } from '@kineticdata/bundle-common';
 import { TIME_FORMAT } from '../constants';
 import { actions as appointmentActions } from '../redux/modules/appointments';
 import { actions as walkInActions } from '../redux/modules/walkIns';

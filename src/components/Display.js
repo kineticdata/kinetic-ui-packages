@@ -6,7 +6,7 @@ import {
   ErrorNotFound,
   ErrorUnauthorized,
   Utils,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { Link } from '@reach/router';
 import { CheckIn } from './CheckIn';
