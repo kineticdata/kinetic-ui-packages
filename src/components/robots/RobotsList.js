@@ -5,7 +5,7 @@ import { push } from 'redux-first-history';
 import { compose, lifecycle } from 'recompose';
 import moment from 'moment';
 import { Constants, Loading } from '@kineticdata/bundle-common';
-import wallyHappyImage from '@kineticdata/bundle-common/src/assets/images/wally-happy.svg';
+import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
 import { PageTitle } from '../shared/PageTitle';
 
 import { actions } from '../../redux/modules/settingsRobots';

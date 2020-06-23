@@ -5,7 +5,7 @@ import { compose, lifecycle, withProps, withState } from 'recompose';
 import { Modal, ModalBody } from 'reactstrap';
 
 import { NotificationListItem } from './NotificationListItem';
-import wallyHappyImage from '@kineticdata/bundle-common/src/assets/images/wally-happy.svg';
+import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
 import { PageTitle } from '../shared/PageTitle';
 
 import { isActiveClass } from '../../utils';
