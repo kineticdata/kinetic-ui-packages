@@ -22,16 +22,11 @@ import {
   FormComponents,
   ErrorMessage,
   LoadingMessage,
+  TableComponents,
   addToast,
   openConfirm,
 } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
-import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
-import { TimeAgoCell } from '@kineticdata/bundle-common/src/components/tables/TimeAgoCell';
-import { StatusBadgeCell } from '@kineticdata/bundle-common/src/components/tables/StatusBadgeCell';
-import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
-import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import { actions } from '../../../redux/modules/settingsForms';
 
 const ActionsCell = ({ deleteForm, toggleModal, processing }) => ({
@@ -78,7 +73,7 @@ const FormNameCell = ({ row, value }) => (
   </td>
 );
 
-const FilterLayout = generateFilterModalLayout(
+const FilterLayout = TableComponents.generateFilterModalLayout(
   ['name', 'type', 'status'],
   'Filter Forms',
 );
@@ -171,7 +166,7 @@ export const FormsListComponent = ({
   cloneFormRequest,
   navigate,
 }) => {
-  const EmptyBodyRow = generateEmptyBodyRow({
+  const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
     loadingMessage: 'Loading Forms...',
     noSearchResultsMessage:
       'No forms were found - please modify your search criteria',
@@ -186,7 +181,7 @@ export const FormsListComponent = ({
       components={{
         EmptyBodyRow,
         FilterLayout,
-        TableLayout: SettingsTableLayout,
+        TableLayout: TableComponents.SettingsTableLayout,
       }}
       columnSet={[
         'name',
@@ -210,12 +205,12 @@ export const FormsListComponent = ({
       alterColumns={{
         updatedAt: {
           components: {
-            BodyCell: TimeAgoCell,
+            BodyCell: TableComponents.TimeAgoCell,
           },
         },
         createdAt: {
           components: {
-            BodyCell: TimeAgoCell,
+            BodyCell: TableComponents.TimeAgoCell,
           },
         },
         name: {
@@ -225,8 +220,8 @@ export const FormsListComponent = ({
         },
         status: {
           components: {
-            BodyCell: StatusBadgeCell,
-            Filter: SelectFilter,
+            BodyCell: TableComponents.StatusBadgeCell,
+            Filter: TableComponents.SelectFilter,
           },
         },
       }}
