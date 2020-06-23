@@ -8,7 +8,7 @@ import {
   ErrorUnauthorized,
   ErrorUnexpected,
   LoadingMessage,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { parse } from 'query-string';
 
@@ -17,7 +17,7 @@ import { parse } from 'query-string';
 // immediately without making the application wait but it will likely be ready
 // before users nagivate to the actual forms.
 
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 export const SurveyComponent = ({
   authenticated,

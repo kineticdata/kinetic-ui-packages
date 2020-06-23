@@ -21,13 +21,13 @@ import {
   LoadingMessage,
   addToast,
   openConfirm,
-} from 'common';
-import { generateEmptyBodyRow } from 'common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from 'common/src/components/tables/FilterLayout';
-import { SettingsTableLayout } from 'common/src/components/tables/TableLayout';
-import { TimeAgoCell } from 'common/src/components/tables/TimeAgoCell';
-import { StatusBadgeCell } from 'common/src/components/tables/StatusBadgeCell';
-import { SelectFilter } from 'common/src/components/tables/SelectFilter';
+} from '@kineticdata/bundle-common';
+import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
+import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
+import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
+import { TimeAgoCell } from '@kineticdata/bundle-common/src/components/tables/TimeAgoCell';
+import { StatusBadgeCell } from '@kineticdata/bundle-common/src/components/tables/StatusBadgeCell';
+import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
 
 const columns = [
   {

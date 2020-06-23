@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 import * as constants from './constants';
 
 export const isBlank = string => !string || string.trim().length === 0;

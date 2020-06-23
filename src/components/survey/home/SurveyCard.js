@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, TimeAgo } from 'common';
+import { Icon, TimeAgo } from '@kineticdata/bundle-common';
 import { Link } from '@reach/router';
 import { I18n } from '@kineticdata/react';
 import { StatusPill } from '../../shared/StatusPill';

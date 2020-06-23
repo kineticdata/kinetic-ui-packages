@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
 import { Table } from '@kineticdata/react';
-import { TimeAgo } from 'common';
+import { TimeAgo } from '@kineticdata/bundle-common';
 import { StatusPill } from '../../shared/StatusPill';
 
 const columns = [

@@ -11,7 +11,7 @@ import {
   createTree,
   fetchTree,
 } from '@kineticdata/react';
-import { addToast, addToastAlert, Utils } from 'common';
+import { addToast, addToastAlert, Utils } from '@kineticdata/bundle-common';
 import {
   actions,
   types,

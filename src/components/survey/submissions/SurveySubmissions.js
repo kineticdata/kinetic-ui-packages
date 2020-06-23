@@ -10,17 +10,17 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-import { TimeAgo } from 'common';
+import { TimeAgo } from '@kineticdata/bundle-common';
 import { ExportModal } from '../export/ExportModal';
 import { PageTitle } from '../../shared/PageTitle';
-import { generateEmptyBodyRow } from 'common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from 'common/src/components/tables/FilterLayout';
-import { BetweenDateFilter } from 'common/src/components/tables/BetweenDateFilter';
-import { ValuesFilter } from 'common/src/components/tables/ValuesFilter';
-import { SelectFilter } from 'common/src/components/tables/SelectFilter';
-import { CoreStateBadgeCell } from 'common/src/components/tables/CoreStateBadgeCell';
-import { StatusBadge } from 'common/src/components/tables/StatusBadgeCell';
-import { SettingsTableLayout } from 'common/src/components/tables/TableLayout';
+import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
+import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
+import { BetweenDateFilter } from '@kineticdata/bundle-common/src/components/tables/BetweenDateFilter';
+import { ValuesFilter } from '@kineticdata/bundle-common/src/components/tables/ValuesFilter';
+import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
+import { CoreStateBadgeCell } from '@kineticdata/bundle-common/src/components/tables/CoreStateBadgeCell';
+import { StatusBadge } from '@kineticdata/bundle-common/src/components/tables/StatusBadgeCell';
+import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import { List } from 'immutable';
 
 const LinkCell = ({ row, value }) => (

@@ -11,7 +11,11 @@ import {
 import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 import classnames from 'classnames';
 import moment from 'moment';
-import { FormComponents, LoadingMessage, addToast } from 'common';
+import {
+  FormComponents,
+  LoadingMessage,
+  addToast,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
 import { bundle, I18n, FormForm } from '@kineticdata/react';
 import { actions as surveyActions } from '../../../redux/modules/surveys';

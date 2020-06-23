@@ -1,5 +1,5 @@
 import { List, Map, Record } from 'immutable';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 import isobject from 'isobject';
 const { namespace, noPayload, withPayload } = Utils;
 const ns = Utils.namespaceBuilder('survey/surveys');

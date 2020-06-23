@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Redirect } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
-import { ErrorUnexpected, Loading } from 'common';
+import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import { connect } from './redux/store';
 import { Survey } from './components/survey/Survey';
