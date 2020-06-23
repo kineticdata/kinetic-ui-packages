@@ -4,7 +4,7 @@ import { compose, withHandlers, withState, lifecycle } from 'recompose';
 import { Link } from '@reach/router';
 import { Map, Seq } from 'immutable';
 import { push } from 'redux-first-history';
-import { addSuccess } from 'common';
+import { addSuccess } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 
 import { actions } from '../../redux/modules/settingsNotifications';

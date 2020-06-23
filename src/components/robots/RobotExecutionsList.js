@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { push } from 'redux-first-history';
 import { compose, lifecycle, withHandlers } from 'recompose';
 import moment from 'moment';
-import { Constants, Loading } from 'common';
-import wallyHappyImage from 'common/src/assets/images/wally-happy.svg';
+import { Constants, Loading } from '@kineticdata/bundle-common';
+import wallyHappyImage from '@kineticdata/bundle-common/src/assets/images/wally-happy.svg';
 
 import { isActiveClass } from '../../utils';
 import { actions } from '../../redux/modules/settingsRobots';

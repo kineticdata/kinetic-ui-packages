@@ -8,12 +8,12 @@ import {
   ROBOT_EXECUTIONS_FORM_SLUG,
 } from '../../redux/modules/settingsRobots';
 import { CoreForm } from '@kineticdata/react';
-import { addError } from 'common';
+import { addError } from '@kineticdata/bundle-common';
 
 import { context } from '../../redux/store';
 import { I18n } from '@kineticdata/react';
 
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 const RobotExecutionComponent = ({
   robotExecution,

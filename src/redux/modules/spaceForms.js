@@ -1,5 +1,5 @@
 import { Record, List } from 'immutable';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 const { namespace, withPayload, noPayload } = Utils;
 
 export const types = {

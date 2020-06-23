@@ -2,7 +2,7 @@ import React from 'react';
 import { compose, withState, withHandlers } from 'recompose';
 import { Link } from '@reach/router';
 import { getTeamColor, getTeamIcon } from '../../utils';
-import { Avatar } from 'common';
+import { Avatar } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 const TeamCardComponent = props => {

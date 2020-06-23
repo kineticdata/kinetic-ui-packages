@@ -1,7 +1,10 @@
 import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 import { context } from '../../redux/store';
-import { PageTitle as CommonPageTitle, selectCurrentKapp } from 'common';
+import {
+  PageTitle as CommonPageTitle,
+  selectCurrentKapp,
+} from '@kineticdata/bundle-common';
 
 export const mapStateToProps = state => ({
   space: state.app.space || 'Home',

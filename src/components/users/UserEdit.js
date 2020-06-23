@@ -1,6 +1,10 @@
 import React, { Fragment } from 'react';
 import { UserForm as UserFormLib, I18n, fetchUser } from '@kineticdata/react';
-import { FormComponents, ProfileCard, addToast } from 'common';
+import {
+  FormComponents,
+  ProfileCard,
+  addToast,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { Link } from '@reach/router';
 import { getIn } from 'immutable';

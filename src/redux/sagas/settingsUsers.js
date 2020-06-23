@@ -8,7 +8,7 @@ import {
 } from '@kineticdata/react';
 import { types, actions } from '../modules/settingsUsers';
 import { actions as errorActions } from '../modules/errors';
-import { addToast, addToastAlert } from 'common';
+import { addToast, addToastAlert } from '@kineticdata/bundle-common';
 
 const USER_INCLUDES =
   'attributes,profileAttributes,memberships,memberships.team,memberships.team.attributes,memberships.team.memberships,memberships.team.memberships.user';

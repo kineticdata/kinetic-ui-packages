@@ -5,14 +5,14 @@ import { Link } from '@reach/router';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 import { I18n, FormTable, FormForm } from '@kineticdata/react';
 import { PageTitle } from '../shared/PageTitle';
-import { generateEmptyBodyRow } from 'common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from 'common/src/components/tables/FilterLayout';
-import { TimeAgoCell } from 'common/src/components/tables/TimeAgoCell';
-import { StatusBadgeCell } from 'common/src/components/tables/StatusBadgeCell';
-import { SelectFilter } from 'common/src/components/tables/SelectFilter';
-import { SettingsTableLayout } from 'common/src/components/tables/TableLayout';
+import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
+import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
+import { TimeAgoCell } from '@kineticdata/bundle-common/src/components/tables/TimeAgoCell';
+import { StatusBadgeCell } from '@kineticdata/bundle-common/src/components/tables/StatusBadgeCell';
+import { SelectFilter } from '@kineticdata/bundle-common/src/components/tables/SelectFilter';
+import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { FormComponents, addToast } from 'common';
+import { FormComponents, addToast } from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/settingsDatastore';
 
 const FormLayout = ({ fields, error, buttons }) => (

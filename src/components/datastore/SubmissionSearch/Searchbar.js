@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { Button, Input, InputGroup, InputGroupAddon, Col } from 'reactstrap';
-import { addToast } from 'common';
+import { addToast } from '@kineticdata/bundle-common';
 import { List } from 'immutable';
 
 import { IndexPart } from '../../../records';

@@ -17,8 +17,8 @@ import {
   addSuccess,
   addError,
   ViewDiscussionsModal,
-} from 'common';
-import { selectDiscussionsEnabled } from 'common/src/redux/modules/common';
+} from '@kineticdata/bundle-common';
+import { selectDiscussionsEnabled } from '@kineticdata/bundle-common/src/redux/modules/common';
 import { PageTitle } from '../shared/PageTitle';
 import {
   selectPrevAndNext,
@@ -29,7 +29,7 @@ import { context } from '../../redux/store';
 
 import { I18n } from '@kineticdata/react';
 
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 const CreationForm = ({ onChange, values, errors }) => (
   <div className="form-group">

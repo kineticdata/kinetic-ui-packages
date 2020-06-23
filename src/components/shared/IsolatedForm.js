@@ -11,7 +11,7 @@ import { PageTitle } from '../shared/PageTitle';
 // forms. Note that we deliberately do this as a const so that it should start
 // immediately without making the application wait but it will likely be ready
 // before users nagivate to the actual forms.
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 const IsolatedFormComponent = ({
   kappSlug,

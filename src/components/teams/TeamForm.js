@@ -5,7 +5,7 @@ import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { parse } from 'query-string';
 import md5 from 'md5';
 import { fromJS } from 'immutable';
-import { Utils, Avatar } from 'common';
+import { Utils, Avatar } from '@kineticdata/bundle-common';
 
 import { AddMemberModal } from './AddMemberModal';
 import { buildHierarchy } from '../../utils';

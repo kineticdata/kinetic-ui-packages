@@ -21,7 +21,7 @@ import {
   clearTranslationsCache,
 } from '@kineticdata/react';
 import { List } from 'immutable';
-import { addSuccess, addError } from 'common';
+import { addSuccess, addError } from '@kineticdata/bundle-common';
 
 import { types, actions } from '../modules/settingsTranslations';
 

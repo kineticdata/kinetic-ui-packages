@@ -3,7 +3,11 @@ import { Link } from '@reach/router';
 import { I18n, FormForm } from '@kineticdata/react';
 import { compose, withHandlers } from 'recompose';
 import { connect } from '../../redux/store';
-import { FormComponents, LoadingMessage, addToast } from 'common';
+import {
+  FormComponents,
+  LoadingMessage,
+  addToast,
+} from '@kineticdata/bundle-common';
 import { actions, buildConfig } from '../../redux/modules/settingsDatastore';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PageTitle } from '../shared/PageTitle';

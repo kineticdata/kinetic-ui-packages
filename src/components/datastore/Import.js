@@ -6,7 +6,10 @@ import { Table } from 'reactstrap';
 import { Set, List, fromJS } from 'immutable';
 import Dropzone from 'react-dropzone';
 import Papa from 'papaparse';
-import { Table as CommonTable, PaginationControl } from 'common';
+import {
+  Table as CommonTable,
+  PaginationControl,
+} from '@kineticdata/bundle-common';
 
 import { actions } from '../../redux/modules/settingsDatastore';
 import { context } from '../../redux/store';

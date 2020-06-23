@@ -12,7 +12,7 @@ import {
   selectAdminKappSlug,
   selectQueueKappSlug,
   selectServicesKappSlug,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { List } from 'immutable';
 window.semver = semver;

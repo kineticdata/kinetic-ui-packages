@@ -4,7 +4,7 @@ import { compose, withHandlers, withProps } from 'recompose';
 import { Link } from '@reach/router';
 import { CoreForm } from '@kineticdata/react';
 import { push } from 'redux-first-history';
-import { addSuccess } from 'common';
+import { addSuccess } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 
 import { NOTIFICATIONS_DATE_FORMAT_FORM_SLUG } from '../../redux/modules/settingsNotifications';

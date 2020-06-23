@@ -4,7 +4,11 @@ import { push } from 'redux-first-history';
 import { connect } from 'react-redux';
 import { Badge, UncontrolledTooltip } from 'reactstrap';
 import { compose, lifecycle, withHandlers } from 'recompose';
-import { Table, PaginationControl, FilterControl } from 'common';
+import {
+  Table,
+  PaginationControl,
+  FilterControl,
+} from '@kineticdata/bundle-common';
 import md5 from 'md5';
 
 import { actions } from '../../redux/modules/settingsTranslations';

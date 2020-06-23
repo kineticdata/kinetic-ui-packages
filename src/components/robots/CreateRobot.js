@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 import { compose, withHandlers } from 'recompose';
 import { ROBOT_FORM_SLUG } from '../../redux/modules/settingsRobots';
 import { CoreForm } from '@kineticdata/react';
-import { addSuccess, addError } from 'common';
+import { addSuccess, addError } from '@kineticdata/bundle-common';
 
 import { I18n } from '@kineticdata/react';
 import { context } from '../../redux/store';
 
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 const CreateRobotComponent = ({
   robot,

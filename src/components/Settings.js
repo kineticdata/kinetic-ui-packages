@@ -6,7 +6,7 @@ import {
   Icon,
   selectHasRoleSchedulerAdmin,
   selectHasRoleSchedulerManager,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { NOTIFICATIONS_FORM_SLUG } from '../redux/modules/settingsNotifications';
 import { ROBOT_DEFINITIONS_FORM_SLUG } from '../redux/modules/settingsRobots';
 import { PageTitle } from './shared/PageTitle';

@@ -4,7 +4,7 @@ import { Modal, ModalFooter } from 'reactstrap';
 import { List, Set } from 'immutable';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import Autocomplete from 'react-autocomplete';
-import { Avatar } from 'common';
+import { Avatar } from '@kineticdata/bundle-common';
 
 import {
   actions,

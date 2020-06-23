@@ -2,12 +2,12 @@ import React, { Fragment } from 'react';
 import { compose, withHandlers, withState } from 'recompose';
 import { Link } from '@reach/router';
 import { TeamTable, TeamForm, I18n } from '@kineticdata/react';
-import { generateEmptyBodyRow } from 'common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from 'common/src/components/tables/FilterLayout';
-import { SettingsTableLayout } from 'common/src/components/tables/TableLayout';
+import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
+import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
+import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import { PageTitle } from '../shared/PageTitle';
 import { Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { FormComponents, addToast } from 'common';
+import { FormComponents, addToast } from '@kineticdata/bundle-common';
 
 const FormLayout = ({ fields, error, buttons }) => (
   <Fragment>

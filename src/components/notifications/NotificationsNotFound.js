@@ -1,5 +1,5 @@
 import React from 'react';
-import wallyMissingIMage from 'common/src/assets/images/wally-missing.svg';
+import wallyMissingIMage from '@kineticdata/bundle-common/src/assets/images/wally-missing.svg';
 import { I18n } from '@kineticdata/react';
 
 export const NotificationsNotFound = () => (

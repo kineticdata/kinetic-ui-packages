@@ -9,7 +9,7 @@ import {
   CreateScheduler,
   Scheduler,
   SchedulersList,
-} from 'common';
+} from '@kineticdata/bundle-common';
 
 export const SchedulerSettingsComponent = ({
   isSchedulerAdmin,

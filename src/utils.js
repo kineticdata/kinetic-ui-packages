@@ -1,5 +1,5 @@
 import md5 from 'md5';
-import { Utils, Constants } from 'common';
+import { Utils, Constants } from '@kineticdata/bundle-common';
 import { Range } from 'immutable';
 
 export const isActiveClass = defaultClass => props => ({

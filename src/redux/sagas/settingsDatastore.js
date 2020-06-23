@@ -27,7 +27,7 @@ import { fromJS, Seq, Map, List } from 'immutable';
 import { push } from 'redux-first-history';
 
 import { actions as systemErrorActions } from '../modules/errors';
-import { addSuccess, addError } from 'common';
+import { addSuccess, addError } from '@kineticdata/bundle-common';
 import {
   actions,
   types,

@@ -12,7 +12,7 @@ import {
 } from 'recompose';
 import { CoreForm } from '@kineticdata/react';
 import { Button } from 'reactstrap';
-import { addSuccess, addError, Loading } from 'common';
+import { addSuccess, addError, Loading } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 
 import { isActiveClass } from '../../utils';
@@ -24,7 +24,7 @@ import { context } from '../../redux/store';
 
 import { I18n } from '@kineticdata/react';
 
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 const RobotComponent = ({
   robot,

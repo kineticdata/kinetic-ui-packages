@@ -21,7 +21,11 @@ import {
   withProps,
   withState,
 } from 'recompose';
-import { Table, PaginationControl, FilterControl } from 'common';
+import {
+  Table,
+  PaginationControl,
+  FilterControl,
+} from '@kineticdata/bundle-common';
 import { UnpublishedChanges } from './TranslationsList';
 import md5 from 'md5';
 import { actions } from '../../redux/modules/settingsTranslations';

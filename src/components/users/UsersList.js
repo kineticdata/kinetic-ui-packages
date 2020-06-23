@@ -4,9 +4,9 @@ import { connect } from '../../redux/store';
 import { actions } from '../../redux/modules/settingsUsers';
 import { Link } from '@reach/router';
 import { UserTable, UserForm, fetchUser, I18n } from '@kineticdata/react';
-import { generateEmptyBodyRow } from 'common/src/components/tables/EmptyBodyRow';
-import { generateFilterModalLayout } from 'common/src/components/tables/FilterLayout';
-import { SettingsTableLayout } from 'common/src/components/tables/TableLayout';
+import { generateEmptyBodyRow } from '@kineticdata/bundle-common/src/components/tables/EmptyBodyRow';
+import { generateFilterModalLayout } from '@kineticdata/bundle-common/src/components/tables/FilterLayout';
+import { SettingsTableLayout } from '@kineticdata/bundle-common/src/components/tables/TableLayout';
 import {
   UncontrolledDropdown,
   DropdownToggle,
@@ -23,7 +23,7 @@ import {
   addToast,
   addToastAlert,
   FormComponents,
-} from 'common';
+} from '@kineticdata/bundle-common';
 import { ExportModal } from './ExportModal';
 import { ImportModal } from './ImportModal';
 import papaparse from 'papaparse';

@@ -4,7 +4,7 @@ import { compose, withHandlers } from 'recompose';
 import { actions } from '../../../redux/modules/settingsDatastore';
 import { context } from '../../../redux/store';
 import { SubmissionListItem } from './SubmissionListItem';
-import wallyHappyImage from 'common/src/assets/images/wally-happy.svg';
+import wallyHappyImage from '@kineticdata/bundle-common/src/assets/images/wally-happy.svg';
 import { I18n } from '@kineticdata/react';
 
 const DiscussionIcon = () => (

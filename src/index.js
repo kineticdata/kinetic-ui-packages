@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { LocationProvider, Router } from '@reach/router';
-import { CommonProvider, ModalFormContainer, ToastsContainer } from 'common';
+import {
+  CommonProvider,
+  ModalFormContainer,
+  ToastsContainer,
+} from '@kineticdata/bundle-common';
 import { is } from 'immutable';
 import { connectedHistory, context, store } from './redux/store';
 import { syncAppState } from './redux/modules/app';

@@ -8,7 +8,7 @@ import {
   DropdownItem,
 } from 'reactstrap';
 import moment from 'moment';
-import { Constants } from 'common';
+import { Constants } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 const DiscussionIcon = () => (

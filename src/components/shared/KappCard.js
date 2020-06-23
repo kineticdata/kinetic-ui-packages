@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { Icon, Utils } from 'common';
+import { Icon, Utils } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 export const KappCard = ({
