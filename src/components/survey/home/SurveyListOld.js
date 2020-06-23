@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
 import { connect } from '../../../redux/store';
 import { compose, withState } from 'recompose';
-import wallyHappyImage from '@kineticdata/bundle-common/src/assets/images/wally-happy.svg';
+import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
 import { PageTitle } from '../../shared/PageTitle';
 import { I18n } from '@kineticdata/react';
 import { SurveyCard } from './SurveyCard';
