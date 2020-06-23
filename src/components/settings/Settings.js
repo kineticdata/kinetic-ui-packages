@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Router } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
-import { Icon, ErrorMessage, LoadingMessage } from 'common';
+import { Icon, ErrorMessage, LoadingMessage } from '@kineticdata/bundle-common';
 import { QueueSettings } from './QueueSettings';
 import { actions as formActions } from '../../redux/modules/settingsForms';
 import { PageTitle } from '../shared/PageTitle';

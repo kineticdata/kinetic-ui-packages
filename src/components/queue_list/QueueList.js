@@ -1,9 +1,13 @@
 import React from 'react';
-import wallyHappyImage from 'common/src/assets/images/wally-happy.svg';
-import wallyMissingImage from 'common/src/assets/images/wally-missing.svg';
+import wallyHappyImage from '@kineticdata/bundle-common/src/assets/images/wally-happy.svg';
+import wallyMissingImage from '@kineticdata/bundle-common/src/assets/images/wally-missing.svg';
 import { QueueListItemSmall } from './QueueListItem';
 import { TOO_MANY_STATUS_STRING } from '../../redux/sagas/queue';
-import { Constants, GroupDivider, LoadingMessage } from 'common';
+import {
+  Constants,
+  GroupDivider,
+  LoadingMessage,
+} from '@kineticdata/bundle-common';
 import { FilterMenuToolbar } from './FilterMenuToolbar';
 import { FilterMenuMobile } from './FilterMenuMobile';
 import { QueueListPagination } from './QueueListPagination';

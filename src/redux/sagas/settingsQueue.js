@@ -1,7 +1,7 @@
 import { Map } from 'immutable';
 import { all, takeEvery, call, put, select } from 'redux-saga/effects';
 import { actions, types } from '../modules/settingsQueue';
-import { addSuccess, addError } from 'common';
+import { addSuccess, addError } from '@kineticdata/bundle-common';
 import {
   fetchKapp,
   fetchForms,

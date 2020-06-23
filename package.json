@@ -9,7 +9,7 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.5",
-    "common": "0.1.0",
+    "@kineticdata/bundle-common": "0.1.0",
     "downloadjs": "^1.4.7",
     "font-awesome": "^4.7.0",
     "immutable": "4.0.0-rc.9",

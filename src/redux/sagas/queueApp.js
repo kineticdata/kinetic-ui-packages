@@ -13,7 +13,7 @@ import {
   fetchTeams,
   updateProfile,
 } from '@kineticdata/react';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 import { actions, types } from '../modules/queueApp';
 import { filterReviver } from '../../records';
 

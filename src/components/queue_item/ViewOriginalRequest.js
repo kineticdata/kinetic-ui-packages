@@ -4,7 +4,7 @@ import { Modal, ModalBody } from 'reactstrap';
 import { CoreForm } from '@kineticdata/react';
 import { I18n } from '@kineticdata/react';
 
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 export const ViewOriginalRequestComponent = ({
   originId,

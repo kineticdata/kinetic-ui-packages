@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect, Router } from '@reach/router';
 import { compose, lifecycle, withHandlers } from 'recompose';
 import { connect } from './redux/store';
-import { ErrorUnexpected, Loading } from 'common';
+import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
 import { List } from 'immutable';
 import { I18n } from '@kineticdata/react';
 

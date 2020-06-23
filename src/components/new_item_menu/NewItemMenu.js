@@ -4,7 +4,7 @@ import { CoreForm } from '@kineticdata/react';
 import { AssignmentSelector } from '../shared/AssignmentSelector';
 import { I18n } from '@kineticdata/react';
 
-const globals = import('common/globals');
+const globals = import('@kineticdata/bundle-common/globals');
 
 const FormList = ({ myTeamForms, handleFormClick, permittedSubtasks }) => (
   <ul className="list-group button-list">

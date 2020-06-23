@@ -7,7 +7,7 @@ import {
   updateSubmission,
 } from '@kineticdata/react';
 import isFunction from 'is-function';
-import { addToastAlert } from 'common';
+import { addToastAlert } from '@kineticdata/bundle-common';
 
 import { types, actions } from '../modules/queue';
 

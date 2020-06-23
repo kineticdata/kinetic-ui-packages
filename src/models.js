@@ -1,4 +1,4 @@
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 import * as constants from './constants';
 
 export const Form = object => ({

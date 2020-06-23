@@ -8,7 +8,7 @@ import {
 } from '@kineticdata/react';
 import { compose, withHandlers } from 'recompose';
 import { connect } from '../../redux/store';
-import { FormComponents, addToast } from 'common';
+import { FormComponents, addToast } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 
 const fieldSet = [

@@ -2,7 +2,7 @@ import { List } from 'immutable';
 import moment from 'moment';
 import { select, call, put } from 'redux-saga/effects';
 import { actions } from '../modules/queue';
-import { addError } from 'common';
+import { addError } from '@kineticdata/bundle-common';
 
 global.bundle = {
   apiLocation: () => '/acme/app/api/v1',

@@ -8,7 +8,11 @@ import {
 } from '@kineticdata/react';
 import { compose, withHandlers } from 'recompose';
 import { connect } from '../../../redux/store';
-import { FormComponents, LoadingMessage, addToast } from 'common';
+import {
+  FormComponents,
+  LoadingMessage,
+  addToast,
+} from '@kineticdata/bundle-common';
 import {
   actions,
   buildFormConfigurationObject,

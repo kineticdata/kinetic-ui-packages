@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { TimeAgo } from 'common';
+import { TimeAgo } from '@kineticdata/bundle-common';
 import { StatusContent } from '../shared/StatusContent';
 import { I18n } from '@kineticdata/react';
 

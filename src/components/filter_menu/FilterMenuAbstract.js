@@ -5,10 +5,10 @@ import { isImmutable, List, Map, OrderedMap } from 'immutable';
 import { actions as queueActions } from '../../redux/modules/queue';
 import { actions } from '../../redux/modules/filterMenu';
 import { actions as appActions } from '../../redux/modules/queueApp';
-import { DateRangeSelector } from 'common/src/components/DateRangeSelector';
+import { DateRangeSelector } from '@kineticdata/bundle-common/src/components/DateRangeSelector';
 import { validateDateRange } from './FilterMenuContainer';
 import moment from 'moment';
-import { AttributeSelectors } from 'common';
+import { AttributeSelectors } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import { connect } from '../../redux/store';
 

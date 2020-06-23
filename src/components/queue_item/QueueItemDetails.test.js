@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { KappLink } from 'common';
+import { KappLink } from '@kineticdata/bundle-common';
 import { QueueItemDetails } from './QueueItemDetails';
 import { ViewOriginalRequest } from './ViewOriginalRequest';
 

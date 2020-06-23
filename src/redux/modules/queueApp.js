@@ -1,6 +1,6 @@
 import { Record, List, Set } from 'immutable';
 import matchPath from 'rudy-match-path';
-import { Utils } from 'common';
+import { Utils } from '@kineticdata/bundle-common';
 import { Profile, Filter, filterReviver } from '../../records';
 const { withPayload, noPayload, getAttributeValue } = Utils;
 const ns = Utils.namespaceBuilder('queue/app');

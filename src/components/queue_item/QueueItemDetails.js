@@ -1,8 +1,8 @@
 import React from 'react';
 import { compose, withState, withHandlers, withProps } from 'recompose';
 import { Link } from '@reach/router';
-import { TimeAgo, ViewDiscussionsModal } from 'common';
-import { selectDiscussionsEnabled } from 'common/src/redux/modules/common';
+import { TimeAgo, ViewDiscussionsModal } from '@kineticdata/bundle-common';
+import { selectDiscussionsEnabled } from '@kineticdata/bundle-common/src/redux/modules/common';
 import { selectAssignments } from '../../redux/modules/queueApp';
 import { actions, selectPrevAndNext } from '../../redux/modules/queue';
 import { ViewOriginalRequest } from './ViewOriginalRequest';

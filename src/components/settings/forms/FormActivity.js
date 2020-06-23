@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import moment from 'moment';
 import { Link } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
-import { TimeAgo } from 'common';
+import { TimeAgo } from '@kineticdata/bundle-common';
 import { actions } from '../../../redux/modules/settingsForms';
 import { I18n } from '@kineticdata/react';
 import { connect } from '../../../redux/store';

@@ -10,7 +10,12 @@ import {
   createForm,
   deleteForm,
 } from '@kineticdata/react';
-import { addToast, addToastAlert, addSuccess, addError } from 'common';
+import {
+  addToast,
+  addToastAlert,
+  addSuccess,
+  addError,
+} from '@kineticdata/bundle-common';
 import axios from 'axios';
 import {
   actions,
