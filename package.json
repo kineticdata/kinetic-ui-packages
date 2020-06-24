@@ -7,6 +7,9 @@
     "assets",
     "lib"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "cross-env NODE_ENV=production babel src --out-dir lib",
     "lint": "eslint src --ext .js",
