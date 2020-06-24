@@ -14,7 +14,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint src --ext .js",
-    "preversion": "yarn lint && yarn test",
+    "preversion": "yarn lint",
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
