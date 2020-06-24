@@ -12,13 +12,6 @@ import {
 import { PageTitle } from '../shared/PageTitle';
 import { parse } from 'query-string';
 
-// Asynchronously import the global dependencies that are used in the embedded
-// forms. Note that we deliberately do this as a const so that it should start
-// immediately without making the application wait but it will likely be ready
-// before users nagivate to the actual forms.
-
-const globals = import('@kineticdata/bundle-common/globals');
-
 export const SurveyComponent = ({
   authenticated,
   loading,
@@ -47,7 +40,6 @@ export const SurveyComponent = ({
                   public={!authenticated}
                   review={submission.coreState !== 'Draft'}
                   form={submission.form.slug}
-                  globals={globals}
                   values={values}
                   completed={handleCompleted}
                   notFoundComponent={ErrorNotFound}
@@ -59,7 +51,6 @@ export const SurveyComponent = ({
                   public={!authenticated}
                   kapp={kappSlug}
                   form={optOutFormSlug}
-                  globals={globals}
                   values={values}
                   completed={handleCompleted}
                   notFoundComponent={ErrorNotFound}
