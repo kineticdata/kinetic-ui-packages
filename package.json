@@ -4,7 +4,7 @@
   "main": "./src/index.js",
   "main:src": "./src/index.js",
   "dependencies": {
-    "@kineticdata/react": "5.0.5",
+    "@kineticdata/react": "5.0.7",
     "@reach/router": "git://github.com/kineticdata/router.git",
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
