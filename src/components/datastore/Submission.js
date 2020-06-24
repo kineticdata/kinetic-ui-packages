@@ -29,8 +29,6 @@ import { context } from '../../redux/store';
 
 import { I18n } from '@kineticdata/react';
 
-const globals = import('@kineticdata/bundle-common/globals');
-
 const CreationForm = ({ onChange, values, errors }) => (
   <div className="form-group">
     <label htmlFor="title">Title</label>
@@ -167,7 +165,6 @@ const DatastoreSubmissionComponent = ({
               submission={submissionId}
               updated={handleUpdated}
               error={handleError}
-              globals={globals}
             />
           ) : (
             <CoreForm
@@ -177,7 +174,6 @@ const DatastoreSubmissionComponent = ({
               onCreated={handleCreated}
               error={handleError}
               values={values}
-              globals={globals}
             />
           )}
         </div>

@@ -13,8 +13,6 @@ import { addError } from '@kineticdata/bundle-common';
 import { context } from '../../redux/store';
 import { I18n } from '@kineticdata/react';
 
-const globals = import('@kineticdata/bundle-common/globals');
-
 const RobotExecutionComponent = ({
   robotExecution,
   robotId,
@@ -63,7 +61,6 @@ const RobotExecutionComponent = ({
             review
             submission={executionId}
             error={handleError}
-            globals={globals}
           />
         </I18n>
       </div>

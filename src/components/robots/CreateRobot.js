@@ -10,8 +10,6 @@ import { addSuccess, addError } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import { context } from '../../redux/store';
 
-const globals = import('@kineticdata/bundle-common/globals');
-
 const CreateRobotComponent = ({
   robot,
   match,
@@ -53,7 +51,6 @@ const CreateRobotComponent = ({
             loaded={handleLoaded}
             created={handleCreated}
             error={handleError}
-            globals={globals}
           />
         </I18n>
       </div>

@@ -24,8 +24,6 @@ import { context } from '../../redux/store';
 
 import { I18n } from '@kineticdata/react';
 
-const globals = import('@kineticdata/bundle-common/globals');
-
 const RobotComponent = ({
   robot,
   robotId,
@@ -144,7 +142,6 @@ const RobotComponent = ({
                         loaded={handleLoaded}
                         updated={handleUpdated}
                         error={handleError}
-                        globals={globals}
                       />
                     </I18n>
                     <span id="popover-placeholder" />
