@@ -25,7 +25,7 @@ import {
 import moment from 'moment';
 import { I18n, Moment } from '@kineticdata/react';
 
-import heroImage from '../assets/images/tech-bar-hero.jpg';
+import heroImage from '../../assets/images/tech-bar-hero.jpg';
 
 export const HomeComponent = ({
   kapp,
