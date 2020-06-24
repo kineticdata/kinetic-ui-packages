@@ -1,6 +1,6 @@
 {
   "name": "@kineticdata/bundle-queue",
-  "version": "0.1.0",
+  "version": "5.0.8-alpha.0",
   "main": "./lib/index.js",
   "main:src": "./src/index.js",
   "files": [
@@ -14,12 +14,12 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@kineticdata/react": "5.0.7",
+    "@kineticdata/bundle-common": "5.0.8-alpha.0",
+    "@kineticdata/react": "5.0.8-alpha.0",
     "@reach/router": "git://github.com/kineticdata/router.git",
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.5",
-    "@kineticdata/bundle-common": "0.1.0",
     "downloadjs": "^1.4.7",
     "font-awesome": "^4.7.0",
     "immutable": "4.0.0-rc.9",
