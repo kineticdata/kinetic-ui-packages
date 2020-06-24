@@ -14,12 +14,6 @@ import { actions } from '../../../redux/modules/techBarApp';
 import { TECH_BAR_SETTINGS_FORM_SLUG } from '../../../constants';
 import { I18n } from '@kineticdata/react';
 
-// Asynchronously import the global dependencies that are used in the embedded
-// forms. Note that we deliberately do this as a const so that it should start
-// immediately without making the application wait but it will likely be ready
-// before users nagivate to the actual forms.
-const globals = import('@kineticdata/bundle-common/globals');
-
 export const TechBarSettingsFormComponent = ({
   techBar,
   handleSaved,
@@ -77,7 +71,6 @@ export const TechBarSettingsFormComponent = ({
                   <CoreForm
                     datastore
                     submission={techBar.settings.submissionId}
-                    globals={globals}
                     created={handleSaved}
                     updated={handleSaved}
                   />
@@ -85,7 +78,6 @@ export const TechBarSettingsFormComponent = ({
                   <CoreForm
                     datastore
                     form={TECH_BAR_SETTINGS_FORM_SLUG}
-                    globals={globals}
                     created={handleSaved}
                     updated={handleSaved}
                     values={{ 'Scheduler Id': techBar.values['Id'] }}

@@ -10,12 +10,6 @@ import { PageTitle } from '../../shared/PageTitle';
 import { Link } from '@reach/router';
 import { CoreForm, I18n } from '@kineticdata/react';
 
-// Asynchronously import the global dependencies that are used in the embedded
-// forms. Note that we deliberately do this as a const so that it should start
-// immediately without making the application wait but it will likely be ready
-// before users nagivate to the actual forms.
-const globals = import('@kineticdata/bundle-common/globals');
-
 export const AppointmentFormComponent = ({ id, kapp, techBar }) => {
   return techBar ? (
     <Fragment>
@@ -65,7 +59,7 @@ export const AppointmentFormComponent = ({ id, kapp, techBar }) => {
           </div>
           <div className="content-wrapper">
             <I18n context={`kapps.${kapp.slug}.forms.appointment`}>
-              <CoreForm submission={id} review={true} globals={globals} />
+              <CoreForm submission={id} review={true} />
             </I18n>
           </div>
         </div>

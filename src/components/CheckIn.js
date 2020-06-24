@@ -15,12 +15,6 @@ import { actions } from '../redux/modules/appointments';
 import moment from 'moment';
 import { CoreForm, Moment, I18n } from '@kineticdata/react';
 
-// Asynchronously import the global dependencies that are used in the embedded
-// forms. Note that we deliberately do this as a const so that it should start
-// immediately without making the application wait but it will likely be ready
-// before users nagivate to the actual forms.
-const globals = import('@kineticdata/bundle-common/globals');
-
 export const CheckInComponent = ({
   crosslink,
   kapp,
@@ -212,7 +206,6 @@ export const CheckInComponent = ({
                     className="body"
                     kapp={kapp.slug}
                     form="walk-in"
-                    globals={globals}
                     values={{
                       'Scheduler Id': techBarId,
                     }}

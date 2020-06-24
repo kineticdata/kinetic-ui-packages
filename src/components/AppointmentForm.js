@@ -11,12 +11,6 @@ import {
 import { PageTitle } from './shared/PageTitle';
 import { APPOINTMENT_FORM_SLUG } from '../constants';
 
-// Asynchronously import the global dependencies that are used in the embedded
-// forms. Note that we deliberately do this as a const so that it should start
-// immediately without making the application wait but it will likely be ready
-// before users nagivate to the actual forms.
-const globals = import('@kineticdata/bundle-common/globals');
-
 export const AppointmentFormComponent = ({
   techBarId,
   id,
@@ -69,7 +63,6 @@ export const AppointmentFormComponent = ({
                   <CoreForm
                     submission={id}
                     review={true}
-                    globals={globals}
                     loaded={handleLoaded}
                     completed={handleCompleted}
                   />
@@ -77,7 +70,6 @@ export const AppointmentFormComponent = ({
                   <CoreForm
                     kapp={kappSlug}
                     form={APPOINTMENT_FORM_SLUG}
-                    globals={globals}
                     loaded={handleLoaded}
                     created={handleCreated}
                     completed={handleCompleted}
