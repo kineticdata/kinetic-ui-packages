@@ -13,8 +13,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "preversion": "yarn test",
-    "version": "yarn build"
+    "lint": "eslint src --ext .js",
+    "preversion": "yarn lint && yarn test",
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "axios": "^0.18.0",
