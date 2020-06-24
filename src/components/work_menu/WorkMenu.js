@@ -6,8 +6,6 @@ import { CoreForm } from '@kineticdata/react';
 import { I18n } from '@kineticdata/react';
 import { connect } from '../../redux/store';
 
-const globals = import('@kineticdata/bundle-common/globals');
-
 export const WorkMenu = ({
   queueItem,
   complete,
@@ -41,7 +39,6 @@ export const WorkMenu = ({
           }`}
         >
           <CoreForm
-            globals={globals}
             submission={queueItem.id}
             review={queueItem.coreState !== 'Draft'}
             onLoaded={handleLoaded}

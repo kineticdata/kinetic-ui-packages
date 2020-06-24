@@ -4,8 +4,6 @@ import { Modal, ModalBody } from 'reactstrap';
 import { CoreForm } from '@kineticdata/react';
 import { I18n } from '@kineticdata/react';
 
-const globals = import('@kineticdata/bundle-common/globals');
-
 export const ViewOriginalRequestComponent = ({
   originId,
   toggleOpen,
@@ -34,7 +32,7 @@ export const ViewOriginalRequestComponent = ({
         <ModalBody>
           <div style={{ margin: '1em' }}>
             <I18n submissionId={originId}>
-              <CoreForm globals={globals} submission={originId} review />
+              <CoreForm submission={originId} review />
             </I18n>
           </div>
         </ModalBody>

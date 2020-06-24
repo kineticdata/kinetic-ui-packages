@@ -4,8 +4,6 @@ import { CoreForm } from '@kineticdata/react';
 import { AssignmentSelector } from '../shared/AssignmentSelector';
 import { I18n } from '@kineticdata/react';
 
-const globals = import('@kineticdata/bundle-common/globals');
-
 const FormList = ({ myTeamForms, handleFormClick, permittedSubtasks }) => (
   <ul className="list-group button-list">
     {myTeamForms
@@ -122,7 +120,6 @@ export const NewItemMenu = ({
           <CoreForm
             kapp={kappSlug}
             form={currentForm.slug}
-            globals={globals}
             values={currentAssignment}
             onLoaded={onFormLoaded}
             onCreated={onCreated}
