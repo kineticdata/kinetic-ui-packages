@@ -155,7 +155,15 @@ export const fetchContexts = (options = {}) => {
       headers: headerBuilder(options),
     })
     .then(response => ({
-      contexts: response.data.contexts,
+      contexts: response.data.contexts.map(c => ({
+        name: c.name,
+        kapp: c.name.startsWith('kapps') ? c.name.split('.')[1] : null,
+        form: c.name.startsWith('kapps')
+          ? c.name.split('.')[3]
+          : c.name.startsWith('datastore')
+          ? c.name.split('.')[2]
+          : null,
+      })),
     }))
     .catch(handleErrors);
 };
@@ -275,7 +283,7 @@ export const fetchTranslations = (options = {}) => {
       headers: headerBuilder(options),
     })
     .then(response => ({
-      entries: response.data.entries,
+      entries: response.data.entries ? response.data.entries : response.data,
     }))
     .catch(handleErrors);
 };

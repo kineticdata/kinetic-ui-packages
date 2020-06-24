@@ -88,6 +88,8 @@ export {
 } from './core/bridge_model_qualification/BridgeModelQualificationTable';
 export { CategoryForm } from './core/category/CategoryForm';
 export { CategoryTable } from './core/category/CategoryTable';
+export { ContextForm } from './core/translation/ContextForm';
+export { ContextTable } from './core/translation/ContextTable';
 export {
   AgentComponentTable,
 } from './core/platform_component/AgentComponentTable';
@@ -95,6 +97,8 @@ export {
   AgentComponentForm,
 } from './core/platform_component/AgentComponentForm';
 export { TaskComponentForm } from './core/platform_component/TaskComponentForm';
+export { EntryForm } from './core/translation/EntryForm';
+export { EntryTable } from './core/translation/EntryTable';
 export { FormForm } from './core/form/FormForm';
 export { FormTable } from './core/form/FormTable';
 export { FormTypeForm } from './core/form_type/FormTypeForm';
@@ -120,6 +124,8 @@ export {
 export { IndexJobTable } from './core/index_job/IndexJobTable';
 export { KappForm } from './core/kapp/KappForm';
 export { KappTable } from './core/kapp/KappTable';
+export { LocaleForm } from './core/translation/LocaleForm';
+export { LocaleTable } from './core/translation/LocaleTable';
 export { OAuthClientForm } from './core/oauth_client/OAuthClientForm';
 export { OAuthClientTable } from './core/oauth_client/OAuthClientTable';
 export { ProfileForm } from './core/profile/ProfileForm';
