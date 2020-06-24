@@ -5,6 +5,7 @@ import { remove } from 'immutable';
 import axios from 'axios';
 import { action, context, commitStore, store } from './store';
 import { I18nProvider } from './components';
+import { GlobalsProvider } from './components/core/core_form/globals';
 import { DefaultFieldConfig } from './components/form/defaults';
 import { DefaultTableConfig } from './components/table/defaults';
 import { ComponentConfigContext } from './components/common/ComponentConfigContext';
@@ -37,22 +38,24 @@ commitStore();
 export const KineticLib = props => (
   <Provider store={store} context={context}>
     <I18nProvider locale={props.locale}>
-      <ComponentConfigContext.Provider
-        value={DefaultFieldConfig.merge(DefaultTableConfig)
-          .merge(remove(props.components || {}, 'fields'))
-          .merge(props.components && props.components.fields)}
-      >
-        {typeof props.children === 'function' ? (
-          <AuthenticationContainer
-            noSocket={props.noSocket}
-            system={props.system}
-          >
-            {props.children}
-          </AuthenticationContainer>
-        ) : (
-          props.children
-        )}
-      </ComponentConfigContext.Provider>
+      <GlobalsProvider globals={props.globals}>
+        <ComponentConfigContext.Provider
+          value={DefaultFieldConfig.merge(DefaultTableConfig)
+            .merge(remove(props.components || {}, 'fields'))
+            .merge(props.components && props.components.fields)}
+        >
+          {typeof props.children === 'function' ? (
+            <AuthenticationContainer
+              noSocket={props.noSocket}
+              system={props.system}
+            >
+              {props.children}
+            </AuthenticationContainer>
+          ) : (
+            props.children
+          )}
+        </ComponentConfigContext.Provider>
+      </GlobalsProvider>
     </I18nProvider>
   </Provider>
 );
