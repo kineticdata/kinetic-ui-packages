@@ -1,6 +1,6 @@
 {
   "name": "@kineticdata/bundle-settings",
-  "version": "5.0.8-alpha.0",
+  "version": "5.0.8-alpha.1",
   "main": "./lib/index.js",
   "main:src": "./src/index.js",
   "files": [
@@ -17,7 +17,7 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@kineticdata/bundle-common": "5.0.8-alpha.0",
+    "@kineticdata/bundle-common": "5.0.8-alpha.1",
     "@kineticdata/react": "5.0.8-alpha.0",
     "@reach/router": "git://github.com/kineticdata/router.git",
     "axios": "^0.18.0",
