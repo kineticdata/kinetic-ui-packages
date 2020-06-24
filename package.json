@@ -1,8 +1,15 @@
 {
-  "name": "survey",
+  "name": "@kineticdata/bundle-survey",
   "version": "0.1.0",
-  "main": "./src/index.js",
+  "main": "./lib/index.js",
   "main:src": "./src/index.js",
+  "files": [
+    "assets",
+    "lib"
+  ],
+  "scripts": {
+    "build": "cross-env NODE_ENV=production babel src --out-dir lib"
+  },
   "dependencies": {
     "@kineticdata/react": "5.0.5",
     "@reach/router": "git://github.com/kineticdata/router.git",
@@ -26,5 +33,18 @@
     "redux-first-history": "^4.0.0-alpha.7",
     "redux-saga": "^0.16.0",
     "rudy-match-path": "^0.3.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.3",
+    "@react-workspaces/react-scripts": "^3.4.0-alpha-01",
+    "cross-env": "^7.0.2"
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   }
 }
