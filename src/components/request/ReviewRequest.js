@@ -10,8 +10,6 @@ import { CoreForm } from '@kineticdata/react';
 import classNames from 'classnames';
 import { I18n } from '@kineticdata/react';
 
-const globals = import('@kineticdata/bundle-common/globals');
-
 export const NavigationControlsComponent = ({
   handleNextPage,
   handlePreviousPage,
@@ -128,7 +126,6 @@ export const ReviewRequestComponent = ({
               loaded={handleLoaded}
               submission={submission.id}
               review={reviewPage}
-              globals={globals}
             />
           </I18n>
         </div>
@@ -146,12 +143,7 @@ export const ReviewRequestComponent = ({
     <I18n context={`kapps.${kappSlug}.forms.${submission.form.slug}`}>
       <div role="tabpanel">
         {' '}
-        <CoreForm
-          loaded={handleLoaded}
-          submission={submission.id}
-          review
-          globals={globals}
-        />
+        <CoreForm loaded={handleLoaded} submission={submission.id} review />
       </div>
     </I18n>
   );
