@@ -4,19 +4,19 @@ import Markdown from 'react-markdown';
 import classnames from 'classnames';
 
 // Import images used.
-import aviIcon from '../../assets/discussions/images/avi_128.png';
-import excelIcon from '../../assets/discussions/images/excel_128.png';
-import htmlIcon from '../../assets/discussions/images/html_128.png';
-import illustratorIcon from '../../assets/discussions/images/illustrator_128.png';
-import movieIcon from '../../assets/discussions/images/movie_128.png';
-import indesignIcon from '../../assets/discussions/images/indesign_128.png';
-import mpegIcon from '../../assets/discussions/images/mpeg_128.png';
-import pdfIcon from '../../assets/discussions/images/pdf_128.png';
-import photoshopIcon from '../../assets/discussions/images/photoshop_128.png';
-import powerpointIcon from '../../assets/discussions/images/powerpoint_128.png';
-import txtIcon from '../../assets/discussions/images/txt_128.png';
-import unknownIcon from '../../assets/discussions/images/unknown_128.png';
-import wordIcon from '../../assets/discussions/images/word_128.png';
+import aviIcon from '../../../assets/discussions/images/avi_128.png';
+import excelIcon from '../../../assets/discussions/images/excel_128.png';
+import htmlIcon from '../../../assets/discussions/images/html_128.png';
+import illustratorIcon from '../../../assets/discussions/images/illustrator_128.png';
+import movieIcon from '../../../assets/discussions/images/movie_128.png';
+import indesignIcon from '../../../assets/discussions/images/indesign_128.png';
+import mpegIcon from '../../../assets/discussions/images/mpeg_128.png';
+import pdfIcon from '../../../assets/discussions/images/pdf_128.png';
+import photoshopIcon from '../../../assets/discussions/images/photoshop_128.png';
+import powerpointIcon from '../../../assets/discussions/images/powerpoint_128.png';
+import txtIcon from '../../../assets/discussions/images/txt_128.png';
+import unknownIcon from '../../../assets/discussions/images/unknown_128.png';
+import wordIcon from '../../../assets/discussions/images/word_128.png';
 
 const AVAILABLE_ICONS = {
   avi: aviIcon,

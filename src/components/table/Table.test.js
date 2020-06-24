@@ -3,7 +3,7 @@ import { KineticLib } from '../../index';
 import { store } from '../../store';
 import { render, mount } from 'enzyme';
 import { List, Map } from 'immutable';
-import { users } from '../../docz/fixtures';
+import { users } from '../../../../../docs/src/docz/fixtures';
 import { DefaultTableConfig } from './defaults';
 import {
   buildTable,

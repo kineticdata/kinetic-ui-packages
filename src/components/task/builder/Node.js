@@ -6,7 +6,7 @@ import * as constants from './constants';
 import { addNewTask, getNewNodePosition, getNodeType, isIE11 } from './helpers';
 import { Point } from './models';
 import { SvgText } from './SvgText';
-import plusIcon from '../../../assets/task/icons/plus_small.svg';
+import plusIcon from '../../../../assets/task/icons/plus_small.svg';
 
 export class Node extends Component {
   constructor(props) {

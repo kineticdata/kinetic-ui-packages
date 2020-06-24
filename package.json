@@ -3,34 +3,18 @@
   "version": "5.0.7",
   "description": "A React library for the Kinetic Platform",
   "main": "lib/index.js",
-  "module": "es/index.js",
+  "main:src": "src/index.js",
   "files": [
-    "css",
-    "es",
-    "lib",
-    "umd"
+    "assets",
+    "lib"
   ],
   "scripts": {
-    "build": "yarn build:lib",
-    "build:lib": "yarn dir && yarn lint && yarn assets && yarn js",
-    "build:docs": "docz build && cp src/docz/404.html docs/404.html",
-    "build:watch": "yarn dir && yarn assets && concurrently \"yarn lint:watch\" \"yarn assets:watch\" \"yarn js:watch\"",
-    "dir": "rimraf lib && mkdirp lib/assets",
-    "js": "cross-env NODE_ENV=production babel src --out-dir lib --ignore \"**/*.test.js\"",
-    "js:watch": "cross-env NODE_ENV=production babel src --watch --out-dir lib --ignore \"**/*.test.js\"",
-    "assets": "cpx \"src/assets/**/*\" \"lib/assets\"",
-    "assets:watch": "cpx \"src/assets/**/*\" \"lib/assets\" -w",
-    "lint": "eslint src --ext .js",
-    "lint:watch": "esw src --ext .js -w",
-    "start": "docz dev",
+    "build": "cross-env NODE_ENV=production babel src --out-dir lib",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "format": "prettier --write \"**\"",
     "preversion": "yarn test",
-    "version": "yarn build",
-    "publish:docs": "git push gh-pages -d docs --git git",
-    "publish:lib": "npm publish"
+    "version": "yarn build"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -65,39 +49,20 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
+    "@react-workspaces/react-scripts": "^3.4.0-alpha-01",
     "@types/jest": "^25.2.1",
-    "babel-eslint": "9.0.0",
     "babel-plugin-prismjs": "^1.1.1",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-react-app": "^7.0.2",
-    "concurrently": "^4.1.0",
-    "cpx": "^1.5.0",
     "cross-env": "^5.2.0",
-    "docz": "^2.2.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.9.1",
     "enzyme-to-json": "^3.3.5",
-    "eslint": "5.12.0",
-    "eslint-config-react-app": "^3.0.8",
-    "eslint-watch": "^5.1.2",
-    "faker": "^4.1.0",
-    "font-awesome": "4.7.0",
-    "gh-pages": "^2.0.1",
-    "husky": "^4.2.5",
     "jest-websocket-mock": "^2.0.2",
-    "lint-staged": "^8.1.3",
-    "mkdirp": "^0.5.1",
     "mock-socket": "^9.0.3",
-    "prettier": "^1.16.4",
-    "react": "^16.8.6",
     "react-addons-test-utils": "^15.6.2",
-    "react-dom": "^16.8.1",
-    "@react-workspaces/react-scripts": "^3.4.0-alpha-01",
     "stylelint": "^10.1.0",
     "stylelint-config-rational-order": "^0.1.2",
     "stylelint-order": "^3.0.1",
-    "wait-for-expect": "^3.0.2",
-    "node-sass": "^4.14.0"
+    "wait-for-expect": "^3.0.2"
   },
   "author": "Kinetic Data, Inc",
   "homepage": "https://kineticdata.github.io/react-kinetic-lib",
@@ -111,12 +76,6 @@
     "react",
     "bundle"
   ],
-  "lint-staged": {
-    "**": [
-      "prettier --write",
-      "git add"
-    ]
-  },
   "babel": {
     "presets": [
       [

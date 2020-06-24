@@ -5,7 +5,7 @@ import { dispatch } from '../../../store';
 import * as constants from './constants';
 import { getNodeType, getRectIntersections, isIE11 } from './helpers';
 import { SvgText } from './SvgText';
-import filter from '../../../assets/task/icons/filter.svg';
+import filter from '../../../../assets/task/icons/filter.svg';
 import { isNumber } from 'lodash-es';
 
 export class Connector extends Component {
