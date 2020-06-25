@@ -8,7 +8,7 @@ import { commitSagas, regSaga, runSaga, sagaMiddleware } from './saga';
 
 const composeEnhancers =
   typeof window !== `undefined` && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({ name: 'react-kinetic-lib' })
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({ name: '@kineticdata/react' })
     : compose;
 
 const store = createStore(

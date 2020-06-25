@@ -1,4 +1,6 @@
 import Prism from 'prismjs';
+import 'prismjs/components/prism-markup-templating.js'
+import 'prismjs/components/prism-ruby.js'
 import { isArray, isString, isUndefined } from 'lodash-es';
 
 const processToken = (...parentTypes) => token => {
