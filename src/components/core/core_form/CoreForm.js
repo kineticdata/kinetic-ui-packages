@@ -10,6 +10,7 @@ import { corePath } from '../../../apis/http';
 import { fetchSubmission, updateSubmission, fetchForm } from '../../../apis';
 import { I18n } from '../i18n/I18n';
 import { Moment } from '../i18n/Moment';
+import { GlobalsContext } from './globals';
 import {
   LOCKED_BY_FIELD,
   LOCKED_UNTIL_FIELD,
@@ -645,9 +646,15 @@ export class CoreFormComponent extends Component {
   }
 }
 
+const GlobalsCoreFormComponent = props => (
+  <GlobalsContext.Consumer>
+    {value => <CoreFormComponent {...props} globals={value} />}
+  </GlobalsContext.Consumer>
+);
+
 export const CoreForm = connect(state => ({
   csrfToken: state.getIn(['session', 'csrfToken']),
-}))(CoreFormComponent);
+}))(GlobalsCoreFormComponent);
 
 const DefaultLoadingComponent = () => (
   <div className="text-center p-3">
