@@ -4,6 +4,7 @@ import {
   fetchSubmission,
   deleteSubmission,
   SubmissionSearch,
+  createSubmission,
 } from '@kineticdata/react';
 
 import { actions as systemErrorActions } from '../modules/errors';
@@ -14,6 +15,9 @@ import {
   ROBOT_EXECUTIONS_FORM_SLUG,
   ROBOT_EXECUTIONS_PAGE_SIZE,
 } from '../modules/settingsRobots';
+import { addToast } from '@kineticdata/bundle-common';
+import { Seq, Map } from 'immutable';
+import { push } from 'redux-first-history';
 
 export function* fetchRobotsSaga(action) {
   const query = new SubmissionSearch(true);
@@ -64,6 +68,7 @@ export function* deleteRobotSaga(action) {
     yield put(actions.setDeleteError(errors));
   } else {
     yield put(actions.setDeleteSuccess());
+    addToast('Report Deleted');
     if (typeof action.payload.callback === 'function') {
       action.payload.callback();
     }
@@ -138,6 +143,61 @@ export function* fetchNextExecutionsSaga(action) {
   }
 }
 
+export function* cloneRobotSaga(action) {
+  const include = 'details,values,form,form.fields.details';
+  const { submission, errors, serverError } = yield call(fetchSubmission, {
+    id: action.payload.id,
+    include,
+    datastore: true,
+  });
+
+  if (serverError) {
+    yield put(systemErrorActions.setSystemError(serverError));
+  } else if (errors) {
+    yield put(actions.cloneRobotErrors(errors));
+  } else {
+    const formSlug = submission.form.slug;
+    const robotName = submission.values['Robot Name'];
+
+    // Some values on the original submission should be reset.
+    const overrideFields = Map({
+      Status: 'Inactive',
+      'Robot Name': `Copy of ${robotName}`,
+    });
+
+    // Copy the values from the original submission with the transformations
+    // described above.
+    const values = Seq(submission.values)
+      .map((value, fieldName) => overrideFields.get(fieldName) || value)
+      .toJS();
+
+    // Make the call to create the clone.
+    const {
+      submission: cloneSubmission,
+      postErrors,
+      postServerError,
+    } = yield call(createSubmission, {
+      datastore: true,
+      formSlug,
+      values,
+      completed: false,
+    });
+
+    if (postServerError) {
+      yield put(systemErrorActions.setSystemError(serverError));
+    } else if (postErrors) {
+      yield put(actions.cloneRobotErrors(postErrors));
+    } else {
+      yield put(actions.cloneRobotSuccess());
+      addToast('Robot Cloned');
+      if (typeof action.payload.callback === 'function') {
+        action.payload.callback();
+      }
+      yield put(push(`/settings/robots/${cloneSubmission.id}`));
+    }
+  }
+}
+
 export function* watchSettingsRobots() {
   yield takeEvery(types.FETCH_ROBOTS, fetchRobotsSaga);
   yield takeEvery(types.FETCH_ROBOT, fetchRobotSaga);
@@ -152,4 +212,5 @@ export function* watchSettingsRobots() {
   );
   yield takeEvery(types.FETCH_ROBOT_EXECUTION, fetchRobotExecutionSaga);
   yield takeEvery(types.FETCH_NEXT_EXECUTIONS, fetchNextExecutionsSaga);
+  yield takeEvery(types.CLONE_ROBOT, cloneRobotSaga);
 }

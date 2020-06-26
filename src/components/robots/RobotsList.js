@@ -2,9 +2,15 @@ import React from 'react';
 import { Link } from '@reach/router';
 import { connect } from 'react-redux';
 import { push } from 'redux-first-history';
-import { compose, lifecycle } from 'recompose';
+import { compose, lifecycle, withHandlers, withState } from 'recompose';
+import {
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from 'reactstrap';
 import moment from 'moment';
-import { Constants, Loading } from '@kineticdata/bundle-common';
+import { Constants, Loading, openConfirm } from '@kineticdata/bundle-common';
 import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
 import { PageTitle } from '../shared/PageTitle';
 
@@ -54,6 +60,10 @@ const RobotsListComponent = ({
   robotsErrors,
   nextExecutions,
   nextExecutionsLoading,
+  openDropdown,
+  toggleDropdown,
+  handleClone,
+  handleDelete,
 }) => {
   const loading = !nextExecutionsLoading && !robotsLoading && !robotsLoaded;
   return loading ? (
@@ -157,6 +167,31 @@ const RobotsListComponent = ({
                         ? moment(nextExecution).format(Constants.TIME_FORMAT)
                         : nextExecution}
                     </td>
+                    <td>
+                      <Dropdown
+                        toggle={toggleDropdown(robot.id)}
+                        isOpen={openDropdown === robot.id}
+                      >
+                        <DropdownToggle color="link" className="btn-sm">
+                          <span className="fa fa-ellipsis-h fa-2x" />
+                        </DropdownToggle>
+                        <DropdownMenu right>
+                          <DropdownItem tag={Link} to={robot.id}>
+                            <I18n>Edit</I18n>
+                          </DropdownItem>
+                          <DropdownItem onClick={handleClone(robot.id)}>
+                            <I18n>Clone</I18n>
+                          </DropdownItem>
+                          <DropdownItem divider />
+                          <DropdownItem
+                            onClick={handleDelete(robot.id)}
+                            className="text-danger"
+                          >
+                            <I18n>Delete</I18n>
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </td>
                   </tr>
                 );
               })}
@@ -168,6 +203,25 @@ const RobotsListComponent = ({
     </div>
   );
 };
+
+const handleClone = ({ cloneRobot, fetchRobots }) => id => () =>
+  cloneRobot({ id: id, callback: fetchRobots });
+
+const handleDelete = ({ deleteRobot, fetchRobots }) => id => () =>
+  openConfirm({
+    title: 'Delete Robot',
+    body: 'Are you sure you want to delete this Robot?',
+    actionName: 'Delete',
+    ok: () => {
+      deleteRobot({ id: id, callback: fetchRobots });
+    },
+  });
+
+const toggleDropdown = ({
+  setOpenDropdown,
+  openDropdown,
+}) => dropdownSlug => () =>
+  setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug);
 
 export const mapStateToProps = state => ({
   robot: state.settingsRobots.robot,
@@ -183,6 +237,8 @@ export const mapDispatchToProps = {
   push,
   fetchRobots: actions.fetchRobots,
   fetchNextExecutions: actions.fetchNextExecutions,
+  deleteRobot: actions.deleteRobot,
+  cloneRobot: actions.cloneRobot,
 };
 
 export const RobotsList = compose(
@@ -192,6 +248,12 @@ export const RobotsList = compose(
     null,
     { context },
   ),
+  withState('openDropdown', 'setOpenDropdown', ''),
+  withHandlers({
+    toggleDropdown,
+    handleClone,
+    handleDelete,
+  }),
   lifecycle({
     componentWillMount() {
       this.props.fetchRobots();

@@ -40,6 +40,9 @@ export const types = {
   ),
   FETCH_NEXT_EXECUTIONS: namespace('settingsRobots', 'FETCH_NEXT_EXECUTIONS'),
   SET_NEXT_EXECUTIONS: namespace('settingsRobots', 'SET_NEXT_EXECUTIONS'),
+  CLONE_ROBOT: namespace('datastore', 'CLONE_ROBOT'),
+  CLONE_ROBOT_SUCCESS: namespace('datastore', 'CLONE_ROBOT_SUCCESS'),
+  CLONE_ROBOT_ERROR: namespace('datastore', 'CLONE_ROBOT_ERROR'),
 };
 
 export const actions = {
@@ -74,6 +77,9 @@ export const actions = {
   setRobotExecutionError: withPayload(types.SET_ROBOT_EXECUTION_ERROR),
   fetchNextExecutions: withPayload(types.FETCH_NEXT_EXECUTIONS),
   setNextExecutions: withPayload(types.SET_NEXT_EXECUTIONS),
+  cloneRobot: withPayload(types.CLONE_ROBOT),
+  cloneRobotSuccess: noPayload(types.CLONE_ROBOT_SUCCESS),
+  cloneRobotErrors: withPayload(types.CLONE_ROBOT_ERROR),
 };
 
 export const State = Record({
@@ -101,6 +107,8 @@ export const State = Record({
   // Next Executions
   nextExecutions: null,
   nextExecutionsLoading: true,
+  cloning: false,
+  robotActionErrors: [],
 });
 
 export const reducer = (state = State(), { type, payload }) => {
@@ -190,7 +198,12 @@ export const reducer = (state = State(), { type, payload }) => {
       return state
         .set('nextExecutionsLoading', false)
         .set('nextExecutions', payload);
-
+    case types.CLONE_ROBOT:
+      return state.set('cloning', true);
+    case types.CLONE_ROBOT_SUCCESS:
+      return state.set('cloning', false);
+    case types.CLONE_ROBOT_ERROR:
+      return state.set('cloning', false).set('robotActionErrors', payload);
     default:
       return state;
   }
