@@ -15,6 +15,7 @@ import { Button } from 'reactstrap';
 import { addSuccess, addError, Loading } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 
+import { DiscussionsPanel } from '@kineticdata/bundle-common';
 import { isActiveClass } from '../../utils';
 import { RobotExecutionsList } from './RobotExecutionsList';
 import { PopConfirm } from '../shared/PopConfirm';
@@ -23,6 +24,22 @@ import { actions, ROBOT_FORM_SLUG } from '../../redux/modules/settingsRobots';
 import { context } from '../../redux/store';
 
 import { I18n } from '@kineticdata/react';
+
+const CreationForm = ({ onChange, values, errors }) => (
+  <div className="form-group">
+    <label htmlFor="title">Title</label>
+    <input
+      id="title"
+      name="title"
+      type="text"
+      value={values.title}
+      onChange={onChange}
+    />
+    {errors.title && (
+      <small className="form-text text-danger">{errors.title}</small>
+    )}
+  </div>
+);
 
 const RobotComponent = ({
   robot,
@@ -36,6 +53,8 @@ const RobotComponent = ({
   confirmDelete,
   setConfirmDelete,
   processDelete,
+  creationFields,
+  profile,
 }) => {
   const loading = robotLoading && (robot === null || robot.id !== robotId);
   const isInactive =
@@ -46,9 +65,9 @@ const RobotComponent = ({
     robot.values['End Date'] &&
     moment(robot.values['End Date']).isBefore(moment());
   return (
-    <div className="page-container">
+    <div className="page-container page-container--panels">
       <PageTitle parts={['Robots', 'Settings']} />
-      <div className="page-panel page-panel--white">
+      <div className="page-panel page-panel--white page-panel--three-fifths">
         <div className="page-title">
           <div
             role="navigation"
@@ -177,6 +196,13 @@ const RobotComponent = ({
           </Fragment>
         )}
       </div>
+      <DiscussionsPanel
+        itemType="Datastore Submission"
+        itemKey={robotId}
+        creationFields={creationFields}
+        CreationForm={CreationForm}
+        me={profile}
+      />
     </div>
   );
 };
@@ -223,6 +249,7 @@ export const mapStateToProps = state => ({
   robot: state.settingsRobots.robot,
   robotLoading: state.settingsRobots.robotLoading,
   robotErrors: state.settingsRobots.robotErrors,
+  profile: state.app.profile,
 });
 
 export const mapDispatchToProps = {
@@ -246,6 +273,15 @@ export const Robot = compose(
         return { type: 'details' };
     }
   }),
+  withProps(
+    props =>
+      props.robot && {
+        creationFields: {
+          title: props.robot.label || 'Datastore Discussion',
+          description: props.robot.form.name || '',
+        },
+      },
+  ),
   withState('confirmDelete', 'setConfirmDelete', false),
   withHandlers({
     handleDelete,

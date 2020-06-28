@@ -40,7 +40,7 @@ export function* fetchRobotsSaga(action) {
 }
 
 export function* fetchRobotSaga(action) {
-  const include = 'details,values';
+  const include = 'details,values,form';
   const { submission, errors, serverError } = yield call(fetchSubmission, {
     id: action.payload,
     include,
