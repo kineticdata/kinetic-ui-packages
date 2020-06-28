@@ -171,7 +171,7 @@ export function* updateFormSaga() {
   if (updateError) {
     yield put(addError(updateError));
   } else {
-    yield put(addSuccess('Form updated.'));
+    yield put(addSuccess('Form updated.', 'Datastore'));
     yield put(actions.fetchForm(slug));
     yield put(actions.fetchForms());
   }
@@ -504,7 +504,7 @@ export function* cloneSubmissionSaga(action) {
       yield put(actions.cloneSubmissionErrors(postErrors));
     } else {
       yield put(actions.cloneSubmissionSuccess());
-      yield put(addSuccess('Submission Cloned'));
+      yield put(addSuccess('Submission Cloned', 'Datastore'));
       if (typeof action.payload.callback === 'function') {
         action.payload.callback();
       }
@@ -525,7 +525,7 @@ export function* deleteSubmissionSaga(action) {
     yield put(actions.deleteSubmissionErrors(errors));
   } else {
     yield put(actions.deleteSubmissionSuccess());
-    yield put(addSuccess('Submission Deleted'));
+    yield put(addSuccess('Submission Deleted', 'Datastore'));
     if (typeof action.payload.callback === 'function') {
       action.payload.callback();
     }
