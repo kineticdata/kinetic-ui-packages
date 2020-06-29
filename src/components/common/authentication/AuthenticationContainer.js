@@ -84,10 +84,12 @@ regHandlers({
 
 regSaga('WATCH_SYSTEM_AUTHENTICATION', function*() {
   yield take('LOGIN');
+  const system = yield select(state => state.getIn(['session', 'system'], false))
+
   let pollingActive = false;
-  while (true) {
+  while (system) {
     try {
-      const { authenticated, refresh } = yield race({
+      const { authenticated, refresh, isLoggingOut, isTimingOut } = yield race({
         authenticated: take('SET_AUTHENTICATED'),
         refresh: delay(180000), // 3 minutes.
         isLoggingOut: take('LOGOUT'),
