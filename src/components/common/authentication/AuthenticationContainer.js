@@ -89,7 +89,7 @@ regSaga('WATCH_SYSTEM_AUTHENTICATION', function*() {
   let pollingActive = false;
   while (system) {
     try {
-      const { authenticated, refresh, isLoggingOut, isTimingOut } = yield race({
+      const { authenticated, refresh, } = yield race({
         authenticated: take('SET_AUTHENTICATED'),
         refresh: delay(180000), // 3 minutes.
         isLoggingOut: take('LOGOUT'),
