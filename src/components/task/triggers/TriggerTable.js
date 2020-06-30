@@ -1,6 +1,6 @@
 import { fetchTaskTriggers, fetchSources } from '../../../apis/task';
 import { generateTable } from '../../table/Table';
-import { get, getIn } from 'immutable';
+import { get } from 'immutable';
 
 const dataSource = ({
   runId,

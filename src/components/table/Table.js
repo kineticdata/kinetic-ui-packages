@@ -806,7 +806,7 @@ Table.propTypes = {
     }),
   ),
   /** Allow overriding the columns shown and in which order. */
-  columnSet: PropTypes.oneOf([
+  columnSet: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.string),
     PropTypes.func,
   ]),

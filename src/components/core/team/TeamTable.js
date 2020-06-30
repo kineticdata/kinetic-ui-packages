@@ -1,5 +1,5 @@
 import { generateTable } from '../../table/Table';
-import { fetchTeams, generateCESearchParams } from '../../../apis';
+import { fetchTeams } from '../../../apis';
 import { defineKqlQuery } from '../../../helpers';
 import {
   generatePaginationParams,

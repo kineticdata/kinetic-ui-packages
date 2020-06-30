@@ -6,33 +6,39 @@ export const VALIDATE_DB_ADAPTERS = [
   { label: 'PostgreSQL DB Server', value: 'postgres' },
 ];
 
-const generateInitialValues = (
+const getValueFromList = (properties, key, initialValue) => {
+  const property = properties.find(p => p.get('name') === key);
+  return property ? property.get('value') : initialValue;
+};
+
+export const generateInitialValues = (
   persistedObject,
   persistedPath,
   defaultObject,
   adapter,
-) => (key, initialValue) => {
+) => (key, initialValue = '') => {
   const sameAsTenant =
     getIn(persistedObject, persistedPath.concat(['type']), '') === adapter;
+  const defaultObjectValue = getValueFromList(get(defaultObject, 'properties', List()), key, initialValue);
 
   if (sameAsTenant) {
+    // Get the properties from the persisted object.
     const properties = getIn(
       persistedObject,
       persistedPath.concat(['properties']),
       List(),
     );
-
     if (List.isList(properties)) {
       const property = properties.find(p => p.get('name') === key);
-      return property ? property.get('value') : '';
+      return property ? property.get('value') : defaultObjectValue;
     } else {
-      return get(properties, key, '');
+      return get(properties, key, defaultObjectValue);
     }
   } else if (get(defaultObject, 'type') === adapter) {
     const adapterProperty = get(defaultObject, 'properties', List()).find(
       property => property.get('name') === key,
     );
-    return get(adapterProperty, 'value', '');
+    return get(adapterProperty, 'value', defaultObjectValue);
   }
 
   return initialValue;
