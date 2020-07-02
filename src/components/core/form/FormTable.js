@@ -53,7 +53,12 @@ const formQuery = defineKqlQuery()
   .equals('status', 'status')
   .end();
 
-const dataSource = ({ kappSlug = null, datastore, manage = false }) => ({
+const dataSource = ({
+  kappSlug = null,
+  datastore,
+  manage = false,
+  surveyList = false,
+}) => ({
   fn: fetchForms,
   params: paramData => [
     {
@@ -67,7 +72,9 @@ const dataSource = ({ kappSlug = null, datastore, manage = false }) => ({
     },
   ],
   transform: result => ({
-    data: result.forms,
+    data: surveyList
+      ? result.forms.filter(f => f.type === 'Survey')
+      : result.forms,
     nextPageToken: result.nextPageToken,
   }),
 });
@@ -122,7 +129,7 @@ const columns = [
 ];
 
 export const FormTable = generateTable({
-  tableOptions: ['kappSlug', 'datastore', 'manage'],
+  tableOptions: ['kappSlug', 'datastore', 'manage', 'surveyList'],
   columns,
   filters,
   filterDataSources,

@@ -65,9 +65,6 @@ const resetValues = fields =>
     }),
   );
 
-const clearFilterFormValues = (fields, formKey) =>
-  fields.map(field => actions.setValue(formKey)(field.get('name'), null));
-
 export const checkRequired = field =>
   field.required && isEmpty(field.value)
     ? List([field.requiredMessage])
@@ -147,10 +144,11 @@ const buildBindings = formState =>
 
 const evaluateDataSources = formState =>
   formState.update('dataSources', dataSources =>
-    dataSources.map(dataSource =>
-      dataSource.paramsFn
-        ? dataSource.set('params', dataSource.paramsFn(formState.bindings))
-        : dataSource,
+    dataSources.map(
+      dataSource =>
+        dataSource.paramsFn
+          ? dataSource.set('params', dataSource.paramsFn(formState.bindings))
+          : dataSource,
     ),
   );
 
@@ -253,8 +251,11 @@ regHandlers({
       .setIn(['forms', formKey, 'submitting'], false)
       .setIn(['forms', formKey, 'error'], 'There are invalid fields')
       .updateIn(['forms', formKey, 'fields'], fields =>
-        fields.map(field =>
-          fieldNames.includes(field.name) ? field.set('touched', true) : field,
+        fields.map(
+          field =>
+            fieldNames.includes(field.name)
+              ? field.set('touched', true)
+              : field,
         ),
       ),
 });
@@ -386,19 +387,6 @@ regSaga(
     yield call(console.error, 'REJECT_DATA_SOURCE', payload);
   }),
 );
-
-// TODO: Removing code to fix bug in production (James)
-// regSaga(
-//   takeEvery('RESET', function*({ payload: { formKey } }) {
-//     try {
-//       const { fields } = yield select(selectForm(formKey));
-//       //clearFilterFormValues(fields, formKey);
-//       dispatch('SUBMIT', { formKey });
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   }),
-// );
 
 regSaga(
   takeEvery('SUBMIT', function*({ payload: { formKey, fieldSet, onInvalid } }) {
@@ -576,8 +564,8 @@ const computeFieldSet = (fields, fieldSetProp) => {
     !fieldSetProp
       ? defaultFieldSet
       : typeof fieldSetProp === 'function'
-      ? fieldSetProp(defaultFieldSet)
-      : fieldSetProp,
+        ? fieldSetProp(defaultFieldSet)
+        : fieldSetProp,
   );
 };
 
@@ -585,8 +573,8 @@ const evaluateReadOnly = (readOnlyProp, bindings) =>
   typeof readOnlyProp === 'boolean'
     ? readOnlyProp
     : typeof readOnlyProp === 'function'
-    ? readOnlyProp(bindings)
-    : false;
+      ? readOnlyProp(bindings)
+      : false;
 
 class FormImplComponent extends Component {
   focusRef = createRef();
@@ -699,6 +687,8 @@ class FormImplComponent extends Component {
             !readOnlyResult && (
               <FormButtons
                 formOptions={formOptions}
+                formKey={formKey}
+                fields={fields}
                 reset={onReset(formKey)}
                 submit={onSubmit(formKey, fieldSet)}
                 submitting={submitting}
