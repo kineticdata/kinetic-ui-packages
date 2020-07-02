@@ -237,7 +237,6 @@ export function* fetchAllSubmissionsSaga(action) {
     formSlug,
     kappSlug,
     createdAt,
-    submittedAt,
     coreState,
     q,
   } = action.payload;
@@ -251,10 +250,6 @@ export function* fetchAllSubmissionsSaga(action) {
   if (createdAt) {
     createdAt['startDate'] && searcher.startDate(createdAt['startDate']);
     createdAt['endDate'] && searcher.endDate(createdAt['endDate']);
-  }
-  if (submittedAt) {
-    submittedAt['startDate'] && searcher.startDate(submittedAt['startDate']);
-    submittedAt['endDate'] && searcher.endDate(submittedAt['endDate']);
   }
   if (coreState) {
     searcher.coreState(coreState);

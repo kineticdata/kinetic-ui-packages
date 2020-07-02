@@ -3,10 +3,12 @@ import { Link } from '@reach/router';
 import { connect } from '../../../redux/store';
 import { actions } from '../../../redux/modules/surveys';
 import { actions as appActions } from '../../../redux/modules/surveyApp';
-import { compose, withState, withHandlers } from 'recompose';
+import { compose, withState, withHandlers, lifecycle } from 'recompose';
+import { Map } from 'immutable';
 import { PageTitle } from '../../shared/PageTitle';
 import {
   UncontrolledDropdown,
+  Dropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
@@ -14,7 +16,16 @@ import {
   ModalBody,
   ModalFooter,
 } from 'reactstrap';
-import { I18n, Table, FormForm, fetchForm } from '@kineticdata/react';
+import {
+  I18n,
+  FormTable,
+  FormForm,
+  fetchForm,
+  mountTable,
+  unmountTable,
+  submitForm,
+  isValueEmpty,
+} from '@kineticdata/react';
 import {
   FormComponents,
   TableComponents,
@@ -24,38 +35,7 @@ import {
   openConfirm,
 } from '@kineticdata/bundle-common';
 
-const columns = [
-  {
-    value: 'name',
-    title: 'Name',
-    type: 'text',
-    sortable: true,
-    filter: 'includes',
-  },
-  {
-    value: 'createdAt',
-    title: 'Created',
-    type: 'text',
-    sortable: true,
-  },
-  {
-    value: 'updatedAt',
-    title: 'Updated',
-    type: 'text',
-    sortable: true,
-  },
-  {
-    value: 'status',
-    title: 'Status',
-    type: 'text',
-    sortable: true,
-    filter: 'equals',
-    options: () => [
-      { value: 'Active', label: 'Active' },
-      { value: 'Inactive', label: 'Inactive' },
-    ],
-  },
-];
+const tableKey = 'survey-list';
 
 const ActionsCell = ({ deleteForm, toggleModal }) => ({ row, tableKey }) => (
   <td className="text-right" style={{ width: '1%' }}>
@@ -88,11 +68,6 @@ const FormNameCell = ({ row, value }) => (
     <br />
     <small>{row.get('slug')}</small>
   </td>
-);
-
-const FilterLayout = TableComponents.generateFilterModalLayout(
-  ['name', 'status'],
-  'Filter Surveys',
 );
 
 const FormLayout = ({ fields, error, buttons, bindings: { cloneForm } }) => (
@@ -169,10 +144,35 @@ const CloneErrorFormLayout = () => (
   </Fragment>
 );
 
+const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
+  loadingMessage: 'Loading Surveys...',
+  noSearchResultsMessage:
+    'No surveys were found - please modify your search criteria',
+  noItemsMessage: 'There are no surveys to display.',
+});
+
+const FilterPill = props => (
+  <div className="btn-group">
+    <button type="button" className="btn btn-xs btn-subtle">
+      {props.name}
+    </button>
+    <button
+      type="button"
+      className="btn btn-xs btn-subtle"
+      onClick={props.onRemove}
+    >
+      <span className="fa fa-fw fa-times" />
+    </button>
+  </div>
+);
+
+const VALUE_FILTER_MATCH = /values\[(.+)]/;
+
 const SurveyListComponent = ({
   kapp,
-  surveys,
   loading,
+  filterModalOpen,
+  setFilterModalOpen,
   modalOpen,
   toggleModal,
   deleteForm,
@@ -180,24 +180,66 @@ const SurveyListComponent = ({
   fetchAppDataRequest,
   navigate,
 }) => {
-  const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
-    loadingMessage: 'Loading Surveys...',
-    noSearchResultsMessage:
-      'No surveys were found - please modify your search criteria',
-    noItemsMessage: 'There are no surveys to display.',
-  });
+  const FilterFormLayout = ({ buttons, fields }) => (
+    <Dropdown
+      direction="left"
+      size="sm"
+      isOpen={filterModalOpen}
+      toggle={() => setFilterModalOpen(!filterModalOpen)}
+    >
+      <DropdownToggle color="primary">Filter</DropdownToggle>
+      <DropdownMenu modifiers={{ preventOverflow: { enabled: true } }}>
+        <div className="filter-menu">
+          <form>
+            <div className="row">
+              <div className="col-12">{fields.get('name')}</div>
+              <div className="col-12">{fields.get('status')}</div>
+            </div>
+            <span className="text-right">{buttons}</span>
+          </form>
+        </div>
+      </DropdownMenu>
+    </Dropdown>
+  );
+
+  const FilterFormButtons = ({ fields, formKey, ...props }) => {
+    const resetFilterForm = () => () => {
+      const values = fields.map(() => null);
+      submitForm(formKey, { values });
+    };
+    return (
+      <div className="form-buttons__right">
+        <button className="btn btn-link" onClick={resetFilterForm()}>
+          Reset
+        </button>
+        <button
+          className="btn btn-success"
+          type="submit"
+          disabled={!props.dirty || props.submitting}
+          onClick={props.submit}
+        >
+          {props.submitting ? (
+            <span className="fa fa-circle-o-notch fa-spin fa-fw" />
+          ) : (
+            <span className="fa fa-check fa-fw" />
+          )}
+          Apply
+        </button>
+      </div>
+    );
+  };
+
   return (
     !loading && (
-      <Table
-        data={surveys.toJS()}
+      <FormTable
+        tableKey={tableKey}
+        kappSlug="survey"
+        surveyList
         components={{
           EmptyBodyRow,
-          FilterLayout,
-          TableLayout: TableComponents.SettingsTableLayout,
+          FilterFormLayout,
+          FilterFormButtons,
         }}
-        columns={columns}
-        columnSet={['name', 'createdAt', 'updatedAt', 'status', 'actions']}
-        defaultSortColumn="status"
         addColumns={[
           {
             value: 'actions',
@@ -231,130 +273,191 @@ const SurveyListComponent = ({
           status: {
             components: {
               BodyCell: TableComponents.StatusBadgeCell,
-              Filter: TableComponents.SelectFilter,
             },
-            options: () => [
-              { value: 'Active', label: 'Active' },
-              { value: 'Inactive', label: 'Inactive' },
-            ],
           },
         }}
+        columnSet={[
+          'name',
+          'type',
+          'createdAt',
+          'updatedAt',
+          'status',
+          'actions',
+        ]}
+        filterSet={['name', 'status']}
+        alterFilters={{
+          status: {
+            options: ['Active', 'Inactive'].map(s => ({
+              value: s,
+              label: s,
+            })),
+          },
+        }}
+        onSearch={() => () => setFilterModalOpen(false)}
       >
-        {({ pagination, table, filter, tableKey }) => (
-          <div className="page-container">
-            <PageTitle parts={[`Surveys`]} />
-            <div className="page-panel page-panel--white">
-              <div className="page-title">
-                <div
-                  role="navigation"
-                  aria-label="breadcrumbs"
-                  className="page-title__breadcrumbs"
-                >
-                  <span className="breadcrumb-item">
-                    <I18n>{kapp.name} / </I18n>
-                  </span>
-                  <h1>
-                    <I18n>Surveys</I18n>
-                  </h1>
-                </div>
-                <div className="page-title__actions">
-                  <Link to="new">
-                    <I18n
-                      render={translate => (
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          title={translate('New Survey')}
-                        >
-                          <span className="fa fa-plus fa-fw" />{' '}
-                          {translate('New Survey')}
-                        </button>
-                      )}
-                    />
-                  </Link>
-                </div>
-              </div>
-              <div>
-                <div className="mb-2 text-right">{filter}</div>
-                {table}
-                {pagination}
-              </div>
-            </div>
+        {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
+          const handleClearFilter = filter => () => {
+            const matches = filter.match(VALUE_FILTER_MATCH);
 
-            {/* Modal for creating a new form */}
-            <Modal isOpen={!!modalOpen} toggle={() => toggleModal()} size="lg">
-              <div className="modal-header">
-                <h4 className="modal-title">
-                  <button
-                    type="button"
-                    className="btn btn-link btn-delete"
-                    onClick={() => toggleModal()}
+            if (matches) {
+              // Handling clearing a value.
+              const valueName = matches[1];
+
+              submitForm(filterFormKey, {
+                values: {
+                  values: appliedFilters.get('values').delete(valueName),
+                },
+              });
+            } else {
+              submitForm(filterFormKey, { values: { [filter]: null } });
+            }
+          };
+
+          const filterPills = appliedFilters
+            .filter(
+              (filter, filterName) =>
+                !isValueEmpty(filter) && filterName !== 'values',
+            )
+            .merge(
+              appliedFilters
+                .get('values', Map())
+                .mapEntries(([filterName, value]) => [
+                  `values[${filterName}]`,
+                  value,
+                ]),
+            )
+            .keySeq()
+            .map(filterName => (
+              <FilterPill
+                key={filterName}
+                name={filterName}
+                onRemove={handleClearFilter(filterName)}
+              />
+            ));
+
+          return (
+            <div className="page-container">
+              <PageTitle parts={[`Surveys`]} />
+              <div className="page-panel page-panel--white">
+                <div className="page-title">
+                  <div
+                    role="navigation"
+                    aria-label="breadcrumbs"
+                    className="page-title__breadcrumbs"
                   >
-                    <I18n>Close</I18n>
-                  </button>
-                  <span>
-                    <I18n>New Form</I18n>
-                  </span>
-                </h4>
+                    <span className="breadcrumb-item">
+                      <I18n>{kapp.name} / </I18n>
+                    </span>
+                    <h1>
+                      <I18n>Surveys</I18n>
+                    </h1>
+                  </div>
+                  <div className="page-title__actions">
+                    <Link to="new">
+                      <I18n
+                        render={translate => (
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            title={translate('New Survey')}
+                          >
+                            <span className="fa fa-plus fa-fw" />{' '}
+                            {translate('New Survey')}
+                          </button>
+                        )}
+                      />
+                    </Link>
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-2 text-right">{filter}</div>
+                  {filterPills.size > 0 && (
+                    <div className="filter-pills">{filterPills}</div>
+                  )}
+                  {table}
+                  {pagination}
+                </div>
               </div>
-              <FormForm
-                kappSlug={kapp.slug}
-                fieldSet={['name', 'slug', 'description']}
-                onSave={() => form => {
-                  if (typeof modalOpen === 'string') {
-                    cloneFormRequest({
-                      kappSlug: kapp.slug,
-                      formSlug: form.slug,
-                      cloneFormSlug: modalOpen,
-                      callback: () => {
-                        fetchAppDataRequest();
-                        navigate(`${form.slug}/settings`);
-                      },
-                    });
-                  } else {
-                    addToast(`${form.name} created successfully.`);
-                    navigate(`${form.slug}/settings`);
-                  }
-                }}
-                components={{ FormLayout, FormButtons }}
-                alterFields={{
-                  description: {
-                    component: FormComponents.TextAreaField,
-                  },
-                }}
-                addDataSources={
-                  typeof modalOpen === 'string'
-                    ? {
-                        cloneForm: {
-                          fn: fetchForm,
-                          params: [
-                            { kappSlug: kapp.slug, formSlug: modalOpen },
-                          ],
-                          // Set to the form, or the result in case of an error
-                          transform: result => result.form || result,
-                        },
-                      }
-                    : undefined
-                }
+
+              {/* Modal for creating a new form */}
+              <Modal
+                isOpen={!!modalOpen}
+                toggle={() => toggleModal()}
+                size="lg"
               >
-                {({ form, initialized, bindings: { cloneForm } }) => {
-                  const isClone = typeof modalOpen === 'string';
-                  const cloneError = cloneForm && cloneForm.get('error');
-                  return initialized && (!isClone || cloneForm) ? (
-                    cloneError ? (
-                      <CloneErrorFormLayout />
+                <div className="modal-header">
+                  <h4 className="modal-title">
+                    <button
+                      type="button"
+                      className="btn btn-link btn-delete"
+                      onClick={() => toggleModal()}
+                    >
+                      <I18n>Close</I18n>
+                    </button>
+                    <span>
+                      <I18n>New Form</I18n>
+                    </span>
+                  </h4>
+                </div>
+                <FormForm
+                  kappSlug={kapp.slug}
+                  fieldSet={['name', 'slug', 'description']}
+                  onSave={() => form => {
+                    if (typeof modalOpen === 'string') {
+                      cloneFormRequest({
+                        kappSlug: kapp.slug,
+                        formSlug: form.slug,
+                        cloneFormSlug: modalOpen,
+                        callback: () => {
+                          fetchAppDataRequest();
+                          navigate(`${form.slug}/settings`);
+                        },
+                      });
+                    } else {
+                      addToast(`${form.name} created successfully.`);
+                      navigate(`${form.slug}/settings`);
+                    }
+                  }}
+                  components={{ FormLayout, FormButtons }}
+                  alterFields={{
+                    description: {
+                      component: FormComponents.TextAreaField,
+                    },
+                  }}
+                  addDataSources={
+                    typeof modalOpen === 'string'
+                      ? {
+                          cloneForm: {
+                            fn: fetchForm,
+                            params: [
+                              { kappSlug: kapp.slug, formSlug: modalOpen },
+                            ],
+                            // Set to the form, or the result in case of an error
+                            transform: result => result.form || result,
+                          },
+                        }
+                      : undefined
+                  }
+                >
+                  {({ form, initialized, bindings: { cloneForm } }) => {
+                    const isClone = typeof modalOpen === 'string';
+                    const cloneError = cloneForm && cloneForm.get('error');
+                    return initialized && (!isClone || cloneForm) ? (
+                      cloneError ? (
+                        <CloneErrorFormLayout />
+                      ) : (
+                        form
+                      )
                     ) : (
-                      form
-                    )
-                  ) : (
-                    <LoadingFormLayout />
-                  );
-                }}
-              </FormForm>
-            </Modal>
-          </div>
-        )}
-      </Table>
+                      <LoadingFormLayout />
+                    );
+                  }}
+                </FormForm>
+              </Modal>
+            </div>
+          );
+        }}
+      </FormTable>
     )
   );
 };
@@ -362,7 +465,6 @@ const SurveyListComponent = ({
 export const mapStateToProps = state => ({
   loading: state.surveyApp.loading,
   kapp: state.app.kapp,
-  surveys: state.surveyApp.surveys,
 });
 
 const mapDispatchToProps = {
@@ -377,7 +479,7 @@ export const SurveyList = compose(
     mapDispatchToProps,
   ),
   withState('modalOpen', 'setModalOpen', false),
-  withState('listKey', 'setListKey', 'survey-list'),
+  withState('filterModalOpen', 'setFilterModalOpen', false),
   withHandlers({
     toggleModal: props => slug =>
       !slug || slug === props.modalOpen
@@ -396,5 +498,13 @@ export const SurveyList = compose(
             formSlug,
           }),
       }),
+  }),
+  lifecycle({
+    componentDidMount() {
+      mountTable(tableKey);
+    },
+    componentWillUnmount() {
+      unmountTable(tableKey);
+    },
   }),
 )(SurveyListComponent);

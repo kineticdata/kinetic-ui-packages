@@ -14,16 +14,12 @@ const ExportComponent = ({
   handleDownload,
   form,
 }) => {
-  let filterLabel = 'All';
-  for (let [key, value] of Object.entries(filter.props.appliedFilters.toJS())) {
-    if (key === 'submittedAt' || key === 'createdAt') {
-      if (value.value[0].length || value.value[1].length) {
-        filterLabel = 'Filtered';
-      }
-    } else if (value.value.length) {
-      filterLabel = 'Filtered';
-    }
-  }
+  const filterLabel = Object.entries(filter.props.appliedFilters.toJS()).some(
+    ([key, value]) =>
+      key === 'values' ? Object.values(value).length : !!value,
+  )
+    ? 'Filtered'
+    : 'All';
 
   return (
     submissions && (
@@ -130,42 +126,33 @@ function createCSV(submissions, form) {
 }
 
 const handleDownload = props => () => {
-  const filter = props.filter.props.appliedFilters.toJS();
+  const filter =
+    props.filter.props.appliedFilters &&
+    props.filter.props.appliedFilters.toJS();
   const q = {};
-  const createdAt = {};
-  const submittedAt = {};
-  let coreState = undefined;
 
-  for (const property in filter) {
-    if (property !== 'values' && filter[property].value) {
-      if (property === 'createdAt') {
-        createdAt['startDate'] =
-          filter[property].value[0] && new Date(filter[property].value[0]);
-        createdAt['endDate'] =
-          filter[property].value[1] && new Date(filter[property].value[1]);
-      } else if (property === 'submittedAt') {
-        submittedAt['startDate'] =
-          filter[property].value[0] && new Date(filter[property].value[0]);
-        submittedAt['endDate'] =
-          filter[property].value[1] && new Date(filter[property].value[1]);
-      } else if (property === 'coreState') {
-        coreState = filter[property].value;
-      } else {
-        q[property] = filter[property].value;
-      }
-    }
+  if (filter.submittedBy) {
+    q['submittedBy'] = filter.submittedBy.username;
   }
-  for (let value of filter.values.value) {
-    q[`values[${value.field}]`] = value.value;
+
+  if (filter.values) {
+    Object.entries(filter.values).map(
+      ([key, value]) => (q[`values[${value.field}]`] = value.value),
+    );
   }
 
   props.fetchAllSubmissions({
     formSlug: props.form.slug,
     kappSlug: props.kappSlug,
     accumulator: [],
-    createdAt: createdAt,
-    submittedAt: submittedAt,
-    coreState: coreState,
+    createdAt:
+      filter.startDate || filter.endDate
+        ? {
+            startDate: filter.startDate ? new Date(filter.startDate) : null,
+            endDate: filter.endDate ? new Date(filter.endDate) : null,
+          }
+        : {},
+    coreState: filter.coreState || undefined,
     q: q,
   });
   props.setExportStatus('FETCHING_RECORDS');
