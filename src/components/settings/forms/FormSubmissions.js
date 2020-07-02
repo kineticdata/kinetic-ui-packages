@@ -46,10 +46,7 @@ export const FormSubmissionsComponent = ({
       columnSet={['label', 'createdAt', 'submittedBy', 'coreState']}
       defaultSortColumn={'createdAt'}
       alterColumns={{
-        label: {
-          components: { BodyCell: LinkCell },
-          sortable: true,
-        },
+        label: { components: { BodyCell: LinkCell }, sortable: true },
         createdAt: {
           title: 'Created',
           filter: 'between',
@@ -123,11 +120,11 @@ export const FormSubmissionsComponent = ({
                   value="export"
                   className="btn btn-secondary pull-left"
                 >
-                  <span className="fa fa-fw fa-download" />
+                  <span className="fa fa-fw fa-download" role="presentation" />
                   <I18n> Export Records</I18n>
                 </button>
                 <Link to="settings" className="btn btn-primary">
-                  <span className="fa fa-fw fa-cog" />
+                  <span className="fa fa-fw fa-cog" role="presentation" />
                   <I18n> Form Settings</I18n>
                 </Link>
               </div>
@@ -181,11 +178,7 @@ export const FormSubmissionsComponent = ({
               </div>
             </div>
           </div>
-          <ExportModal
-            form={form}
-            filter={filter}
-            // createSearchQuery={createSearchQuery}
-          />
+          <ExportModal form={form} filter={filter} />
         </div>
       )}
     </SubmissionTable>
