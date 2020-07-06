@@ -70,6 +70,13 @@ const ActionsCell = ({
   </td>
 );
 
+const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
+  loadingMessage: 'Loading Submissions...',
+  noSearchResultsMessage:
+    'No submissions were found - please modify your search criteria',
+  noItemsMessage: 'There are no submissions to display.',
+});
+
 const FilterPill = props => (
   <div className="btn-group">
     <button type="button" className="btn btn-xs btn-subtle">
@@ -98,13 +105,6 @@ export const SurveySubmissionsComponent = ({
   filterModalOpen,
   setFilterModalOpen,
 }) => {
-  const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
-    loadingMessage: 'Loading Submissions...',
-    noSearchResultsMessage:
-      'No submissions were found - please modify your search criteria',
-    noItemsMessage: 'There are no submissions to display.',
-  });
-
   const FilterFormLayout = ({ buttons, fields }) => (
     <Dropdown
       direction="left"
@@ -388,6 +388,11 @@ export const SurveySubmissions = compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
+  withState('openDropdown', 'setOpenDropdown', ''),
+  withState('filterModalOpen', 'setFilterModalOpen', false),
+  withHandlers({
+    toggleDropdown,
+  }),
   lifecycle({
     componentDidMount() {
       this.props.fetchFormRequest({
@@ -399,10 +404,5 @@ export const SurveySubmissions = compose(
     componentWillUnmount() {
       unmountTable(tableKey);
     },
-  }),
-  withState('openDropdown', 'setOpenDropdown', ''),
-  withState('filterModalOpen', 'setFilterModalOpen', false),
-  withHandlers({
-    toggleDropdown,
   }),
 )(SurveySubmissionsComponent);

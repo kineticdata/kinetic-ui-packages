@@ -4,7 +4,6 @@ import { connect } from '../../../redux/store';
 import { actions } from '../../../redux/modules/surveys';
 import { actions as appActions } from '../../../redux/modules/surveyApp';
 import { compose, withState, withHandlers, lifecycle } from 'recompose';
-import { Map } from 'immutable';
 import { PageTitle } from '../../shared/PageTitle';
 import {
   UncontrolledDropdown,
@@ -166,8 +165,6 @@ const FilterPill = props => (
   </div>
 );
 
-const VALUE_FILTER_MATCH = /values\[(.+)]/;
-
 const SurveyListComponent = ({
   kapp,
   loading,
@@ -296,36 +293,11 @@ const SurveyListComponent = ({
         onSearch={() => () => setFilterModalOpen(false)}
       >
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
-          const handleClearFilter = filter => () => {
-            const matches = filter.match(VALUE_FILTER_MATCH);
-
-            if (matches) {
-              // Handling clearing a value.
-              const valueName = matches[1];
-
-              submitForm(filterFormKey, {
-                values: {
-                  values: appliedFilters.get('values').delete(valueName),
-                },
-              });
-            } else {
-              submitForm(filterFormKey, { values: { [filter]: null } });
-            }
-          };
+          const handleClearFilter = filter => () =>
+            submitForm(filterFormKey, { values: { [filter]: null } });
 
           const filterPills = appliedFilters
-            .filter(
-              (filter, filterName) =>
-                !isValueEmpty(filter) && filterName !== 'values',
-            )
-            .merge(
-              appliedFilters
-                .get('values', Map())
-                .mapEntries(([filterName, value]) => [
-                  `values[${filterName}]`,
-                  value,
-                ]),
-            )
+            .filter(filter => !isValueEmpty(filter))
             .keySeq()
             .map(filterName => (
               <FilterPill
