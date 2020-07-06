@@ -26,13 +26,9 @@ const ExportModalComponent = ({
         </span>
       </h4>
     </div>
-    <ModalBody>
-      <div style={{ padding: '1rem' }}>
-        <Export
-          filter={filter}
-          createSearchQuery={createSearchQuery}
-          form={form}
-        />
+    <ModalBody className="modal-body--import-export">
+      <div style={{ padding: '1.5rem' }}>
+        <Export filter={filter} form={form} />
       </div>
     </ModalBody>
   </Modal>

@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
-import { compose, withHandlers, withState } from 'recompose';
+import { compose, withHandlers, withState, lifecycle } from 'recompose';
 import { connect } from '../../../redux/store';
 import {
   UncontrolledDropdown,
+  Dropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
@@ -17,6 +18,10 @@ import {
   FormForm,
   fetchForm,
   refetchTable,
+  submitForm,
+  isValueEmpty,
+  mountTable,
+  unmountTable,
 } from '@kineticdata/react';
 import {
   FormComponents,
@@ -28,6 +33,8 @@ import {
 } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
 import { actions } from '../../../redux/modules/settingsForms';
+
+const tableKey = 'services-settings-form-list';
 
 const ActionsCell = ({ deleteForm, toggleModal, processing }) => ({
   tableOptions: { kappSlug },
@@ -71,11 +78,6 @@ const FormNameCell = ({ row, value }) => (
     <br />
     <small>{row.get('slug')}</small>
   </td>
-);
-
-const FilterLayout = TableComponents.generateFilterModalLayout(
-  ['name', 'type', 'status'],
-  'Filter Forms',
 );
 
 const FormLayout = ({ fields, error, buttons, bindings: { cloneForm } }) => (
@@ -157,11 +159,28 @@ const CloneErrorFormLayout = () => (
   </Fragment>
 );
 
+const FilterPill = props => (
+  <div className="btn-group">
+    <button type="button" className="btn btn-xs btn-subtle">
+      {props.name}
+    </button>
+    <button
+      type="button"
+      className="btn btn-xs btn-subtle"
+      onClick={props.onRemove}
+    >
+      <span className="fa fa-fw fa-times" />
+    </button>
+  </div>
+);
+
 export const FormsListComponent = ({
   kapp,
   processing,
   modalOpen,
   toggleModal,
+  filterModalOpen,
+  setFilterModalOpen,
   deleteForm,
   cloneFormRequest,
   navigate,
@@ -175,13 +194,64 @@ export const FormsListComponent = ({
     noItemsLinkToMessage: 'Add New Form',
   });
 
+  const FilterFormLayout = ({ buttons, fields }) => (
+    <Dropdown
+      direction="left"
+      size="sm"
+      isOpen={filterModalOpen}
+      toggle={() => setFilterModalOpen(!filterModalOpen)}
+    >
+      <DropdownToggle color="primary">Filter</DropdownToggle>
+      <DropdownMenu modifiers={{ preventOverflow: { enabled: true } }}>
+        <div className="filter-menu">
+          <form>
+            <div className="row">
+              <div className="col-12">{fields.get('name')}</div>
+              <div className="col-12">{fields.get('type')}</div>
+              <div className="col-12">{fields.get('status')}</div>
+            </div>
+            <span className="text-right">{buttons}</span>
+          </form>
+        </div>
+      </DropdownMenu>
+    </Dropdown>
+  );
+
+  const FilterFormButtons = ({ fields, formKey, ...props }) => {
+    const resetFilterForm = () => () => {
+      const values = fields.map(() => null);
+      submitForm(formKey, { values });
+    };
+    return (
+      <div className="form-buttons__right">
+        <button className="btn btn-link" onClick={resetFilterForm()}>
+          Reset
+        </button>
+        <button
+          className="btn btn-success"
+          type="submit"
+          disabled={!props.dirty || props.submitting}
+          onClick={props.submit}
+        >
+          {props.submitting ? (
+            <span className="fa fa-circle-o-notch fa-spin fa-fw" />
+          ) : (
+            <span className="fa fa-check fa-fw" />
+          )}
+          Apply
+        </button>
+      </div>
+    );
+  };
+
   return (
     <FormTable
+      tableKey={tableKey}
       kappSlug={kapp.slug}
       components={{
         EmptyBodyRow,
-        FilterLayout,
-        TableLayout: TableComponents.SettingsTableLayout,
+        FilterFormLayout,
+        FilterFormButtons,
       }}
       columnSet={[
         'name',
@@ -221,135 +291,157 @@ export const FormsListComponent = ({
         status: {
           components: {
             BodyCell: TableComponents.StatusBadgeCell,
-            Filter: TableComponents.SelectFilter,
           },
         },
       }}
+      filterSet={['name', 'type', 'status']}
+      onSearch={() => () => setFilterModalOpen(false)}
     >
-      {({ pagination, table, filter, tableKey }) => (
-        <div className="page-container">
-          <PageTitle parts={[`Forms`]} />
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="../../">
-                    <I18n>services</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../">
-                    <I18n>settings</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <h1>
-                  <I18n>Forms</I18n>
-                </h1>
-              </div>
-              <div className="page-title__actions">
-                <I18n
-                  render={translate => (
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      title={translate('New Form')}
-                      onClick={() => toggleModal(true)}
-                    >
-                      <span className="fa fa-plus fa-fw" />{' '}
-                      {translate('New Form')}
-                    </button>
-                  )}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="mb-2 text-right">{filter}</div>
-              {table}
-              {pagination}
-            </div>
-          </div>
+      {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
+        const handleClearFilter = filter => () =>
+          submitForm(filterFormKey, { values: { [filter]: null } });
 
-          {/* Modal for creating a new form */}
-          <Modal isOpen={!!modalOpen} toggle={() => toggleModal()} size="lg">
-            <div className="modal-header">
-              <h4 className="modal-title">
-                <button
-                  type="button"
-                  className="btn btn-link btn-delete"
-                  onClick={() => toggleModal()}
+        const filterPills = appliedFilters
+          .filter(filter => !isValueEmpty(filter))
+          .keySeq()
+          .map(filterName => (
+            <FilterPill
+              key={filterName}
+              name={filterName}
+              onRemove={handleClearFilter(filterName)}
+            />
+          ));
+
+        return (
+          <div className="page-container">
+            <PageTitle parts={[`Forms`]} />
+            <div className="page-panel page-panel--white">
+              <div className="page-title">
+                <div
+                  role="navigation"
+                  aria-label="breadcrumbs"
+                  className="page-title__breadcrumbs"
                 >
-                  <I18n>Close</I18n>
-                </button>
-                <span>
-                  <I18n>New Form</I18n>
-                </span>
-              </h4>
+                  <span className="breadcrumb-item">
+                    <Link to="../../">
+                      <I18n>services</I18n>
+                    </Link>
+                  </span>{' '}
+                  <span aria-hidden="true">/ </span>
+                  <span className="breadcrumb-item">
+                    <Link to="../">
+                      <I18n>settings</I18n>
+                    </Link>
+                  </span>{' '}
+                  <span aria-hidden="true">/ </span>
+                  <h1>
+                    <I18n>Forms</I18n>
+                  </h1>
+                </div>
+                <div className="page-title__actions">
+                  <I18n
+                    render={translate => (
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        title={translate('New Form')}
+                        onClick={() => toggleModal(true)}
+                      >
+                        <span className="fa fa-plus fa-fw" />{' '}
+                        {translate('New Form')}
+                      </button>
+                    )}
+                  />
+                </div>
+              </div>
+              <div>
+                <div className="mb-2 text-right">{filter}</div>
+                {filterPills.size > 0 && (
+                  <div className="filter-pills">{filterPills}</div>
+                )}
+                {table}
+                {pagination}
+              </div>
             </div>
-            <FormForm
-              kappSlug={kapp.slug}
-              fieldSet={[
-                'name',
-                'slug',
-                'status',
-                'type',
-                'submissionLabelExpression',
-                'description',
-              ]}
-              onSave={() => form => {
-                if (typeof modalOpen === 'string') {
-                  cloneFormRequest({
-                    kappSlug: kapp.slug,
-                    formSlug: form.slug,
-                    cloneFormSlug: modalOpen,
-                    callback: () => navigate(`${form.slug}/settings`),
-                  });
-                } else {
-                  addToast(`${form.name} created successfully.`);
-                  navigate(`${form.slug}/settings`);
+
+            {/* Modal for creating a new form */}
+            <Modal isOpen={!!modalOpen} toggle={() => toggleModal()} size="lg">
+              <div className="modal-header">
+                <h4 className="modal-title">
+                  <button
+                    type="button"
+                    className="btn btn-link btn-delete"
+                    onClick={() => toggleModal()}
+                  >
+                    <I18n>Close</I18n>
+                  </button>
+                  <span>
+                    <I18n>New Form</I18n>
+                  </span>
+                </h4>
+              </div>
+              <FormForm
+                kappSlug={kapp.slug}
+                fieldSet={[
+                  'name',
+                  'slug',
+                  'status',
+                  'type',
+                  'submissionLabelExpression',
+                  'description',
+                ]}
+                onSave={() => form => {
+                  if (typeof modalOpen === 'string') {
+                    cloneFormRequest({
+                      kappSlug: kapp.slug,
+                      formSlug: form.slug,
+                      cloneFormSlug: modalOpen,
+                      callback: () => navigate(`${form.slug}/settings`),
+                    });
+                  } else {
+                    addToast(`${form.name} created successfully.`);
+                    navigate(`${form.slug}/settings`);
+                  }
+                }}
+                components={{ FormLayout, FormButtons }}
+                alterFields={{
+                  description: {
+                    component: FormComponents.TextAreaField,
+                  },
+                }}
+                addDataSources={
+                  typeof modalOpen === 'string'
+                    ? {
+                        cloneForm: {
+                          fn: fetchForm,
+                          params: [
+                            { kappSlug: kapp.slug, formSlug: modalOpen },
+                          ],
+                          // Set to the form, or the result in case of an error
+                          transform: result => result.form || result,
+                        },
+                      }
+                    : undefined
                 }
-              }}
-              components={{ FormLayout, FormButtons }}
-              alterFields={{
-                description: {
-                  component: FormComponents.TextAreaField,
-                },
-              }}
-              addDataSources={
-                typeof modalOpen === 'string'
-                  ? {
-                      cloneForm: {
-                        fn: fetchForm,
-                        params: [{ kappSlug: kapp.slug, formSlug: modalOpen }],
-                        // Set to the form, or the result in case of an error
-                        transform: result => result.form || result,
-                      },
-                    }
-                  : undefined
-              }
-            >
-              {({ form, initialized, bindings: { cloneForm } }) => {
-                const isClone = typeof modalOpen === 'string';
-                const cloneError = cloneForm && cloneForm.get('error');
-                return initialized && (!isClone || cloneForm) ? (
-                  cloneError ? (
-                    <CloneErrorFormLayout />
+              >
+                {({ form, initialized, bindings: { cloneForm } }) => {
+                  const isClone = typeof modalOpen === 'string';
+                  const cloneError = cloneForm && cloneForm.get('error');
+                  return initialized && (!isClone || cloneForm) ? (
+                    cloneError ? (
+                      <CloneErrorFormLayout />
+                    ) : (
+                      form
+                    )
                   ) : (
-                    form
-                  )
-                ) : (
-                  <LoadingFormLayout />
-                );
-              }}
-            </FormForm>
-          </Modal>
-        </div>
-      )}
+                    <LoadingFormLayout />
+                  );
+                }}
+              </FormForm>
+            </Modal>
+          </div>
+        );
+      }}
     </FormTable>
   );
 };
@@ -371,6 +463,7 @@ export const FormsList = compose(
     mapDispatchToProps,
   ),
   withState('modalOpen', 'setModalOpen', false),
+  withState('filterModalOpen', 'setFilterModalOpen', false),
   withHandlers({
     toggleModal: props => slug =>
       !slug || slug === props.modalOpen
@@ -390,5 +483,13 @@ export const FormsList = compose(
             onSuccess,
           }),
       }),
+  }),
+  lifecycle({
+    componentDidMount() {
+      mountTable(tableKey);
+    },
+    componentWillUnmount() {
+      unmountTable(tableKey);
+    },
   }),
 )(FormsListComponent);
