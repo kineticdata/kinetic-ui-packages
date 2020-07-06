@@ -7,81 +7,91 @@ import { connect } from '../../../redux/store';
 import { I18n } from '@kineticdata/react';
 
 const ExportComponent = ({
+  filter,
   submissions,
   exportStatus,
   submissionsCount,
   handleDownload,
   form,
-}) =>
-  submissions && (
-    <Fragment>
-      <div className="text-center">
-        {exportStatus === 'NOT_STARTED' ? (
-          <Fragment>
-            <h2>
-              <I18n>This process will export as a .csv file</I18n>
-            </h2>
-            <h4>
-              <I18n>Please don't close modal until confirmation</I18n>
-            </h4>
-            <button className="btn btn-primary" onClick={handleDownload}>
-              {1 === 2 ? (
-                <span>
-                  <I18n>Export Records for Query</I18n>
-                </span>
-              ) : (
-                <span>
-                  <I18n>Export All Records</I18n>
-                </span>
-              )}
-            </button>
-          </Fragment>
-        ) : (
-          <Fragment>
-            <h2>
-              <I18n>Retrieving Records</I18n>
-            </h2>
-            <h4>
-              {submissionsCount} <I18n>records retrieved</I18n>
-            </h4>
-            {/* TODO: Warp user feedback in a conditional if exportStatus === Failed */}
-            {exportStatus === 'CONVERT' && (
+}) => {
+  const filterLabel = Object.entries(filter.props.appliedFilters.toJS()).some(
+    ([key, value]) =>
+      key === 'values' ? Object.values(value).length : !!value,
+  )
+    ? 'Filtered'
+    : 'All';
+  return (
+    submissions && (
+      <Fragment>
+        <div className="text-center">
+          {exportStatus === 'NOT_STARTED' ? (
+            <Fragment>
+              <h2>
+                <I18n>This process will export as a .csv file</I18n>
+              </h2>
               <h4>
-                <I18n>Converting Records to CSV format</I18n>
+                <I18n>Please don't close modal until confirmation</I18n>
               </h4>
-            )}
-            {exportStatus === 'DOWNLOAD' && (
-              <I18n
-                render={translate => (
-                  <h4>{`${translate(
-                    'Downloading',
-                  )} ${submissionsCount} ${translate('Records to')} ${
-                    form.name
-                  }.csv`}</h4>
+              <button className="btn btn-primary" onClick={handleDownload}>
+                {1 === 2 ? (
+                  <span>
+                    <I18n>Export Records for Query</I18n>
+                  </span>
+                ) : (
+                  <span>
+                    <I18n>Export {filterLabel} Records</I18n>
+                  </span>
                 )}
-              />
-            )}
-            {exportStatus === 'COMPLETE' && (
-              <Fragment>
+              </button>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <h2>
+                <I18n>Retrieving Records</I18n>
+              </h2>
+              <h4>
+                {submissionsCount} <I18n>records retrieved</I18n>
+              </h4>
+              {/* TODO: Warp user feedback in a conditional if exportStatus === Failed */}
+              {exportStatus === 'CONVERT' && (
+                <h4>
+                  <I18n>Converting Records to CSV format</I18n>
+                </h4>
+              )}
+              {exportStatus === 'DOWNLOAD' && (
                 <I18n
                   render={translate => (
-                    <h2>
-                      {`${submissionsCount} ${translate(
-                        'Records exported to',
-                      )} ${form.name}.csv`}
-                    </h2>
+                    <h4>{`${translate(
+                      'Downloading',
+                    )} ${submissionsCount} ${translate('Records to')} ${
+                      form.name
+                    }.csv`}</h4>
                   )}
                 />
-                <h4>
-                  <I18n>Click Cancel to close the modal</I18n>
-                </h4>
-              </Fragment>
-            )}
-          </Fragment>
-        )}
-      </div>
-    </Fragment>
+              )}
+              {exportStatus === 'COMPLETE' && (
+                <Fragment>
+                  <I18n
+                    render={translate => (
+                      <h2>
+                        {`${submissionsCount} ${translate(
+                          'Records exported to',
+                        )} ${form.name}.csv`}
+                      </h2>
+                    )}
+                  />
+                  <h4>
+                    <I18n>Click Cancel to close the modal</I18n>
+                  </h4>
+                </Fragment>
+              )}
+            </Fragment>
+          )}
+        </div>
+      </Fragment>
+    )
   );
+};
 
 function createCSV(submissions, form) {
   // Create csv string that will be used for download
@@ -115,35 +125,33 @@ function createCSV(submissions, form) {
 }
 
 const handleDownload = props => () => {
-  const filter = props.filter.props.appliedFilters.toJS();
+  const filter =
+    props.filter.props.appliedFilters &&
+    props.filter.props.appliedFilters.toJS();
   const q = {};
-  const createdAt = {};
-  let coreState = undefined;
 
-  for (const property in filter) {
-    if (property !== 'values' && filter[property].value) {
-      if (property === 'createdAt') {
-        createdAt['startDate'] =
-          filter[property].value[0] && new Date(filter[property].value[0]);
-        createdAt['endDate'] =
-          filter[property].value[1] && new Date(filter[property].value[1]);
-      } else if (property === 'coreState') {
-        coreState = filter[property].value;
-      } else {
-        q[property] = filter[property].value;
-      }
-    }
+  if (filter.submittedBy) {
+    q['submittedBy'] = filter.submittedBy.username;
   }
-  for (let value of filter.values.value) {
-    q[`values[${value.field}]`] = value.value;
+
+  if (filter.values) {
+    Object.entries(filter.values).map(
+      ([key, value]) => (q[`values[${value.field}]`] = value.value),
+    );
   }
 
   props.fetchAllSubmissions({
     formSlug: props.form.slug,
     kappSlug: props.kappSlug,
     accumulator: [],
-    createdAt: createdAt,
-    coreState: coreState,
+    createdAt:
+      filter.startDate || filter.endDate
+        ? {
+            startDate: filter.startDate ? new Date(filter.startDate) : null,
+            endDate: filter.endDate ? new Date(filter.endDate) : null,
+          }
+        : {},
+    coreState: filter.coreState || undefined,
     q: q,
   });
   props.setExportStatus('FETCHING_RECORDS');
