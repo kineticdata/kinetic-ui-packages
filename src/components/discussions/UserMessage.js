@@ -98,46 +98,48 @@ const formatFileSize = fileSize => {
 
 export const TextMessage = ({ discussion, message }) => (
   <div>
-    <Markdown source={produceContent(message)} skipHtml />
-    {message.content
-      .filter(c => c.type === 'attachment')
-      .map(attachment => (
-        <div
-          key={attachment.value.documentId}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            paddingBottom: '0.5em',
-          }}
+    <Markdown source={produceContent(message)} skipHtml linkTarget="_blank" />
+    {message.content.filter(c => c.type === 'attachment').map(attachment => (
+      <div
+        key={attachment.value.documentId}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          paddingBottom: '0.5em',
+        }}
+      >
+        <a
+          href={attachmentUrl(discussion, message, attachment.value)}
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          <a
-            href={attachmentUrl(discussion, message, attachment.value)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src={thumbnailUrl(discussion, message, attachment.value)}
-              alt={attachment.value.filename}
-            />
-          </a>
+          <img
+            src={thumbnailUrl(discussion, message, attachment.value)}
+            alt={attachment.value.filename}
+          />
+        </a>
 
-          <small>
-            {attachment.value.filename} (
-            <em>{formatFileSize(attachment.value.size)}</em>)
-          </small>
-        </div>
-      ))}
+        <small>
+          {attachment.value.filename} (
+          <em>{formatFileSize(attachment.value.size)}</em>)
+        </small>
+      </div>
+    ))}
   </div>
 );
 
 export const Message = ({ discussion, message, actions }) => (
   <div className={`message ${editedClass(message)}`}>
     <TextMessage discussion={discussion} message={message} />
-    {actions && message.createdAt !== message.updatedAt && (
-      <button className="btn btn-link" onClick={() => actions.history(message)}>
-        <em>(Edited)</em>
-      </button>
-    )}
+    {actions &&
+      message.createdAt !== message.updatedAt && (
+        <button
+          className="btn btn-link"
+          onClick={() => actions.history(message)}
+        >
+          <em>(Edited)</em>
+        </button>
+      )}
     {message.parent && (
       <div className="message--parent">
         {message.parent.unknown ? (
