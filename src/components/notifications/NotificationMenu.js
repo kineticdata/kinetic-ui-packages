@@ -94,7 +94,8 @@ const FormMenu = ({ form, handleClick }) => (
       <I18n>Form Attributes</I18n>
     </h6>
     {form ? (
-      Object.keys(form.attributes)
+      form.attributes
+        .map(attr => attr.name)
         .map(wrapVar('formAttributes'))
         .map(prop => (
           <DropdownItem key={prop} data-value={prop} onClick={handleClick}>
