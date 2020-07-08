@@ -687,8 +687,8 @@ class FormImplComponent extends Component {
             !readOnlyResult && (
               <FormButtons
                 formOptions={formOptions}
-                formKey={formKey}
                 fields={fields}
+                formKey={formKey}
                 reset={onReset(formKey)}
                 submit={onSubmit(formKey, fieldSet)}
                 submitting={submitting}
