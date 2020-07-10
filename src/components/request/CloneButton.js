@@ -16,7 +16,9 @@ const CloneButton = props =>
     </button>
   );
 
-export const mapStateToProps = () => ({});
+export const mapStateToProps = state => ({
+  appLocation: state.app.location,
+});
 
 export const mapDispatchToProps = {
   cloneSubmission: actions.cloneSubmissionRequest,
@@ -45,7 +47,11 @@ const enhance = compose(
       props.cloneSubmission({
         id: props.submission.id,
         success: clonedSubmission =>
-          props.navigate(`../../../../Draft/request/${clonedSubmission.id}`),
+          props.navigate(
+            `${props.appLocation}/requests/Draft/request/${
+              clonedSubmission.id
+            }`,
+          ),
       }),
   }),
 );
