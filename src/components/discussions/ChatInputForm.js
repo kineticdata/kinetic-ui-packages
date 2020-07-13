@@ -255,8 +255,9 @@ class ChatInput extends Component {
               isOpen={this.state.actionsOpen}
               toggle={this.toggleActionsOpen}
               direction="up"
+              aria-label="More discussion options"
             >
-              <DropdownToggle color="subtle">
+              <DropdownToggle color="subtle" aria-hidden="true">
                 <i className="fa fa-fw fa-plus" />
               </DropdownToggle>
               <DropdownMenu>
@@ -321,6 +322,7 @@ class ChatInput extends Component {
                 onKeyPress={this.handleChatHotKey}
                 onFocus={this.handleFocus}
                 onBlur={this.handleBlur}
+                aria-label="Type your message here…"
               />
             ) : (
               <div className="message-form__editor is-disabled text-danger">
@@ -334,8 +336,9 @@ class ChatInput extends Component {
               type="button"
               className="btn btn-subtle btn-cancel"
               onClick={this.cancelAction}
+              aria-label="Cancel Discussion"
             >
-              <i className="fa fa-fw fa-times" />
+              <i className="fa fa-fw fa-times" aria-hidden="true" />
             </button>
           )}
           {!this.props.discussion.isArchived && (
@@ -343,11 +346,12 @@ class ChatInput extends Component {
               type="submit"
               className="btn btn-subtle btn-send"
               disabled={this.isChatInputInvalid()}
+              aria-label="Send Discusion"
             >
               {this.props.messageActions.editing ? (
-                <i className="fa fa-fw fa-check" />
+                <i className="fa fa-fw fa-check" aria-hidden="true" />
               ) : (
-                <i className="fa fa-fw fa-paper-plane" />
+                <i className="fa fa-fw fa-paper-plane" aria-hidden="true" />
               )}
             </button>
           )}

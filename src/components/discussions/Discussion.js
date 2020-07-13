@@ -146,7 +146,7 @@ export class DiscussionComponent extends React.Component {
               onClick={this.scrollHelper && this.scrollHelper.scrollToBottom}
             >
               New messages
-              <i className="fa fa-fw fa-arrow-down" />
+              <i className="fa fa-fw fa-arrow-down" aria-hidden="true" />
             </button>
           ) : null,
         },
