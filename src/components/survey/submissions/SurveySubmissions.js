@@ -20,7 +20,7 @@ import {
 import { TableComponents, TimeAgo } from '@kineticdata/bundle-common';
 import { ExportModal } from '../export/ExportModal';
 import { PageTitle } from '../../shared/PageTitle';
-import { Map } from 'immutable';
+import { List } from 'immutable';
 
 const tableKey = 'survey-submissions';
 
@@ -226,6 +226,11 @@ export const SurveySubmissionsComponent = ({
           'submittedBy',
           'values',
         ]}
+        alterFilters={{
+          values: {
+            component: TableComponents.ValuesFilter,
+          },
+        }}
         onSearch={() => () => setFilterModalOpen(false)}
       >
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
@@ -238,7 +243,9 @@ export const SurveySubmissionsComponent = ({
 
               submitForm(filterFormKey, {
                 values: {
-                  values: appliedFilters.get('values').delete(valueName),
+                  values: appliedFilters
+                    .get('values')
+                    .filter(v => v.get('field') !== valueName),
                 },
               });
             } else {
@@ -253,11 +260,8 @@ export const SurveySubmissionsComponent = ({
             )
             .merge(
               appliedFilters
-                .get('values', Map())
-                .mapEntries(([filterName, value]) => [
-                  `values[${filterName}]`,
-                  value,
-                ]),
+                .get('values', List())
+                .map(val => [`values[${val.get('field')}]`, val.get('value')]),
             )
             .keySeq()
             .map(filterName => (
