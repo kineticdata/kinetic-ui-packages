@@ -38,9 +38,13 @@ const submissionSearch = ({ filters, pageSize, sortColumn, sortDirection }) => {
     'submittedBy',
     filters.getIn(['submittedBy', 'username']),
   );
-  filters
-    .get('values', Map())
-    .forEach((value, field) => applyOp(query, 'eq', `values[${field}]`, value));
+  filters.get('values', Map()).forEach((value, field) => {
+    if (typeof value === 'number') {
+      applyOp(query, 'eq', `values[${field}]`, value);
+    } else {
+      applyOp(query, 'eq', `values[${value.get('field')}]`, value.get('value'));
+    }
+  });
   return query.build();
 };
 
