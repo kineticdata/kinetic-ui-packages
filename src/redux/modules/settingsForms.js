@@ -54,6 +54,9 @@ export const SUBMISSION_SYSTEM_PROPS = [
 
 export const types = {
   FETCH_FORM: namespace('settingsQueueForms', 'FETCH_FORM'),
+  FETCH_FORM_REQUEST: namespace('settingsQueueForms', 'FETCH_FORM_REQUEST'),
+  FETCH_FORM_SUCCESS: namespace('settingsQueueForms', 'FETCH_FORM_SUCCESS'),
+  FETCH_FORM_FAILURE: namespace('settingsQueueForms', 'FETCH_FORM_FAILURE'),
   SET_QUEUE_FORM: namespace('settingsQueueForms', 'SET_QUEUE_FORM'),
   UPDATE_QUEUE_FORM: namespace('settingsQueueForms', 'UPDATE_QUEUE_FORM'),
   CREATE_FORM: namespace('settingsQueueForms', 'CREATE_FORM'),
@@ -93,6 +96,9 @@ export const types = {
 
 export const actions = {
   fetchForm: withPayload(types.FETCH_FORM),
+  fetchFormRequest: withPayload(types.FETCH_FORM_REQUEST),
+  fetchFormSuccess: withPayload(types.FETCH_FORM_SUCCESS),
+  fetchFormFailure: withPayload(types.FETCH_FORM_FAILURE),
   setForm: withPayload(types.SET_QUEUE_FORM),
   updateForm: withPayload(types.UPDATE_QUEUE_FORM),
   createForm: withPayload(types.CREATE_FORM),
@@ -235,6 +241,17 @@ export const reducer = (state = State(), { type, payload }) => {
   switch (type) {
     case types.FETCH_FORM:
       return state; //.set('loading', true);
+    case types.FETCH_FORM_REQUEST:
+      return state
+        .update(
+          'currentForm',
+          form => (form && form.slug === payload.formSlug ? form : null),
+        )
+        .set('errors', null);
+    case types.FETCH_FORM_SUCCESS:
+      return state.set('currentForm', payload);
+    case types.FETCH_FORM_FAILURE:
+      return state.set('errors', payload);
     case types.SET_QUEUE_FORM:
       const config = buildFormConfigurationObject(payload);
       const newForm =

@@ -39,6 +39,20 @@ export function* fetchFormSaga(action) {
   }
 }
 
+export function* fetchFormRequestSaga({ payload }) {
+  const { error, form } = yield call(fetchForm, {
+    kappSlug: payload.kappSlug,
+    formSlug: payload.formSlug,
+    include: FORM_INCLUDES,
+  });
+
+  if (error) {
+    yield put(actions.fetchFormFailure(error));
+  } else {
+    yield put(actions.fetchFormSuccess(form));
+  }
+}
+
 export function* cloneFormSaga({ payload }) {
   const { error: cloneError, form: cloneForm } = yield call(fetchForm, {
     kappSlug: payload.kappSlug,
@@ -360,6 +374,7 @@ export function* deleteFormSaga({ payload }) {
 
 export function* watchSettingsForms() {
   yield takeEvery(types.FETCH_FORM, fetchFormSaga);
+  yield takeEvery(types.FETCH_FORM_REQUEST, fetchFormRequestSaga);
   yield takeEvery(types.FETCH_KAPP, fetchKappSaga);
   yield takeEvery(types.UPDATE_QUEUE_FORM, updateFormSaga);
   yield takeEvery(types.CREATE_FORM, createFormSaga);

@@ -18,10 +18,9 @@ export const FormSettingsWrapper = compose(
     state => ({
       kapp: state.app.kapp,
       form: state.settingsForms.currentForm,
-      loading: state.settingsForms.loading,
       error: state.settingsForms.error,
     }),
-    { fetchFormRequest: formActions.fetchForm },
+    { fetchFormRequest: formActions.fetchFormRequest },
   ),
   lifecycle({
     componentWillMount(prev, next) {
@@ -32,8 +31,8 @@ export const FormSettingsWrapper = compose(
     },
   }),
 )(
-  ({ form, error, loading }) =>
-    loading || error || !form ? (
+  ({ form, error }) =>
+    error || !form ? (
       <div className="page-container">
         <PageTitle parts={[form && form.name, `Forms | Settings`]} />
         <div className="page-panel page-panel--white">
