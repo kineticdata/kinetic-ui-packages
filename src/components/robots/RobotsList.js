@@ -128,6 +128,7 @@ const RobotsListComponent = ({
                 <th scope="col">
                   <I18n>Next Execution Time</I18n>
                 </th>
+                <th />
               </tr>
             </thead>
             <tbody>

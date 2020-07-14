@@ -68,7 +68,7 @@ export function* deleteRobotSaga(action) {
     yield put(actions.setDeleteError(errors));
   } else {
     yield put(actions.setDeleteSuccess());
-    addToast('Report Deleted');
+    addToast('Robot Deleted');
     if (typeof action.payload.callback === 'function') {
       action.payload.callback();
     }
