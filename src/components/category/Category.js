@@ -67,6 +67,7 @@ export const Category = ({ category }) => (
           </div>
           <div className="cards__wrapper cards__wrapper--seconds">
             {category.forms
+              .sort((a, b) => a.name.localeCompare(b.name))
               .map(form => ({
                 form,
                 path: form.slug,
