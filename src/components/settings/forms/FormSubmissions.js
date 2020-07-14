@@ -11,14 +11,10 @@ import {
   unmountTable,
 } from '@kineticdata/react';
 import { Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
-import {
-  TableComponents,
-  TimeAgo,
-  SubmissionExportModalButton,
-} from '@kineticdata/bundle-common';
+import { TableComponents, TimeAgo } from '@kineticdata/bundle-common';
 import { ExportModal } from './ExportModal';
 import { PageTitle } from '../../shared/PageTitle';
-import { Map } from 'immutable';
+import { List } from 'immutable';
 import { actions } from '../../../redux/modules/settingsForms';
 
 // TODO Replace old details page with this one when SubmissionsTable from RKL is ready to be used
@@ -52,8 +48,6 @@ const FilterPill = props => (
     </button>
   </div>
 );
-
-const VALUE_FILTER_MATCH = /values\[(.+)]/;
 
 export const FormSubmissionsComponent = ({
   kapp,
@@ -115,199 +109,201 @@ export const FormSubmissionsComponent = ({
   };
 
   return (
-    <SubmissionTable
-      tableKey={tableKey}
-      kappSlug={kapp.slug}
-      formSlug={form.slug}
-      components={{
-        EmptyBodyRow,
-        FilterFormLayout,
-        FilterFormButtons,
-      }}
-      columnSet={['label', 'submittedBy', 'type', 'coreState', 'createdAt']}
-      alterColumns={{
-        label: {
-          components: { BodyCell: LinkCell },
-        },
-        submittedBy: {
-          title: 'Submitter',
-        },
-        createdAt: {
-          title: 'Created',
-          components: {
-            BodyCell: TableComponents.TimeAgoCell,
+    form && (
+      <SubmissionTable
+        tableKey={tableKey}
+        kappSlug={kapp.slug}
+        formSlug={form.slug}
+        components={{
+          EmptyBodyRow,
+          FilterFormLayout,
+          FilterFormButtons,
+        }}
+        columnSet={['label', 'submittedBy', 'type', 'coreState', 'createdAt']}
+        alterColumns={{
+          label: {
+            components: { BodyCell: LinkCell },
           },
-        },
-        coreState: {
-          title: 'State',
-          components: {
-            BodyCell: TableComponents.CoreStateBadgeCell,
+          submittedBy: {
+            title: 'Submitter',
           },
-        },
-        // values: {
-        //   filter: 'custom',
-        //   type: 'text',
-        //   initial: List([]),
-        //   options: () =>
-        //     form && form.fields
-        //       ? form.fields.map(({ name }) => ({ value: name, label: name }))
-        //       : [],
-        //   components: {
-        //     Filter: TableComponents.ValuesFilter,
-        //   },
-        // },
-      }}
-      filterSet={['startDate', 'endDate', 'submittedBy', 'coreState', 'values']}
-      onSearch={() => () => setFilterModalOpen(false)}
-    >
-      {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
-        const handleClearFilter = filter => () => {
-          const matches = filter.match(VALUE_FILTER_MATCH);
+          createdAt: {
+            title: 'Created',
+            components: {
+              BodyCell: TableComponents.TimeAgoCell,
+            },
+          },
+          coreState: {
+            title: 'State',
+            components: {
+              BodyCell: TableComponents.CoreStateBadgeCell,
+            },
+          },
+        }}
+        filterSet={[
+          'startDate',
+          'endDate',
+          'submittedBy',
+          'coreState',
+          'values',
+        ]}
+        alterFilters={{
+          values: {
+            component: TableComponents.ValuesFilter,
+          },
+        }}
+        onSearch={() => () => setFilterModalOpen(false)}
+      >
+        {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
+          const handleClearFilter = filter => () => {
+            const matches = filter.match(/values\[(.+)]/);
 
-          if (matches) {
-            // Handling clearing a value.
-            const valueName = matches[1];
+            if (matches) {
+              // Handling clearing a value.
+              const valueName = matches[1];
 
-            submitForm(filterFormKey, {
-              values: {
-                values: appliedFilters.get('values').delete(valueName),
-              },
-            });
-          } else {
-            submitForm(filterFormKey, { values: { [filter]: null } });
-          }
-        };
+              submitForm(filterFormKey, {
+                values: {
+                  values: appliedFilters
+                    .get('values')
+                    .filter(v => v.get('field') !== valueName),
+                },
+              });
+            } else {
+              submitForm(filterFormKey, { values: { [filter]: null } });
+            }
+          };
 
-        const filterPills = appliedFilters
-          .filter(
-            (filter, filterName) =>
-              !isValueEmpty(filter) && filterName !== 'values',
-          )
-          .merge(
-            appliedFilters
-              .get('values', Map())
-              .mapEntries(([filterName, value]) => [
-                `values[${filterName}]`,
-                value,
-              ]),
-          )
-          .keySeq()
-          .map(filterName => (
-            <FilterPill
-              key={filterName}
-              name={filterName}
-              onRemove={handleClearFilter(filterName)}
-            />
-          ));
+          const filterPills = appliedFilters
+            .filter(
+              (filter, filterName) =>
+                !isValueEmpty(filter) && filterName !== 'values',
+            )
+            .merge(
+              appliedFilters
+                .get('values', List())
+                .map(val => [`values[${val.get('field')}]`, val.get('value')]),
+            )
+            .keySeq()
+            .map(filterName => (
+              <FilterPill
+                key={filterName}
+                name={filterName}
+                onRemove={handleClearFilter(filterName)}
+              />
+            ));
 
-        return (
-          <div className="page-container">
-            <PageTitle parts={[form.name, `Forms`]} />
-            <div className="page-panel page-panel--white">
-              <div className="page-title">
-                <div
-                  role="navigation"
-                  aria-label="breadcrumbs"
-                  className="page-title__breadcrumbs"
-                >
-                  <span className="breadcrumb-item">
-                    <span className="breadcrumb-item">
-                      <Link to="../../../">
-                        <I18n>services</I18n>
-                      </Link>
-                    </span>{' '}
-                    <span aria-hidden="true">/ </span>
-                    <span className="breadcrumb-item">
-                      <Link to="../../">
-                        <I18n>settings</I18n>
-                      </Link>
-                    </span>{' '}
-                    <span aria-hidden="true">/ </span>
-                    <span className="breadcrumb-item">
-                      <Link to="../">
-                        <I18n>forms</I18n>
-                      </Link>
-                    </span>{' '}
-                    <span aria-hidden="true">/ </span>
-                  </span>
-                  <h1>
-                    <I18n>{form.name}</I18n>
-                  </h1>
-                </div>
-                <div className="page-title__actions">
-                  <button
-                    onClick={() => openModal('export')}
-                    value="export"
-                    className="btn btn-secondary pull-left"
+          return (
+            <div className="page-container">
+              <PageTitle parts={[form.name, `Forms`]} />
+              <div className="page-panel page-panel--white">
+                <div className="page-title">
+                  <div
+                    role="navigation"
+                    aria-label="breadcrumbs"
+                    className="page-title__breadcrumbs"
                   >
-                    <span className="fa fa-fw fa-download" />
-                    <I18n> Export Records</I18n>
-                  </button>
-                  <Link to="settings" className="btn btn-primary">
-                    <span className="fa fa-fw fa-cog" />
-                    <I18n>Form Settings</I18n>
-                  </Link>
+                    <span className="breadcrumb-item">
+                      <span className="breadcrumb-item">
+                        <Link to="../../../">
+                          <I18n>services</I18n>
+                        </Link>
+                      </span>{' '}
+                      <span aria-hidden="true">/ </span>
+                      <span className="breadcrumb-item">
+                        <Link to="../../">
+                          <I18n>settings</I18n>
+                        </Link>
+                      </span>{' '}
+                      <span aria-hidden="true">/ </span>
+                      <span className="breadcrumb-item">
+                        <Link to="../">
+                          <I18n>forms</I18n>
+                        </Link>
+                      </span>{' '}
+                      <span aria-hidden="true">/ </span>
+                    </span>
+                    <h1>
+                      <I18n>{form.name}</I18n>
+                    </h1>
+                  </div>
+                  <div className="page-title__actions">
+                    <button
+                      onClick={() => openModal('export')}
+                      value="export"
+                      className="btn btn-secondary pull-left"
+                    >
+                      <span className="fa fa-fw fa-download" />
+                      <I18n> Export Records</I18n>
+                    </button>
+                    <Link to="settings" className="btn btn-primary">
+                      <span className="fa fa-fw fa-cog" />
+                      <I18n>Form Settings</I18n>
+                    </Link>
+                  </div>
+                </div>
+                <div>
+                  <div className="data-list data-list--fourths">
+                    <dl>
+                      <dt>Type</dt>
+                      <dd>
+                        {form.type || <em className="text-muted">None</em>}
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>Status</dt>
+                      <dd>
+                        {form.status || <em className="text-muted">None</em>}
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>Created</dt>
+                      <dd>
+                        <TimeAgo timestamp={form.createdAt} />
+                        <br />
+                        <small>
+                          <I18n>by</I18n> {form.createdBy}
+                        </small>
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>Updated</dt>
+                      <dd>
+                        <TimeAgo timestamp={form.updatedAt} />
+                        <br />
+                        <small>
+                          <I18n>by</I18n> {form.updatedBy}
+                        </small>
+                      </dd>
+                    </dl>
+                    {form.description && (
+                      <div>
+                        <dl>
+                          <dt>Description</dt>
+                          <dd>{form.description}</dd>
+                        </dl>
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="section__title">
+                    <I18n>Submissions</I18n>
+                    {filter}
+                  </h3>
+                  <div className="section__content">
+                    {filterPills.size > 0 && (
+                      <div className="filter-pills">{filterPills}</div>
+                    )}
+                    <div className="scroll-wrapper-h">{table}</div>
+                    {pagination}
+                  </div>
                 </div>
               </div>
-              <div>
-                <div className="data-list data-list--fourths">
-                  <dl>
-                    <dt>Type</dt>
-                    <dd>{form.type || <em className="text-muted">None</em>}</dd>
-                  </dl>
-                  <dl>
-                    <dt>Status</dt>
-                    <dd>
-                      {form.status || <em className="text-muted">None</em>}
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt>Created</dt>
-                    <dd>
-                      <TimeAgo timestamp={form.createdAt} />
-                      <br />
-                      <small>
-                        <I18n>by</I18n> {form.createdBy}
-                      </small>
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt>Updated</dt>
-                    <dd>
-                      <TimeAgo timestamp={form.updatedAt} />
-                      <br />
-                      <small>
-                        <I18n>by</I18n> {form.updatedBy}
-                      </small>
-                    </dd>
-                  </dl>
-                  {form.description && (
-                    <div>
-                      <dl>
-                        <dt>Description</dt>
-                        <dd>{form.description}</dd>
-                      </dl>
-                    </div>
-                  )}
-                </div>
-                <h3 className="section__title">
-                  <I18n>Submissions</I18n>
-                  {filter}
-                </h3>
-                <div className="section__content">
-                  {filterPills.size > 0 && (
-                    <div className="filter-pills">{filterPills}</div>
-                  )}
-                  <div className="scroll-wrapper-h">{table}</div>
-                  {pagination}
-                </div>
-              </div>
+              <ExportModal form={form} filter={filter} />
             </div>
-            <ExportModal form={form} filter={filter} />
-          </div>
-        );
-      }}
-    </SubmissionTable>
+          );
+        }}
+      </SubmissionTable>
+    )
   );
 };
 
