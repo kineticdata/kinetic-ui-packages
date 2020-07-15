@@ -257,8 +257,9 @@ class ChatInput extends Component {
               direction="up"
               aria-label="More discussion options"
             >
-              <DropdownToggle color="subtle" aria-hidden="true">
-                <i className="fa fa-fw fa-plus" />
+              <DropdownToggle color="subtle">
+                <i className="fa fa-fw fa-plus" aria-hidden="true" />
+                <span className="sr-only">Add File or Invite Person</span>
               </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem onClick={this.handleAttachmentClick}>

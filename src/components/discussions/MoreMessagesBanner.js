@@ -18,8 +18,8 @@ export const MoreMessagesBanner = props => {
   }
   return (
     <div className="banner banner--more">
-      <h5 className="banner__title">{title}</h5>
-      <h6 className="banner__subtitle">{subtitle}</h6>
+      <div className="banner__title">{title}</div>
+      <div className="banner__subtitle">{subtitle}</div>
     </div>
   );
 };

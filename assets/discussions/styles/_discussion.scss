@@ -59,14 +59,18 @@
     color: $gray80;
     font-weight: 600;
     line-height: 1.5rem;
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
   }
 
   &__subtitle {
     @include ms-respond(font-size, -1);
 
     margin-top: 0;
-    color: $blue2;
+    color: $gray60;
     line-height: 1.5rem;
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
   }
 }
 
