@@ -258,7 +258,10 @@ class ChatInput extends Component {
               direction="up"
               aria-label="More discussion options"
             >
-              <DropdownToggle color="subtle">
+              <DropdownToggle
+                color="subtle"
+                // tabIndex={2}
+              >
                 <i className="fa fa-fw fa-plus" aria-hidden="true" />
                 <span className="sr-only">Add File or Invite Person</span>
               </DropdownToggle>
@@ -315,7 +318,7 @@ class ChatInput extends Component {
             {!this.props.discussion.isArchived ? (
               <ContentEditable
                 ref={element => (this.contentEditable = element)}
-                tabIndex={0}
+                // tabIndex={1}
                 tagName="div"
                 className="message-form__editor"
                 contentEditable="plaintext-only"
@@ -338,7 +341,8 @@ class ChatInput extends Component {
               type="button"
               className="btn btn-subtle btn-cancel"
               onClick={this.cancelAction}
-              aria-label="Cancel Discussion"
+              aria-label="Cancel Discussion Message"
+              // tabIndex={3}
             >
               <i className="fa fa-fw fa-times" aria-hidden="true" />
             </button>
@@ -348,7 +352,8 @@ class ChatInput extends Component {
               type="submit"
               className="btn btn-subtle btn-send"
               disabled={this.isChatInputInvalid()}
-              aria-label="Send Discusion"
+              aria-label="Send Discussion Message"
+              // tabIndex={3}
             >
               {this.props.messageActions.editing ? (
                 <i className="fa fa-fw fa-check" aria-hidden="true" />
