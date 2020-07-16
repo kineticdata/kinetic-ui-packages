@@ -83,6 +83,7 @@ const UploadCard = ({ discussion, message, attachment, remove }) => {
           justifyContent: 'center',
         }}
         onClick={remove(attachment)}
+        aria-label="Remove file from message"
       >
         <i className="fa fa-fw fa-times" />
       </button>
