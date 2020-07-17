@@ -5,19 +5,13 @@ import { connect } from '../../../redux/store';
 import {
   I18n,
   SubmissionTable,
-  submitForm,
-  isValueEmpty,
   mountTable,
   unmountTable,
 } from '@kineticdata/react';
-import { Dropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 import { TableComponents, TimeAgo } from '@kineticdata/bundle-common';
 import { ExportModal } from './ExportModal';
 import { PageTitle } from '../../shared/PageTitle';
-import { List } from 'immutable';
 import { actions } from '../../../redux/modules/settingsForms';
-
-// TODO Replace old details page with this one when SubmissionsTable from RKL is ready to be used
 
 const tableKey = 'queue-settings-form-submissions';
 
@@ -34,79 +28,23 @@ const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   noItemsMessage: 'There are no submissions to display.',
 });
 
-const FilterPill = props => (
-  <div className="btn-group">
-    <button type="button" className="btn btn-xs btn-subtle">
-      {props.name}
-    </button>
-    <button
-      type="button"
-      className="btn btn-xs btn-subtle"
-      onClick={props.onRemove}
-    >
-      <span className="fa fa-fw fa-times" />
-    </button>
-  </div>
-);
-
 export const FormSubmissionsComponent = ({
   kapp,
   form,
   openModal,
-  filterModalOpen,
-  setFilterModalOpen,
+  filterOpen,
+  setFilterOpen,
 }) => {
-  const FilterFormLayout = ({ buttons, fields }) => (
-    <Dropdown
-      direction="left"
-      size="sm"
-      isOpen={filterModalOpen}
-      toggle={() => setFilterModalOpen(!filterModalOpen)}
-    >
-      <DropdownToggle color="primary">Filter</DropdownToggle>
-      <DropdownMenu modifiers={{ preventOverflow: { enabled: true } }}>
-        <div className="filter-menu">
-          <form>
-            <div className="row">
-              <div className="col-6">{fields.get('startDate')}</div>
-              <div className="col-6">{fields.get('endDate')}</div>
-              <div className="col-12">{fields.get('coreState')}</div>
-              <div className="col-12">{fields.get('submittedBy')}</div>
-              <div className="col-12">{fields.get('values')}</div>
-            </div>
-            <span className="text-right">{buttons}</span>
-          </form>
-        </div>
-      </DropdownMenu>
-    </Dropdown>
-  );
-
-  const FilterFormButtons = ({ fields, formKey, ...props }) => {
-    const resetFilterForm = () => () => {
-      const values = fields.map(() => null);
-      submitForm(formKey, { values });
-    };
-    return (
-      <div className="form-buttons__right">
-        <button className="btn btn-link" onClick={resetFilterForm()}>
-          Reset
-        </button>
-        <button
-          className="btn btn-success"
-          type="submit"
-          disabled={!props.dirty || props.submitting}
-          onClick={props.submit}
-        >
-          {props.submitting ? (
-            <span className="fa fa-circle-o-notch fa-spin fa-fw" />
-          ) : (
-            <span className="fa fa-check fa-fw" />
-          )}
-          Apply
-        </button>
-      </div>
-    );
-  };
+  const FilterFormLayout = TableComponents.generateFilterFormLayout({
+    isOpen: filterOpen,
+    toggle: () => setFilterOpen(open => !open),
+    fieldsLayout: [
+      ['startDate', 'endDate'],
+      'coreState',
+      'submittedBy',
+      'values',
+    ],
+  });
 
   return (
     form && (
@@ -117,7 +55,7 @@ export const FormSubmissionsComponent = ({
         components={{
           EmptyBodyRow,
           FilterFormLayout,
-          FilterFormButtons,
+          FilterFormButtons: TableComponents.FilterFormButtons,
         }}
         columnSet={['label', 'submittedBy', 'type', 'coreState', 'createdAt']}
         alterColumns={{
@@ -152,47 +90,9 @@ export const FormSubmissionsComponent = ({
             component: TableComponents.ValuesFilter,
           },
         }}
-        onSearch={() => () => setFilterModalOpen(false)}
+        onSearch={() => () => setFilterOpen(false)}
       >
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
-          const handleClearFilter = filter => () => {
-            const matches = filter.match(/values\[(.+)]/);
-
-            if (matches) {
-              // Handling clearing a value.
-              const valueName = matches[1];
-
-              submitForm(filterFormKey, {
-                values: {
-                  values: appliedFilters
-                    .get('values')
-                    .filter(v => v.get('field') !== valueName),
-                },
-              });
-            } else {
-              submitForm(filterFormKey, { values: { [filter]: null } });
-            }
-          };
-
-          const filterPills = appliedFilters
-            .filter(
-              (filter, filterName) =>
-                !isValueEmpty(filter) && filterName !== 'values',
-            )
-            .merge(
-              appliedFilters
-                .get('values', List())
-                .map(val => [`values[${val.get('field')}]`, val.get('value')]),
-            )
-            .keySeq()
-            .map(filterName => (
-              <FilterPill
-                key={filterName}
-                name={filterName}
-                onRemove={handleClearFilter(filterName)}
-              />
-            ));
-
           return (
             <div className="page-container">
               <PageTitle parts={[form.name, `Forms`]} />
@@ -285,14 +185,15 @@ export const FormSubmissionsComponent = ({
                       </div>
                     )}
                   </div>
-                  <h3 className="section__title">
+                  <h3 className="section__title pr-0 mb-2">
                     <I18n>Submissions</I18n>
                     {filter}
                   </h3>
                   <div className="section__content">
-                    {filterPills.size > 0 && (
-                      <div className="filter-pills">{filterPills}</div>
-                    )}
+                    <TableComponents.FilterPills
+                      filterFormKey={filterFormKey}
+                      appliedFilters={appliedFilters}
+                    />
                     <div className="scroll-wrapper-h">{table}</div>
                     {pagination}
                   </div>
@@ -320,7 +221,7 @@ export const FormSubmissions = compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  withState('filterModalOpen', 'setFilterModalOpen', false),
+  withState('filterOpen', 'setFilterOpen', false),
   lifecycle({
     componentDidMount() {
       mountTable(tableKey);
