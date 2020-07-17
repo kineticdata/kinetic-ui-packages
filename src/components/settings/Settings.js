@@ -7,7 +7,6 @@ import { actions as formActions } from '../../redux/modules/settingsForms';
 import { ServicesSettings } from './services_settings/ServicesSettings';
 import { FormsList } from './forms/FormsList';
 import { FormSettings } from './forms/FormSettings';
-// import { FormDetails } from './forms/FormDetails';
 import { FormSubmissions } from './forms/FormSubmissions';
 import { FormActivity } from './forms/FormActivity';
 import { CategorySettings } from './categories/CategorySettings';
