@@ -7,7 +7,6 @@ import { compose, withState, withHandlers, lifecycle } from 'recompose';
 import { PageTitle } from '../../shared/PageTitle';
 import {
   UncontrolledDropdown,
-  Dropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
@@ -22,8 +21,6 @@ import {
   fetchForm,
   mountTable,
   unmountTable,
-  submitForm,
-  isValueEmpty,
 } from '@kineticdata/react';
 import {
   FormComponents,
@@ -150,26 +147,11 @@ const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   noItemsMessage: 'There are no surveys to display.',
 });
 
-const FilterPill = props => (
-  <div className="btn-group">
-    <button type="button" className="btn btn-xs btn-subtle">
-      {props.name}
-    </button>
-    <button
-      type="button"
-      className="btn btn-xs btn-subtle"
-      onClick={props.onRemove}
-    >
-      <span className="fa fa-fw fa-times" />
-    </button>
-  </div>
-);
-
 const SurveyListComponent = ({
   kapp,
   loading,
-  filterModalOpen,
-  setFilterModalOpen,
+  filterOpen,
+  setFilterOpen,
   modalOpen,
   toggleModal,
   deleteForm,
@@ -177,54 +159,10 @@ const SurveyListComponent = ({
   fetchAppDataRequest,
   navigate,
 }) => {
-  const FilterFormLayout = ({ buttons, fields }) => (
-    <Dropdown
-      direction="left"
-      size="sm"
-      isOpen={filterModalOpen}
-      toggle={() => setFilterModalOpen(!filterModalOpen)}
-    >
-      <DropdownToggle color="primary">Filter</DropdownToggle>
-      <DropdownMenu modifiers={{ preventOverflow: { enabled: true } }}>
-        <div className="filter-menu">
-          <form>
-            <div className="row">
-              <div className="col-12">{fields.get('name')}</div>
-              <div className="col-12">{fields.get('status')}</div>
-            </div>
-            <span className="text-right">{buttons}</span>
-          </form>
-        </div>
-      </DropdownMenu>
-    </Dropdown>
-  );
-
-  const FilterFormButtons = ({ fields, formKey, ...props }) => {
-    const resetFilterForm = () => () => {
-      const values = fields.map(() => null);
-      submitForm(formKey, { values });
-    };
-    return (
-      <div className="form-buttons__right">
-        <button className="btn btn-link" onClick={resetFilterForm()}>
-          Reset
-        </button>
-        <button
-          className="btn btn-success"
-          type="submit"
-          disabled={!props.dirty || props.submitting}
-          onClick={props.submit}
-        >
-          {props.submitting ? (
-            <span className="fa fa-circle-o-notch fa-spin fa-fw" />
-          ) : (
-            <span className="fa fa-check fa-fw" />
-          )}
-          Apply
-        </button>
-      </div>
-    );
-  };
+  const FilterFormLayout = TableComponents.generateFilterFormLayout({
+    isOpen: filterOpen,
+    toggle: () => setFilterOpen(open => !open),
+  });
 
   return (
     !loading && (
@@ -235,7 +173,7 @@ const SurveyListComponent = ({
         components={{
           EmptyBodyRow,
           FilterFormLayout,
-          FilterFormButtons,
+          FilterFormButtons: TableComponents.FilterFormButtons,
         }}
         addColumns={[
           {
@@ -290,23 +228,9 @@ const SurveyListComponent = ({
             })),
           },
         }}
-        onSearch={() => () => setFilterModalOpen(false)}
+        onSearch={() => () => setFilterOpen(false)}
       >
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
-          const handleClearFilter = filter => () =>
-            submitForm(filterFormKey, { values: { [filter]: null } });
-
-          const filterPills = appliedFilters
-            .filter(filter => !isValueEmpty(filter))
-            .keySeq()
-            .map(filterName => (
-              <FilterPill
-                key={filterName}
-                name={filterName}
-                onRemove={handleClearFilter(filterName)}
-              />
-            ));
-
           return (
             <div className="page-container">
               <PageTitle parts={[`Surveys`]} />
@@ -342,11 +266,12 @@ const SurveyListComponent = ({
                   </div>
                 </div>
                 <div>
-                  <div className="mb-2 text-right">{filter}</div>
-                  {filterPills.size > 0 && (
-                    <div className="filter-pills">{filterPills}</div>
-                  )}
-                  {table}
+                  <div className="text-right mb-2">{filter}</div>
+                  <TableComponents.FilterPills
+                    filterFormKey={filterFormKey}
+                    appliedFilters={appliedFilters}
+                  />
+                  <div className="scroll-wrapper-h">{table}</div>
                   {pagination}
                 </div>
               </div>
@@ -451,7 +376,7 @@ export const SurveyList = compose(
     mapDispatchToProps,
   ),
   withState('modalOpen', 'setModalOpen', false),
-  withState('filterModalOpen', 'setFilterModalOpen', false),
+  withState('filterOpen', 'setFilterOpen', false),
   withHandlers({
     toggleModal: props => slug =>
       !slug || slug === props.modalOpen
