@@ -87,6 +87,9 @@ export const filterReviver = filterJSON => {
     if (typeof filterJSON === 'string') {
       filter = JSON.parse(filterJSON);
     }
+    if (!filter.name) {
+      return null;
+    }
     const sortBy = VALID_SORT_OPTIONS.includes(filter.sortBy)
       ? filter.sortBy
       : undefined;

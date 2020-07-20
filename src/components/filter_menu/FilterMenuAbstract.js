@@ -63,7 +63,9 @@ const restrictDateRange = filter =>
     : null;
 
 const validateFilterName = filter => {
-  if (filter.name && filter.name.indexOf('%') >= 0) {
+  if (!filter.name || !filter.name.trim()) {
+    return 'Filter name cannot be empty.';
+  } else if (filter.name.indexOf('%') >= 0) {
     return 'Percentage signs are not allowed in filter names.';
   }
 };
