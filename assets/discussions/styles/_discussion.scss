@@ -190,7 +190,7 @@
     min-height: 24px;
     max-height: 25vh;
     overflow-y: auto;
-    color: #54698d;
+    color: $gray90;
     white-space: pre-wrap;
     overflow-wrap: break-word;
 
@@ -202,6 +202,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    &.is-disabled.text-danger{
+      color: $danger70 !important;
     }
   }
 }
@@ -273,6 +276,10 @@
           opacity: 1;
           transition: opacity 0.3s;
         }
+      }
+      &:focus{
+        outline: none;
+        box-shadow: 0 0 1px 4px rgba($orange-kinops, .25);
       }
 
       &.editing,

@@ -163,7 +163,6 @@ export const Message = ({ discussion, message, actions }) => (
 
 export const UserMessage = ({ discussion, message, profile, actions }) => (
   <div
-    tabIndex={0}
     className={classnames('message-list__item', {
       editing: actions && actions.editing && actions.editing.id === message.id,
       replying:
