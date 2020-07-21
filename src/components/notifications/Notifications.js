@@ -4,7 +4,7 @@ import { Router } from '@reach/router';
 import { Notification } from './Notification';
 import { DateFormat } from './DateFormat';
 import { NotificationsNotFound } from './NotificationsNotFound';
-import { NotificationsList } from './NotificationsList';
+import { NotificationsList } from './NotificationsListNew';
 import {
   NOTIFICATIONS_FORM_SLUG,
   NOTIFICATIONS_DATE_FORMAT_FORM_SLUG,

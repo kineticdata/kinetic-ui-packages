@@ -7,7 +7,7 @@ import { CreateRobot } from './CreateRobot';
 import { Robot } from './Robot';
 import { RobotExecution } from './RobotExecution';
 import { RobotExecutionsList } from './RobotExecutionsList';
-import { RobotsList } from './RobotsList';
+import { RobotsList } from './RobotsListNew';
 
 import { context } from '../../redux/store';
 import { I18n } from '@kineticdata/react';
