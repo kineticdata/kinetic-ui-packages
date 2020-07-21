@@ -150,18 +150,6 @@ export const UserEdit = ({ formKey, username, onDelete }) => (
           }),
         },
       }}
-      addDataSources={
-        username
-          ? {
-              user: {
-                fn: fetchUser,
-                params: [{ username: username }],
-                // Set to the user, or the result in case of an error
-                transform: result => result.user || result,
-              },
-            }
-          : undefined
-      }
       onSave={handleSave}
     >
       {({ form, bindings: { form: formBindings }, initialized, user }) =>

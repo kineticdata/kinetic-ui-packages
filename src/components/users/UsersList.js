@@ -166,7 +166,7 @@ const CloneErrorFormLayout = () => (
 
 const NameCell = ({ value, row }) => (
   <td>
-    <Link to={row.get('username')} title="Edit User">
+    <Link to={encodeURIComponent(row.get('username'))} title="Edit User">
       {value}
     </Link>
   </td>
@@ -180,10 +180,16 @@ const ActionsCell = ({ toggleModal }) => ({ row }) => (
         <span className="fa fa-chevron-down fa-fw" />
       </DropdownToggle>
       <DropdownMenu right>
-        <Link to={`/profile/${row.get('username')}`} className="dropdown-item">
+        <Link
+          to={`/profile/${encodeURIComponent(row.get('username'))}`}
+          className="dropdown-item"
+        >
           <I18n>View</I18n>
         </Link>
-        <Link to={row.get('username')} className="dropdown-item">
+        <Link
+          to={encodeURIComponent(row.get('username'))}
+          className="dropdown-item"
+        >
           <I18n>Edit</I18n>
         </Link>
         <DropdownItem onClick={() => toggleModal(row.get('username'))}>
