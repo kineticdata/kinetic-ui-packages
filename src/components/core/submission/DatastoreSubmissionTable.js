@@ -3,7 +3,7 @@ import { searchSubmissions } from '../../../apis';
 import { generatePaginationParams } from '../../../apis/http';
 import { filterDataSources, filters } from './DatastoreSubmissionFilters';
 
-const dataSource = ({ formSlug }) => ({
+const dataSource = ({ formSlug, notificationType }) => ({
   fn: searchSubmissions,
   params: paramData => [
     {
@@ -11,7 +11,7 @@ const dataSource = ({ formSlug }) => ({
       form: formSlug,
       search: {
         direction: paramData.sortDirection,
-        include: ['details'],
+        include: ['details,values'],
         index: paramData.filters.getIn(['query', 'index']),
         // need to pass undefined instead of null so the `q` parameter is not
         // added to the query string with empty value
@@ -21,7 +21,11 @@ const dataSource = ({ formSlug }) => ({
     },
   ],
   transform: result => ({
-    data: result.submissions,
+    data: notificationType
+      ? notificationType !== 'Date Format'
+        ? result.submissions.filter(n => n.values.Type === notificationType)
+        : result.submissions
+      : result.submissions,
     nextPageToken: result.nextPageToken,
   }),
 });
@@ -115,7 +119,7 @@ const columns = [
 ];
 
 export const DatastoreSubmissionTable = generateTable({
-  tableOptions: ['formSlug'],
+  tableOptions: ['formSlug', 'notificationType'],
   columns,
   dataSource,
   filters,
