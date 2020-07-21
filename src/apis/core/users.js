@@ -34,8 +34,10 @@ export const fetchUser = (options = {}) => {
   return axios
     .get(
       spaceSlug
-        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${spaceSlug}/users/${username}`
-        : `${bundle.apiLocation()}/users/${username}`,
+        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${spaceSlug}/users/${encodeURIComponent(
+            username,
+          )}`
+        : `${bundle.apiLocation()}/users/${encodeURIComponent(username)}`,
       {
         params: paramBuilder(options),
         headers: headerBuilder(options),
@@ -60,8 +62,10 @@ export const updateUser = (options = {}) => {
   return axios
     .put(
       spaceSlug
-        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${spaceSlug}/users/${username}`
-        : `${bundle.apiLocation()}/users/${username}`,
+        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${spaceSlug}/users/${encodeURIComponent(
+            username,
+          )}`
+        : `${bundle.apiLocation()}/users/${encodeURIComponent(username)}`,
       user,
       {
         params: paramBuilder(options),
@@ -106,8 +110,10 @@ export const deleteUser = (options = {}) => {
   return axios
     .delete(
       spaceSlug
-        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${spaceSlug}/users/${username}`
-        : `${bundle.apiLocation()}/users/${username}`,
+        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${spaceSlug}/users/${encodeURIComponent(
+            username,
+          )}`
+        : `${bundle.apiLocation()}/users/${encodeURIComponent(username)}`,
       {
         params: paramBuilder(options),
         headers: headerBuilder(options),
