@@ -58,11 +58,10 @@ export const FormSubmissionsComponent = ({
           FilterFormButtons: TableComponents.FilterFormButtons,
         }}
         columnSet={['label', 'createdAt', 'submittedBy', 'coreState']}
-        defaultSortColumn={'createdAt'}
+        defaultSortColumn="createdAt"
         alterColumns={{
           label: {
             components: { BodyCell: LinkCell },
-            sortable: true,
           },
           createdAt: {
             title: 'Created',
@@ -70,12 +69,8 @@ export const FormSubmissionsComponent = ({
               BodyCell: TableComponents.TimeAgoCell,
             },
           },
-          submittedBy: {
-            sortable: true,
-          },
           coreState: {
             title: 'State',
-            sortable: true,
             components: {
               BodyCell: TableComponents.CoreStateBadgeCell,
             },
