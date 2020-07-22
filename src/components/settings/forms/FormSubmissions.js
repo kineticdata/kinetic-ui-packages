@@ -58,6 +58,7 @@ export const FormSubmissionsComponent = ({
           FilterFormButtons: TableComponents.FilterFormButtons,
         }}
         columnSet={['label', 'submittedBy', 'type', 'coreState', 'createdAt']}
+        defaultSortColumn="createdAt"
         alterColumns={{
           label: {
             components: { BodyCell: LinkCell },
