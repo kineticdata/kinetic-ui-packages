@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { UserForm as UserFormLib, I18n, fetchUser } from '@kineticdata/react';
+import { compose, withHandlers } from 'recompose';
+import { UserForm, I18n, refetchTable } from '@kineticdata/react';
 import {
   FormComponents,
   ProfileCard,
@@ -11,10 +12,6 @@ import { getIn } from 'immutable';
 
 const asArray = value => (value ? [value] : []);
 
-const handleSave = () => ({ user }) => {
-  addToast(`${user.username} updated successfully.`);
-};
-
 const buildProfile = profile => ({
   ...profile,
   displayName: profile.displayName || '',
@@ -24,65 +21,60 @@ const buildProfile = profile => ({
   profileAttributes: profile.profileAttributes || [],
 });
 
-const layout = ({ fields, error, buttons }) => (
+const FormLayout = ({ fields, error, buttons }) => (
   <form>
-    <div className="row">
-      <div className="col-12">
-        <h5>General</h5>
-        {fields.get('spaceAdmin')}
-        {fields.get('enabled')}
-        {fields.get('displayName')}
-        {fields.get('email')}
-      </div>
+    <div className="section__title">
+      <I18n>General</I18n>
     </div>
-    <hr />
-    <div className="row">
-      <div className="col-12">
-        <h5>Profile Attributes</h5>
-        {fields.get('firstName')}
-        {fields.get('lastName')}
-        {fields.get('phoneNumber')}
-      </div>
+    {fields.get('spaceAdmin')}
+    {fields.get('enabled')}
+    {fields.get('displayName')}
+    {fields.get('email')}
+    <br />
+    <div className="section__title">
+      <I18n>Profile Attributes</I18n>
     </div>
-    <hr />
-    <div className="row">
-      <div className="col-12">
-        <h5>User Attributes</h5>
-        {fields.get('department')}
-        {fields.get('manager')}
-        {fields.get('organization')}
-        {fields.get('site')}
-      </div>
+    {fields.get('firstName')}
+    {fields.get('lastName')}
+    {fields.get('phoneNumber')}
+    <br />
+    <div className="section__title">
+      <I18n>User Attributes</I18n>
     </div>
-    <hr />
-    <div className="row">
-      <div className="col-12">
-        <h5>Membership</h5>
-        {fields.get('memberships')}
-      </div>
+    {fields.get('department')}
+    {fields.get('manager')}
+    {fields.get('organization')}
+    {fields.get('site')}
+    <br />
+    <div className="section__title">
+      <I18n>Memberships</I18n>
     </div>
+    {fields.get('memberships')}
+    <br />
     {error}
-    <hr />
-    <div className="row">
-      <div className="col-12 form-buttons ">{buttons}</div>
-    </div>
+    {buttons}
   </form>
 );
 
-export const UserEdit = ({ formKey, username, onDelete }) => (
+export const UserEditComponent = ({
+  formKey,
+  username,
+  handleSave,
+  handleDelete,
+}) => (
   <div className="page-container page-container--panels">
     <PageTitle parts={[`Edit User`, 'Users']} />
-    <UserFormLib
+    <UserForm
       formkey={`user-edit`}
       username={username ? username : null}
       components={{
         FormError: FormComponents.FormError,
         FormButtons: FormComponents.generateFormButtons({
-          handleDelete: onDelete,
+          handleDelete,
           submitLabel: 'Update User',
           cancelPath: '/settings/users',
         }),
-        FormLayout: layout,
+        FormLayout,
       }}
       addFields={() => ({ user }) =>
         user && [
@@ -192,6 +184,16 @@ export const UserEdit = ({ formKey, username, onDelete }) => (
           </Fragment>
         )
       }
-    </UserFormLib>
+    </UserForm>
   </div>
 );
+
+// TODO implement handleDelete
+export const UserEdit = compose(
+  withHandlers({
+    handleSave: props => () => ({ user }) => {
+      refetchTable(props.tableKey);
+      addToast(`${user.username} updated successfully.`);
+    },
+  }),
+)(UserEditComponent);

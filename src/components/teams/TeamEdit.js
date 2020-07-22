@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { TeamForm as TeamFormLib, I18n } from '@kineticdata/react';
+import { TeamForm, I18n, refetchTable } from '@kineticdata/react';
+import { compose, withHandlers } from 'recompose';
 import { FormComponents, addToast } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { Link } from '@reach/router';
@@ -8,43 +9,47 @@ import { getIn } from 'immutable';
 
 const asArray = value => (value ? [value] : []);
 
-const handleSave = () => team => {
-  addToast(`${team.name} updated successfully.`);
-};
-
-const layout = ({ fields, error, buttons }) => (
+const FormLayout = ({ fields, error, buttons }) => (
   <form>
-    <div className="row">
-      <div className="col-12">
-        <h5>General</h5>
-        {fields.get('localName')}
-        {fields.get('description')}
-        {fields.get('parentTeam')}
-        {fields.get('assignable')}
-        {fields.get('icon')}
-      </div>
+    <div className="section__title">
+      <I18n>General</I18n>
     </div>
-    <hr />
-    <div className="row">
-      <div className="col-12">
-        <h5>Membership</h5>
-        {fields.get('memberships')}
-      </div>
+    {fields.get('parentTeam')}
+    {fields.get('localName')}
+    {fields.get('description')}
+    {fields.get('assignable')}
+    {fields.get('icon')}
+    <br />
+    <div className="section__title">
+      <I18n>Memberships</I18n>
     </div>
+    {fields.get('memberships')}
+    <br />
     {error}
-    <hr />
-    <div className="row">
-      <div className="col-12 form-buttons ">{buttons}</div>
-    </div>
+    {buttons}
   </form>
 );
 
-export const TeamEdit = ({ formKey, slug: teamSlug, onDelete }) => (
+const TeamEditComponent = ({
+  formKey,
+  slug: teamSlug,
+  handleSave,
+  handleDelete,
+}) => (
   <div className="page-container page-container--panels">
     <PageTitle parts={[`Edit Team`, 'Teams']} />
-    <TeamFormLib
+    <TeamForm
       formKey={formKey}
       teamSlug={teamSlug}
+      components={{
+        FormError: FormComponents.FormError,
+        FormButtons: FormComponents.generateFormButtons({
+          handleDelete,
+          submitLabel: 'Update Team',
+          cancelPath: '/settings/teams',
+        }),
+        FormLayout,
+      }}
       addFields={() => ({ team }) =>
         team && [
           {
@@ -72,15 +77,6 @@ export const TeamEdit = ({ formKey, slug: teamSlug, onDelete }) => (
             Icon: asArray(values.get('icon')),
           }),
         },
-      }}
-      components={{
-        FormError: FormComponents.FormError,
-        FormButtons: FormComponents.generateFormButtons({
-          handleDelete: onDelete,
-          submitLabel: 'Update Team',
-          cancelPath: '/settings/teams',
-        }),
-        FormLayout: layout,
       }}
       onSave={handleSave}
     >
@@ -120,6 +116,16 @@ export const TeamEdit = ({ formKey, slug: teamSlug, onDelete }) => (
           </Fragment>
         )
       }
-    </TeamFormLib>
+    </TeamForm>
   </div>
 );
+
+// TODO implement handleDelete
+export const TeamEdit = compose(
+  withHandlers({
+    handleSave: props => () => team => {
+      refetchTable(props.tableKey);
+      addToast(`${team.name} updated successfully.`);
+    },
+  }),
+)(TeamEditComponent);

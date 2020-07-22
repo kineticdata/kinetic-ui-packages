@@ -3,7 +3,13 @@ import { compose, withHandlers, withState } from 'recompose';
 import { connect } from '../../redux/store';
 import { actions } from '../../redux/modules/settingsUsers';
 import { Link } from '@reach/router';
-import { UserTable, UserForm, fetchUser, I18n } from '@kineticdata/react';
+import {
+  UserTable,
+  UserForm,
+  fetchUser,
+  I18n,
+  refetchTable,
+} from '@kineticdata/react';
 import {
   UncontrolledDropdown,
   DropdownToggle,
@@ -203,21 +209,16 @@ const ActionsCell = ({ toggleModal }) => ({ row }) => (
 const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   loadingMessage: 'Loading Users...',
   noSearchResultsMessage:
-    'No Users were found - please modify your search criteria',
-  noItemsMessage: 'There are no Users to display.',
-  noItemsLinkTo: '/settings/users/new',
-  noItemsLinkToMessage: 'Add new User',
+    'No users were found - please modify your search criteria',
+  noItemsMessage: 'There are no users to display.',
 });
-
-const FilterLayout = TableComponents.generateFilterModalLayout([
-  'username',
-  'displayName',
-]);
 
 export const UsersListComponent = ({
   tableKey,
   modalOpen,
   toggleModal,
+  filterOpen,
+  setFilterOpen,
   cloneUserRequest,
   createUserRequest,
   navigate,
@@ -225,177 +226,203 @@ export const UsersListComponent = ({
   handleImport,
   remountKey,
   setRemountKey,
-}) => (
-  <UserTable
-    key={remountKey}
-    tableKey={tableKey}
-    components={{
-      FilterLayout,
-      EmptyBodyRow,
-      TableLayout: TableComponents.SettingsTableLayout,
-    }}
-    alterColumns={{
-      username: { title: 'Email', components: { BodyCell: NameCell } },
-    }}
-    addColumns={[
-      {
-        value: 'actions',
-        title: ' ',
-        sortable: false,
-        components: {
-          BodyCell: ActionsCell({ toggleModal }),
+}) => {
+  const FilterFormLayout = TableComponents.generateFilterFormLayout({
+    isOpen: filterOpen,
+    toggle: () => setFilterOpen(open => !open),
+  });
+
+  return (
+    <UserTable
+      key={remountKey}
+      tableKey={tableKey}
+      components={{
+        EmptyBodyRow,
+        FilterFormLayout,
+        FilterFormButtons: TableComponents.FilterFormButtons,
+        TableLayout: TableComponents.SettingsTableLayout,
+      }}
+      columnSet={['username', 'displayName', 'actions']}
+      addColumns={[
+        {
+          value: 'actions',
+          title: ' ',
+          sortable: false,
+          components: {
+            BodyCell: ActionsCell({ toggleModal }),
+          },
         },
-      },
-    ]}
-    columnSet={['username', 'displayName', 'actions']}
-  >
-    {({ pagination, table, filter }) => (
-      <div className="page-container page-container--panels">
-        <PageTitle parts={['Users']} />
-        <div className="page-panel page-panel--two-thirds page-panel--white">
-          <div className="page-title">
-            <div
-              role="navigation"
-              aria-label="breadcrumbs"
-              className="page-title__breadcrumbs"
-            >
-              <span className="breadcrumb-item">
-                <Link to="..">
-                  <I18n>settings</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <h1 aria-current="page">
-                <I18n>Users</I18n>
-              </h1>
-            </div>
-            <div className="page-title__actions">
-              <div className="file-up" data-file-input>
-                <label htmlFor="file_upload" className="file-up__label">
-                  <span className="file-up__label__text btn btn-info">
-                    <I18n>Import Users</I18n>
-                  </span>
-                  <input
-                    type="file"
-                    accept=".csv"
-                    autocomplete="off"
-                    id="file_upload"
-                    onChange={handleImport}
-                  />
-                </label>
+      ]}
+      alterColumns={{
+        username: { title: 'Email', components: { BodyCell: NameCell } },
+      }}
+      filterSet={['username', 'displayName', 'email']}
+      onSearch={() => () => setFilterOpen(false)}
+    >
+      {({
+        pagination,
+        table,
+        filter,
+        appliedFilters,
+        filterFormKey,
+      }) => (
+        <div className="page-container page-container--panels">
+          <PageTitle parts={['Users']} />
+          <div className="page-panel page-panel--two-thirds page-panel--white">
+            <div className="page-title">
+              <div
+                role="navigation"
+                aria-label="breadcrumbs"
+                className="page-title__breadcrumbs"
+              >
+                <span className="breadcrumb-item">
+                  <Link to="..">
+                    <I18n>settings</I18n>
+                  </Link>
+                </span>{' '}
+                <span aria-hidden="true">/ </span>
+                <h1 aria-current="page">
+                  <I18n>Users</I18n>
+                </h1>
               </div>
+              <div className="page-title__actions">
+                <div className="file-up" data-file-input>
+                  <label htmlFor="file_upload" className="file-up__label">
+                    <span className="file-up__label__text btn btn-info">
+                      <I18n>Import Users</I18n>
+                    </span>
+                    <input
+                      type="file"
+                      accept=".csv"
+                      autoComplete="off"
+                      id="file_upload"
+                      onChange={handleImport}
+                    />
+                  </label>
+                </div>
 
-              <button
-                className="btn btn-info"
-                onClick={() => openExportModal('export')}
-              >
-                <I18n>Export Users</I18n>
-              </button>
-              <I18n
-                render={translate => (
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    title={translate('New User')}
-                    onClick={() => toggleModal(true)}
-                  >
-                    <span className="fa fa-plus fa-fw" />{' '}
-                    {translate('New User')}
-                  </button>
-                )}
+                <button
+                  className="btn btn-info"
+                  onClick={() => openExportModal('export')}
+                >
+                  <I18n>Export Users</I18n>
+                </button>
+                <I18n
+                  render={translate => (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      title={translate('New User')}
+                      onClick={() => toggleModal(true)}
+                    >
+                      <span className="fa fa-plus fa-fw" />{' '}
+                      {translate('New User')}
+                    </button>
+                  )}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="text-right mb-2">{filter}</div>
+              <TableComponents.FilterPills
+                filterFormKey={filterFormKey}
+                appliedFilters={appliedFilters}
               />
+              <div className="scroll-wrapper-h">{table}</div>
+              {pagination}
             </div>
           </div>
-          <div>
-            <div className="mb-2 text-right">{filter}</div>
-            {table}
-            {pagination}
+          <div className="page-panel page-panel--one-thirds page-panel--sidebar">
+            <h3>
+              <I18n>Users</I18n>
+            </h3>
+            <p>
+              <I18n>
+                Users are the platform representation of individuals. They can
+                have attributes and profile attributes, which can be defined per
+                space, and they can also be members of teams.
+              </I18n>
+            </p>
           </div>
-        </div>
-        <div className="page-panel page-panel--one-thirds page-panel--sidebar">
-          <h3>
-            <I18n>Users</I18n>
-          </h3>
-          <p>
-            <I18n>
-              Users are the platform representation of individuals. They can
-              have attributes and profile attributes, which can be defined per
-              space, and they can also be members of teams.
-            </I18n>
-          </p>
-        </div>
-        <ExportModal />
-        <ImportModal
-          onClose={() => setRemountKey(`remount-key-${new Date().getTime()}`)}
-        />
+          <ExportModal />
+          <ImportModal
+            onClose={() => setRemountKey(`remount-key-${new Date().getTime()}`)}
+          />
 
-        {/* Modal for creating a new user */}
-        <Modal isOpen={!!modalOpen} toggle={() => toggleModal()} size="lg">
-          <div className="modal-header">
-            <h4 className="modal-title">
-              <button
-                type="button"
-                className="btn btn-link btn-delete"
-                onClick={() => toggleModal()}
-              >
-                <I18n>Close</I18n>
-              </button>
-              <span>
-                <I18n>New User</I18n>
-              </span>
-            </h4>
-          </div>
-          <UserForm
-            formkey={`user-${typeof modalOpen === 'string' ? 'clone' : 'new'}`}
-            onSave={() => ({ user }) => {
-              if (typeof modalOpen === 'string') {
-                cloneUserRequest({
-                  cloneUserUsername: modalOpen,
-                  user: user,
-                  callback: () => navigate(`${user.username}`),
-                });
-              } else {
-                addToast(`${user.username} created successfully.`);
-                user && navigate(`${user.username}`);
-              }
-            }}
-            components={{
-              FormLayout,
-              FormButtons,
-              FormError: FormComponents.FormError,
-            }}
-            alterFields={{ username: { label: 'Email' } }}
-            addDataSources={
-              typeof modalOpen === 'string'
-                ? {
-                    cloneUser: {
-                      fn: fetchUser,
-                      params: [{ username: modalOpen }],
-                      transform: result => result.user || result,
+          {/* Modal for creating a new user */}
+          <Modal isOpen={!!modalOpen} toggle={() => toggleModal()} size="lg">
+            <div className="modal-header">
+              <h4 className="modal-title">
+                <button
+                  type="button"
+                  className="btn btn-link btn-delete"
+                  onClick={() => toggleModal()}
+                >
+                  <I18n>Close</I18n>
+                </button>
+                <span>
+                  <I18n>New User</I18n>
+                </span>
+              </h4>
+            </div>
+            <UserForm
+              formkey={`user-${
+                typeof modalOpen === 'string' ? 'clone' : 'new'
+              }`}
+              onSave={() => ({ user }) => {
+                if (typeof modalOpen === 'string') {
+                  cloneUserRequest({
+                    cloneUserUsername: modalOpen,
+                    user: user,
+                    callback: () => {
+                      refetchTable(tableKey);
+                      navigate(`${user.username}`);
                     },
-                  }
-                : undefined // Set to the user, or the result in case of an error
-            }
-          >
-            {({ form, initialized, bindings: { cloneUser } }) => {
-              const isClone = typeof modalOpen === 'string';
-              const cloneError = cloneUser && cloneUser.get('error');
-              return initialized && (!isClone || cloneUser) ? (
-                cloneError ? (
-                  <CloneErrorFormLayout />
+                  });
+                } else {
+                  addToast(`${user.username} created successfully.`);
+                  refetchTable(tableKey);
+                  navigate(`${user.username}`);
+                }
+              }}
+              components={{
+                FormLayout,
+                FormButtons,
+                FormError: FormComponents.FormError,
+              }}
+              alterFields={{ username: { label: 'Email' } }}
+              addDataSources={
+                typeof modalOpen === 'string'
+                  ? {
+                      cloneUser: {
+                        fn: fetchUser,
+                        params: [{ username: modalOpen }],
+                        transform: result => result.user || result,
+                      },
+                    }
+                  : undefined // Set to the user, or the result in case of an error
+              }
+            >
+              {({ form, initialized, bindings: { cloneUser } }) => {
+                const isClone = typeof modalOpen === 'string';
+                const cloneError = cloneUser && cloneUser.get('error');
+                return initialized && (!isClone || cloneUser) ? (
+                  cloneError ? (
+                    <CloneErrorFormLayout />
+                  ) : (
+                    form
+                  )
                 ) : (
-                  form
-                )
-              ) : (
-                <LoadingFormLayout />
-              );
-            }}
-          </UserForm>
-        </Modal>
-      </div>
-    )}
-  </UserTable>
-);
+                  <LoadingFormLayout />
+                );
+              }}
+            </UserForm>
+          </Modal>
+        </div>
+      )}
+    </UserTable>
+  );
+};
 
 const mapStateToProps = state => ({
   kapp: state.app.kapp,
@@ -419,6 +446,7 @@ export const UsersList = compose(
     `remount-key-${new Date().getTime()}`,
   ),
   withState('modalOpen', 'setModalOpen', false),
+  withState('filterOpen', 'setFilterOpen', false),
   withHandlers({
     toggleModal: props => slug =>
       !slug || slug === props.modalOpen
