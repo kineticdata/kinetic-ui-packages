@@ -57,11 +57,14 @@ const FormLayout = ({ fields, error, buttons, bindings: { userToClone } }) => (
           </small>
         </div>
       )}
+      <div className="form-group">{fields.get('username')}</div>
       <div className="form-group__columns">
-        {fields.get('username')}
+        {fields.get('email')}
         {fields.get('displayName')}
         {fields.get('password')}
         {fields.get('passwordConfirmation')}
+        {fields.get('enabled')}
+        {fields.get('spaceAdmin')}
       </div>
       {error}
     </ModalBody>
@@ -319,7 +322,7 @@ export const UsersListComponent = ({
                   FormButtons,
                   FormError: FormComponents.FormError,
                 }}
-                alterFields={{ username: { label: 'Email' } }}
+                alterFields={{ email: { required: true } }}
                 addDataSources={
                   typeof modalOpen === 'string'
                     ? {
