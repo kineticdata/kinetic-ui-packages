@@ -48,3 +48,31 @@ export const TIME_AGO_INTERVAL = 10000;
 export const TIME_FORMAT = 'MMMM D, YYYY h:mm A';
 export const DEFAULT_FORM_ICON = 'fa-sticky-note-o';
 export const DEFAULT_CATEGORY_ICON = 'fa-cube';
+
+export const DEFAULT_SURVEY_CONFIGURATION = {
+  'Use Custom Workflow': 'false',
+  Reminders: {
+    'Reminder Template': 'Survey Invitation',
+    'Reminder Interval': 2,
+    'Reminder Max': 3,
+  },
+  'Invitation Notification Name': 'Survey Invitation',
+  'Event Polling': {
+    Poll: 'false',
+    Source: '',
+    Type: '',
+    'Reference Id': '',
+    'Email Address': '',
+    Trigger: '',
+    Interval: 1440,
+  },
+  'Survey Period': {
+    Start: '2020-07-20',
+    Stop: '2021-07-20',
+  },
+  Expiration: 365,
+  'Allow Opt-out': 'false',
+  'Maximum Survey Frequency': { Count: 1, Days: 7 },
+  'Owning Team': null,
+  'Owning Individual': null,
+};

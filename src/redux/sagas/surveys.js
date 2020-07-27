@@ -22,6 +22,7 @@ import {
 import { actions as appActions } from '../modules/surveyApp';
 import {
   DEFAULT_SURVEY_TYPE,
+  DEFAULT_SURVEY_CONFIGURATION,
   DEFAULT_TEMPLATE_INCLUDES,
 } from '../../constants';
 
@@ -119,6 +120,12 @@ export function* createFormSaga({ payload }) {
         slug: payload.form.slug,
         description: payload.form.description,
         type: DEFAULT_SURVEY_TYPE,
+        attributes: [
+          {
+            name: 'Survey Configuration',
+            values: [JSON.stringify(DEFAULT_SURVEY_CONFIGURATION)],
+          },
+        ],
       },
     });
     if (error) {
