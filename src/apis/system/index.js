@@ -289,8 +289,18 @@ export const postPlatformComponentRestart = (options = {}) => {
     .post(
       `/app/system-coordinator/api/v1/platform/components/${options.component}/restart`,
     )
+    .then(({ data }) => ({ component: data.component, message: data.message }))
     .catch(handleErrors);
 };
+
+export const fetchPlatformComponentStatus = (options = {}) =>
+  axios
+    .get(
+      '/app/system-coordinator/api/v1/platform/components',
+    )
+    .then(({ data }) => ({ components: data.components }))
+    .catch(handleErrors);
+
 export const systemLogin = (options = {}) => {
   const { username, password } = options;
 
