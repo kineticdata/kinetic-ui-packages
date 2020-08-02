@@ -143,7 +143,7 @@ export const QueueItemContainer = compose(
                 props.profile.username,
             },
           ],
-          relateOriginatingRequest: false,
+          relateOriginatingRequest: true,
         },
       },
   ),
