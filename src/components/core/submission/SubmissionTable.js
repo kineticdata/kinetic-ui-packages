@@ -1,4 +1,4 @@
-import { getIn, List, Map } from 'immutable';
+import { getIn, List, Map, Set } from 'immutable';
 import { generateTable } from '../../table/Table';
 import {
   fetchForm,
@@ -13,9 +13,22 @@ const applyMeta = (query, op, rvalue) => (rvalue ? query[op](rvalue) : query);
 const applyOp = (query, op, lvalue, rvalue) =>
   rvalue ? query[op](lvalue, rvalue) : query;
 
-const submissionSearch = ({ filters, pageSize, sortColumn, sortDirection }) => {
+const submissionSearch = (
+  { filters, pageSize, sortColumn, sortDirection },
+  include,
+) => {
   const query = new SubmissionSearch()
-    .includes(['details', 'form'])
+    .includes(
+      Set([
+        ...(typeof include === 'string'
+          ? include.split(',')
+          : Array.isArray(include)
+            ? include
+            : []),
+        'details',
+        'form',
+      ]).toJS(),
+    )
     .sortBy(sortColumn || 'createdAt')
     .sortDirection(sortDirection.toLocaleUpperCase())
     .limit(pageSize);
@@ -38,17 +51,13 @@ const submissionSearch = ({ filters, pageSize, sortColumn, sortDirection }) => {
     'submittedBy',
     filters.getIn(['submittedBy', 'username']),
   );
-  filters.get('values', Map()).forEach((value, field) => {
-    if (typeof value === 'number') {
-      applyOp(query, 'eq', `values[${field}]`, value);
-    } else {
-      applyOp(query, 'eq', `values[${value.get('field')}]`, value.get('value'));
-    }
-  });
+  filters
+    .get('values', Map())
+    .forEach((value, field) => applyOp(query, 'eq', `values[${field}]`, value));
   return query.build();
 };
 
-const dataSource = ({ formSlug, kappSlug }) => {
+const dataSource = ({ formSlug, kappSlug, include }) => {
   return {
     fn: searchSubmissions,
     params: paramData => [
@@ -56,7 +65,7 @@ const dataSource = ({ formSlug, kappSlug }) => {
         kapp: kappSlug,
         form: paramData.filters.getIn(['form', 'slug'], formSlug),
         pageToken: paramData.nextPageToken,
-        search: submissionSearch(paramData),
+        search: submissionSearch(paramData, include),
       },
     ],
     transform: result => ({
@@ -231,7 +240,7 @@ const columns = [
 ];
 
 export const SubmissionTable = generateTable({
-  tableOptions: ['kappSlug', 'formSlug', 'datastore'],
+  tableOptions: ['kappSlug', 'formSlug', 'datastore', 'include'],
   columns,
   dataSource,
   filterDataSources,

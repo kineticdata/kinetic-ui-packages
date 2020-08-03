@@ -2,8 +2,9 @@ import { generateTable } from '../../table/Table';
 import { searchSubmissions } from '../../../apis';
 import { generatePaginationParams } from '../../../apis/http';
 import { filterDataSources, filters } from './DatastoreSubmissionFilters';
+import { Set } from 'immutable';
 
-const dataSource = ({ formSlug, notificationType }) => ({
+const dataSource = ({ formSlug, include }) => ({
   fn: searchSubmissions,
   params: paramData => [
     {
@@ -11,7 +12,14 @@ const dataSource = ({ formSlug, notificationType }) => ({
       form: formSlug,
       search: {
         direction: paramData.sortDirection,
-        include: ['details,values'],
+        include: Set([
+          ...(typeof include === 'string'
+            ? include.split(',')
+            : Array.isArray(include)
+              ? include
+              : []),
+          'details',
+        ]).toJS(),
         index: paramData.filters.getIn(['query', 'index']),
         // need to pass undefined instead of null so the `q` parameter is not
         // added to the query string with empty value
@@ -21,11 +29,7 @@ const dataSource = ({ formSlug, notificationType }) => ({
     },
   ],
   transform: result => ({
-    data: notificationType
-      ? notificationType !== 'Date Format'
-        ? result.submissions.filter(n => n.values.Type === notificationType)
-        : result.submissions
-      : result.submissions,
+    data: result.submissions,
     nextPageToken: result.nextPageToken,
   }),
 });
@@ -119,7 +123,7 @@ const columns = [
 ];
 
 export const DatastoreSubmissionTable = generateTable({
-  tableOptions: ['formSlug', 'notificationType'],
+  tableOptions: ['formSlug', 'include'],
   columns,
   dataSource,
   filters,
