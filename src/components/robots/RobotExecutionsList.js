@@ -1,260 +1,186 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { connect } from 'react-redux';
-import { push } from 'redux-first-history';
-import { compose, lifecycle, withHandlers } from 'recompose';
-import moment from 'moment';
-import { Constants, Loading } from '@kineticdata/bundle-common';
-import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
-
-import { isActiveClass } from '../../utils';
-import { actions } from '../../redux/modules/settingsRobots';
-import { context } from '../../redux/store';
-import { I18n } from '@kineticdata/react';
+import { connect } from '../../redux/store';
+import { compose } from 'recompose';
+import { I18n, DatastoreSubmissionTable, Moment } from '@kineticdata/react';
+import { TableComponents } from '@kineticdata/bundle-common';
+import { ROBOT_EXECUTIONS_FORM_SLUG } from '../../redux/modules/settingsRobots';
 import { PageTitle } from '../shared/PageTitle';
 
-const getStatusColor = status =>
-  status === 'Queued'
-    ? 'status--yellow'
-    : status === 'Running'
-      ? 'status--green'
-      : 'status--gray';
+export const StatusBadge = ({ status }) => (
+  <span
+    className={`badge ${
+      status === 'Queued'
+        ? 'badge-warning'
+        : status === 'Running'
+          ? 'badge-success'
+          : 'badge-secondary'
+    }`}
+  >
+    <I18n>{status}</I18n>
+  </span>
+);
 
-const WallyEmptyMessage = () => {
+const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
+  loadingMessage: 'Loading Executions...',
+  noSearchResultsMessage:
+    'No executions were found - please modify your search criteria',
+  noItemsMessage: 'There are no executions to display',
+});
+
+const StatusCell = ({ value }) => {
   return (
-    <div className="empty-state empty-state--wally">
-      <div className="empty-state__title">
-        <I18n>No Executions Found</I18n>
-      </div>
-      <img src={wallyHappyImage} alt="Happy Wally" />
-      <div className="empty-state__message">
-        <I18n>Executions are a record of a run of a robot</I18n>
-      </div>
-    </div>
+    <td>
+      <StatusBadge status={value} />
+    </td>
   );
 };
 
+const StartDateCell = ({ value }) => {
+  return (
+    <td>
+      <Moment timestamp={value} format={Moment.formats.dateTime} />
+    </td>
+  );
+};
+
+const EndDateCell = ({ row, value }) => {
+  return (
+    <td>
+      {value && row.getIn(['values', 'Start']).toLowerCase() !== 'running' ? (
+        <Moment timestamp={value} format={Moment.formats.dateTime} />
+      ) : (
+        ''
+      )}
+    </td>
+  );
+};
+
+const LinkCell = ({ row }) => (
+  <td>
+    <Link to={row.get('id')}>
+      <I18n>View</I18n> <span className="fa fa-fw fa-external-link-square" />
+    </Link>
+  </td>
+);
+
 const RobotExecutionsListComponent = ({
+  tableKey,
   robot,
-  robotExecutions,
-  robotExecutionsLoading,
-  robotExecutionsErrors,
+  robotError,
   robotId,
-  hasNextPage,
-  hasPreviousPage,
-  handleNextPage,
-  handlePreviousPage,
-  handleReload,
 }) => {
-  const loading =
-    robotExecutionsLoading &&
-    (robotExecutions.size <= 0 ||
-      (robotId !== undefined &&
-        robotExecutions.get(0).values['Robot ID'] !== robotId));
-  return loading ? (
-    <Loading />
-  ) : (
-    <div className="page-container">
-      <PageTitle parts={['Robots', 'Settings']} />
-      <div className="page-panel page-panel--white">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to="/settings">
-                <I18n>settings</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to="/settings/robots">
-                <I18n>robots</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <h1>
-              {(robot && robot.values['Robot Name']) || <I18n>Executions</I18n>}
-            </h1>
-          </div>
-        </div>
-        <div className="tab-navigation tab-navigation--robots">
-          <ul className="nav nav-tabs">
-            <li role="presentation">
-              <Link
-                to={`/settings/robots/${robotId}`}
-                getProps={isActiveClass()}
+  return (
+    <DatastoreSubmissionTable
+      tableKey={tableKey}
+      formSlug={ROBOT_EXECUTIONS_FORM_SLUG}
+      include="values"
+      components={{
+        EmptyBodyRow,
+      }}
+      columnSet={['robotName', 'status', 'start', 'end', 'link']}
+      defaultSortColumn={'start'}
+      defaultSortDirection={'desc'}
+      addColumns={[
+        {
+          value: 'robotName',
+          title: 'Robot Name',
+          valueTransform: (_value, row) => row.getIn(['values', 'Robot Name']),
+        },
+        {
+          value: 'status',
+          title: 'Status',
+          valueTransform: (_value, row) => row.getIn(['values', 'Status']),
+          components: {
+            BodyCell: StatusCell,
+          },
+        },
+        {
+          value: 'start',
+          valueTransform: (_value, row) => row.getIn(['values', 'Start']),
+          title: 'Start',
+          sortable: true,
+          components: {
+            BodyCell: StartDateCell,
+          },
+        },
+        {
+          value: 'end',
+          valueTransform: (_value, row) => row.getIn(['values', 'End']),
+          title: 'End',
+          components: {
+            BodyCell: EndDateCell,
+          },
+        },
+        {
+          value: 'link',
+          title: ' ',
+          components: {
+            BodyCell: LinkCell,
+          },
+        },
+      ]}
+      initialFilterValues={{
+        query: {
+          index: 'values[Robot ID],values[Start]',
+          parts: ['values[Robot ID]', 'equals', robotId],
+          q: `values[Robot ID] = "${robotId}"`,
+        },
+      }}
+    >
+      {({ pagination, table }) => (
+        <div className="page-container page-container--panels">
+          <PageTitle parts={[`Robots`, 'Settings']} />
+          <div className="page-panel page-panel--white">
+            <div className="page-title">
+              <div
+                role="navigation"
+                aria-label="breadcrumbs"
+                className="page-title__breadcrumbs"
               >
-                <I18n>Details</I18n>
-              </Link>
-            </li>
-            <li role="presentation">
-              <Link
-                to={`/settings/robots/${robotId}/executions`}
-                getProps={isActiveClass()}
-              >
-                <I18n>Executions</I18n>
-              </Link>
-            </li>
-          </ul>
-        </div>
-        {robotExecutions.size <= 0 &&
-          robotExecutionsErrors.length > 0 && (
-            <div className="text-center text-danger">
-              <h1>
-                <I18n>Oops!</I18n>
-              </h1>
-              <h2>
-                <I18n>Robot Executions Not Found</I18n>
-              </h2>
-              {robotExecutionsErrors.map(error => (
-                <p className="error-details">{error}</p>
-              ))}
-            </div>
-          )}
-        {robotExecutions.size > 0 && (
-          <table className="table table-sm table-striped table-robots">
-            <thead className="header">
-              <tr>
-                <th scope="col">
-                  <I18n>Robot Name</I18n>
-                </th>
-                <th scope="col" width="10%">
-                  <I18n>Status</I18n>
-                </th>
-                <th scope="col">
-                  <I18n>Start</I18n>
-                </th>
-                <th scope="col">
-                  <I18n>End</I18n>
-                </th>
-                <th width="1%" />
-              </tr>
-            </thead>
-            <tbody>
-              {robotExecutions.map(execution => {
-                return (
-                  <tr key={execution.id}>
-                    <td>{execution.values['Robot Name']}</td>
-                    <td>
-                      <span
-                        className={`status ${getStatusColor(
-                          execution.values['Status'],
-                        )}`}
-                      >
-                        {execution.values['Status']}
-                      </span>
-                    </td>
-                    <td>
-                      {moment(execution.values['Start']).format(
-                        Constants.TIME_FORMAT,
-                      )}
-                    </td>
-                    <td>
-                      {execution.values['Status'].toLowerCase() !== 'running' &&
-                        execution.values['End'] &&
-                        moment(execution.values['End']).format(
-                          Constants.TIME_FORMAT,
-                        )}
-                    </td>
-                    <td>
-                      <Link
-                        to={`/settings/robots/${
-                          execution.values['Robot ID']
-                        }/executions/${execution.id}`}
-                      >
-                        <span>
-                          <I18n>View</I18n>{' '}
-                        </span>
-                        <span className="fa fa-external-link-square" />
+                <span className="breadcrumb-item">
+                  <Link to="../../..">
+                    <I18n>settings</I18n>
+                  </Link>
+                </span>{' '}
+                <span aria-hidden="true">/ </span>
+                <span className="breadcrumb-item">
+                  <Link to="../..">
+                    <I18n>robots</I18n>
+                  </Link>
+                </span>{' '}
+                <span aria-hidden="true">/ </span>
+                {(robot || robotError) && (
+                  <>
+                    <span className="breadcrumb-item">
+                      <Link to="..">
+                        <I18n>
+                          {robot ? robot.values['Robot Name'] : 'robot'}
+                        </I18n>
                       </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
-        {robotExecutionsErrors.length <= 0 &&
-          robotExecutions.size === 0 && <WallyEmptyMessage />}
-        <div className="robots-pagination">
-          <div className="btn-group">
-            <button
-              type="button"
-              className="btn btn-inverse"
-              disabled={!hasPreviousPage}
-              onClick={handlePreviousPage}
-            >
-              <span className="icon">
-                <span className="fa fa-fw fa-caret-left" />
-              </span>
-            </button>
-            <button
-              type="button"
-              className="btn btn-inverse"
-              disabled={robotExecutionsLoading}
-              onClick={handleReload}
-            >
-              <span className="icon">
-                <span
-                  className={`fa fa-fw ${
-                    robotExecutionsLoading ? 'fa-spin fa-spinner' : 'fa-refresh'
-                  }`}
-                />
-              </span>
-            </button>
-            <button
-              type="button"
-              className="btn btn-inverse"
-              disabled={!hasNextPage}
-              onClick={handleNextPage}
-            >
-              <span className="icon">
-                <span className="fa fa-fw fa-caret-right" />
-              </span>
-            </button>
+                    </span>{' '}
+                    <span aria-hidden="true">/ </span>
+                  </>
+                )}
+                <h1>
+                  <I18n>Executions</I18n>
+                </h1>
+              </div>
+            </div>
+            <div className="scroll-wrapper-h">{table}</div>
+            {pagination}
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </DatastoreSubmissionTable>
   );
 };
 
 export const mapStateToProps = state => ({
   robot: state.settingsRobots.robot,
-  robotExecutions: state.settingsRobots.robotExecutions,
-  robotExecutionsLoading: state.settingsRobots.robotExecutionsLoading,
-  robotExecutionsErrors: state.settingsRobots.robotExecutionsErrors,
-  hasNextPage: !!state.settingsRobots.robotExecutionsNextPageToken,
-  hasPreviousPage: !state.settingsRobots.robotExecutionsPreviousPageTokens.isEmpty(),
+  robotError: state.settingsRobots.robotError,
 });
 
-export const mapDispatchToProps = {
-  push,
-  fetchRobotExecutions: actions.fetchRobotExecutions,
-  fetchRobotExecutionsNextPage: actions.fetchRobotExecutionsNextPage,
-  fetchRobotExecutionsPreviousPage: actions.fetchRobotExecutionsPreviousPage,
-};
-
-export const RobotExecutionsList = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { context },
-  ),
-  withHandlers({
-    handleNextPage: props => () =>
-      props.fetchRobotExecutionsNextPage(props.robotId),
-    handlePreviousPage: props => () =>
-      props.fetchRobotExecutionsPreviousPage(props.robotId),
-    handleReload: props => () => props.fetchRobotExecutions(props.robotId),
-  }),
-  lifecycle({
-    componentWillMount() {
-      this.props.fetchRobotExecutions(this.props.robotId);
-    },
-  }),
-)(RobotExecutionsListComponent);
+export const RobotExecutionsList = compose(connect(mapStateToProps))(
+  RobotExecutionsListComponent,
+);

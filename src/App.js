@@ -8,13 +8,14 @@ import { Sidebar } from './components/Sidebar';
 import { Settings } from './components/Settings';
 import { Notifications } from './components/notifications/Notifications';
 import { Datastore } from './components/datastore/Datastore';
-import { RobotsWrapper } from './components/robots/RobotsWrapper';
+import { Robots } from './components/robots/Robots';
 import { Users } from './components/users/Users';
 import { Teams } from './components/teams/Teams';
 import { Translations } from './components/translations/Translations';
 import { SchedulerSettings } from './components/SchedulerSettings';
 import { SpaceSettings } from './components/space_settings/SpaceSettings';
 import { actions as datastoreActions } from './redux/modules/settingsDatastore';
+import { actions } from './redux/modules/settingsApp';
 
 const AppComponent = props => {
   if (props.error) {
@@ -34,7 +35,7 @@ const AppComponent = props => {
             <Router>
               <SpaceSettings path="space" />
               <Datastore path="datastore/*" />
-              <RobotsWrapper path="robots/*" />
+              <Robots path="robots/*" />
               <Users path="users/*" />
               <Notifications path="notifications/*" />
               <Teams path="teams/*" />
@@ -49,10 +50,14 @@ const AppComponent = props => {
   }
 };
 
-const mapStateToProps = (state, props) => ({});
+const mapStateToProps = state => ({
+  loading: state.settingsApp.loading,
+  error: state.settingsApp.error,
+});
 
 const mapDispatchToProps = {
   fetchForms: datastoreActions.fetchForms,
+  fetchAppData: actions.fetchAppDataRequest,
 };
 
 const enhance = compose(
@@ -63,6 +68,7 @@ const enhance = compose(
   lifecycle({
     componentDidMount() {
       this.props.fetchForms();
+      this.props.fetchAppData();
     },
   }),
 );

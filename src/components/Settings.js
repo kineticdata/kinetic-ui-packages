@@ -1,14 +1,7 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Link } from '@reach/router';
 import { connect } from '../redux/store';
-import { compose, withProps } from 'recompose';
-import {
-  Icon,
-  selectHasRoleSchedulerAdmin,
-  selectHasRoleSchedulerManager,
-} from '@kineticdata/bundle-common';
-import { NOTIFICATIONS_FORM_SLUG } from '../redux/modules/settingsNotifications';
-import { ROBOT_DEFINITIONS_FORM_SLUG } from '../redux/modules/settingsRobots';
+import { Icon } from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { I18n } from '@kineticdata/react';
 
@@ -26,10 +19,12 @@ const SettingsCard = ({ path, icon, name, description }) => (
 
 const SettingsComponent = ({
   isSpaceAdmin,
-  showDatastore,
-  showNotifications,
-  showRobots,
-  showSchedulers,
+  hasDatastoreAccess,
+  hasNotificationAccess,
+  hasRobotAccess,
+  hasSchedulerAccess,
+  hasTeamAccess,
+  hasUserAccess,
 }) => (
   <div className="page-container">
     <PageTitle parts={['Settings']} />
@@ -45,52 +40,60 @@ const SettingsComponent = ({
           <div className="cards__wrapper cards__wrapper--seconds">
             {isSpaceAdmin && (
               <SettingsCard
-                name={translate('User Management')}
-                path={`/settings/users`}
-                icon="fa-users"
-                description={translate('Create, Edit and Import Users')}
-              />
-            )}
-            {isSpaceAdmin && (
-              <SettingsCard
-                name={translate('Team Management')}
-                path={`/settings/teams`}
-                icon="fa-users"
-                description={translate('Create and Edit Teams')}
-              />
-            )}
-            {isSpaceAdmin && (
-              <SettingsCard
                 name={translate('Space Settings')}
                 path={`/settings/space`}
                 icon="fa-gear"
-                description={translate('View and Modify all Space Settings')}
+                description={translate('View and modify space settings')}
               />
             )}
-            {showDatastore && (
+            {hasDatastoreAccess && (
               <SettingsCard
                 name={translate('Datastore Forms')}
                 path={`/settings/datastore`}
                 icon="fa-hdd-o"
-                description={translate('View, Create and Edit Reference Data')}
+                description={translate('View, create, and edit reference data')}
               />
             )}
-            {showNotifications && (
+            {hasNotificationAccess && (
               <SettingsCard
                 name={translate('Notifications')}
                 path={`/settings/notifications`}
                 icon="fa-envelope-o"
                 description={translate(
-                  'View, Create and Edit Email Notifications',
+                  'View, create, and edit email notifications',
                 )}
               />
             )}
-            {showRobots && (
+            {hasRobotAccess && (
               <SettingsCard
                 name={translate('Robots')}
                 path={`/settings/robots`}
                 icon="fa-tasks"
-                description={translate('View, Create and Edit Robots')}
+                description={translate('View, create, and edit robots')}
+              />
+            )}
+            {hasSchedulerAccess && (
+              <SettingsCard
+                name={translate('Schedulers')}
+                path={`/settings/schedulers`}
+                icon="fa-calendar"
+                description={translate('View, create, and manage schedulers')}
+              />
+            )}
+            {hasTeamAccess && (
+              <SettingsCard
+                name={translate('Team Management')}
+                path={`/settings/teams`}
+                icon="fa-users"
+                description={translate('View, create, and edit teams')}
+              />
+            )}
+            {hasUserAccess && (
+              <SettingsCard
+                name={translate('User Management')}
+                path={`/settings/users`}
+                icon="fa-users"
+                description={translate('View, create, and edit users')}
               />
             )}
             {isSpaceAdmin && (
@@ -98,15 +101,7 @@ const SettingsComponent = ({
                 name={translate('Translations')}
                 path={`/settings/translations`}
                 icon="fa-globe"
-                description={translate('View, Create and Edit Translations')}
-              />
-            )}
-            {showSchedulers && (
-              <SettingsCard
-                name={translate('Schedulers')}
-                path={`/settings/schedulers`}
-                icon="fa-calendar"
-                description={translate('View, Create and Manage Schedulers')}
+                description={translate('View, create, and edit translations')}
               />
             )}
           </div>
@@ -117,22 +112,13 @@ const SettingsComponent = ({
 );
 
 const mapStateToProps = state => ({
-  forms: state.settingsDatastore.forms,
   isSpaceAdmin: state.app.profile.spaceAdmin,
-  isSchedulerAdmin: selectHasRoleSchedulerAdmin(state.app.profile),
-  isSchedulerManager: selectHasRoleSchedulerManager(state.app.profile),
+  hasDatastoreAccess: state.settingsApp.hasDatastoreAccess,
+  hasNotificationAccess: state.settingsApp.hasNotificationAccess,
+  hasRobotAccess: state.settingsApp.hasRobotAccess,
+  hasSchedulerAccess: state.settingsApp.hasSchedulerAccess,
+  hasTeamAccess: state.settingsApp.hasTeamAccess,
+  hasUserAccess: state.settingsApp.hasUserAccess,
 });
 
-export const Settings = compose(
-  connect(mapStateToProps),
-  withProps(props => ({
-    showDatastore: props.spaceAdmin || !props.forms.isEmpty(),
-    showNotifications: !!props.forms.find(
-      form => form.slug === NOTIFICATIONS_FORM_SLUG,
-    ),
-    showRobots: !!props.forms.find(
-      form => form.slug === ROBOT_DEFINITIONS_FORM_SLUG,
-    ),
-    showSchedulers: props.isSchedulerAdmin || props.isSchedulerManager,
-  })),
-)(SettingsComponent);
+export const Settings = connect(mapStateToProps)(SettingsComponent);

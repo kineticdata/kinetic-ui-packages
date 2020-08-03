@@ -8,10 +8,8 @@ import {
   searchSubmissions,
   SubmissionSearch,
 } from '@kineticdata/react';
+import { Utils } from '@kineticdata/bundle-common';
 import { Seq, Map } from 'immutable';
-import { push } from 'redux-first-history';
-
-import { actions as systemErrorActions } from '../modules/errors';
 import {
   actions,
   types,
@@ -19,63 +17,53 @@ import {
   NOTIFICATIONS_DATE_FORMAT_FORM_SLUG,
 } from '../modules/settingsNotifications';
 
-export function* fetchNotificationsSaga() {
+export function* fetchSnippetsSaga() {
   const query = new SubmissionSearch(true);
   query.include('details,values');
   query.limit('1000');
-  query.index('createdAt');
+  query.index('values[Type],values[Name]');
+  query.eq('values[Type]', 'Snippet');
 
-  const { submissions, errors, serverError } = yield call(searchSubmissions, {
+  const { submissions, error } = yield call(searchSubmissions, {
     search: query.build(),
     datastore: true,
     form: NOTIFICATIONS_FORM_SLUG,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.setFetchNotificationsError(errors));
+  if (error) {
+    yield put(actions.fetchSnippetsFailure(error));
   } else {
-    yield put(
-      actions.setNotifications({
-        templates: submissions.filter(sub => sub.values.Type === 'Template'),
-        snippets: submissions.filter(sub => sub.values.Type === 'Snippet'),
-      }),
-    );
+    yield put(actions.fetchSnippetsSuccess(submissions));
   }
 }
 
 export function* fetchNotificationSaga(action) {
-  const include = 'details,values';
   if (action.payload === 'new') {
-    yield put(actions.setNotification(null));
+    yield put(actions.fetchNotificationSuccess(null));
   } else {
-    const { submission, serverError } = yield call(fetchSubmission, {
+    const { submission, error } = yield call(fetchSubmission, {
       id: action.payload,
-      include,
+      include: 'details,values',
       datastore: true,
     });
 
-    if (serverError) {
-      yield put(systemErrorActions.setSystemError(serverError));
+    if (error) {
+      yield put(actions.fetchNotificationFailure(error));
     } else {
-      yield put(actions.setNotification(submission));
+      yield put(actions.fetchNotificationSuccess(submission));
     }
   }
 }
 
-export function* cloneNotificationSaga(action) {
-  const include = 'details,values,form,form.fields.details';
-  const { submission, errors, serverError } = yield call(fetchSubmission, {
-    id: action.payload,
-    include,
+export function* cloneNotificationSaga({ payload }) {
+  const { submission, error: fetchError } = yield call(fetchSubmission, {
+    id: payload.id,
+    include: 'details,values,form,form.fields.details',
     datastore: true,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.setCloneError(errors));
+  if (fetchError) {
+    Utils.callBack({ payload, error: fetchError });
   } else {
     // The values of attachment fields cannot be cloned so we will filter them out
     // of the values POSTed to the new submission.
@@ -86,8 +74,8 @@ export function* cloneNotificationSaga(action) {
 
     // Some values on the original submission should be reset.
     const overrideFields = Map({
+      Name: `Copy of ${submission.values['Name']}`,
       Status: 'Inactive',
-      'Discussion Id': null,
       Observers: [],
     });
 
@@ -99,126 +87,81 @@ export function* cloneNotificationSaga(action) {
       .toJS();
 
     // Make the call to create the clone.
-    const {
-      submission: cloneSubmission,
-      postErrors,
-      postServerError,
-    } = yield call(createSubmission, {
+    const { submission: response, error } = yield call(createSubmission, {
       datastore: true,
       formSlug: submission.form.slug,
       values,
       completed: false,
     });
 
-    if (postServerError) {
-      yield put(systemErrorActions.setSystemError(serverError));
-    } else if (postErrors) {
-      yield put(actions.setCloneError(postErrors));
-    } else {
-      // Determine the type route parameter for the redirect below based on
-      // either the form slug or the value of the 'Type' field.
-      const type =
-        submission.form.slug === NOTIFICATIONS_DATE_FORMAT_FORM_SLUG
-          ? 'date-formats'
-          : submission.values.Type === 'Template'
-            ? 'templates'
-            : 'snippets';
-      yield put(actions.setCloneSuccess());
-      yield put(actions.fetchNotifications());
-      yield put(push(`/settings/notifications/${type}/${cloneSubmission.id}`));
-    }
+    Utils.callBack({ payload, response, error });
   }
 }
 
-export function* deleteNotificationSaga(action) {
-  const { errors, serverError } = yield call(deleteSubmission, {
-    id: action.payload.id,
+export function* deleteNotificationSaga({ payload }) {
+  const { error } = yield call(deleteSubmission, {
+    id: payload.id,
     datastore: true,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.setDeleteError(errors));
-  } else {
-    yield put(actions.setDeleteSuccess());
-    if (typeof action.payload.callback === 'function') {
-      action.payload.callback();
-    }
-  }
+  Utils.callBack({ payload, response: !error, error });
 }
 
-export function* saveNotificationSaga(action) {
-  const datastore = true;
-  const completed = true;
-  const formSlug = NOTIFICATIONS_FORM_SLUG;
-  const {
-    payload: { id, values, callback },
-  } = action;
-
-  const { errors, error, serverError, submission } = yield id
-    ? call(updateSubmission, { datastore, id, values })
+export function* saveNotificationSaga({ payload }) {
+  const { submission, error } = yield payload.id
+    ? call(updateSubmission, {
+        datastore: true,
+        id: payload.id,
+        values: payload.values,
+      })
     : call(createSubmission, {
-        datastore,
-        completed,
-        formSlug,
-        values,
+        datastore: true,
+        formSlug: NOTIFICATIONS_FORM_SLUG,
+        completed: true,
+        values: payload.values,
       });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors || error) {
-    yield put(actions.setSaveError(errors || error));
-  } else {
-    yield put(actions.setSaveSuccess());
-    if (typeof callback === 'function') {
-      callback(submission);
-    }
-  }
+  Utils.callBack({ payload, response: submission, error });
 }
 
 export function* fetchVariablesSaga(action) {
   if (action.payload.kappSlug) {
     // When Datastore is selected, we're passing the string 'app/datastore' as the kapp-slug
     const isDatastore = action.payload.kappSlug === 'app/datastore';
-    const { forms, errors, serverError } = yield call(fetchForms, {
+    const { forms, error } = yield call(fetchForms, {
       include: 'attributes,fields',
       datastore: isDatastore,
       ...(!isDatastore && { kappSlug: action.payload.kappSlug }),
     });
 
-    if (serverError) {
-      yield put(systemErrorActions.setSystemError(serverError));
-    } else if (errors) {
-      yield put(actions.setVariablesError(errors));
+    if (error) {
+      yield put(actions.fetchVariablesFailure(error));
     } else {
-      yield put(actions.setVariables({ forms }));
+      yield put(actions.fetchVariablesSuccess(forms));
     }
   }
 }
 
 export function* fetchDateFormatsSaga() {
-  const { submissions } = yield call(searchSubmissions, {
+  const { submissions, error } = yield call(searchSubmissions, {
     datastore: true,
     form: NOTIFICATIONS_DATE_FORMAT_FORM_SLUG,
     search: new SubmissionSearch(true).includes(['values']).build(),
   });
 
-  yield put(
-    submissions
-      ? actions.setDateFormats(submissions)
-      : actions.setSystemError(
-          'Failed to fetch notification template date formats',
-        ),
-  );
+  if (error) {
+    yield put(actions.fetchDateFormatsFailure(error));
+  } else {
+    yield put(actions.fetchDateFormatsSuccess(submissions));
+  }
 }
 
 export function* watchSettingsNotifications() {
-  yield takeEvery(types.FETCH_VARIABLES, fetchVariablesSaga);
-  yield takeEvery(types.FETCH_DATE_FORMATS, fetchDateFormatsSaga);
-  yield takeEvery(types.FETCH_NOTIFICATIONS, fetchNotificationsSaga);
-  yield takeEvery(types.FETCH_NOTIFICATION, fetchNotificationSaga);
-  yield takeEvery(types.CLONE_NOTIFICATION, cloneNotificationSaga);
-  yield takeEvery(types.DELETE_NOTIFICATION, deleteNotificationSaga);
-  yield takeEvery(types.SAVE_NOTIFICATION, saveNotificationSaga);
+  yield takeEvery(types.FETCH_SNIPPETS_REQUEST, fetchSnippetsSaga);
+  yield takeEvery(types.FETCH_NOTIFICATION_REQUEST, fetchNotificationSaga);
+  yield takeEvery(types.CLONE_NOTIFICATION_REQUEST, cloneNotificationSaga);
+  yield takeEvery(types.DELETE_NOTIFICATION_REQUEST, deleteNotificationSaga);
+  yield takeEvery(types.SAVE_NOTIFICATION_REQUEST, saveNotificationSaga);
+  yield takeEvery(types.FETCH_VARIABLES_REQUEST, fetchVariablesSaga);
+  yield takeEvery(types.FETCH_DATE_FORMATS_REQUEST, fetchDateFormatsSaga);
 }

@@ -1,23 +1,16 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { push } from 'redux-first-history';
-import { connect } from 'react-redux';
 import { compose, withHandlers } from 'recompose';
 import { ROBOT_FORM_SLUG } from '../../redux/modules/settingsRobots';
-import { CoreForm } from '@kineticdata/react';
-import { addSuccess, addError } from '@kineticdata/bundle-common';
+import { CoreForm, refetchTable } from '@kineticdata/react';
+import { addToast } from '@kineticdata/bundle-common';
+import { PageTitle } from '../shared/PageTitle';
 
 import { I18n } from '@kineticdata/react';
-import { context } from '../../redux/store';
 
-const CreateRobotComponent = ({
-  robot,
-  match,
-  handleLoaded,
-  handleCreated,
-  handleError,
-}) => (
+const CreateRobotComponent = ({ handleCreated }) => (
   <div className="page-container">
+    <PageTitle parts={[`Robots`, 'Settings']} />
     <div className="page-panel page-panel--white">
       <div className="page-title">
         <div
@@ -26,13 +19,13 @@ const CreateRobotComponent = ({
           className="page-title__breadcrumbs"
         >
           <span className="breadcrumb-item">
-            <Link to="/settings">
+            <Link to="../..">
               <I18n>settings</I18n>
             </Link>
           </span>{' '}
           <span aria-hidden="true">/ </span>
           <span className="breadcrumb-item">
-            <Link to="/settings/robots">
+            <Link to="..">
               <I18n>robots</I18n>
             </Link>
           </span>{' '}
@@ -45,62 +38,23 @@ const CreateRobotComponent = ({
 
       <div>
         <I18n context={`datastore.forms.${ROBOT_FORM_SLUG}`}>
-          <CoreForm
-            datastore
-            form={ROBOT_FORM_SLUG}
-            loaded={handleLoaded}
-            created={handleCreated}
-            error={handleError}
-          />
+          <CoreForm datastore form={ROBOT_FORM_SLUG} created={handleCreated} />
         </I18n>
       </div>
     </div>
   </div>
 );
 
-export const handleLoaded = props => form => {
-  const cancelButton = form.find('button.cancel-schedule')[0];
-  if (cancelButton) {
-    cancelButton.addEventListener('click', () => {
-      props.push(`/settings/robots`);
-    });
-  }
-  const deleteButton = form.find('button.delete-schedule')[0];
-  if (deleteButton) {
-    deleteButton.remove();
-  }
-};
-
 export const handleCreated = props => response => {
-  addSuccess(
-    `Successfully created robot (${response.submission.values['Name']})`,
-    'Robot Created!',
+  addToast(
+    `${response.submission.values['Robot Name']} robot created successfully`,
   );
-  props.push(`/settings/robots/${response.submission.id}`);
-};
-
-export const handleError = props => response => {
-  addError(response.error, 'Error');
-};
-
-export const mapStateToProps = state => ({
-  robot: state.settingsRobots.robot,
-});
-
-export const mapDispatchToProps = {
-  push,
+  refetchTable(props.tableKey);
+  props.navigate(`../${response.submission.id}`);
 };
 
 export const CreateRobot = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { context },
-  ),
   withHandlers({
-    handleLoaded,
     handleCreated,
-    handleError,
   }),
 )(CreateRobotComponent);

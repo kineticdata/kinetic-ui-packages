@@ -1,4 +1,4 @@
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import {
   searchSubmissions,
   fetchSubmission,
@@ -6,163 +6,60 @@ import {
   SubmissionSearch,
   createSubmission,
 } from '@kineticdata/react';
-
-import { actions as systemErrorActions } from '../modules/errors';
+import { Utils } from '@kineticdata/bundle-common';
 import {
   actions,
   types,
-  ROBOT_FORM_SLUG,
-  ROBOT_EXECUTIONS_FORM_SLUG,
-  ROBOT_EXECUTIONS_PAGE_SIZE,
+  ROBOT_NEXT_EXECUTION_FORM_SLUG,
 } from '../modules/settingsRobots';
-import { addToast } from '@kineticdata/bundle-common';
 import { Seq, Map } from 'immutable';
-import { push } from 'redux-first-history';
 
-export function* fetchRobotsSaga(action) {
+export function* fetchNextExecutionsSaga() {
   const query = new SubmissionSearch(true);
   query.include('details,values');
   query.limit('1000');
 
-  const { submissions, errors, serverError } = yield call(searchSubmissions, {
+  const { submissions, error } = yield call(searchSubmissions, {
     search: query.build(),
     datastore: true,
-    form: ROBOT_FORM_SLUG,
+    form: ROBOT_NEXT_EXECUTION_FORM_SLUG,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.setFetchRobotsError(errors));
+  if (error) {
+    yield put(actions.fetchNextExecutionsFailure(error));
   } else {
-    yield put(actions.setRobots(submissions));
+    yield put(actions.fetchNextExecutionsSuccess(submissions));
   }
 }
 
-export function* fetchRobotSaga(action) {
-  const include = 'details,values,form';
-  const { submission, errors, serverError } = yield call(fetchSubmission, {
-    id: action.payload,
-    include,
+export function* fetchRobotSaga({ payload }) {
+  const { submission, error } = yield call(fetchSubmission, {
+    id: payload.id,
+    include: 'details,values,form',
     datastore: true,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.setRobotError(errors));
+  if (error) {
+    yield put(actions.fetchRobotFailure(error));
   } else {
-    yield put(actions.setRobot(submission));
+    yield put(actions.fetchRobotSuccess(submission));
   }
 }
 
-export function* deleteRobotSaga(action) {
-  const { errors, serverError } = yield call(deleteSubmission, {
-    id: action.payload.id,
+export function* cloneRobotSaga({ payload }) {
+  const { submission, error: fetchError } = yield call(fetchSubmission, {
+    id: payload.id,
+    include: 'details,values,form,form.fields.details',
     datastore: true,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.setDeleteError(errors));
+  if (fetchError) {
+    Utils.callBack({ payload, error: fetchError });
   } else {
-    yield put(actions.setDeleteSuccess());
-    addToast('Robot Deleted');
-    if (typeof action.payload.callback === 'function') {
-      action.payload.callback();
-    }
-  }
-}
-
-export function* fetchRobotExecutionsSaga({ payload: { scheduleId } }) {
-  const pageToken = yield select(
-    state => state.settingsRobots.robotExecutionsCurrentPageToken,
-  );
-  const query = new SubmissionSearch(true);
-  if (pageToken) {
-    query.pageToken(pageToken);
-  }
-  query.include('details,values');
-  query.limit(ROBOT_EXECUTIONS_PAGE_SIZE);
-  query.sortDirection('DESC');
-  query.eq('values[Robot ID]', scheduleId);
-  query.index('values[Robot ID],values[Start]');
-
-  const { submissions, nextPageToken, errors, serverError } = yield call(
-    searchSubmissions,
-    {
-      search: query.build(),
-      datastore: true,
-      form: ROBOT_EXECUTIONS_FORM_SLUG,
-    },
-  );
-
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.setFetchRobotExecutionsError(errors));
-  } else {
-    yield put(actions.setRobotExecutions({ submissions, nextPageToken }));
-  }
-}
-
-export function* fetchRobotExecutionSaga(action) {
-  const include = 'details,values';
-  const { submission, errors, serverError } = yield call(fetchSubmission, {
-    id: action.payload,
-    include,
-    datastore: true,
-  });
-
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.setRobotExecutionError(errors));
-  } else {
-    yield put(actions.setRobotExecution(submission));
-  }
-}
-
-export function* fetchNextExecutionsSaga(action) {
-  const query = new SubmissionSearch(true);
-
-  query.include('details,values');
-  query.limit('1000');
-
-  const { submissions, errors, serverError } = yield call(searchSubmissions, {
-    search: query.build(),
-    datastore: true,
-    form: 'robot-next-execution',
-  });
-
-  if (serverError) {
-  } else if (errors) {
-  } else {
-    yield put(actions.setNextExecutions(submissions));
-  }
-}
-
-export function* cloneRobotSaga(action) {
-  const include = 'details,values,form,form.fields.details';
-  const { submission, errors, serverError } = yield call(fetchSubmission, {
-    id: action.payload.id,
-    include,
-    datastore: true,
-  });
-
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.cloneRobotErrors(errors));
-  } else {
-    const formSlug = submission.form.slug;
-    const robotName = submission.values['Robot Name'];
-
     // Some values on the original submission should be reset.
     const overrideFields = Map({
+      'Robot Name': `Copy of ${submission.values['Robot Name']}`,
       Status: 'Inactive',
-      'Robot Name': `Copy of ${robotName}`,
     });
 
     // Copy the values from the original submission with the transformations
@@ -172,45 +69,29 @@ export function* cloneRobotSaga(action) {
       .toJS();
 
     // Make the call to create the clone.
-    const {
-      submission: cloneSubmission,
-      postErrors,
-      postServerError,
-    } = yield call(createSubmission, {
+    const { submission: response, error } = yield call(createSubmission, {
       datastore: true,
-      formSlug,
+      formSlug: submission.form.slug,
       values,
       completed: false,
     });
 
-    if (postServerError) {
-      yield put(systemErrorActions.setSystemError(serverError));
-    } else if (postErrors) {
-      yield put(actions.cloneRobotErrors(postErrors));
-    } else {
-      yield put(actions.cloneRobotSuccess());
-      addToast('Robot Cloned');
-      if (typeof action.payload.callback === 'function') {
-        action.payload.callback();
-      }
-      yield put(push(`/settings/robots/${cloneSubmission.id}`));
-    }
+    Utils.callBack({ payload, response, error });
   }
 }
 
+export function* deleteRobotSaga({ payload }) {
+  const { error } = yield call(deleteSubmission, {
+    id: payload.id,
+    datastore: true,
+  });
+
+  Utils.callBack({ payload, response: !error, error });
+}
+
 export function* watchSettingsRobots() {
-  yield takeEvery(types.FETCH_ROBOTS, fetchRobotsSaga);
-  yield takeEvery(types.FETCH_ROBOT, fetchRobotSaga);
-  yield takeEvery(types.DELETE_ROBOT, deleteRobotSaga);
-  yield takeEvery(
-    [
-      types.FETCH_ROBOT_EXECUTIONS,
-      types.FETCH_ROBOT_EXECUTIONS_NEXT_PAGE,
-      types.FETCH_ROBOT_EXECUTIONS_PREVIOUS_PAGE,
-    ],
-    fetchRobotExecutionsSaga,
-  );
-  yield takeEvery(types.FETCH_ROBOT_EXECUTION, fetchRobotExecutionSaga);
-  yield takeEvery(types.FETCH_NEXT_EXECUTIONS, fetchNextExecutionsSaga);
-  yield takeEvery(types.CLONE_ROBOT, cloneRobotSaga);
+  yield takeEvery(types.FETCH_NEXT_EXECUTIONS_REQUEST, fetchNextExecutionsSaga);
+  yield takeEvery(types.FETCH_ROBOT_REQUEST, fetchRobotSaga);
+  yield takeEvery(types.CLONE_ROBOT_REQUEST, cloneRobotSaga);
+  yield takeEvery(types.DELETE_ROBOT_REQUEST, deleteRobotSaga);
 }

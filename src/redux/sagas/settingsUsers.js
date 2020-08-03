@@ -7,58 +7,36 @@ import {
   fetchUsers,
 } from '@kineticdata/react';
 import { types, actions } from '../modules/settingsUsers';
-import { actions as errorActions } from '../modules/errors';
-import { addToast, addToastAlert } from '@kineticdata/bundle-common';
-
-const USER_INCLUDES =
-  'attributes,profileAttributes,memberships,memberships.team,memberships.team.attributes,memberships.team.memberships,memberships.team.memberships.user';
+import { Utils, addToastAlert } from '@kineticdata/bundle-common';
 
 export function* cloneUserSaga({ payload }) {
-  const { error: cloneError, user: cloneUser } = yield call(fetchUser, {
-    include: USER_INCLUDES,
-    username: payload.cloneUserUsername,
+  const { user, error: fetchError } = yield call(fetchUser, {
+    include: 'attributesMap,memberships',
+    username: payload.clonedUsername,
   });
 
-  if (cloneError) {
-    yield put(actions.setUserError(cloneError));
+  if (fetchError) {
+    Utils.callBack({ payload, error: fetchError });
   } else {
-    const { error, user } = yield call(updateUser, {
+    const { user: response, error } = yield call(updateUser, {
       username: payload.user.username,
       user: {
         ...payload.user,
-        preferredLocale: cloneUser.preferredLocale,
-        timezone: cloneUser.timezone,
-        attributesMap: cloneUser.attributesMap,
-        memberships: cloneUser.memberships,
+        preferredLocale: user.preferredLocale,
+        timezone: user.timezone,
+        attributesMap: user.attributesMap,
+        memberships: user.memberships,
       },
     });
 
-    if (error) {
-      addToastAlert({
-        title: 'Error Cloning User',
-        message: error.message,
-      });
-      yield put(actions.cloneUserComplete(payload));
-    }
-
-    addToast(
-      `${user.username} cloned successfully from ${payload.cloneUserUsername}`,
-    );
-    if (typeof payload.callback === 'function') {
-      payload.callback(user);
-    }
-    yield put(actions.cloneUserComplete(payload));
+    Utils.callBack({ payload, response, error });
   }
 }
 
 export function* deleteUserSaga({ payload }) {
-  const { serverError } = yield call(deleteUser, { username: payload });
+  const { error } = yield call(deleteUser, { username: payload.username });
 
-  if (serverError) {
-    yield put(errorActions.setSystemError(serverError));
-  } else {
-    yield put(actions.fetchUsers());
-  }
+  Utils.callBack({ payload, response: !error, error });
 }
 
 export function* fetchAllUsersSaga({ payload = {} }) {
@@ -163,7 +141,7 @@ function* checkExistingUsers({ importUsers, pageToken } = {}) {
 }
 
 export function* watchSettingsUsers() {
-  yield takeEvery(types.DELETE_USER, deleteUserSaga);
+  yield takeEvery(types.DELETE_USER_REQUEST, deleteUserSaga);
   yield takeEvery(types.CLONE_USER_REQUEST, cloneUserSaga);
   yield takeEvery(types.FETCH_ALL_USERS, fetchAllUsersSaga);
   yield takeEvery(types.IMPORT_USERS_REQUEST, importUsersSaga);

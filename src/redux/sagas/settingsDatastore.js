@@ -25,8 +25,6 @@ import {
 } from '@kineticdata/react';
 import { fromJS, Seq, Map, List } from 'immutable';
 import { push } from 'redux-first-history';
-
-import { actions as systemErrorActions } from '../modules/errors';
 import { addSuccess, addError } from '@kineticdata/bundle-common';
 import {
   actions,
@@ -82,10 +80,8 @@ export function* fetchFormSaga(action) {
     }),
   ]);
 
-  if (formCall.serverError) {
-    yield put(systemErrorActions.setSystemError(formCall.serverError));
-  } else if (formCall.errors) {
-    yield put(actions.setFormsErrors(formCall.errors));
+  if (formCall.error) {
+    yield put(actions.setFormsErrors([formCall.error]));
   } else {
     const { form } = formCall;
     const { bridgeModels } = modelsCall;
@@ -122,14 +118,14 @@ export function* updateFormSaga() {
 
   // Update form if content has changed
   if (!formContent.equals(formContentChanges)) {
-    const { serverError, error, form } = yield call(updateForm, {
+    const { form, error } = yield call(updateForm, {
       datastore: true,
       formSlug: currentForm.slug,
       form: formContentChanges,
       include: FORM_INCLUDES,
     });
-    if (error || serverError) {
-      updateError = error || serverError.statusText;
+    if (error) {
+      updateError = error.message;
     } else {
       slug = form.slug;
     }
@@ -155,7 +151,7 @@ export function* updateFormSaga() {
         ),
       ])
       .toJS();
-    const { error, serverError } = !!modelName
+    const { error } = !!modelName
       ? yield call(updateBridgeModel, {
           modelName,
           bridgeModel,
@@ -163,8 +159,8 @@ export function* updateFormSaga() {
       : yield call(createBridgeModel, {
           bridgeModel,
         });
-    if (error || serverError) {
-      updateError = error || serverError.statusText;
+    if (error) {
+      updateError = error.message;
     }
   }
 
@@ -187,13 +183,13 @@ export function* createFormSaga(action) {
     name: form.name,
     description: form.description,
   };
-  const { error, serverError } = yield call(createForm, {
+  const { error } = yield call(createForm, {
     datastore: true,
     form: formContent,
     include: FORM_INCLUDES,
   });
-  if (serverError || error) {
-    yield put(addError(error || serverError.statusText));
+  if (error) {
+    yield put(addError(error.message));
   } else {
     yield put(actions.fetchForms());
     if (typeof action.payload.callback === 'function') {
@@ -238,12 +234,12 @@ export function* fetchSubmissionsSimpleSaga() {
     }
     query.pageToken(pageToken);
 
-    const { submissions, nextPageToken = null, serverError } = yield call(
+    const { submissions, nextPageToken = null, error } = yield call(
       searchSubmissions,
       { search: query.build(), datastore: true, form: form.slug },
     );
 
-    if (serverError) {
+    if (error) {
       // What should we do?
     } else {
       // If we made a request for page > 2, then push that page token to the stack.
@@ -260,12 +256,12 @@ export function* fetchSubmissionsSimpleSaga() {
     query.limit(DATASTORE_LIMIT);
     query.sortDirection(sortDirection === 'DESC' ? sortDirection : 'ASC');
 
-    const { submissions, nextPageToken = null, serverError } = yield call(
+    const { submissions, nextPageToken = null, error } = yield call(
       searchSubmissions,
       { search: query.build(), datastore: true, form: form.slug },
     );
 
-    if (serverError) {
+    if (error) {
       // What should we do?
     } else {
       // Set the next available page token to the one returned.
@@ -414,12 +410,12 @@ export function* fetchSubmissionsAdvancedSaga() {
     }
   });
 
-  const { submissions, nextPageToken = null, serverError } = yield call(
+  const { submissions, nextPageToken = null, error } = yield call(
     searchSubmissions,
     { search: searcher.build(), datastore: true, form: form.slug },
   );
 
-  if (serverError) {
+  if (error) {
     // What should we do?
   } else {
     // If we made a request for page > 2, then push that page token to the stack.
@@ -437,14 +433,14 @@ export function* fetchSubmissionsAdvancedSaga() {
 export function* fetchSubmissionSaga(action) {
   const include =
     'details,values,form,form.attributes,form.fields,activities,activities.details';
-  const { submission, serverError } = yield call(fetchSubmission, {
+  const { submission, error } = yield call(fetchSubmission, {
     id: action.payload,
     include,
     datastore: true,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
+  if (error) {
+    yield put(actions.setSubmission(null));
   } else {
     yield put(actions.setSubmission(submission));
   }
@@ -452,16 +448,14 @@ export function* fetchSubmissionSaga(action) {
 
 export function* cloneSubmissionSaga(action) {
   const include = 'details,values,form,form.fields.details';
-  const { submission, errors, serverError } = yield call(fetchSubmission, {
+  const { submission, error } = yield call(fetchSubmission, {
     id: action.payload.id,
     include,
     datastore: true,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.cloneSubmissionErrors(errors));
+  if (error) {
+    yield put(actions.cloneSubmissionErrors([error]));
   } else {
     // The values of attachment fields cannot be cloned so we will filter them out
     // of the values POSTed to the new submission.
@@ -487,21 +481,18 @@ export function* cloneSubmissionSaga(action) {
       .toJS();
 
     // Make the call to create the clone.
-    const {
-      submission: cloneSubmission,
-      postErrors,
-      postServerError,
-    } = yield call(createSubmission, {
-      datastore: true,
-      formSlug: form.slug,
-      values,
-      completed: false,
-    });
+    const { submission: cloneSubmission, error: postError } = yield call(
+      createSubmission,
+      {
+        datastore: true,
+        formSlug: form.slug,
+        values,
+        completed: false,
+      },
+    );
 
-    if (postServerError) {
-      yield put(systemErrorActions.setSystemError(serverError));
-    } else if (postErrors) {
-      yield put(actions.cloneSubmissionErrors(postErrors));
+    if (postError) {
+      yield put(actions.cloneSubmissionErrors([postError]));
     } else {
       yield put(actions.cloneSubmissionSuccess());
       yield put(addSuccess('Submission Cloned', 'Datastore'));
@@ -514,15 +505,13 @@ export function* cloneSubmissionSaga(action) {
 }
 
 export function* deleteSubmissionSaga(action) {
-  const { errors, serverError } = yield call(deleteSubmission, {
+  const { error } = yield call(deleteSubmission, {
     id: action.payload.id,
     datastore: true,
   });
 
-  if (serverError) {
-    yield put(systemErrorActions.setSystemError(serverError));
-  } else if (errors) {
-    yield put(actions.deleteSubmissionErrors(errors));
+  if (error) {
+    yield put(actions.deleteSubmissionErrors([error]));
   } else {
     yield put(actions.deleteSubmissionSuccess());
     yield put(addSuccess('Submission Deleted', 'Datastore'));
@@ -542,7 +531,7 @@ export function* fetchAllSubmissionsSaga(action) {
     searcher.pageToken(pageToken);
   }
 
-  const { submissions, nextPageToken = null, serverError } = yield call(
+  const { submissions, nextPageToken = null, error } = yield call(
     searchSubmissions,
     {
       search: searcher.build(),
@@ -566,7 +555,7 @@ export function* fetchAllSubmissionsSaga(action) {
   if (nextPageToken) {
     yield call(fetchAllSubmissionsSaga, action);
   } else {
-    if (serverError) {
+    if (error) {
       // What should we do?
     } else {
       yield put(actions.setExportSubmissions(action.payload.accumulator));
@@ -644,12 +633,12 @@ export function* executeImportSaga(action) {
 
   // for (let x = 0; x < responses.length; x++) {
   //   currentRecordCount++;
-  //   const { serverError, errors } = responses[x];
+  //   const { error } = responses[x];
   //   // Not handling nonconforming errors from CoreAPI.
-  //   if (serverError || errors) {
+  //   if (error) {
   //     const failedRow = {
   //       rowNumber: currentRecordCount,
-  //       errors: errors ? errors : [serverError.statusText],
+  //       errors: [error.message],
   //     };
   //     yield put(actions.setImportFailedCall(failedRow));
   //   }
@@ -657,13 +646,13 @@ export function* executeImportSaga(action) {
 
   const errorsArray = responses.reduce((acc, response) => {
     currentRecordCount++;
-    const { serverError, errors } = response;
+    const { error } = response;
 
     // Not handling nonconforming errors from CoreAPI.
-    if (serverError || errors) {
+    if (error) {
       acc.push({
         rowNumber: currentRecordCount,
-        errors: errors ? errors : [serverError.statusText],
+        errors: [error.message],
       });
     }
     return acc;

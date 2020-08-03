@@ -1,11 +1,9 @@
 import React, { Fragment } from 'react';
 import { TeamForm, I18n, refetchTable } from '@kineticdata/react';
 import { compose, withHandlers } from 'recompose';
-import { FormComponents, addToast } from '@kineticdata/bundle-common';
+import { FormComponents, TeamCard, addToast } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { Link } from '@reach/router';
-import { TeamCard } from '../shared/TeamCard';
-import { getIn } from 'immutable';
 
 const asArray = value => (value ? [value] : []);
 
@@ -30,23 +28,18 @@ const FormLayout = ({ fields, error, buttons }) => (
   </form>
 );
 
-const TeamEditComponent = ({
-  formKey,
-  slug: teamSlug,
-  handleSave,
-  handleDelete,
-}) => (
+const TeamEditComponent = ({ formKey, slug, handleSave, handleDelete }) => (
   <div className="page-container page-container--panels">
     <PageTitle parts={[`Edit Team`, 'Teams']} />
     <TeamForm
       formKey={formKey}
-      teamSlug={teamSlug}
+      teamSlug={slug}
       components={{
         FormError: FormComponents.FormError,
         FormButtons: FormComponents.generateFormButtons({
           handleDelete,
           submitLabel: 'Update Team',
-          cancelPath: '/settings/teams',
+          cancelPath: '..',
         }),
         FormLayout,
       }}
@@ -80,7 +73,7 @@ const TeamEditComponent = ({
       }}
       onSave={handleSave}
     >
-      {({ form, bindings: { form: formBindings }, initialized }) =>
+      {({ form, bindings: { team, values }, initialized }) =>
         initialized && (
           <Fragment>
             <div className="page-panel page-panel--two-thirds page-panel--white">
@@ -101,7 +94,7 @@ const TeamEditComponent = ({
                     /
                   </span>
                   <h1>
-                    <I18n>Edit Team</I18n>
+                    <I18n>{team && team.get('name')}</I18n>
                   </h1>
                 </div>
               </div>
@@ -110,7 +103,20 @@ const TeamEditComponent = ({
             <div className="page-panel page-panel--one-thirds page-panel--sidebar">
               <br />
               <TeamCard
-                team={getIn(form, ['props', 'bindings', 'team'], []).toJS()}
+                team={{
+                  name: values.getIn(['parentTeam', 'name'])
+                    ? `${values.getIn(['parentTeam', 'name'])}::${values.get(
+                        'localName',
+                      )}`
+                    : values.get('localName'),
+                  slug,
+                  description: values.get('description'),
+                  attributesMap: { Icon: [values.get('icon')].filter(Boolean) },
+                  memberships: values
+                    .get('memberships')
+                    .map(user => ({ user }))
+                    .toJS(),
+                }}
               />
             </div>
           </Fragment>
@@ -120,7 +126,7 @@ const TeamEditComponent = ({
   </div>
 );
 
-// TODO implement handleDelete
+// TODO implement handleDelete?
 export const TeamEdit = compose(
   withHandlers({
     handleSave: props => () => team => {

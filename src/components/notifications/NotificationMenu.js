@@ -15,7 +15,6 @@ import { context } from '../../redux/store';
 import { I18n } from '@kineticdata/react';
 
 const wrapVar = type => property => `\${${type}('${property}')}`;
-const MINIMUM_CE_VERSION_FOR_DATASTORE = '2.1.0';
 
 const submissionProperties = [
   'handle',
@@ -256,7 +255,6 @@ export const NotificationMenuComponent = ({
   dateFormats,
   selectedKapp,
   selectedForm,
-  hasDatastore,
   isDatastore,
   handleClick,
   handleKappSelect,
@@ -265,26 +263,24 @@ export const NotificationMenuComponent = ({
 }) => (
   <div className="alert alert-secondary">
     <div className="form-row">
-      {hasDatastore && (
-        <div className="form-group col-2">
-          <label htmlFor="notification-menu-datastore">
-            <I18n>Datastore?</I18n>
-          </label>
-          <I18n
-            render={translate => (
-              <select
-                id="notification-menu-datastore"
-                className="form-control form-control-sm"
-                value={isDatastore}
-                onChange={toggleIsDatastore}
-              >
-                <option value={false}>{translate('No')}</option>
-                <option value={true}>{translate('Yes')}</option>
-              </select>
-            )}
-          />
-        </div>
-      )}
+      <div className="form-group col-2">
+        <label htmlFor="notification-menu-datastore">
+          <I18n>Datastore?</I18n>
+        </label>
+        <I18n
+          render={translate => (
+            <select
+              id="notification-menu-datastore"
+              className="form-control form-control-sm"
+              value={isDatastore}
+              onChange={toggleIsDatastore}
+            >
+              <option value={false}>{translate('No')}</option>
+              <option value={true}>{translate('Yes')}</option>
+            </select>
+          )}
+        />
+      </div>
       {!isDatastore && (
         <div className="form-group col-md-2">
           <label htmlFor="notification-menu-kapp">
@@ -402,25 +398,19 @@ export const NotificationMenuComponent = ({
 export const mapStateToProps = state => ({
   space: state.app.space,
   kapps: state.app.kapps,
-  forms:
-    state.settingsNotifications.variables &&
-    state.settingsNotifications.variables.forms,
+  forms: state.settingsNotifications.variables,
   dateFormats: state.settingsNotifications.dateFormats
     .filter(submission => submission.values.Status === 'Active')
     .map(submission => submission.values.Name),
-  snippets: state.settingsNotifications.notificationSnippets.filter(
+  snippets: state.settingsNotifications.snippets.filter(
     submission => submission.values.Status === 'Active',
-  ),
-  hasDatastore: semver.satisfies(
-    semver.coerce(state.app.coreVersion),
-    `>=${MINIMUM_CE_VERSION_FOR_DATASTORE}`,
   ),
 });
 
 const mapDispatchToProps = {
-  fetchVariables: actions.fetchVariables,
-  fetchNotifications: actions.fetchNotifications,
-  fetchDateFormats: actions.fetchDateFormats,
+  fetchSnippets: actions.fetchSnippetsRequest,
+  fetchDateFormats: actions.fetchDateFormatsRequest,
+  fetchVariables: actions.fetchVariablesRequest,
 };
 
 export const NotificationMenu = compose(
@@ -436,7 +426,7 @@ export const NotificationMenu = compose(
   withHandlers({
     handleClick: props => event => props.onSelect(event.target.dataset.value),
     handleKappSelect: props => event => {
-      props.fetchVariables(event.target.value);
+      props.fetchVariables({ kappSlug: event.target.value });
       props.setSelectedKapp(
         props.kapps.find(kapp => kapp.slug === event.target.value),
       );
@@ -449,13 +439,13 @@ export const NotificationMenu = compose(
     toggleIsDatastore: props => () => {
       props.setIsDatastore(!props.isDatastore);
       if (!props.isDatastore) {
-        props.fetchVariables('app/datastore');
+        props.fetchVariables({ kappSlug: 'app/datastore' });
       }
     },
   }),
   lifecycle({
     componentDidMount() {
-      this.props.fetchNotifications();
+      this.props.fetchSnippets();
       this.props.fetchDateFormats();
     },
   }),

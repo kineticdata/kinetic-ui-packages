@@ -96,7 +96,6 @@ export const FormListComponent = ({
     <FormTable
       datastore
       tableKey={tableKey}
-      pageSize={3}
       components={{
         EmptyBodyRow,
         FilterFormLayout,
@@ -127,9 +126,9 @@ export const FormListComponent = ({
       onSearch={() => () => setFilterOpen(false)}
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (
-        <div className="page-container page-container--panels">
+        <div className="page-container">
           <PageTitle parts={['Datastore Forms']} />
-          <div className="page-panel page-panel--two-thirds page-panel--white">
+          <div className="page-panel page-panel--white">
             <div className="page-title">
               <div
                 role="navigation"
@@ -171,26 +170,6 @@ export const FormListComponent = ({
               <div className="scroll-wrapper-h">{table}</div>
               {pagination}
             </div>
-          </div>
-          <div className="page-panel page-panel--one-thirds page-panel--sidebar">
-            <h3>
-              <I18n>Datastore Forms</I18n>
-            </h3>
-            {/* TODO: Update tone of copy */}
-            <p>
-              <I18n>
-                Datastore Forms allow administrators to define and build
-                referential datasets. These forms can be configured with
-                compound (multi-field/property) indexes and unique indexes,
-                which provide efficient query support for large datasets.
-              </I18n>
-            </p>
-            <p>
-              <I18n>
-                Example datasets: Assets, People, Locations, Vendors, or Cities
-                and States
-              </I18n>
-            </p>
           </div>
 
           {/* Modal for creating a new team */}

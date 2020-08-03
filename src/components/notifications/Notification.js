@@ -1,16 +1,12 @@
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import { compose, withHandlers, withState, lifecycle } from 'recompose';
+import { connect } from '../../redux/store';
 import { Link } from '@reach/router';
 import { Map, Seq } from 'immutable';
-import { push } from 'redux-first-history';
-import { addSuccess } from '@kineticdata/bundle-common';
+import { I18n, refetchTable } from '@kineticdata/react';
+import { addToast, addToastAlert } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
-
 import { actions } from '../../redux/modules/settingsNotifications';
-import { context } from '../../redux/store';
-
-import { I18n } from '@kineticdata/react';
 import { NotificationMenu } from './NotificationMenu';
 
 const fields = {
@@ -28,7 +24,7 @@ const fields = {
     required: true,
   },
   'Text Content': {
-    required: values => values.get('Type') === 'Template',
+    required: true,
   },
   Type: {
     required: true,
@@ -65,13 +61,7 @@ const NotificationComponent = ({
   handleVariableSelection,
 }) => (
   <div className="page-container page-container--panels">
-    <PageTitle
-      parts={[
-        submission ? submission.label : `New ${title}`,
-        'Notifications',
-        'Settings',
-      ]}
-    />
+    <PageTitle parts={['Notifications', 'Settings']} />
     <div className="page-panel page-panel--two-thirds page-panel--white">
       <div className="page-title">
         <div
@@ -80,13 +70,13 @@ const NotificationComponent = ({
           className="page-title__breadcrumbs"
         >
           <span className="breadcrumb-item">
-            <Link to="/settings">
+            <Link to="../../..">
               <I18n>settings</I18n>
             </Link>
           </span>{' '}
           <span aria-hidden="true">/ </span>
           <span className="breadcrumb-item">
-            <Link to={`/settings/notifications/${type}`}>
+            <Link to={`..`}>
               <I18n>notification {type}</I18n>
             </Link>
           </span>{' '}
@@ -247,22 +237,38 @@ const NotificationComponent = ({
   </div>
 );
 
+export const mapStateToProps = (state, props) => ({
+  submission: state.settingsNotifications.notification,
+  type: props.type,
+  title: props.type === 'templates' ? 'Template' : 'Snippet',
+  loading:
+    props.id !== 'new' &&
+    !state.settingsNotifications.notification &&
+    !state.settingsNotifications.notificationError,
+});
+
+export const mapDispatchToProps = {
+  fetchNotification: actions.fetchNotificationRequest,
+  saveNotification: actions.saveNotificationRequest,
+};
+
 export const handleSubmit = props => event => {
   event.preventDefault();
-  props.saveNotification(
-    props.values.toJS(),
-    props.submission && props.submission.id,
-    submission => {
-      const action = props.submission ? 'Updated' : 'Created';
-      props.push(`/settings/notifications/${props.type}`);
-      addSuccess(
-        `Successfully ${action.toLowerCase()} ${props.title.toLowerCase()} (${
-          submission.handle
-        })`,
-        `${action} ${props.title}`,
+  props.saveNotification({
+    id: props.submission ? props.submission.id : undefined,
+    values: props.values.toJS(),
+    success: () => {
+      addToast(
+        `${props.title} ${
+          props.submission ? 'updated' : 'created'
+        } successfully`,
       );
+      refetchTable(props.tableKey);
+      props.navigate('..');
     },
-  );
+    failure: error =>
+      addToastAlert({ title: 'Save Failed', message: error.message }),
+  });
 };
 
 export const handleFieldChange = props => event => {
@@ -294,28 +300,10 @@ export const handleVariableSelection = props => variable => {
   }
 };
 
-export const mapStateToProps = (state, props) => ({
-  submission: state.settingsNotifications.notification,
-  type: props.type,
-  title: props.type === 'templates' ? 'Template' : 'Snippet',
-  loading: state.settingsNotifications.notificationLoading,
-  saving: state.settingsNotifications.saving,
-});
-
-export const mapDispatchToProps = {
-  fetchNotification: actions.fetchNotification,
-  resetNotification: actions.resetNotification,
-  saveNotification: actions.saveNotification,
-  fetchVariables: actions.fetchVariables,
-  push,
-};
-
 export const Notification = compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
-    null,
-    { context },
   ),
   withState('dirty', 'setDirty', false),
   withState('values', 'setValues', props =>
@@ -330,26 +318,35 @@ export const Notification = compose(
     handleVariableSelection,
   }),
   lifecycle({
-    componentWillMount() {
+    componentDidMount() {
       this.props.fetchNotification(this.props.id);
     },
-    componentWillReceiveProps(nextProps) {
-      if (this.props.id !== nextProps.id) {
-        this.props.fetchNotification(nextProps.id);
+    componentDidUpdate(prevProps) {
+      console.log(
+        'update',
+        !!this.props.submission,
+        !!prevProps.submission,
+        this.props.submission &&
+          (!prevProps.submission ||
+            prevProps.submission.id !== this.props.submission.id),
+      );
+      if (this.props.id !== prevProps.id) {
+        this.props.fetchNotification(this.props.id);
       }
-      if (this.props.submission !== nextProps.submission) {
+      if (
+        this.props.submission &&
+        (!prevProps.submission ||
+          prevProps.submission.id !== this.props.submission.id)
+      ) {
         this.props.setValues(
           Object.keys(fields).reduce(
             (values, field) =>
-              values.set(field, nextProps.submission.values[field] || ''),
+              values.set(field, this.props.submission.values[field] || ''),
             Map(),
           ),
         );
         this.props.setDirty(false);
       }
-    },
-    componentWillUnmount() {
-      this.props.resetNotification();
     },
   }),
 )(NotificationComponent);

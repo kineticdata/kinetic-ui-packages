@@ -1,25 +1,11 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { compose, withHandlers } from 'recompose';
 import { UserForm, I18n, refetchTable } from '@kineticdata/react';
-import {
-  FormComponents,
-  ProfileCard,
-  addToast,
-} from '@kineticdata/bundle-common';
+import { FormComponents, addToast } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { Link } from '@reach/router';
-import { getIn } from 'immutable';
 
 const asArray = value => (value ? [value] : []);
-
-const buildProfile = profile => ({
-  ...profile,
-  displayName: profile.displayName || '',
-  email: profile.email || '',
-  preferredLocale: profile.preferredLocale || '',
-  timezone: profile.timezone || '',
-  profileAttributes: profile.profileAttributes || [],
-});
 
 const FormLayout = ({ fields, error, buttons }) => (
   <form>
@@ -62,9 +48,10 @@ export const UserEditComponent = ({
   handleSave,
   handleDelete,
 }) => (
-  <div className="page-container page-container--panels">
-    <PageTitle parts={[`Edit User`, 'Users']} />
+  <div className="page-container">
+    <PageTitle parts={['Users', 'Settings']} />{' '}
     <UserForm
+      key={username}
       formkey={`user-edit`}
       username={username ? username : null}
       components={{
@@ -72,7 +59,7 @@ export const UserEditComponent = ({
         FormButtons: FormComponents.generateFormButtons({
           handleDelete,
           submitLabel: 'Update User',
-          cancelPath: '/settings/users',
+          cancelPath: '..',
         }),
         FormLayout,
       }}
@@ -104,7 +91,7 @@ export const UserEditComponent = ({
             name: 'department',
             label: 'Department',
             type: 'text',
-            initialValue: user.getIn(['attributesMap', 'Last Name', 0]),
+            initialValue: user.getIn(['attributesMap', 'Department', 0]),
           },
           {
             name: 'manager',
@@ -144,51 +131,37 @@ export const UserEditComponent = ({
       }}
       onSave={handleSave}
     >
-      {({ form, bindings: { form: formBindings }, initialized, user }) =>
+      {({ form, bindings: { user }, initialized }) =>
         initialized && (
-          <Fragment>
-            <div className="page-panel page-panel--two-thirds page-panel--white">
-              <div className="page-title">
-                <div
-                  role="navigation"
-                  aria-label="breadcrumbs"
-                  className="page-title__breadcrumbs"
-                >
-                  <span className="breadcrumb-item">
-                    <Link to="/settings">
-                      <I18n>settings</I18n>
-                    </Link>{' '}
-                    /{' '}
-                    <Link to="/settings/users">
-                      <I18n>users</I18n>
-                    </Link>{' '}
-                    /
-                  </span>
-                  <h1>
-                    <I18n>Edit User</I18n>
-                  </h1>
-                </div>
+          <div className="page-panel page-panel--white">
+            <div className="page-title">
+              <div
+                role="navigation"
+                aria-label="breadcrumbs"
+                className="page-title__breadcrumbs"
+              >
+                <span className="breadcrumb-item">
+                  <Link to="../..">
+                    <I18n>settings</I18n>
+                  </Link>{' '}
+                  /{' '}
+                  <Link to="..">
+                    <I18n>users</I18n>
+                  </Link>{' '}
+                  /
+                </span>
+                <h1>{user && user.get('username')}</h1>
               </div>
-              {form}
             </div>
-            <div className="page-panel page-panel--one-thirds page-panel--sidebar">
-              <Fragment>
-                <br />
-                <ProfileCard
-                  user={buildProfile(
-                    getIn(form, ['props', 'bindings', 'user'], []).toJS(),
-                  )}
-                />
-              </Fragment>
-            </div>
-          </Fragment>
+            {form}
+          </div>
         )
       }
     </UserForm>
   </div>
 );
 
-// TODO implement handleDelete
+// TODO implement handleDelete?
 export const UserEdit = compose(
   withHandlers({
     handleSave: props => () => ({ user }) => {

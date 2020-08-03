@@ -1,88 +1,80 @@
 import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
 import { connect } from '../redux/store';
-import { compose, withProps } from 'recompose';
 import { bundle } from '@kineticdata/react';
-import {
-  selectVisibleKapps,
-  selectHasRoleSchedulerAdmin,
-  selectHasRoleSchedulerManager,
-} from '@kineticdata/bundle-common';
-import { NOTIFICATIONS_FORM_SLUG } from '../redux/modules/settingsNotifications';
-import { ROBOT_DEFINITIONS_FORM_SLUG } from '../redux/modules/settingsRobots';
+import { selectVisibleKapps } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
 import { isActiveClass } from '../utils';
 
 export const SidebarComponent = ({
-  loading,
-  spaceAdmin,
-  showDatastore,
-  showNotifications,
-  showRobots,
-  showSchedulers,
+  isSpaceAdmin,
+  hasDatastoreAccess,
+  hasNotificationAccess,
+  hasRobotAccess,
+  hasSchedulerAccess,
+  hasTeamAccess,
+  hasUserAccess,
   visibleKapps,
 }) => (
   <div className="sidebar">
     <div className="sidebar-group--content-wrapper">
-      {!loading && (
-        <Fragment>
-          <div className="sidebar-group">
-            <div className="sidebar-group__label">Space Settings</div>
-            <ul className="nav flex-column">
-              <li className="nav-item">
-                {spaceAdmin && (
-                  <Link to="space" getProps={isActiveClass('nav-link')}>
-                    <I18n>Space</I18n>
-                    <span className="fa fa-fw fa-angle-right" />
-                  </Link>
-                )}
-                {showDatastore && (
-                  <Link to="datastore" getProps={isActiveClass('nav-link')}>
-                    <I18n>Datastore</I18n>
-                    <span className="fa fa-fw fa-angle-right" />
-                  </Link>
-                )}
-                {showNotifications && (
-                  <Link to="notifications" getProps={isActiveClass('nav-link')}>
-                    <I18n>Notifications</I18n>
-                    <span className="fa fa-fw fa-angle-right" />
-                  </Link>
-                )}
-                {showRobots && (
-                  <Link to="robots" getProps={isActiveClass('nav-link')}>
-                    <I18n>Robots</I18n>
-                    <span className="fa fa-fw fa-angle-right" />
-                  </Link>
-                )}
-                {spaceAdmin && (
-                  <Link to="users" getProps={isActiveClass('nav-link')}>
-                    <I18n>Users</I18n>
-                    <span className="fa fa-fw fa-angle-right" />
-                  </Link>
-                )}
-                {spaceAdmin && (
-                  <Link to="teams" getProps={isActiveClass('nav-link')}>
-                    <I18n>Teams</I18n>
-                    <span className="fa fa-fw fa-angle-right" />
-                  </Link>
-                )}
-                {showSchedulers && (
-                  <Link to="schedulers" getProps={isActiveClass('nav-link')}>
-                    <I18n>Schedulers</I18n>
-                    <span className="fa fa-fw fa-angle-right" />
-                  </Link>
-                )}
-                {spaceAdmin && (
-                  <Link to="translations" getProps={isActiveClass('nav-link')}>
-                    <I18n>Translations</I18n>
-                    <span className="fa fa-fw fa-angle-right" />
-                  </Link>
-                )}
-              </li>
-            </ul>
-          </div>
-          {/*visibleKapps &&
+      <div className="sidebar-group">
+        <div className="sidebar-group__label">Space Settings</div>
+        <ul className="nav flex-column">
+          <li className="nav-item">
+            {isSpaceAdmin && (
+              <Link to="space" getProps={isActiveClass('nav-link')}>
+                <I18n>Space</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
+            {hasDatastoreAccess && (
+              <Link to="datastore" getProps={isActiveClass('nav-link')}>
+                <I18n>Datastore</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
+            {hasNotificationAccess && (
+              <Link to="notifications" getProps={isActiveClass('nav-link')}>
+                <I18n>Notifications</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
+            {hasRobotAccess && (
+              <Link to="robots" getProps={isActiveClass('nav-link')}>
+                <I18n>Robots</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
+            {hasSchedulerAccess && (
+              <Link to="schedulers" getProps={isActiveClass('nav-link')}>
+                <I18n>Schedulers</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
+            {hasTeamAccess && (
+              <Link to="teams" getProps={isActiveClass('nav-link')}>
+                <I18n>Teams</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
+            {hasUserAccess && (
+              <Link to="users" getProps={isActiveClass('nav-link')}>
+                <I18n>Users</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
+            {isSpaceAdmin && (
+              <Link to="translations" getProps={isActiveClass('nav-link')}>
+                <I18n>Translations</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
+          </li>
+        </ul>
+      </div>
+      {/*visibleKapps &&
             visibleKapps.length > 0 && (
               <div className="sidebar-group">
                 <h1>Kapp Settings</h1>
@@ -100,16 +92,15 @@ export const SidebarComponent = ({
                 </ul>
               </div>
             )*/}
-        </Fragment>
-      )}
     </div>
-    {spaceAdmin && (
+    {isSpaceAdmin && (
       <div className="sidebar-group sidebar-group--settings">
         <ul className="nav flex-column settings-group">
           <li>
             <a
               href={`${bundle.spaceLocation()}/app`}
               target="_blank"
+              rel="noopener noreferrer"
               className="nav-link nav-link--admin"
             >
               <I18n>Kinetic Platform Admin</I18n>
@@ -123,25 +114,14 @@ export const SidebarComponent = ({
 );
 
 export const mapStateToProps = state => ({
-  loading: state.settingsDatastore.loading,
-  forms: state.settingsDatastore.forms,
-  spaceAdmin: state.app.profile.spaceAdmin,
-  pathname: state.router.location.pathname,
+  isSpaceAdmin: state.app.profile.spaceAdmin,
+  hasDatastoreAccess: state.settingsApp.hasDatastoreAccess,
+  hasNotificationAccess: state.settingsApp.hasNotificationAccess,
+  hasRobotAccess: state.settingsApp.hasRobotAccess,
+  hasSchedulerAccess: state.settingsApp.hasSchedulerAccess,
+  hasTeamAccess: state.settingsApp.hasTeamAccess,
+  hasUserAccess: state.settingsApp.hasUserAccess,
   visibleKapps: selectVisibleKapps(state),
-  isSchedulerAdmin: selectHasRoleSchedulerAdmin(state.app.profile),
-  isSchedulerManager: selectHasRoleSchedulerManager(state.app.profile),
 });
 
-export const Sidebar = compose(
-  connect(mapStateToProps),
-  withProps(props => ({
-    showDatastore: props.spaceAdmin || !props.forms.isEmpty(),
-    showNotifications: !!props.forms.find(
-      form => form.slug === NOTIFICATIONS_FORM_SLUG,
-    ),
-    showRobots: !!props.forms.find(
-      form => form.slug === ROBOT_DEFINITIONS_FORM_SLUG,
-    ),
-    showSchedulers: props.isSchedulerAdmin || props.isSchedulerManager,
-  })),
-)(SidebarComponent);
+export const Sidebar = connect(mapStateToProps)(SidebarComponent);

@@ -304,6 +304,7 @@ export class ImportComponent extends Component {
       reader.onload = event => {
         Papa.parse(event.target.result, {
           header: true,
+          skipEmptyLines: true,
           complete: results => {
             //When streaming, parse results are not available in this callback.
             this.parseResults = results;
