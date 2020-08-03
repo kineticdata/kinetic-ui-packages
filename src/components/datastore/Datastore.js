@@ -18,7 +18,6 @@ export const DatastoreRouter = ({ loading }) =>
         <DatastoreSettings tableKey={tableKey} path=":slug/settings" />
         {/* <DatastoreEdit tableKey={tableKey} path=":slug/settings" /> */}
         <DatastoreSubmission path=":slug/new" />
-        <DatastoreSubmission path=":slug/:id/:mode" />
         <DatastoreSubmission path=":slug/:id" />
         <FormList tableKey={tableKey} default />
       </TableComponents.MountWrapper>

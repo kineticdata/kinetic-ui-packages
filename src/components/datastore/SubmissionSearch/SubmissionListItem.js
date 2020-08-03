@@ -61,10 +61,7 @@ const MobileSubmissionCard = ({ submission, columns, path }) => (
           </p>
           <div className="btn-group" role="group" aria-label="Actions">
             <Link to={`${path}/${submission.id}`} className="btn btn-primary">
-              <I18n>View</I18n>
-            </Link>
-            <Link to={`${path}/${submission.id}/edit`} className="btn btn-info">
-              <I18n>Edit</I18n>
+              <I18n>View / Edit</I18n>
             </Link>
             <button
               type="button"
@@ -129,10 +126,7 @@ const TableSubmissionRow = ({
         </DropdownToggle>
         <DropdownMenu right>
           <DropdownItem tag={Link} to={`${path}/${submission.id}`}>
-            <I18n>View</I18n>
-          </DropdownItem>
-          <DropdownItem tag={Link} to={`${path}/${submission.id}/edit`}>
-            <I18n>Edit</I18n>
+            <I18n>View / Edit</I18n>
           </DropdownItem>
           <DropdownItem onClick={handleClone(submission.id)}>
             <I18n>Clone</I18n>

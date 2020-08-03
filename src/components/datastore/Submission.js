@@ -55,7 +55,6 @@ const DatastoreSubmissionComponent = ({
   handleError,
   values,
   submission,
-  isEditing,
   formKey,
   discussionsEnabled,
   viewDiscussionsModal,
@@ -111,8 +110,9 @@ const DatastoreSubmissionComponent = ({
             </h1>
           </div>
           <div className="page-title__actions">
-            {showPrevAndNext &&
-              !isEditing && (
+            {submissionId &&
+              submission &&
+              showPrevAndNext && (
                 <ButtonGroup className="datastore-prev-next">
                   <Link
                     to={prevAndNext.prev || ''}
@@ -134,15 +134,6 @@ const DatastoreSubmissionComponent = ({
                   </Link>
                 </ButtonGroup>
               )}
-            {submissionId &&
-              !isEditing && (
-                <Link
-                  to={`/settings/datastore/${form.slug}/${submissionId}/edit`}
-                  className="btn btn-primary ml-3 datastore-edit"
-                >
-                  <I18n>Edit Record</I18n>
-                </Link>
-              )}
             {discussionsEnabled && (
               <button
                 onClick={openDiscussions}
@@ -161,7 +152,6 @@ const DatastoreSubmissionComponent = ({
           {submissionId ? (
             <CoreForm
               datastore
-              review={!isEditing}
               submission={submissionId}
               updated={handleUpdated}
               error={handleError}
@@ -248,14 +238,13 @@ export const openDiscussions = props => () =>
 export const closeDiscussions = props => () =>
   props.setViewDiscussionsModal(false);
 
-export const mapStateToProps = (state, { id, mode, slug }) => ({
+export const mapStateToProps = (state, { id, slug }) => ({
   submissionId: id,
   submission: state.settingsDatastore.submission,
   showPrevAndNext: shouldPrevNextShow(state),
   prevAndNext: selectPrevAndNext(state),
   form: selectFormBySlug(state, slug),
   values: valuesFromQueryParams(state.router.location.search),
-  isEditing: mode && mode === 'edit' ? true : false,
   discussionsEnabled: selectDiscussionsEnabled(state),
   isSmallLayout: state.app.layoutSize === 'small',
   profile: state.app.profile,
