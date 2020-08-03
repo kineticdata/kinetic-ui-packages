@@ -167,11 +167,6 @@ export const SurveySubmissionsComponent = ({
           'submittedBy',
           'values',
         ]}
-        alterFilters={{
-          values: {
-            component: TableComponents.ValuesFilter,
-          },
-        }}
         onSearch={() => () => setFilterOpen(false)}
       >
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
