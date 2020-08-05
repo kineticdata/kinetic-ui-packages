@@ -50,17 +50,18 @@ const handleSubmit = ({ modelName, qualificationName }) => (
     qualificationName,
     bridgeModelQualification: { name, resultType },
   })
-    .then(result =>
-      result.error
-        ? result
-        : (qualificationName
-            ? updateBridgeModelQualificationMapping
-            : createBridgeModelQualificationMapping)({
-            modelName,
-            mappingName,
-            qualificationName: name,
-            bridgeModelQualificationMapping: { name, query },
-          }),
+    .then(
+      result =>
+        result.error
+          ? result
+          : (qualificationName
+              ? updateBridgeModelQualificationMapping
+              : createBridgeModelQualificationMapping)({
+              modelName,
+              mappingName,
+              qualificationName: name,
+              bridgeModelQualificationMapping: { name, query },
+            }),
     )
     .then(({ bridgeModelQualificationMapping, error }) => {
       if (error) {
@@ -105,6 +106,9 @@ const fields = ({ modelName, qualificationName }) => ({
       type: 'code',
       language: 'js-template',
       required: false,
+      constraint: ({ values }) =>
+        /^[A-Za-z0-9- ${}("')]*$/.test(values.get('query')),
+      constraintMessage: 'Query contains invalid characters',
       initialValue:
         (bridgeModelQualificationMapping &&
           bridgeModelQualificationMapping.get('query')) ||
