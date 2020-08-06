@@ -464,6 +464,7 @@ export const FormSettingsComponent = ({
                   }/builder`}
                   className="btn btn-primary"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <span className="fa fa-fw fa-mouse-pointer" />
                   <I18n>Form Builder</I18n>
