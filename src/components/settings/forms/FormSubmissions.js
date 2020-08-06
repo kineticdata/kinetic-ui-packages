@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { compose, withState, lifecycle } from 'recompose';
+import { compose, withProps, withState, lifecycle } from 'recompose';
 import { connect } from '../../../redux/store';
 import {
   I18n,
@@ -11,7 +11,10 @@ import {
 import { TableComponents, TimeAgo } from '@kineticdata/bundle-common';
 import { ExportModal } from './ExportModal';
 import { PageTitle } from '../../shared/PageTitle';
-import { actions } from '../../../redux/modules/settingsForms';
+import {
+  actions,
+  buildFormConfigurationObject,
+} from '../../../redux/modules/settingsForms';
 
 const tableKey = 'queue-settings-form-submissions';
 
@@ -31,6 +34,7 @@ const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
 export const FormSubmissionsComponent = ({
   kapp,
   form,
+  columns,
   openModal,
   filterOpen,
   setFilterOpen,
@@ -46,39 +50,67 @@ export const FormSubmissionsComponent = ({
     ],
   });
 
+  const visibleSortColumns = columns.filter(
+    c => c.visible && ['createdAt', 'updatedAt'].includes(c.name),
+  );
+
+  const sortField =
+    visibleSortColumns.size > 0
+      ? visibleSortColumns.getIn([0, 'name'])
+      : 'updatedAt';
+
+  const visibleColumns = columns
+    .filter(c => c.visible)
+    .map((c, i) => ({
+      value: c.type === 'value' ? `_${c.name}` : c.name,
+      valueTransform:
+        c.type === 'value'
+          ? (_, row) => row.getIn(['values', c.name])
+          : undefined,
+      title: c.label,
+      sortable: ['createdAt', 'updatedAt'].includes(c.name),
+      components:
+        i === 0
+          ? { BodyCell: LinkCell }
+          : ['createdAt', 'updatedAt'].includes(c.name)
+            ? {
+                BodyCell: TableComponents.TimeAgoCell,
+              }
+            : undefined,
+    }))
+    .push(
+      visibleSortColumns.size === 0
+        ? {
+            value: 'updatedAt',
+            sortable: true,
+            components: { BodyCell: TableComponents.TimeAgoCell },
+          }
+        : undefined,
+    )
+    .filter(Boolean);
+
   return (
     form && (
       <SubmissionTable
         tableKey={tableKey}
         kappSlug={kapp.slug}
         formSlug={form.slug}
+        include={['values']}
         components={{
           EmptyBodyRow,
           FilterFormLayout,
           FilterFormButtons: TableComponents.FilterFormButtons,
         }}
-        columnSet={['label', 'submittedBy', 'type', 'coreState', 'createdAt']}
-        defaultSortColumn="createdAt"
-        alterColumns={{
-          label: {
-            components: { BodyCell: LinkCell },
-          },
-          submittedBy: {
-            title: 'Submitter',
-          },
-          createdAt: {
-            title: 'Created',
-            components: {
-              BodyCell: TableComponents.TimeAgoCell,
-            },
-          },
-          coreState: {
-            title: 'State',
-            components: {
-              BodyCell: TableComponents.CoreStateBadgeCell,
-            },
-          },
-        }}
+        columnSet={visibleColumns.map(c => c.value).toJS()}
+        defaultSortColumn={sortField}
+        addColumns={visibleColumns.filter(c => !!c.valueTransform).toJS()}
+        alterColumns={visibleColumns.filter(c => !c.valueTransform).reduce(
+          (alter, { value, valueTransform, ...properties }) => ({
+            ...alter,
+            [value]: properties,
+          }),
+          {},
+        )}
         filterSet={[
           'startDate',
           'endDate',
@@ -218,6 +250,9 @@ export const FormSubmissions = compose(
     mapDispatchToProps,
   ),
   withState('filterOpen', 'setFilterOpen', false),
+  withProps(props => ({
+    columns: buildFormConfigurationObject(props.form).columns,
+  })),
   lifecycle({
     componentDidMount() {
       mountTable(tableKey);
