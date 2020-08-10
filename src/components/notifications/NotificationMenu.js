@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
-import semver from 'semver';
 import {
+  Collapse,
   UncontrolledButtonDropdown,
   DropdownToggle,
   DropdownMenu,
@@ -260,6 +260,8 @@ export const NotificationMenuComponent = ({
   handleKappSelect,
   handleFormSelect,
   toggleIsDatastore,
+  showHelp,
+  toggleHelp,
 }) => (
   <div className="alert alert-secondary">
     <div className="form-row">
@@ -345,7 +347,7 @@ export const NotificationMenuComponent = ({
       </div>
     </div>
     <div className="form-row">
-      <div className="form-group col-md-5">
+      <div className="form-group col-md-6">
         <label htmlFor="">
           <I18n>Dynamic Replacement Value</I18n>
         </label>
@@ -391,7 +393,46 @@ export const NotificationMenuComponent = ({
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
+      <div className="form-group col-md-6 d-flex justify-content-end align-items-end">
+        <I18n
+          render={translate => (
+            <button
+              type="button"
+              className="btn btn-icon"
+              aria-label={translate('Toggle Help')}
+              onClick={toggleHelp}
+              title={translate('Toggle Help')}
+            >
+              <span className="fa fa-fw fa-2x fa-info-circle" />
+            </button>
+          )}
+        />
+      </div>
     </div>
+    <Collapse className="formRow" isOpen={showHelp}>
+      <p>
+        <I18n>
+          Use the dropdown to insert dynamic elements within the subject and
+          body of your templates. Just put your cursor into one of those fields
+          where you want the element to appear and choose an option from the
+          dropdown list.
+        </I18n>
+      </p>
+      <p>
+        <I18n>
+          Selecting a Kapp and Form will populate the dropdown menu with
+          available options.
+        </I18n>
+      </p>
+      <p>
+        <I18n>
+          Caution: Email templates can be used by any process. Since not all
+          Kapps have the same attributes and not all forms have the same
+          attributes or fields, relying on attributes or fields that may not
+          exist will yield unexpected results. Test your email templates!
+        </I18n>
+      </p>
+    </Collapse>
   </div>
 );
 
@@ -423,6 +464,7 @@ export const NotificationMenu = compose(
   withState('selectedKapp', 'setSelectedKapp', null),
   withState('selectedForm', 'setSelectedForm', null),
   withState('isDatastore', 'setIsDatastore', false),
+  withState('showHelp', 'setShowHelp', false),
   withHandlers({
     handleClick: props => event => props.onSelect(event.target.dataset.value),
     handleKappSelect: props => event => {
@@ -442,6 +484,7 @@ export const NotificationMenu = compose(
         props.fetchVariables({ kappSlug: 'app/datastore' });
       }
     },
+    toggleHelp: props => () => props.setShowHelp(b => !b),
   }),
   lifecycle({
     componentDidMount() {

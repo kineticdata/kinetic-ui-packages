@@ -62,7 +62,7 @@ const NotificationComponent = ({
 }) => (
   <div className="page-container page-container--panels">
     <PageTitle parts={['Notifications', 'Settings']} />
-    <div className="page-panel page-panel--two-thirds page-panel--white">
+    <div className="page-panel page-panel--white">
       <div className="page-title">
         <div
           role="navigation"
@@ -206,33 +206,6 @@ const NotificationComponent = ({
             </div>
           </form>
         )}
-    </div>
-    <div className="page-panel page-panel--one-thirds page-panel--sidebar">
-      <h3>
-        <I18n>Dynamic Replacements</I18n>
-      </h3>
-      <p>
-        <I18n>
-          Use the dropdown to insert dynamic elements within the subject and
-          body of your templates. Just put your cursor into one of those fields
-          where you want the element to appear and choose an option from the
-          dropdown list.
-        </I18n>
-      </p>
-      <p>
-        <I18n>
-          Selecting a Kapp and Form will populate the dropdown menu with
-          available options.
-        </I18n>
-      </p>
-      <p>
-        <I18n>
-          Caution: Email templates can be used by any process. Since not all
-          Kapps have the same attributes and not all forms have the same
-          attributes or fields, relying on attributes or fields that may not
-          exist will yield unexpected results. Test your email templates!
-        </I18n>
-      </p>
     </div>
   </div>
 );

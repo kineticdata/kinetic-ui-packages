@@ -55,7 +55,7 @@ const SettingsComponent = ({
     <I18n context={`datastore.forms.${origForm.slug}`}>
       <div className="page-container page-container--panels">
         <PageTitle parts={['Settings', origForm.name, 'Datastore']} />
-        <div className="page-panel page-panel--two-thirds page-panel--white">
+        <div className="page-panel page-panel--white">
           <div className="page-title">
             <div
               role="navigation"
@@ -91,6 +91,7 @@ const SettingsComponent = ({
               }/builder`}
               className="btn btn-primary"
               target="_blank"
+              rel="noopener noreferrer"
             >
               <I18n>Form Builder</I18n>{' '}
               <i className="fa fa-fw fa-external-link" />
@@ -306,6 +307,18 @@ const SettingsComponent = ({
                         )}
                       </Droppable>
                     </DragDropContext>
+                    <tfoot>
+                      <tr>
+                        <td colSpan={2}>
+                          <small>
+                            Select which field columns should be visible by
+                            default when viewwing records for this form. Drag
+                            and drop to change the order in which the columns
+                            will appear.
+                          </small>
+                        </td>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>
@@ -400,28 +413,6 @@ const SettingsComponent = ({
               <I18n>You do not have access to configure this datastore.</I18n>
             </p>
           )}
-        </div>
-        <div className="page-panel page-panel--one-thirds page-panel--transparent page-panel--sidebar page-panel--datastore-sidebar">
-          <h3>
-            <I18n>Datastore Configuration</I18n>
-          </h3>
-          <p>
-            <I18n>
-              To update the datastore form fields, click the Form Builder
-              button, which will open the form builder in a new window. You will
-              need to reload this page after making changes in the form builder.
-            </I18n>
-          </p>
-          <h4>
-            <I18n>Table Display Settings</I18n>
-          </h4>
-          <p>
-            <I18n>
-              The Display Table Settings section lists all of the fields that
-              exist in this datastore. You may select which fields you'd like to
-              be visible in the table when viewing records.
-            </I18n>
-          </p>
         </div>
         <Modal
           isOpen={staleFields}
