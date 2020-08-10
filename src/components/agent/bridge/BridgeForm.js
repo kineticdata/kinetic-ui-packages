@@ -70,7 +70,7 @@ const fields = ({ bridgeSlug, adapterClass }) => ({
         type: 'text',
         required: true,
         initialValue: get(bridge, 'slug', ''),
-        pattern: /^[A-Za-z\d-]+$/,
+        pattern: /^[a-z\d-]+$/,
         patternMessage:
           'Bridge Slug may only contain letters, numbers, and dashes',
         helpText: 'Unique name used in the bridge path.',

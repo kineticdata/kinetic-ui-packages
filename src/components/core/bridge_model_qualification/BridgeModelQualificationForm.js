@@ -106,9 +106,6 @@ const fields = ({ modelName, qualificationName }) => ({
       type: 'code',
       language: 'js-template',
       required: false,
-      constraint: ({ values }) =>
-        /^[A-Za-z0-9- ${}("')]*$/.test(values.get('query')),
-      constraintMessage: 'Query contains invalid characters',
       initialValue:
         (bridgeModelQualificationMapping &&
           bridgeModelQualificationMapping.get('query')) ||
