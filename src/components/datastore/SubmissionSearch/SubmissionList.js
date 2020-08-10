@@ -5,6 +5,7 @@ import { actions } from '../../../redux/modules/settingsDatastore';
 import { context } from '../../../redux/store';
 import { SubmissionListItem } from './SubmissionListItem';
 import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
+import wallyMissingImage from '@kineticdata/bundle-common/assets/images/wally-missing.svg';
 import { I18n } from '@kineticdata/react';
 
 const DiscussionIcon = () => (
@@ -45,6 +46,20 @@ const WallyEnterSearchTerm = ({ form }) => {
           You can search by any field on the form, or by choosing an index and
           building a search query.
         </I18n>
+      </div>
+    </div>
+  );
+};
+
+const WallyErrorMessage = ({ error }) => {
+  return (
+    <div className="empty-state empty-state--wally">
+      <div className="empty-state__title text-danger">
+        <I18n>An Error Occurred</I18n>
+      </div>
+      <img src={wallyMissingImage} alt="Happy Wally" />
+      <div className="empty-state__message">
+        <I18n>{error.message}</I18n>
       </div>
     </div>
   );
@@ -100,6 +115,7 @@ const fetchSubmissions = ({
 const SubmissionListComponent = ({
   form,
   submissions,
+  submissionsError,
   loading,
   columns,
   hasStartedSearching,
@@ -123,160 +139,167 @@ const SubmissionListComponent = ({
         </h3>
       ) : (
         <div>
-          {submissions.size > 0 && (
-            <div>
-              {nextPageToken === null &&
-                pageTokens.size === 0 &&
-                !searching && (
-                  <div className="alert alert-success mt-3">
-                    <strong>{submissions.size}</strong>{' '}
-                    <I18n>results found</I18n>
-                  </div>
-                )}
-              {clientSortInfo &&
-                (nextPageToken !== null || pageTokens.size > 0) && (
-                  <div className="text-info mb-2">
-                    <small>
-                      <em>
-                        <I18n>
-                          Sorting the table columns will only sort the visible
-                          records on the current page.
-                        </I18n>
-                      </em>
-                    </small>
-                  </div>
-                )}
-              <table className="table table-sm table-striped table--settings">
-                <thead className="d-none d-md-table-header-group sortable">
-                  <tr>
-                    {visibleColumns.map(c => {
-                      const isDiscussionIdField =
-                        c.name === 'Discussion Id' ? true : false;
-                      const sortClass =
-                        (clientSortInfo &&
-                          clientSortInfo.type === c.type &&
-                          clientSortInfo.name === c.name &&
-                          (clientSortInfo.direction === 'DESC'
-                            ? 'sort-desc'
-                            : 'sort-asc')) ||
-                        '';
-                      return (
-                        <th
-                          key={`thead-${c.type}-${c.name}`}
-                          className={`d-sm-none d-md-table-cell ${sortClass}`}
-                          onClick={e => sortTable(c)}
-                          scope="col"
-                        >
-                          {isDiscussionIdField ? (
-                            <DiscussionIcon />
-                          ) : (
-                            <I18n>{c.label}</I18n>
-                          )}
-                        </th>
-                      );
-                    })}
-                    <th className="sort-disabled" />
-                  </tr>
-                </thead>
-                <thead className="d-md-none">
-                  <tr>
-                    <th scope="col">
-                      <div className="input-group">
-                        <div className="input-group-prepend">
-                          <span className="input-group-text">
-                            <I18n>Sort By</I18n>
-                          </span>
-                        </div>
-                        <I18n
-                          render={translate => (
-                            <select
-                              className="form-control"
-                              value={
-                                (clientSortInfo &&
-                                  `${clientSortInfo.name}::${
-                                    clientSortInfo.type
-                                  }`) ||
-                                ''
-                              }
-                              onChange={e => {
-                                const sortInfo = e.target.value.split('::');
-                                sortTable(
-                                  sortInfo.length === 2
-                                    ? visibleColumns.find(
-                                        c =>
-                                          c.name === sortInfo[0] &&
-                                          c.type === sortInfo[1],
-                                      )
-                                    : null,
-                                );
-                              }}
-                            >
-                              {!clientSortInfo && <option />}
-                              {visibleColumns.map(c => (
-                                <option
-                                  key={`${c.name}::${c.type}`}
-                                  value={`${c.name}::${c.type}`}
-                                >
-                                  {translate(c.label)}
-                                </option>
-                              ))}
-                            </select>
-                          )}
-                        />
-                        {clientSortInfo && (
+          {!submissionsError &&
+            submissions.size > 0 && (
+              <div>
+                {nextPageToken === null &&
+                  pageTokens.size === 0 &&
+                  !searching && (
+                    <div className="alert alert-success mt-3">
+                      <strong>{submissions.size}</strong>{' '}
+                      <I18n>results found</I18n>
+                    </div>
+                  )}
+                {clientSortInfo &&
+                  (nextPageToken !== null || pageTokens.size > 0) && (
+                    <div className="text-info mb-2">
+                      <small>
+                        <em>
+                          <I18n>
+                            Sorting the table columns will only sort the visible
+                            records on the current page.
+                          </I18n>
+                        </em>
+                      </small>
+                    </div>
+                  )}
+                <table className="table table-sm table-striped table--settings">
+                  <thead className="d-none d-md-table-header-group sortable">
+                    <tr>
+                      {visibleColumns.map(c => {
+                        const isDiscussionIdField =
+                          c.name === 'Discussion Id' ? true : false;
+                        const sortClass =
+                          (clientSortInfo &&
+                            clientSortInfo.type === c.type &&
+                            clientSortInfo.name === c.name &&
+                            (clientSortInfo.direction === 'DESC'
+                              ? 'sort-desc'
+                              : 'sort-asc')) ||
+                          '';
+                        return (
+                          <th
+                            key={`thead-${c.type}-${c.name}`}
+                            className={`d-sm-none d-md-table-cell ${sortClass}`}
+                            onClick={e => sortTable(c)}
+                            scope="col"
+                          >
+                            {isDiscussionIdField ? (
+                              <DiscussionIcon />
+                            ) : (
+                              <I18n>{c.label}</I18n>
+                            )}
+                          </th>
+                        );
+                      })}
+                      <th className="sort-disabled" />
+                    </tr>
+                  </thead>
+                  <thead className="d-md-none">
+                    <tr>
+                      <th scope="col">
+                        <div className="input-group">
+                          <div className="input-group-prepend">
+                            <span className="input-group-text">
+                              <I18n>Sort By</I18n>
+                            </span>
+                          </div>
                           <I18n
                             render={translate => (
                               <select
                                 className="form-control"
                                 value={
                                   (clientSortInfo &&
-                                    clientSortInfo.direction) ||
+                                    `${clientSortInfo.name}::${
+                                      clientSortInfo.type
+                                    }`) ||
                                   ''
                                 }
                                 onChange={e => {
-                                  sortTable({
-                                    ...clientSortInfo,
-                                    direction: e.target.value,
-                                  });
+                                  const sortInfo = e.target.value.split('::');
+                                  sortTable(
+                                    sortInfo.length === 2
+                                      ? visibleColumns.find(
+                                          c =>
+                                            c.name === sortInfo[0] &&
+                                            c.type === sortInfo[1],
+                                        )
+                                      : null,
+                                  );
                                 }}
                               >
-                                <option value="ASC">{translate('Asc')}</option>
-                                <option value="DESC">
-                                  {translate('Desc')}
-                                </option>
+                                {!clientSortInfo && <option />}
+                                {visibleColumns.map(c => (
+                                  <option
+                                    key={`${c.name}::${c.type}`}
+                                    value={`${c.name}::${c.type}`}
+                                  >
+                                    {translate(c.label)}
+                                  </option>
+                                ))}
                               </select>
                             )}
                           />
-                        )}
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {submissions.map(s => (
-                    <SubmissionListItem
-                      key={`trow-${s.id}`}
-                      submission={s}
-                      loading={loading}
-                      form={form}
-                      columns={visibleColumns}
-                      path={path}
-                      isMobile={isMobile}
-                      cloneSubmission={cloneSubmission}
-                      fetchSubmissions={fetchSubmissions}
-                      deleteSubmission={deleteSubmission}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                          {clientSortInfo && (
+                            <I18n
+                              render={translate => (
+                                <select
+                                  className="form-control"
+                                  value={
+                                    (clientSortInfo &&
+                                      clientSortInfo.direction) ||
+                                    ''
+                                  }
+                                  onChange={e => {
+                                    sortTable({
+                                      ...clientSortInfo,
+                                      direction: e.target.value,
+                                    });
+                                  }}
+                                >
+                                  <option value="ASC">
+                                    {translate('Asc')}
+                                  </option>
+                                  <option value="DESC">
+                                    {translate('Desc')}
+                                  </option>
+                                </select>
+                              )}
+                            />
+                          )}
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {submissions.map(s => (
+                      <SubmissionListItem
+                        key={`trow-${s.id}`}
+                        submission={s}
+                        loading={loading}
+                        form={form}
+                        columns={visibleColumns}
+                        path={path}
+                        isMobile={isMobile}
+                        cloneSubmission={cloneSubmission}
+                        fetchSubmissions={fetchSubmissions}
+                        deleteSubmission={deleteSubmission}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           {searching && <WallySearching />}
           {!searching &&
             hasStartedSearching &&
+            !submissionsError &&
             submissions.size === 0 && (
               <WallyNoResultsFoundMessage form={form} />
             )}
+          {!searching &&
+            hasStartedSearching &&
+            submissionsError && <WallyErrorMessage error={submissionsError} />}
           {!searching &&
             !hasStartedSearching &&
             submissions.size === 0 && <WallyEnterSearchTerm form={form} />}
@@ -290,6 +313,7 @@ export const mapStateToProps = state => ({
   loading: state.settingsDatastore.currentFormLoading,
   form: state.settingsDatastore.currentForm,
   submissions: state.settingsDatastore.submissions,
+  submissionsError: state.settingsDatastore.submissionsError,
   clientSortInfo: state.settingsDatastore.clientSortInfo,
   searching: state.settingsDatastore.searching,
   nextPageToken: state.settingsDatastore.nextPageToken,

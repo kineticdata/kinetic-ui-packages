@@ -62,6 +62,7 @@ export const types = {
   ),
   FETCH_SUBMISSIONS_SIMPLE: namespace('datastore', 'FETCH_SUBMISSIONS_SIMPLE'),
   SET_SUBMISSIONS: namespace('datastore', 'SET_SUBMISSIONS'),
+  SET_SUBMISSIONS_ERROR: namespace('datastore', 'SET_SUBMISSIONS_ERROR'),
   FETCH_SUBMISSION: namespace('datastore', 'FETCH_SUBMISSION'),
   SET_SUBMISSION: namespace('datastore', 'SET_SUBMISSION'),
   RESET_SUBMISSION: namespace('datastore', 'RESET_SUBMISSION'),
@@ -131,6 +132,7 @@ export const actions = {
   fetchSubmissionsAdvanced: noPayload(types.FETCH_SUBMISSIONS_ADVANCED),
   fetchSubmissionsSimple: noPayload(types.FETCH_SUBMISSIONS_SIMPLE),
   setSubmissions: withPayload(types.SET_SUBMISSIONS),
+  setSubmissionsError: withPayload(types.SET_SUBMISSIONS_ERROR),
   fetchSubmission: withPayload(types.FETCH_SUBMISSION),
   resetSubmission: noPayload(types.RESET_SUBMISSION),
   setSubmission: withPayload(types.SET_SUBMISSION),
@@ -320,6 +322,7 @@ export const State = Record({
   hasStartedSearching: false,
   searching: false,
   submissions: List(),
+  submissionsError: null,
   searchParams: SearchParams(),
   // Represents the pages navigated.
   pageTokens: List(),
@@ -414,9 +417,9 @@ export const reducer = (state = State(), { type, payload }) => {
     case types.RESET_FORM:
       return state.set('currentFormChanges', state.get('currentForm'));
     case types.FETCH_SUBMISSIONS_ADVANCED:
-      return state.set('searching', true);
+      return state.set('searching', true).set('submissionsError', null);
     case types.FETCH_SUBMISSIONS_SIMPLE:
-      return state.set('searching', true);
+      return state.set('searching', true).set('submissionsError', null);
     case types.SET_SUBMISSIONS:
       return state
         .set('searching', false)
@@ -424,6 +427,11 @@ export const reducer = (state = State(), { type, payload }) => {
           'submissions',
           sortSubmissions(List(payload), state.clientSortInfo),
         )
+        .set('hasStartedSearching', true);
+    case types.SET_SUBMISSIONS_ERROR:
+      return state
+        .set('searching', false)
+        .set('submissionsError', payload)
         .set('hasStartedSearching', true);
     case types.SET_INDEX:
       return state.setIn(['searchParams', 'index'], payload);

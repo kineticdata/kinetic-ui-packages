@@ -240,7 +240,7 @@ export function* fetchSubmissionsSimpleSaga() {
     );
 
     if (error) {
-      // What should we do?
+      yield put(actions.setSubmissionsError(error));
     } else {
       // If we made a request for page > 2, then push that page token to the stack.
       if (pageToken) {
@@ -248,8 +248,8 @@ export function* fetchSubmissionsSimpleSaga() {
       }
       // Set the next available page token to the one returned.
       yield put(actions.setNextPageToken(nextPageToken));
+      yield put(actions.setSubmissions(submissions));
     }
-    yield put(actions.setSubmissions(submissions));
   } else if (!simpleSearchParam) {
     const query = new SubmissionSearch(true);
     query.include(SUBMISSION_INCLUDES);
@@ -262,12 +262,12 @@ export function* fetchSubmissionsSimpleSaga() {
     );
 
     if (error) {
-      // What should we do?
+      yield put(actions.setSubmissionsError(error));
     } else {
       // Set the next available page token to the one returned.
       yield put(actions.setNextPageToken(nextPageToken));
+      yield put(actions.setSubmissions(submissions));
     }
-    yield put(actions.setSubmissions(submissions));
   } else {
     const searchQueries = form.indexDefinitions
       .filter(
@@ -295,6 +295,9 @@ export function* fetchSubmissionsSimpleSaga() {
     );
 
     const responses = fromJS(yield all(searchCalls));
+    const responsesWithError = responses.filter(
+      result => result.get('error') != null,
+    );
     const responsesWithResults = responses.filter(
       result => result.get('submissions').size > 0,
     );
@@ -302,7 +305,14 @@ export function* fetchSubmissionsSimpleSaga() {
       result => result.get('nextPageToken') !== null,
     );
 
-    if (responsesWithResults.size > 1 && responsesWithPageTokens.size > 0) {
+    if (responsesWithError.size > 0) {
+      yield put(
+        actions.setSubmissionsError(responsesWithError.first().get('error')),
+      );
+    } else if (
+      responsesWithResults.size > 1 &&
+      responsesWithPageTokens.size > 0
+    ) {
       // Multiple searches had results and at least one had a next page token);
       yield all([
         put(actions.setSubmissions(List())),
@@ -416,7 +426,7 @@ export function* fetchSubmissionsAdvancedSaga() {
   );
 
   if (error) {
-    // What should we do?
+    yield put(actions.setSubmissionsError(error));
   } else {
     // If we made a request for page > 2, then push that page token to the stack.
     if (pageToken) {
