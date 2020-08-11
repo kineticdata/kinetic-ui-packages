@@ -1,4 +1,4 @@
-# react-kinetic-lib
+# @kineticdata/react
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![NPM Version](https://img.shields.io/npm/v/@kineticdata/react/latest.svg)](https://opensource.org/licenses/MIT)
