@@ -16,6 +16,56 @@ exports[`dataSources simple 1`] = `
       clearError={[Function]}
       dirty={false}
       error={null}
+      fields={
+        Immutable.OrderedMap {
+          "test": Immutable.Record {
+            "constraint": null,
+            "constraintMessage": "Invalid",
+            "dirty": false,
+            "enabled": true,
+            "errors": Immutable.List [],
+            "eventHandlers": Immutable.Map {
+              "onBlur": [Function],
+              "onChange": [Function],
+              "onFocus": [Function],
+            },
+            "focused": false,
+            "functions": Immutable.Map {
+              "enabled": null,
+              "label": null,
+              "options": null,
+              "placeholder": null,
+              "required": null,
+              "search": null,
+              "transient": null,
+              "visible": null,
+            },
+            "helpText": "",
+            "id": "dGVzdCB0ZXN0",
+            "initialValue": "Hello World!",
+            "label": "",
+            "language": "",
+            "name": "test",
+            "onChange": null,
+            "options": Immutable.List [],
+            "pattern": null,
+            "patternMessage": "Invalid format",
+            "placeholder": "",
+            "renderAttributes": Immutable.Map {},
+            "required": false,
+            "requiredMessage": "This field is required",
+            "search": Immutable.Map {},
+            "serialize": null,
+            "touched": false,
+            "transient": false,
+            "type": "text",
+            "valid": true,
+            "value": "Hello World!",
+            "visible": true,
+          },
+        }
+      }
+      formKey="test"
       formOptions={Object {}}
       reset={[Function]}
       submit={[Function]}
@@ -85,6 +135,56 @@ exports[`dataSources simple 1`] = `
     clearError={[Function]}
     dirty={false}
     error={null}
+    fields={
+      Immutable.OrderedMap {
+        "test": Immutable.Record {
+          "constraint": null,
+          "constraintMessage": "Invalid",
+          "dirty": false,
+          "enabled": true,
+          "errors": Immutable.List [],
+          "eventHandlers": Immutable.Map {
+            "onBlur": [Function],
+            "onChange": [Function],
+            "onFocus": [Function],
+          },
+          "focused": false,
+          "functions": Immutable.Map {
+            "enabled": null,
+            "label": null,
+            "options": null,
+            "placeholder": null,
+            "required": null,
+            "search": null,
+            "transient": null,
+            "visible": null,
+          },
+          "helpText": "",
+          "id": "dGVzdCB0ZXN0",
+          "initialValue": "Hello World!",
+          "label": "",
+          "language": "",
+          "name": "test",
+          "onChange": null,
+          "options": Immutable.List [],
+          "pattern": null,
+          "patternMessage": "Invalid format",
+          "placeholder": "",
+          "renderAttributes": Immutable.Map {},
+          "required": false,
+          "requiredMessage": "This field is required",
+          "search": Immutable.Map {},
+          "serialize": null,
+          "touched": false,
+          "transient": false,
+          "type": "text",
+          "valid": true,
+          "value": "Hello World!",
+          "visible": true,
+        },
+      }
+    }
+    formKey="test"
     formOptions={Object {}}
     reset={[Function]}
     submit={[Function]}
@@ -2501,6 +2601,56 @@ exports[`handleSubmit happy path 1`] = `
       clearError={[Function]}
       dirty={false}
       error={null}
+      fields={
+        Immutable.OrderedMap {
+          "test2": Immutable.Record {
+            "constraint": null,
+            "constraintMessage": "Invalid",
+            "dirty": false,
+            "enabled": true,
+            "errors": Immutable.List [],
+            "eventHandlers": Immutable.Map {
+              "onBlur": [Function],
+              "onChange": [Function],
+              "onFocus": [Function],
+            },
+            "focused": false,
+            "functions": Immutable.Map {
+              "enabled": null,
+              "label": null,
+              "options": null,
+              "placeholder": null,
+              "required": null,
+              "search": null,
+              "transient": null,
+              "visible": null,
+            },
+            "helpText": "",
+            "id": "dGVzdCB0ZXN0Mg",
+            "initialValue": "",
+            "label": "",
+            "language": "",
+            "name": "test2",
+            "onChange": null,
+            "options": Immutable.List [],
+            "pattern": null,
+            "patternMessage": "Invalid format",
+            "placeholder": "",
+            "renderAttributes": Immutable.Map {},
+            "required": false,
+            "requiredMessage": "This field is required",
+            "search": Immutable.Map {},
+            "serialize": null,
+            "touched": false,
+            "transient": false,
+            "type": "text",
+            "valid": true,
+            "value": "",
+            "visible": true,
+          },
+        }
+      }
+      formKey="test"
       formOptions={
         Object {
           "testOption": "Foo",
@@ -2578,6 +2728,56 @@ exports[`handleSubmit happy path 1`] = `
     clearError={[Function]}
     dirty={false}
     error={null}
+    fields={
+      Immutable.OrderedMap {
+        "test2": Immutable.Record {
+          "constraint": null,
+          "constraintMessage": "Invalid",
+          "dirty": false,
+          "enabled": true,
+          "errors": Immutable.List [],
+          "eventHandlers": Immutable.Map {
+            "onBlur": [Function],
+            "onChange": [Function],
+            "onFocus": [Function],
+          },
+          "focused": false,
+          "functions": Immutable.Map {
+            "enabled": null,
+            "label": null,
+            "options": null,
+            "placeholder": null,
+            "required": null,
+            "search": null,
+            "transient": null,
+            "visible": null,
+          },
+          "helpText": "",
+          "id": "dGVzdCB0ZXN0Mg",
+          "initialValue": "",
+          "label": "",
+          "language": "",
+          "name": "test2",
+          "onChange": null,
+          "options": Immutable.List [],
+          "pattern": null,
+          "patternMessage": "Invalid format",
+          "placeholder": "",
+          "renderAttributes": Immutable.Map {},
+          "required": false,
+          "requiredMessage": "This field is required",
+          "search": Immutable.Map {},
+          "serialize": null,
+          "touched": false,
+          "transient": false,
+          "type": "text",
+          "valid": true,
+          "value": "",
+          "visible": true,
+        },
+      }
+    }
+    formKey="test"
     formOptions={
       Object {
         "testOption": "Foo",
@@ -2604,6 +2804,56 @@ exports[`handleSubmit happy path 2`] = `
       clearError={[Function]}
       dirty={false}
       error={null}
+      fields={
+        Immutable.OrderedMap {
+          "test2": Immutable.Record {
+            "constraint": null,
+            "constraintMessage": "Invalid",
+            "dirty": false,
+            "enabled": true,
+            "errors": Immutable.List [],
+            "eventHandlers": Immutable.Map {
+              "onBlur": [Function],
+              "onChange": [Function],
+              "onFocus": [Function],
+            },
+            "focused": false,
+            "functions": Immutable.Map {
+              "enabled": null,
+              "label": null,
+              "options": null,
+              "placeholder": null,
+              "required": null,
+              "search": null,
+              "transient": null,
+              "visible": null,
+            },
+            "helpText": "",
+            "id": "dGVzdCB0ZXN0Mg",
+            "initialValue": "",
+            "label": "",
+            "language": "",
+            "name": "test2",
+            "onChange": null,
+            "options": Immutable.List [],
+            "pattern": null,
+            "patternMessage": "Invalid format",
+            "placeholder": "",
+            "renderAttributes": Immutable.Map {},
+            "required": false,
+            "requiredMessage": "This field is required",
+            "search": Immutable.Map {},
+            "serialize": null,
+            "touched": false,
+            "transient": false,
+            "type": "text",
+            "valid": true,
+            "value": "",
+            "visible": true,
+          },
+        }
+      }
+      formKey="test"
       formOptions={
         Object {
           "testOption": "Foo",
@@ -2681,6 +2931,56 @@ exports[`handleSubmit happy path 2`] = `
     clearError={[Function]}
     dirty={false}
     error={null}
+    fields={
+      Immutable.OrderedMap {
+        "test2": Immutable.Record {
+          "constraint": null,
+          "constraintMessage": "Invalid",
+          "dirty": false,
+          "enabled": true,
+          "errors": Immutable.List [],
+          "eventHandlers": Immutable.Map {
+            "onBlur": [Function],
+            "onChange": [Function],
+            "onFocus": [Function],
+          },
+          "focused": false,
+          "functions": Immutable.Map {
+            "enabled": null,
+            "label": null,
+            "options": null,
+            "placeholder": null,
+            "required": null,
+            "search": null,
+            "transient": null,
+            "visible": null,
+          },
+          "helpText": "",
+          "id": "dGVzdCB0ZXN0Mg",
+          "initialValue": "",
+          "label": "",
+          "language": "",
+          "name": "test2",
+          "onChange": null,
+          "options": Immutable.List [],
+          "pattern": null,
+          "patternMessage": "Invalid format",
+          "placeholder": "",
+          "renderAttributes": Immutable.Map {},
+          "required": false,
+          "requiredMessage": "This field is required",
+          "search": Immutable.Map {},
+          "serialize": null,
+          "touched": false,
+          "transient": false,
+          "type": "text",
+          "valid": true,
+          "value": "",
+          "visible": true,
+        },
+      }
+    }
+    formKey="test"
     formOptions={
       Object {
         "testOption": "Foo",
@@ -2749,6 +3049,8 @@ exports[`handleSubmit submit error 1`] = `
       clearError={[Function]}
       dirty={false}
       error="This is a test error"
+      fields={Immutable.OrderedMap {}}
+      formKey="test"
       formOptions={Object {}}
       reset={[Function]}
       submit={[Function]}
@@ -2775,6 +3077,8 @@ exports[`handleSubmit submit error 1`] = `
     clearError={[Function]}
     dirty={false}
     error="This is a test error"
+    fields={Immutable.OrderedMap {}}
+    formKey="test"
     formOptions={Object {}}
     reset={[Function]}
     submit={[Function]}
@@ -2813,6 +3117,8 @@ exports[`handleSubmit submit unexpected error, we expect the promise to reject w
       clearError={[Function]}
       dirty={false}
       error="Unexpected error occurred"
+      fields={Immutable.OrderedMap {}}
+      formKey="test"
       formOptions={Object {}}
       reset={[Function]}
       submit={[Function]}
@@ -2839,6 +3145,8 @@ exports[`handleSubmit submit unexpected error, we expect the promise to reject w
     clearError={[Function]}
     dirty={false}
     error="Unexpected error occurred"
+    fields={Immutable.OrderedMap {}}
+    formKey="test"
     formOptions={Object {}}
     reset={[Function]}
     submit={[Function]}
