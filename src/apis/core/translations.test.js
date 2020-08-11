@@ -492,18 +492,26 @@ describe('translations api', () => {
     });
   });
 
+  const mockSuccessfulContexts = () =>
   describe('fetchContexts', () => {
+    let mockSettings;
+    let mockResults;
     beforeEach(() => {
       axios.get.mockReset();
+      mockSettings = {
+        status: 200,
+        data: {
+          contexts: [{ name: 'name' }, { name: 'kapps.kappName.form.formName' }, { name: 'datastore.form.formName' }],
+        },
+      };
+      mockResults = [
+        {form: null, kapp: null, name: 'name'},
+        {form: 'formName', kapp: 'kappName', name: 'name'},
+      ]
     });
 
     test('success fetch all', async () => {
-      axios.get.mockResolvedValue({
-        status: 200,
-        data: {
-          contexts: [{}, {}],
-        },
-      });
+      axios.get.mockResolvedValue(mockSettings);
       const result = await fetchContexts();
       expect(axios.get.mock.calls).toEqual([
         [
@@ -512,17 +520,12 @@ describe('translations api', () => {
         ],
       ]);
       expect(result).toEqual({
-        contexts: [{}, {}],
+        contexts: mockResults,
       });
     });
 
     test('success fetch custom', async () => {
-      axios.get.mockResolvedValue({
-        status: 200,
-        data: {
-          contexts: [{}, {}],
-        },
-      });
+      mockSuccessfulContexts();
       const result = await fetchContexts({ custom: true });
       expect(axios.get.mock.calls).toEqual([
         [
@@ -534,17 +537,12 @@ describe('translations api', () => {
         ],
       ]);
       expect(result).toEqual({
-        contexts: [{}, {}],
+        contexts: mockResults,
       });
     });
 
     test('success fetch expected', async () => {
-      axios.get.mockResolvedValue({
-        status: 200,
-        data: {
-          contexts: [{}, {}],
-        },
-      });
+      mockSuccessfulContexts();
       const result = await fetchContexts({ expected: true });
       expect(axios.get.mock.calls).toEqual([
         [
@@ -556,17 +554,12 @@ describe('translations api', () => {
         ],
       ]);
       expect(result).toEqual({
-        contexts: [{}, {}],
+        contexts: mockResults,
       });
     });
 
     test('success fetch unexpected', async () => {
-      axios.get.mockResolvedValue({
-        status: 200,
-        data: {
-          contexts: [{}, {}],
-        },
-      });
+      mockSuccessfulContexts();
       const result = await fetchContexts({ unexpected: true });
       expect(axios.get.mock.calls).toEqual([
         [
@@ -578,7 +571,7 @@ describe('translations api', () => {
         ],
       ]);
       expect(result).toEqual({
-        contexts: [{}, {}],
+        contexts: mockResults,
       });
     });
 

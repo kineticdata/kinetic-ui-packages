@@ -283,7 +283,7 @@ export const fetchTranslations = (options = {}) => {
       headers: headerBuilder(options),
     })
     .then(response => ({
-      entries: response.data.entries ? response.data.entries : response.data,
+      entries: response.data.hasOwnProperty('entries') ? response.data.entries : response.data,
     }))
     .catch(handleErrors);
 };
