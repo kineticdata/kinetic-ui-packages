@@ -1,7 +1,7 @@
 const removeSecure = cookie => cookie.replace(/;\s*Secure/i, '');
 const removeSameSiteNone = cookie => cookie.replace(/;\s*SameSite=None/i, '');
 
-module.exports = (target = process.env.REACT_APP_API_HOST) => ({
+module.exports = (target = process.env.REACT_APP_PROXY_HOST) => ({
   target,
   secure: true,
   changeOrigin: true,
