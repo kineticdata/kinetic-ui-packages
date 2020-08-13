@@ -23,7 +23,7 @@ export const SurveyComponent = ({
   handleCompleted,
 }) => (
   <Fragment>
-    <PageTitle parts={[submission ? submission.form.name : '']} />
+    <PageTitle parts={[submission && submission.form.name]} />
     {loading ? (
       <LoadingMessage />
     ) : (

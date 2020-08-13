@@ -60,7 +60,7 @@ export const SubmissionDetailsContainer = ({
 }) =>
   form && (
     <div className="page-container page-container--panels">
-      <PageTitle parts={['Survey Submission']} />
+      <PageTitle parts={[submission && submission.handle, form && form.name]} />
       <div className="page-panel page-panel--three-fifths page-panel--white">
         <div className="page-title">
           <div

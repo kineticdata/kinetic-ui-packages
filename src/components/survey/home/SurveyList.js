@@ -233,7 +233,7 @@ const SurveyListComponent = ({
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
           return (
             <div className="page-container">
-              <PageTitle parts={[`Surveys`]} />
+              <PageTitle />
               <div className="page-panel page-panel--white">
                 <div className="page-title">
                   <div

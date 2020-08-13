@@ -33,7 +33,7 @@ const SurveyListComponent = ({
 }) => {
   return (
     <div className="page-container page-container--panels">
-      <PageTitle parts={[]} />
+      <PageTitle />
       <div className="page-panel page-panel--two-thirds">
         <div className="page-title">
           <div

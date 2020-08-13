@@ -25,7 +25,7 @@ export const SurveyPreviewComponent = ({
   handleCompleted,
 }) => (
   <Fragment>
-    <PageTitle parts={[form ? form.name : '', 'Preview']} />
+    <PageTitle parts={['Preview', form && form.name]} />
     {!loading && form ? (
       <div className="page-container page-container--color-bar">
         <div className="page-panel">

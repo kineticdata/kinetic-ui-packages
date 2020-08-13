@@ -4,6 +4,7 @@ import { compose, lifecycle } from 'recompose';
 import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import { connect } from './redux/store';
+import { PageTitle } from './components/shared/PageTitle';
 import { Survey } from './components/survey/Survey';
 import { SurveyConfirmation } from './components/survey/SurveyConfirmation';
 import { SurveyPreview } from './components/survey/SurveyPreview';
@@ -34,6 +35,7 @@ const AppComponent = props => {
       main: (
         <I18n>
           <main className={`package-layout package-layout--survey`}>
+            <PageTitle parts={['Loading...']} />
             <Router>
               <SurveyList path="/" />
               <CreateSurvey path="new" />
@@ -100,6 +102,7 @@ export const PublicAppComponent = props => {
       main: (
         <I18n>
           <main className="package-layout package-layout--services">
+            <PageTitle parts={['Loading...']} />
             <Router>
               <Survey path=":slug/submissions/:submissionId" />
               <Redirect
