@@ -34,7 +34,7 @@ export const CategoriesComponent = ({
   handleDelete,
 }) => (
   <Fragment>
-    <PageTitle parts={['Space Settings']} />
+    <PageTitle parts={['Categories']} settings />
     <div className="page-container">
       <div className="page-panel page-panel--white page-panel--flex page-panel--no-padding">
         <div className="page-panel__header px-4">

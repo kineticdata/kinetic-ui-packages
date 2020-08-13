@@ -258,7 +258,7 @@ export const ServicesSettingsComponent = ({
   >
     {({ form, initialized }) => (
       <div className="page-container">
-        <PageTitle parts={[`${currentKapp.name} Settings`]} />
+        <PageTitle parts={['General']} settings />
         <div className="page-panel page-panel--white">
           <div className="page-title">
             <div

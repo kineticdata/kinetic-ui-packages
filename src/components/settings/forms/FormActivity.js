@@ -19,7 +19,10 @@ export const FormActivityContainer = ({
   submissionError,
 }) => (
   <div className="page-container">
-    <PageTitle parts={['Services Settings']} />
+    <PageTitle
+      parts={[submission && submission.handle, form && form.name, 'Forms']}
+      settings
+    />
     <div className="page-panel page-panel--white">
       <div className="page-title">
         <div

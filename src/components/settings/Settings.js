@@ -104,7 +104,7 @@ const SettingsCard = ({ path, icon, name, description }) => (
 
 const SettingsNavigationComponent = ({ kapp, isSpaceAdmin }) => (
   <div className="page-container">
-    <PageTitle parts={[]} />
+    <PageTitle settings />
     <div className="page-panel page-panel--white">
       <div className="page-title">
         <div
