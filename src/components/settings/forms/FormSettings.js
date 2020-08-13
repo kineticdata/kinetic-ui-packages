@@ -419,7 +419,7 @@ export const FormSettingsComponent = ({
     >
       {({ form: formContent, initialized }) => (
         <div className="page-container">
-          <PageTitle parts={['Settings', form.name, 'Forms']} />
+          <PageTitle parts={['Settings', form.name, 'Forms']} settings />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div

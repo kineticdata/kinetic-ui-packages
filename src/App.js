@@ -13,6 +13,8 @@ import { connect } from './redux/store';
 
 import { actions as categoriesActions } from './redux/modules/servicesApp';
 import { actions as submissionCountActions } from './redux/modules/submissionCounts';
+
+import { PageTitle } from './components/shared/PageTitle';
 import { CatalogContainer } from './components/home/CatalogContainer';
 import { CategoryListContainer } from './components/category_list/CategoryListContainer';
 import { CategoryContainer } from './components/category/CategoryContainer';
@@ -64,6 +66,7 @@ const AppComponent = props => {
       main: (
         <I18n>
           <main className="package-layout package-layout--services">
+            <PageTitle parts={['Loading...']} />
             <Router>
               <Settings path="settings/*" />
               <SubmissionRedirect
@@ -162,6 +165,7 @@ export const PublicAppComponent = props => {
     main: (
       <I18n>
         <main className="package-layout package-layout--services">
+          <PageTitle parts={['Loading...']} />
           <Router>
             <FormContainer path="forms/:formSlug" />
             <FormContainer path="forms/:formSlug/:submissionId" />

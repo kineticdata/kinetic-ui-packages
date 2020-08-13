@@ -90,7 +90,7 @@ export const CategoryComponent = ({
           : 'New Category';
       return (
         <div className="page-container">
-          <PageTitle parts={[pageName, 'Category Settings']} />
+          <PageTitle parts={[pageName, 'Categories']} settings />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div
