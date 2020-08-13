@@ -9,7 +9,12 @@ import { NOTIFICATIONS_DATE_FORMAT_FORM_SLUG } from '../../redux/modules/setting
 
 export const DateFormatComponent = props => (
   <div className="page-container">
-    <PageTitle parts={['Notifications', 'Settings']} />
+    <PageTitle
+      parts={[
+        `${props.submissionId ? 'Edit' : 'New'} Date Format`,
+        'Notifications',
+      ]}
+    />
     <div className="page-panel page-panel--white">
       <div className="page-title">
         <div

@@ -15,7 +15,14 @@ const RobotExecutionComponent = ({
 }) => {
   return (
     <div className="page-container">
-      <PageTitle parts={[`Robots`, 'Settings']} />
+      <PageTitle
+        parts={[
+          executionId && executionId.slice(-6).toUpperCase(),
+          'Executions',
+          robot && robot.values['Robot Name'],
+          `Robots`,
+        ]}
+      />
       <div className="page-panel page-panel--white">
         <div className="page-title">
           <div

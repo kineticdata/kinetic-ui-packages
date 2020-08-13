@@ -130,7 +130,13 @@ const RobotExecutionsListComponent = ({
     >
       {({ pagination, table }) => (
         <div className="page-container page-container--panels">
-          <PageTitle parts={[`Robots`, 'Settings']} />
+          <PageTitle
+            parts={[
+              'Executions',
+              robot && robot.values['Robot Name'],
+              `Robots`,
+            ]}
+          />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div

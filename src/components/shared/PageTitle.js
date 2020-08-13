@@ -1,31 +1,16 @@
-import { connect } from 'react-redux';
+import { connect } from '../../redux/store';
 import { compose, withProps } from 'recompose';
-import { context } from '../../redux/store';
-import {
-  PageTitle as CommonPageTitle,
-  selectCurrentKapp,
-} from '@kineticdata/bundle-common';
+import { PageTitle as CommonPageTitle } from '@kineticdata/bundle-common';
 
 export const mapStateToProps = state => ({
-  space: state.app.space || 'Home',
-  kapp: selectCurrentKapp(state),
+  space: state.app.space,
 });
 
-export const mapDispatchToProps = {};
-
 export const PageTitle = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { context },
-  ),
-  withProps(props => {
+  connect(mapStateToProps),
+  withProps(({ parts = [], ...props }) => {
     return {
-      pageTitleParts: props.parts.concat([
-        props.space && props.space.name,
-        'kinops',
-      ]),
+      parts: parts.concat(['Settings', props.space && props.space.name]),
     };
   }),
 )(CommonPageTitle);

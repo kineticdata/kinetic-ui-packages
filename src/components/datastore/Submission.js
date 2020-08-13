@@ -68,7 +68,8 @@ const DatastoreSubmissionComponent = ({
     <div className="page-container page-container--panels">
       <PageTitle
         parts={[
-          submissionId ? (submission ? submission.label : '') : ' New Record',
+          submissionId ? (submission ? submission.handle : '') : 'New Record',
+          form && form.name,
           'Datastore',
         ]}
       />

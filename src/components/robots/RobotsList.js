@@ -189,7 +189,7 @@ export const RobotsListComponent = ({
     >
       {({ pagination, table }) => (
         <div className="page-container">
-          <PageTitle parts={['Robots', 'Settings']} />
+          <PageTitle parts={['Robots']} />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div

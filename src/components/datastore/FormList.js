@@ -127,7 +127,7 @@ export const FormListComponent = ({
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (
         <div className="page-container">
-          <PageTitle parts={['Datastore Forms']} />
+          <PageTitle parts={['Datastore']} />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div

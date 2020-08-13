@@ -182,7 +182,7 @@ export const NotificationsListComponent = ({
     >
       {({ pagination, table }) => (
         <div className="page-container">
-          <PageTitle parts={['Notifications', 'Settings']} />
+          <PageTitle parts={[`${type}s`, 'Notifications']} />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div
@@ -192,7 +192,7 @@ export const NotificationsListComponent = ({
               >
                 <span className="breadcrumb-item">
                   <span className="breadcrumb-item">
-                    <Link to="../../../">
+                    <Link to="../../">
                       <I18n>settings</I18n>
                     </Link>
                   </span>{' '}

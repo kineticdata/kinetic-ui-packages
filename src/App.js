@@ -4,6 +4,7 @@ import { compose, lifecycle } from 'recompose';
 import { connect } from './redux/store';
 import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
+import { PageTitle } from './components/shared/PageTitle';
 import { Sidebar } from './components/Sidebar';
 import { Settings } from './components/Settings';
 import { Notifications } from './components/notifications/Notifications';
@@ -32,6 +33,7 @@ const AppComponent = props => {
       main: (
         <I18n>
           <main className={`package-layout package-layout--settings`}>
+            <PageTitle parts={['Loading...']} />
             <Router>
               <SpaceSettings path="space" />
               <Datastore path="datastore/*" />

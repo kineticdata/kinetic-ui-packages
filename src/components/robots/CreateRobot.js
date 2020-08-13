@@ -10,7 +10,7 @@ import { I18n } from '@kineticdata/react';
 
 const CreateRobotComponent = ({ handleCreated }) => (
   <div className="page-container">
-    <PageTitle parts={[`Robots`, 'Settings']} />
+    <PageTitle parts={['New Robot', 'Robots']} />
     <div className="page-panel page-panel--white">
       <div className="page-title">
         <div

@@ -323,7 +323,7 @@ export const SpaceSettingsComponent = ({
     {({ form, initialized }) =>
       initialized && (
         <div className="page-container">
-          <PageTitle parts={['Space Settings']} />
+          <PageTitle parts={['General']} />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div

@@ -51,7 +51,7 @@ const RobotComponent = ({
     moment(robot.values['End Date']).isBefore(moment());
   return (
     <div className="page-container page-container--panels">
-      <PageTitle parts={['Robots', 'Settings']} />
+      <PageTitle parts={[robot && robot.values['Robot Name'], 'Robots']} />
       <div className="page-panel page-panel--white page-panel--three-fifths">
         <div className="page-title">
           <div

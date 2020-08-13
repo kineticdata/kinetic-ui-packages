@@ -49,7 +49,7 @@ export const UserEditComponent = ({
   handleDelete,
 }) => (
   <div className="page-container">
-    <PageTitle parts={['Users', 'Settings']} />{' '}
+    <PageTitle parts={['Edit User', 'Users']} />{' '}
     <UserForm
       key={username}
       formkey={`user-edit`}

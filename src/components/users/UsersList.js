@@ -207,7 +207,7 @@ export const UsersListComponent = ({
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (
         <div className="page-container">
-          <PageTitle parts={['Users', 'Settings']} />
+          <PageTitle parts={['Users']} />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div

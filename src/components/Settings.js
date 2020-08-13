@@ -27,7 +27,7 @@ const SettingsComponent = ({
   hasUserAccess,
 }) => (
   <div className="page-container">
-    <PageTitle parts={['Settings']} />
+    <PageTitle />
     <div className="page-panel page-panel--white">
       <div className="page-title">
         <h1>

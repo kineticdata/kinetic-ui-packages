@@ -1,5 +1,11 @@
 import React, { Fragment } from 'react';
-import { compose, withHandlers, withState, lifecycle } from 'recompose';
+import {
+  compose,
+  withHandlers,
+  withProps,
+  withState,
+  lifecycle,
+} from 'recompose';
 import { connect } from '../../redux/store';
 import { Link } from '@reach/router';
 import { Map, Seq } from 'immutable';
@@ -48,6 +54,7 @@ const isValid = values =>
   );
 
 const NotificationComponent = ({
+  submissionId,
   loading,
   submission,
   type,
@@ -61,7 +68,9 @@ const NotificationComponent = ({
   handleVariableSelection,
 }) => (
   <div className="page-container page-container--panels">
-    <PageTitle parts={['Notifications', 'Settings']} />
+    <PageTitle
+      parts={[`${submissionId ? 'Edit' : 'New'} ${title}`, 'Notifications']}
+    />
     <div className="page-panel page-panel--white">
       <div className="page-title">
         <div
@@ -284,6 +293,9 @@ export const Notification = compose(
   ),
   withState('cursorPosition', 'setCursorPosition', null),
   withState('selection', 'setSelection', null),
+  withProps(props => ({
+    submissionId: props.id !== 'new' ? props.id : null,
+  })),
   withHandlers({
     handleSubmit,
     handleFieldChange,
@@ -295,14 +307,6 @@ export const Notification = compose(
       this.props.fetchNotification(this.props.id);
     },
     componentDidUpdate(prevProps) {
-      console.log(
-        'update',
-        !!this.props.submission,
-        !!prevProps.submission,
-        this.props.submission &&
-          (!prevProps.submission ||
-            prevProps.submission.id !== this.props.submission.id),
-      );
       if (this.props.id !== prevProps.id) {
         this.props.fetchNotification(this.props.id);
       }
