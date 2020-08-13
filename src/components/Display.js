@@ -56,7 +56,7 @@ export const DisplayComponent = ({
     <ErrorUnauthorized />
   ) : (
     <Fragment>
-      <PageTitle parts={[]} />
+      <PageTitle />
       <div className="page-container">
         <div className="page-panel page-panel--display">
           {techBar && (

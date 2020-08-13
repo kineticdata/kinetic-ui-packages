@@ -22,9 +22,7 @@ export const TechBarSettingsFormComponent = ({
   return techBar ? (
     hasManagerAccess ? (
       <Fragment>
-        <PageTitle
-          parts={['Edit Settings', techBar.values['Name'], 'Tech Bar Settings']}
-        />
+        <PageTitle parts={['Settings', techBar.values['Name']]} settings />
         <div className="page-container">
           <div className="page-panel page-panel--white">
             <div className="page-title">

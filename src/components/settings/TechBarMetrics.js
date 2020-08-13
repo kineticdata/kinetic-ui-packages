@@ -36,7 +36,7 @@ export const TechBarMetricsComponent = ({
   setSelectedDate,
 }) => (
   <Fragment>
-    <PageTitle parts={['Tech Bar Metrics']} />
+    <PageTitle parts={['Metrics']} settings />
     <div className="page-container">
       <div className="page-panel page-panel--white page-panel--tech-bar-metrics">
         <div className="page-title">

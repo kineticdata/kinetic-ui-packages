@@ -5,6 +5,7 @@ import { connect } from './redux/store';
 import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 
+import { PageTitle } from './components/shared/PageTitle';
 import { Sidebar } from './components/Sidebar';
 import { Home } from './components/Home';
 import { Past } from './components/Past';
@@ -41,6 +42,7 @@ const AppComponent = props => {
       main: (
         <I18n>
           <main className={`package-layout package-layout--tech-bar`}>
+            <PageTitle parts={['Loading...']} />
             <Router>
               <Settings path="settings/*" />
               <Home path="/" />

@@ -14,11 +14,8 @@ export const AppointmentFormComponent = ({ id, kapp, techBar }) => {
   return techBar ? (
     <Fragment>
       <PageTitle
-        parts={[
-          'Appointment Details',
-          techBar.values['Name'],
-          'Tech Bar Settings',
-        ]}
+        parts={['Appointment Details', techBar.values['Name']]}
+        settings
       />
       <div className="page-container">
         <div className="page-panel page-panel--white">

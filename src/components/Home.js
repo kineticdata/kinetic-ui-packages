@@ -47,7 +47,7 @@ export const HomeComponent = ({
   const selectedTechBar = currentTechBar || techBars.get(0);
   return (
     <Fragment>
-      <PageTitle parts={[]} />
+      <PageTitle />
       <div className="page-container">
         <div className="page-panel">
           <div className="page-panel__header">

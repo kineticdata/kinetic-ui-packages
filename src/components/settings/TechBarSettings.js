@@ -16,7 +16,7 @@ const getStatusColor = status =>
 
 export const TechBarSettingsComponent = ({ techBars }) => (
   <Fragment>
-    <PageTitle parts={['Tech Bar Settings']} />
+    <PageTitle settings />
     <div className="page-container">
       <div className="page-panel page-panel--white">
         <div className="page-title">

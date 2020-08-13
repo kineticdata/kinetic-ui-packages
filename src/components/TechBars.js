@@ -30,7 +30,7 @@ export const TechBarsComponent = ({
   selectCurrentTechBar,
 }) => (
   <Fragment>
-    <PageTitle parts={['Tech Bars']} />
+    <PageTitle parts={['All Tech Bars']} />
     <div className="page-container page-container--tech-bar container">
       <div className="page-panel">
         <div className="page-title">

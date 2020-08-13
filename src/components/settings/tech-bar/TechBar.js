@@ -28,7 +28,7 @@ export const TechBarComponent = ({
 }) => {
   return techBar ? (
     <Fragment>
-      <PageTitle parts={[techBar.values['Name'], 'Tech Bar Settings']} />
+      <PageTitle parts={[techBar.values['Name']]} settings />
       <div className="page-container">
         <div className="page-panel page-panel--white">
           <div className="page-title">
