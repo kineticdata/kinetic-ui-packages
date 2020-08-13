@@ -11,7 +11,14 @@ import { PageTitle } from '../../shared/PageTitle';
 export const FormActivityContainer = ({ loading, submission, space }) =>
   !loading && (
     <div className="page-container">
-      <PageTitle parts={['Queue Settings']} />
+      <PageTitle
+        parts={[
+          submission && submission.handle,
+          submission && submission.form && submission.form.name,
+          'Forms',
+        ]}
+        settings
+      />
       <div className="page-panel page-panel--white">
         <div className="page-title">
           <div

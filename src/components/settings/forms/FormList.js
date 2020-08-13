@@ -246,7 +246,7 @@ export const FormListComponent = ({
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
           return (
             <div className="page-container">
-              <PageTitle parts={[`Forms`]} />
+              <PageTitle parts={[`Forms`]} settings />
               <div className="page-panel page-panel--white">
                 <div className="page-title">
                   <div

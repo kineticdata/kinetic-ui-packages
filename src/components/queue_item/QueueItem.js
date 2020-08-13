@@ -70,7 +70,7 @@ export const QueueItem = ({
     <div className="page-container page-container--panels">
       <PageTitle
         parts={[
-          queueItem ? queueItem.handle : '',
+          queueItem ? queueItem.label : '',
           filter ? filter.name || 'Adhoc' : '',
         ]}
       />

@@ -339,7 +339,7 @@ export const FormSettingsComponent = ({ form, kapp, onSave }) => {
     >
       {({ form: formContent, initialized }) => (
         <div className="page-container">
-          <PageTitle parts={['Settings', form.name, 'Forms']} />
+          <PageTitle parts={[`${form.name} Settings`, 'Forms']} settings />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div

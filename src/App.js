@@ -11,6 +11,7 @@ import { actions as queueActions } from './redux/modules/queue';
 import { actions as filterMenuActions } from './redux/modules/filterMenu';
 import { actions as formsActions } from './redux/modules/forms';
 
+import { PageTitle } from './components/shared/PageTitle';
 import { Sidebar } from './components/Sidebar';
 import { Sidebar as SettingsSidebar } from './components/settings/Sidebar';
 import { QueueItemContainer } from './components/queue_item/QueueItem';
@@ -47,6 +48,7 @@ const AppComponent = props => {
       main: (
         <I18n>
           <main className="package-layout package-layout--queue">
+            <PageTitle parts={['Loading...']} />
             <Router>
               <Settings path="settings/*" />
               <QueueListContainer path="list/:filter" />
