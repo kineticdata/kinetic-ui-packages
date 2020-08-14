@@ -7,6 +7,7 @@ import {
   createBridgeModelQualificationMapping,
   updateBridgeModelQualification,
   updateBridgeModelQualificationMapping,
+  deleteBridgeModelQualification,
 } from '../../../apis';
 
 const dataSources = ({ modelName, qualificationName }) => ({
@@ -65,6 +66,12 @@ const handleSubmit = ({ modelName, qualificationName }) => (
     )
     .then(({ bridgeModelQualificationMapping, error }) => {
       if (error) {
+        if (!qualificationName) {
+          deleteBridgeModelQualification({
+            modelName,
+            qualificationName: name,
+          });
+        }
         throw (error.statusCode === 400 && error.message) ||
           'There was an error saving the qualification';
       }
