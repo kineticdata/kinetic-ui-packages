@@ -8,7 +8,7 @@ export const QueueListPagination = ({ filter, paginationProps }) => {
         <div className="queue-controls__pagination">
           <button
             type="button"
-            className="btn btn-link icon-wrapper"
+            className="btn btn-icon"
             disabled={!paginationProps.hasPrevPage}
             onClick={paginationProps.gotoPrevPage}
             aria-label="Previous Page"
@@ -26,7 +26,7 @@ export const QueueListPagination = ({ filter, paginationProps }) => {
           </small>
           <button
             type="button"
-            className="btn btn-link icon-wrapper"
+            className="btn btn-icon"
             disabled={!paginationProps.hasNextPage}
             onClick={paginationProps.gotoNextPage}
             aria-label="Next Page"

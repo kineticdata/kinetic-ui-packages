@@ -20,6 +20,7 @@ export const Menu = props => {
         target={id}
         isOpen={props.showing === props.name}
         toggle={toggle}
+        setActiveFromChild
       >
         {props.renderButton({ onClick: toggle, id })}
 
@@ -75,12 +76,7 @@ export const Menu = props => {
 
 // Define some simple button components just to cleanup the toolbar component.
 const MenuButton = props => (
-  <DropdownToggle
-    tag="button"
-    className="btn btn-subtle"
-    {...props}
-    setActiveFromChild
-  />
+  <DropdownToggle tag="button" className="btn btn-subtle" {...props} />
 );
 const ClearButton = props => {
   const disabled = typeof props.action === 'string';
@@ -109,7 +105,7 @@ const SortButton = props => {
   return (
     <button
       type="button"
-      className="btn btn-link icon-wrapper"
+      className="btn btn-icon"
       onClick={props.toggle}
       aria-label={`Sort by ${icon}`}
     >
@@ -256,7 +252,7 @@ export const FilterMenuToolbar = ({ filter, refresh }) => (
                   resetLabel="Cancel"
                   messages={props.saveMessages}
                   renderButton={btnProps => (
-                    <MenuButton {...btnProps} className="btn-primary">
+                    <MenuButton {...btnProps} className="btn btn-primary">
                       <I18n>Save Filter?</I18n>
                     </MenuButton>
                   )}
@@ -288,7 +284,7 @@ export const FilterMenuToolbar = ({ filter, refresh }) => (
               )}
               <button
                 type="button"
-                className="btn btn-link icon-wrapper"
+                className="btn btn-icon"
                 onClick={refresh}
                 aria-label="Refresh"
               >

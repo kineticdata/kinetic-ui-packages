@@ -7,7 +7,7 @@ import { connect } from '../../redux/store';
 export const CreatedByMe = ({ filter, toggleCreatedByMeHandler }) => (
   <button
     type="button"
-    className="btn btn-link icon-wrapper"
+    className="btn btn-link"
     onClick={toggleCreatedByMeHandler}
   >
     <span className="button-title">

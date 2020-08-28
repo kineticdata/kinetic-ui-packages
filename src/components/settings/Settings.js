@@ -113,7 +113,7 @@ const SettingsNavigationComponent = ({ isSpaceAdmin }) => (
           className="page-title__breadcrumbs"
         >
           <span className="breadcrumb-item">
-            <Link to="/">
+            <Link to="..">
               <I18n>queue</I18n>
             </Link>{' '}
             <span aria-hidden="true">/ </span>

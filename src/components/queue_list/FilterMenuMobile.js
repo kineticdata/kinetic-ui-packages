@@ -18,7 +18,7 @@ const SortButton = props => {
   return (
     <button
       type="button"
-      className="btn btn-link icon-wrapper"
+      className="btn btn-icon"
       onClick={props.toggle}
       aria-label={`Sort by ${icon}`}
     >
@@ -41,7 +41,7 @@ export const FilterMenuMobile = ({ filter, ...props }) => (
         <div className="buttons">
           <button
             type="button"
-            className="btn btn-link icon-wrapper"
+            className="btn btn-icon"
             onClick={props.refresh}
             aria-label="Refresh"
           >
@@ -54,7 +54,7 @@ export const FilterMenuMobile = ({ filter, ...props }) => (
           </button>
           <button
             type="button"
-            className="btn btn-link"
+            className="btn btn-icon"
             onClick={props.openFilterMenu()}
             aria-label="Filter Menu"
           >

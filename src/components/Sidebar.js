@@ -18,10 +18,10 @@ export const Sidebar = ({
   <div className="sidebar sidebar--queue">
     <div className="sidebar-group--content-wrapper">
       {hasForms && (
-        <div className="sidebar-group sidebar-group--action">
+        <div className="sidebar-group sidebar-group--action px-4 pt-4 pb-2">
           <button
             type="button"
-            className="btn btn-secondary btn-sidebar-action"
+            className="btn btn-secondary btn-block"
             onClick={handleOpenNewItemMenu}
           >
             <I18n>New Task</I18n>

@@ -62,8 +62,8 @@ const restrictDateRange = filter =>
     ? 'A date range is required if status includes Complete or Cancelled'
     : null;
 
-const validateFilterName = filter => {
-  if (!filter.name || !filter.name.trim()) {
+const validateFilterName = (filter, showing) => {
+  if (showing === 'save-filter' && (!filter.name || !filter.name.trim())) {
     return 'Filter name cannot be empty.';
   } else if (filter.name.indexOf('%') >= 0) {
     return 'Percentage signs are not allowed in filter names.';
@@ -194,7 +194,7 @@ const FilterMenuAbstractComponent = props => (
         apply: props.applyFilter,
         reset: props.resetFilter,
         validations: [validateDateRange, validateFilterName]
-          .map(fn => fn(props.currentFilter))
+          .map(fn => fn(props.currentFilter, props.showing))
           .filter(v => v),
         hasTeams: props.hasTeams,
         clearTeams: props.clearTeams,

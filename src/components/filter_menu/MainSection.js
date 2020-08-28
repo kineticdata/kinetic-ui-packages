@@ -101,7 +101,7 @@ export const MainSection = ({
       <li className="list-group-item">
         <button
           type="button"
-          className="btn btn-link icon-wrapper"
+          className="btn btn-link"
           onClick={() => showSection('assignment')}
         >
           <span className="button-title">
@@ -116,7 +116,7 @@ export const MainSection = ({
       <li className="list-group-item">
         <button
           type="button"
-          className="btn btn-link icon-wrapper"
+          className="btn btn-link"
           onClick={() => showSection('status')}
         >
           <span className="button-title">
@@ -131,7 +131,7 @@ export const MainSection = ({
       <li className="list-group-item">
         <button
           type="button"
-          className="btn btn-link icon-wrapper"
+          className="btn btn-link"
           onClick={() => showSection('date')}
         >
           <span className="button-title">
@@ -146,7 +146,7 @@ export const MainSection = ({
       <li className="list-group-item">
         <button
           type="button"
-          className="btn btn-link icon-wrapper"
+          className="btn btn-link"
           onClick={() => showSection('sort')}
         >
           <span className="button-title">
@@ -163,7 +163,7 @@ export const MainSection = ({
       <li className="list-group-item">
         <button
           type="button"
-          className="btn btn-link icon-wrapper"
+          className="btn btn-link"
           onClick={() => showSection('group')}
         >
           <span className="button-title">

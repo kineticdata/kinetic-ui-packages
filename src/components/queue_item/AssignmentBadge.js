@@ -4,7 +4,7 @@ import { I18n } from '@kineticdata/react';
 
 export const AssignmentBadge = ({ queueItem, toggle, readOnly }) => (
   <div
-    className={classNames('assignment-badge icon-wrapper', {
+    className={classNames('assignment-badge', {
       'read-only': readOnly,
     })}
     onClick={toggle}

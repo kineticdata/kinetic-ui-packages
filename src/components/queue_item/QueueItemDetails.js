@@ -70,7 +70,7 @@ export const QueueItemDetails = ({
           isSmallLayout && (
             <button
               onClick={openDiscussions}
-              className="btn btn-inverse btn-discussion"
+              className="btn btn-inverse btn-discussion btn-block mb-3"
             >
               <span
                 className="fa fa-fw fa-comments"
