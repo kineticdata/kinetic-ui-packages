@@ -49,8 +49,8 @@
   .advanced-dropdown-wrapper {
     border: 1px solid rgba($border-color, 0.5);
     border-top: 0px;
-    border-bottom-right-radius: $border-radius-base;
-    border-bottom-left-radius: $border-radius-base;
+    border-bottom-right-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
     padding: 1rem 1.5rem;
     background-color: $gray3;
     width: calc(100% - 3.75rem);

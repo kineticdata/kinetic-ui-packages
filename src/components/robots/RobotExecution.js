@@ -63,9 +63,11 @@ const RobotExecutionComponent = ({
             </h1>
           </div>
         </div>
-        <I18n context={`datastore.forms.${ROBOT_EXECUTIONS_FORM_SLUG}`}>
-          <CoreForm datastore review submission={executionId} />
-        </I18n>
+        <div className="form-unstyled mb-4">
+          <I18n context={`datastore.forms.${ROBOT_EXECUTIONS_FORM_SLUG}`}>
+            <CoreForm datastore review submission={executionId} />
+          </I18n>
+        </div>
       </div>
     </div>
   );

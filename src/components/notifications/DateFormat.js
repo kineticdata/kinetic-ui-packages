@@ -37,18 +37,20 @@ export const DateFormatComponent = props => (
           <h1>
             <I18n>{props.submissionId ? 'Edit' : 'New'} Date Format</I18n>
           </h1>
-          <I18n
-            context={`datastore.forms.${NOTIFICATIONS_DATE_FORMAT_FORM_SLUG}`}
-          >
-            <CoreForm
-              datastore
-              form={!props.submissionId && NOTIFICATIONS_DATE_FORMAT_FORM_SLUG}
-              submission={props.submissionId}
-              onCreated={props.handleCreated}
-              onUpdated={props.handleUpdated}
-            />
-          </I18n>
         </div>
+      </div>
+      <div className="form-unstyled">
+        <I18n
+          context={`datastore.forms.${NOTIFICATIONS_DATE_FORMAT_FORM_SLUG}`}
+        >
+          <CoreForm
+            datastore
+            form={!props.submissionId && NOTIFICATIONS_DATE_FORMAT_FORM_SLUG}
+            submission={props.submissionId}
+            onCreated={props.handleCreated}
+            onUpdated={props.handleUpdated}
+          />
+        </I18n>
       </div>
     </div>
   </div>

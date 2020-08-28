@@ -36,7 +36,7 @@ const CreateRobotComponent = ({ handleCreated }) => (
         </div>
       </div>
 
-      <div>
+      <div className="form-unstyled mb-4">
         <I18n context={`datastore.forms.${ROBOT_FORM_SLUG}`}>
           <CoreForm datastore form={ROBOT_FORM_SLUG} created={handleCreated} />
         </I18n>

@@ -18,7 +18,7 @@ const FormLayout = ({ fields, error, buttons }) => (
       {fields.get('description')}
       {error}
     </ModalBody>
-    <ModalFooter className="modal-footer--full-width">{buttons}</ModalFooter>
+    <ModalFooter>{buttons}</ModalFooter>
   </Fragment>
 );
 

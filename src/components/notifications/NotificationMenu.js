@@ -263,7 +263,7 @@ export const NotificationMenuComponent = ({
   showHelp,
   toggleHelp,
 }) => (
-  <div className="alert alert-secondary">
+  <div className="alert alert-tertiary">
     <div className="form-row">
       <div className="form-group col-2">
         <label htmlFor="notification-menu-datastore">
@@ -273,7 +273,7 @@ export const NotificationMenuComponent = ({
           render={translate => (
             <select
               id="notification-menu-datastore"
-              className="form-control form-control-sm"
+              className="form-control"
               value={isDatastore}
               onChange={toggleIsDatastore}
             >
@@ -292,7 +292,7 @@ export const NotificationMenuComponent = ({
             render={translate => (
               <select
                 id="notification-menu-kapp"
-                className="form-control form-control-sm"
+                className="form-control"
                 value={selectedKapp ? selectedKapp.slug : ''}
                 onChange={handleKappSelect}
               >
@@ -313,7 +313,7 @@ export const NotificationMenuComponent = ({
         </label>
         <select
           id="notification-menu-form"
-          className="form-control form-control-sm"
+          className="form-control"
           value={selectedForm ? selectedForm.slug : ''}
           onChange={handleFormSelect}
         >
@@ -348,10 +348,10 @@ export const NotificationMenuComponent = ({
     </div>
     <div className="form-row">
       <div className="form-group col-md-6">
-        <label htmlFor="">
+        <label htmlFor="replacement-menu" className="field-label">
           <I18n>Dynamic Replacement Value</I18n>
         </label>
-        <UncontrolledButtonDropdown>
+        <UncontrolledButtonDropdown id="replacement-menu">
           <DropdownToggle caret>
             <I18n>Insert Dynamic Replacement Value</I18n>
           </DropdownToggle>

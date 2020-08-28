@@ -149,7 +149,7 @@ const DatastoreSubmissionComponent = ({
             )}
           </div>
         </div>
-        <div>
+        <div className="form-unstyled">
           {submissionId ? (
             <CoreForm
               datastore

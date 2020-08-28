@@ -89,7 +89,7 @@ export const NotificationsListComponent = ({
           <span className="sr-only">More Actions</span>
           <span className="fa fa-chevron-down fa-fw" role="presentation" />
         </DropdownToggle>
-        <DropdownMenu right>
+        <DropdownMenu right positionFixed>
           {type !== 'Date Format' && (
             <DropdownItem onClick={handlePreview(row.toJS())}>
               <I18n>Preview</I18n>
@@ -210,26 +210,26 @@ export const NotificationsListComponent = ({
             </div>
             <div className="notifications-tabs">
               <ul className="nav nav-tabs">
-                <li role="presentation">
+                <li role="presentation" className="nav-item">
                   <Link
                     to="/settings/notifications/templates"
-                    getProps={isActiveClass()}
+                    getProps={isActiveClass('nav-link')}
                   >
                     <I18n>Templates</I18n>
                   </Link>
                 </li>
-                <li role="presentation">
+                <li role="presentation" className="nav-item">
                   <Link
                     to="/settings/notifications/snippets"
-                    getProps={isActiveClass()}
+                    getProps={isActiveClass('nav-link')}
                   >
                     <I18n>Snippets</I18n>
                   </Link>
                 </li>
-                <li role="presentation">
+                <li role="presentation" className="nav-item">
                   <Link
                     to="/settings/notifications/date-formats"
-                    getProps={isActiveClass()}
+                    getProps={isActiveClass('nav-link')}
                   >
                     <I18n>Date Formats</I18n>
                   </Link>

@@ -386,26 +386,23 @@ const SettingsComponent = ({
                   </div>
                 </div>
               )}
-              <div className="form__footer">
-                <div className="form__footer__right">
-                  {hasChanged && (
-                    <button
-                      type="button"
-                      onClick={handleReset()}
-                      className="btn btn-link mr-3"
-                    >
-                      <I18n>Reset</I18n>
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handleSave()}
-                    className="btn btn-primary"
-                    disabled={!hasChanged}
-                  >
-                    <I18n>Save Changes</I18n>
-                  </button>
-                </div>
+              <div className="mb-4 text-right">
+                <button
+                  type="button"
+                  onClick={handleSave()}
+                  className="btn btn-primary"
+                  disabled={!hasChanged}
+                >
+                  <I18n>Save Changes</I18n>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleReset()}
+                  className="btn btn-link ml-2"
+                  disabled={!hasChanged}
+                >
+                  <I18n>Reset</I18n>
+                </button>
               </div>
             </div>
           ) : (

@@ -24,7 +24,7 @@ const FormLayout = ({ fields, error, buttons }) => (
       {fields.get('status')}
       {error}
     </ModalBody>
-    <ModalFooter className="modal-footer--full-width">{buttons}</ModalFooter>
+    <ModalFooter>{buttons}</ModalFooter>
   </Fragment>
 );
 
@@ -49,7 +49,7 @@ const ActionsCell = () => ({ row }) => (
         <span className="sr-only">More Actions</span>
         <span className="fa fa-chevron-down fa-fw" />
       </DropdownToggle>
-      <DropdownMenu right>
+      <DropdownMenu right positionFixed>
         <Link to={row.get('slug')} className="dropdown-item">
           <I18n>View</I18n>
         </Link>

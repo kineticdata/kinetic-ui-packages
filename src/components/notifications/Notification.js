@@ -99,7 +99,7 @@ const NotificationComponent = ({
       </div>
       {!loading &&
         values && (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="form-unstyled">
             <Fragment>
               <NotificationMenu
                 selection={selection}
@@ -192,26 +192,21 @@ const NotificationComponent = ({
                 value={values.get('Text Content')}
               />
             </div>
-            <div className="form__footer">
-              <div className="form__footer__right">
-                <Link
-                  to="/settings/notifications"
-                  className="btn btn-link mb-0"
-                >
-                  <I18n>Cancel</I18n>
-                </Link>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={!dirty || !isValid(values)}
-                >
-                  {submission ? (
-                    <I18n>Save Changes</I18n>
-                  ) : (
-                    <I18n>{`Create ${title}`}</I18n>
-                  )}
-                </button>
-              </div>
+            <div className="mb-4 text-right">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={!dirty || !isValid(values)}
+              >
+                {submission ? (
+                  <I18n>Save Changes</I18n>
+                ) : (
+                  <I18n>{`Create ${title}`}</I18n>
+                )}
+              </button>
+              <Link to="/settings/notifications" className="btn btn-link ml-2">
+                <I18n>Cancel</I18n>
+              </Link>
             </div>
           </form>
         )}

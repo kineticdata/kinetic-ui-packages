@@ -133,8 +133,8 @@ export const TranslationsListComponent = ({
           </h2>
 
           <ul className="nav nav-tabs">
-            <li role="presentation">
-              <Link to="/settings/translations/context/shared">
+            <li role="presentation" className="nav-item">
+              <Link to="/settings/translations/context/shared" className="nav-link">
                 <I18n>Shared Translations</I18n>
               </Link>
             </li>
@@ -146,23 +146,23 @@ export const TranslationsListComponent = ({
           </div>
 
           <ul className="nav nav-tabs">
-            <li role="presentation">
-              <Link to="/settings/translations" getProps={isActiveClass()}>
+            <li role="presentation" className="nav-item">
+              <Link to="/settings/translations" getProps={isActiveClass('nav-link')}>
                 <I18n>Form Contexts</I18n>
               </Link>
             </li>
-            <li role="presentation">
+            <li role="presentation" className="nav-item">
               <Link
                 to="/settings/translations/datastore"
-                getProps={isActiveClass()}
+                getProps={isActiveClass('nav-link')}
               >
                 <I18n>Datastore Contexts</I18n>
               </Link>
             </li>
-            <li role="presentation">
+            <li role="presentation" className="nav-item">
               <Link
                 to="/settings/translations/custom"
-                getProps={isActiveClass()}
+                getProps={isActiveClass('nav-link')}
               >
                 <I18n>Custom Contexts</I18n>
               </Link>

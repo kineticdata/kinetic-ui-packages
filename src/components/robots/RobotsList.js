@@ -94,7 +94,7 @@ export const RobotsListComponent = ({
           <span className="sr-only">More Actions</span>
           <span className="fa fa-chevron-down fa-fw" role="presentation" />
         </DropdownToggle>
-        <DropdownMenu right>
+        <DropdownMenu right positionFixed>
           <DropdownItem tag={Link} to={row.get('id')}>
             <I18n>Edit</I18n>
           </DropdownItem>

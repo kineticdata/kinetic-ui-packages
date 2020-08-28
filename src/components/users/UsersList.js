@@ -68,7 +68,7 @@ const FormLayout = ({ fields, error, buttons, bindings: { userToClone } }) => (
       </div>
       {error}
     </ModalBody>
-    <ModalFooter className="modal-footer--full-width">{buttons}</ModalFooter>
+    <ModalFooter>{buttons}</ModalFooter>
   </Fragment>
 );
 
@@ -91,7 +91,7 @@ const LoadingFormLayout = () => (
     <ModalBody className="form">
       <LoadingMessage />
     </ModalBody>
-    <ModalFooter className="modal-footer--full-width">
+    <ModalFooter>
       <button className="btn btn-success" type="button" disabled={true}>
         <I18n>Create User</I18n>
       </button>
@@ -104,7 +104,7 @@ const CloneErrorFormLayout = () => (
     <ModalBody className="form">
       <ErrorMessage message="Failed to load user to clone." />
     </ModalBody>
-    <ModalFooter className="modal-footer--full-width">
+    <ModalFooter>
       <button className="btn btn-success" type="button" disabled={true}>
         <I18n>Create User</I18n>
       </button>
@@ -127,7 +127,7 @@ const ActionsCell = ({ toggleModal, handleDelete }) => ({ row }) => (
         <span className="sr-only">More Actions</span>
         <span className="fa fa-chevron-down fa-fw" />
       </DropdownToggle>
-      <DropdownMenu right>
+      <DropdownMenu right positionFixed>
         <Link
           to={`/profile/${encodeURIComponent(row.get('username'))}`}
           className="dropdown-item"

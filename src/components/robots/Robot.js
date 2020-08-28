@@ -108,9 +108,11 @@ const RobotComponent = ({
             {'.'}
           </div>
         )}
-        <I18n context={`datastore.forms.${ROBOT_FORM_SLUG}`}>
-          <CoreForm datastore submission={robotId} updated={handleUpdated} />
-        </I18n>
+        <div className="form-unstyled mb-4">
+          <I18n context={`datastore.forms.${ROBOT_FORM_SLUG}`}>
+            <CoreForm datastore submission={robotId} updated={handleUpdated} />
+          </I18n>
+        </div>
         {discussionsEnabled &&
           isSmallLayout &&
           viewDiscussionsModal && (
