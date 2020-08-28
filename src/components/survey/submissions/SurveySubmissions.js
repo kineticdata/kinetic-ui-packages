@@ -45,7 +45,7 @@ const ActionsCell = ({
       <DropdownToggle color="link" className="btn-sm">
         <span className="fa fa-ellipsis-h fa-2x" />
       </DropdownToggle>
-      <DropdownMenu right>
+      <DropdownMenu right positionFixed>
         <DropdownItem tag={Link} to={`${row.get('id')}/details`}>
           <I18n>View</I18n>
         </DropdownItem>

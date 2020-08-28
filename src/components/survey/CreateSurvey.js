@@ -121,30 +121,28 @@ const CreateSurveyComponent = ({
               name="description"
             />
           </div>
-          <div className="form__footer">
-            <div className="form__footer__right">
-              <Link to="../" className="btn btn-link mb-0">
-                <I18n>Cancel</I18n>
-              </Link>
-              <button
-                disabled={
-                  newForm.template === '' ||
-                  newForm.name === '' ||
-                  newForm.slug === '' ||
-                  creating
-                }
-                type="button"
-                onClick={handleSave()}
-                className="btn btn-secondary"
-              >
-                <I18n>Create Survey</I18n>
-              </button>
-            </div>
+          <div className="mb-4 text-right">
+            <button
+              disabled={
+                newForm.template === '' ||
+                newForm.name === '' ||
+                newForm.slug === '' ||
+                creating
+              }
+              type="button"
+              onClick={handleSave()}
+              className="btn btn-secondary"
+            >
+              <I18n>Create Survey</I18n>
+            </button>
+            <Link to="../" className="btn btn-link ml-2">
+              <I18n>Cancel</I18n>
+            </Link>
           </div>
         </div>
       </div>
     </div>
-    <div className="page-panel page-panel--one-thirds page-panel--transparent page-panel--sidebar page-panel--datastore-sidebar">
+    <div className="page-panel page-panel--one-thirds page-panel--transparent page-panel--sidebar py-4">
       <h3>
         <I18n>New Survey</I18n>
       </h3>

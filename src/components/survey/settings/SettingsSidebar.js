@@ -16,8 +16,8 @@ export const SettingsSidebarComponent = ({
 }) =>
   tab === '1' ? (
     <Fragment>
-      <h3>General Settings</h3>
       <br />
+      <h3>General Settings</h3>
       <p>
         <b>Survey Name</b> will be visible to the owning team and individual
         (see Permissions tab), but not the individuals who take the survey.
@@ -48,8 +48,8 @@ export const SettingsSidebarComponent = ({
     </Fragment>
   ) : tab === '2' ? (
     <Fragment>
-      <h3>Workflow Process</h3>
       <br />
+      <h3>Workflow Process</h3>
       <p>
         There is not, by default, any workflow that runs when a user submits
         their survey. The data is simply recorded as their submission. If you
@@ -60,8 +60,8 @@ export const SettingsSidebarComponent = ({
     </Fragment>
   ) : tab === '6' ? (
     <Fragment>
-      <h3>Notifications</h3>
       <br />
+      <h3>Notifications</h3>
       <p>
         <b>Invitation Notification Template</b> is the notification that is sent
         to the survey recipient when their survey is created.
@@ -111,8 +111,8 @@ export const SettingsSidebarComponent = ({
     </Fragment>
   ) : tab === '3' ? (
     <Fragment>
-      <h3>Triggers</h3>
       <br />
+      <h3>Triggers</h3>
       <p>
         Polling should only be used if the system triggering the survey cannot
         make outbound calls. Remedy 9.2 and earlier are an example of a system
@@ -144,8 +144,8 @@ export const SettingsSidebarComponent = ({
     </Fragment>
   ) : tab === '4' ? (
     <Fragment>
-      <h3>Delivery Rules</h3>
       <br />
+      <h3>Delivery Rules</h3>
       <p>
         <b>Expiration in Days</b> is the number of days the user has to take a
         copy of the survey sent to them. This is not an expiration for the
@@ -168,8 +168,8 @@ export const SettingsSidebarComponent = ({
   ) : (
     tab === '5' && (
       <Fragment>
-        <h3>Security</h3>
         <br />
+        <h3>Security</h3>
         <p>
           <b>Owning Team</b> is the team who is allowed to see survey
           submissions and modify the survey.

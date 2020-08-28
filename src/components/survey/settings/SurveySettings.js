@@ -718,7 +718,7 @@ const SurveySettingsComponent = ({
               </p>
             )}
           </div>
-          <div className="page-panel page-panel--one-thirds page-panel--transparent page-panel--sidebar page-panel--datastore-sidebar">
+          <div className="page-panel page-panel--one-thirds page-panel--transparent page-panel--sidebar py-4">
             <h3>
               <I18n>Survey Settings</I18n>
             </h3>
