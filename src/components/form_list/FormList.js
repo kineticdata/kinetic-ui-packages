@@ -58,7 +58,7 @@ export const FormList = ({
                 <I18n
                   render={translate => (
                     <button
-                      className="btn btn-link icon-wrapper"
+                      className="btn btn-icon"
                       onClick={loadPreviousHandler}
                       disabled={paging || !hasPreviousPage}
                       title={translate('Previous Page')}
@@ -79,7 +79,7 @@ export const FormList = ({
                 <I18n
                   render={translate => (
                     <button
-                      className="btn btn-link icon-wrapper"
+                      className="btn btn-icon"
                       onClick={loadNextHandler}
                       disabled={paging || !hasNextPage}
                       title={translate('Next Page')}
