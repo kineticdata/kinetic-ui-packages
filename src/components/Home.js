@@ -305,7 +305,7 @@ export const HomeComponent = ({
               <span>
                 <I18n>Location</I18n>
               </span>
-              <Link to="tech-bars" className="btn btn-sm btn-link">
+              <Link to="tech-bars" className="btn btn-link">
                 <I18n>View All</I18n>
               </Link>
             </h4>

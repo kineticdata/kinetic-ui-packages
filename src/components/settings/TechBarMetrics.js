@@ -124,10 +124,10 @@ export const TechBarMetricsComponent = ({
 
         <div>
           <ul className="nav nav-tabs">
-            <li role="presentation">
+            <li role="presentation" className="nav-item">
               <Link
                 to={`${mode ? '../' : ''}`}
-                getProps={isActiveClass()}
+                getProps={isActiveClass('nav-link')}
                 onClick={() => {
                   if (selectedRange !== 'last30Days') {
                     setSelectedRange('last30Days');
@@ -140,10 +140,10 @@ export const TechBarMetricsComponent = ({
                 </I18n>
               </Link>
             </li>
-            <li role="presentation">
+            <li role="presentation" className="nav-item">
               <Link
                 to={`${mode ? '../' : ''}trend`}
-                getProps={isActiveClass()}
+                getProps={isActiveClass('nav-link')}
                 onClick={() => {
                   if (selectedRange !== 'last12Months') {
                     setSelectedRange('last12Months');
@@ -154,10 +154,10 @@ export const TechBarMetricsComponent = ({
                 <I18n>Trend</I18n>
               </Link>
             </li>
-            <li role="presentation">
+            <li role="presentation" className="nav-item">
               <Link
                 to={`${mode ? '../' : ''}export`}
-                getProps={isActiveClass()}
+                getProps={isActiveClass('nav-link')}
                 onClick={() => {
                   fetchMetricsReset();
                   setSelectedRange('singleDay');

@@ -63,7 +63,7 @@ export const TechBarSettingsFormComponent = ({
                 <I18n>Cancel Edit</I18n>
               </Link>
             </div>
-            <div className="content-wrapper">
+            <div className="content-wrapper form-unstyled">
               <I18n context={`datastore.forms.${TECH_BAR_SETTINGS_FORM_SLUG}`}>
                 {techBar.settings.submissionId ? (
                   <CoreForm

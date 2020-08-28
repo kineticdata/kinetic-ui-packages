@@ -190,7 +190,7 @@ export const CheckInComponent = ({
                 />
               )}
               <div className="header bg-info" />
-              <div className="body">
+              <div className="body form-unstyled">
                 <h1>
                   <I18n>I am a walk-in</I18n>
                   <button

@@ -88,7 +88,7 @@ export const FeedbackComponent = ({
               </span>
             </h4>
           </div>
-          <ModalBody>
+          <ModalBody className="modal-body--padding">
             <div className="form">
               <div
                 className={`form-group ${

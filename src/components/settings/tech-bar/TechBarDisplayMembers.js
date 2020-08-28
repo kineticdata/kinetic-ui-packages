@@ -138,7 +138,7 @@ const TechBarDisplayMembersComponent = ({
             </span>
           </h4>
         </div>
-        <ModalBody>
+        <ModalBody className="modal-body--padding">
           {!user && (
             <div className="form overflow-visible">
               <div className="form-group">
