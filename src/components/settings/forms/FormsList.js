@@ -49,7 +49,7 @@ const ActionsCell = ({ deleteForm, toggleModal, processing }) => ({
           <span className="sr-only">More Actions</span>
           <span className="fa fa-chevron-down fa-fw" />
         </DropdownToggle>
-        <DropdownMenu right>
+        <DropdownMenu right positionFixed>
           <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
             Settings
           </Link>
@@ -112,7 +112,7 @@ const FormLayout = ({ fields, error, buttons, bindings: { cloneForm } }) => (
       {fields.get('description')}
       {error}
     </ModalBody>
-    <ModalFooter className="modal-footer--full-width">{buttons}</ModalFooter>
+    <ModalFooter>{buttons}</ModalFooter>
   </Fragment>
 );
 
@@ -135,7 +135,7 @@ const LoadingFormLayout = () => (
     <ModalBody className="form">
       <LoadingMessage />
     </ModalBody>
-    <ModalFooter className="modal-footer--full-width">
+    <ModalFooter>
       <button className="btn btn-success" type="button" disabled={true}>
         <I18n>Create Form</I18n>
       </button>
@@ -148,7 +148,7 @@ const CloneErrorFormLayout = () => (
     <ModalBody className="form">
       <ErrorMessage message="Failed to load form to clone." />
     </ModalBody>
-    <ModalFooter className="modal-footer--full-width">
+    <ModalFooter>
       <button className="btn btn-success" type="button" disabled={true}>
         <I18n>Create Form</I18n>
       </button>

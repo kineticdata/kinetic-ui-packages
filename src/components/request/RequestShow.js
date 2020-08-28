@@ -254,7 +254,7 @@ export const RequestShow = ({
 
               <div className="submission-tabs">
                 <ul className="nav nav-tabs" role="tablist">
-                  <li role="tab">
+                  <li role="tab" className="nav-item">
                     <Link
                       to={getSubmissionPath(
                         appLocation,
@@ -262,13 +262,13 @@ export const RequestShow = ({
                         null,
                         listType,
                       )}
-                      getProps={isActiveClass()}
+                      getProps={isActiveClass('nav-link')}
                     >
                       <I18n>Timeline</I18n>
                     </Link>
                   </li>
 
-                  <li role="tab">
+                  <li role="tab" className="nav-item">
                     <Link
                       to={`${getSubmissionPath(
                         appLocation,
@@ -276,7 +276,7 @@ export const RequestShow = ({
                         'review',
                         listType,
                       )}`}
-                      getProps={isActiveClass()}
+                      getProps={isActiveClass('nav-link')}
                     >
                       <I18n>Review Request</I18n>
                     </Link>

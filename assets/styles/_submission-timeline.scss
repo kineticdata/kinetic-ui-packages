@@ -28,7 +28,7 @@
 .card--timeline {
   position: relative;
   border: 1px solid $gray16;
-  border-radius: $border-radius-base;
+  border-radius: $border-radius;
   padding: 0.75rem 1rem;
   margin: 0.75rem 0 1.5rem 1rem;
   list-style: none;
@@ -68,7 +68,7 @@
   font-size: 0.8rem;
   font-weight: 700;
   padding: 0.25rem 0.75rem;
-  border-radius: $border-radius-base;
+  border-radius: $border-radius;
   color: darken($green-grass, 18.5);
   background-color: #d3f6e2;
   text-align: center;
