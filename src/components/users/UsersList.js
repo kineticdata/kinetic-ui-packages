@@ -188,7 +188,7 @@ export const UsersListComponent = ({
         FilterFormButtons: TableComponents.FilterFormButtons,
         TableLayout: TableComponents.SettingsTableLayout,
       }}
-      columnSet={['username', 'displayName', 'actions']}
+      columnSet={['username', 'displayName', 'email', 'actions']}
       addColumns={[
         {
           value: 'actions',
@@ -200,7 +200,7 @@ export const UsersListComponent = ({
         },
       ]}
       alterColumns={{
-        username: { title: 'Email', components: { BodyCell: NameCell } },
+        username: { components: { BodyCell: NameCell } },
       }}
       filterSet={['username', 'displayName', 'email']}
       onSearch={() => () => setFilterOpen(false)}
