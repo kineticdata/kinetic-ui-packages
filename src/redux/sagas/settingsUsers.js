@@ -129,10 +129,10 @@ function* checkExistingUsers({ importUsers, pageToken } = {}) {
     );
     if (nextPageToken) {
       return yield call(
-        checkExistingUsers({
+        checkExistingUsers, {
           importUsers: updatedImportUsers,
           pageToken: nextPageToken,
-        }),
+        },
       );
     } else {
       return { importUsers: updatedImportUsers };
