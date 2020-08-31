@@ -38,7 +38,7 @@ export const prepareDateRangeFilter = (searcher, filter, now) => {
   if (filter.dateRange.custom) {
     searcher.sortBy(
       filter.dateRange.timeline === 'completedAt'
-        ? 'updatedAt'
+        ? 'closedAt'
         : filter.dateRange.timeline,
     );
     searcher.startDate(moment(filter.dateRange.start).toDate());
@@ -60,7 +60,7 @@ export const prepareDateRangeFilter = (searcher, filter, now) => {
     }
     searcher.sortBy(
       filter.dateRange.timeline === 'completedAt'
-        ? 'updatedAt'
+        ? 'closedAt'
         : filter.dateRange.timeline,
     );
     searcher.startDate(
@@ -178,12 +178,12 @@ export function* fetchListTask(action) {
     if (invalidAssignment) {
       yield put(actions.setListItems(filter, []));
     } else {
-      const { submissions, messages, nextPageToken, error } = yield call(
+      const { submissions, nextPageToken, error } = yield call(
         searchSubmissions,
         { kapp: kappSlug, search, limit: 1000 },
       );
 
-      if (error || (messages && messages.length > 0)) {
+      if (error) {
         yield put(actions.setListStatus(filter, ERROR_STATUS_STRING));
         yield put(addToastAlert('Failed to retrieve items!'));
       } else if (nextPageToken) {
