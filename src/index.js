@@ -77,4 +77,7 @@ export default class extends Component {
     !authenticated && matchPath(location.pathname, { path: `${appLocation}` });
 
   static hasPublicRoutes = true;
+
+  // Class that will be added to the body when this package is rendered
+  static bodyClassName = 'package--survey';
 }
