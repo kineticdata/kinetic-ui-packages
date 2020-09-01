@@ -16,6 +16,7 @@ export const Form = ({
   category,
   submissionId,
   handleCreated,
+  handleUpdated,
   handleCompleted,
   handleLoaded,
   handleDelete,
@@ -114,6 +115,7 @@ export const Form = ({
               <CoreForm
                 submission={submissionId}
                 loaded={handleLoaded}
+                updated={handleUpdated}
                 completed={handleCompleted}
                 unauthorized={handleUnauthorized}
                 public={!authenticated}
@@ -129,6 +131,7 @@ export const Form = ({
                 form={formSlug}
                 loaded={handleLoaded}
                 created={handleCreated}
+                updated={handleUpdated}
                 completed={handleCompleted}
                 unauthorized={handleUnauthorized}
                 values={values}
