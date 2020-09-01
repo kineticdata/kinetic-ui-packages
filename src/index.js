@@ -74,4 +74,7 @@ export default class extends Component {
 
   // Set to true if package allows public (unauthenticated) routes
   static hasPublicRoutes = true;
+
+  // Class that will be added to the body when this package is rendered
+  static bodyClassName = 'package--services';
 }
