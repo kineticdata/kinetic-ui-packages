@@ -12,7 +12,6 @@ import { Datastore } from './components/datastore/Datastore';
 import { Robots } from './components/robots/Robots';
 import { Users } from './components/users/Users';
 import { Teams } from './components/teams/Teams';
-import { Translations } from './components/translations/Translations';
 import { SchedulerSettings } from './components/SchedulerSettings';
 import { SpaceSettings } from './components/space_settings/SpaceSettings';
 import { actions as datastoreActions } from './redux/modules/settingsDatastore';
@@ -42,7 +41,6 @@ const AppComponent = props => {
               <Notifications path="notifications/*" />
               <Teams path="teams/*" />
               <SchedulerSettings path="schedulers/*" />
-              <Translations path="translations/*" />
               <Settings default />
             </Router>
           </main>

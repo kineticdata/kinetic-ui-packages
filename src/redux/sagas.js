@@ -4,7 +4,6 @@ import { watchSettingsApp } from './sagas/settingsApp';
 import { watchSettingsDatastore } from './sagas/settingsDatastore';
 import { watchSettingsNotifications } from './sagas/settingsNotifications';
 import { watchSettingsRobots } from './sagas/settingsRobots';
-import { watchSettingsTranslations } from './sagas/settingsTranslations';
 import { watchSettingsUsers } from './sagas/settingsUsers';
 
 export default function* sagas() {
@@ -14,7 +13,6 @@ export default function* sagas() {
     watchSettingsDatastore(),
     watchSettingsNotifications(),
     watchSettingsRobots(),
-    watchSettingsTranslations(),
     watchSettingsUsers(),
   ]);
 }

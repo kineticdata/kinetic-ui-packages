@@ -96,14 +96,6 @@ const SettingsComponent = ({
                 description={translate('View, create, and edit users')}
               />
             )}
-            {isSpaceAdmin && (
-              <SettingsCard
-                name={translate('Translations')}
-                path={`/settings/translations`}
-                icon="fa-globe"
-                description={translate('View, create, and edit translations')}
-              />
-            )}
           </div>
         )}
       />

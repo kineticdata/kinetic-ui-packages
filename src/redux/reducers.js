@@ -4,7 +4,6 @@ import { reducer as settingsApp } from './modules/settingsApp';
 import { reducer as settingsDatastore } from './modules/settingsDatastore';
 import { reducer as settingsNotifications } from './modules/settingsNotifications';
 import { reducer as settingsRobots } from './modules/settingsRobots';
-import { reducer as settingsTranslations } from './modules/settingsTranslations';
 import { reducer as settingsUsers } from './modules/settingsUsers';
 
 export default {
@@ -14,6 +13,5 @@ export default {
   settingsDatastore,
   settingsNotifications,
   settingsRobots,
-  settingsTranslations,
   settingsUsers,
 };

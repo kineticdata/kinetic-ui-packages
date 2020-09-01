@@ -65,12 +65,6 @@ export const SidebarComponent = ({
                 <span className="fa fa-fw fa-angle-right" />
               </Link>
             )}
-            {isSpaceAdmin && (
-              <Link to="translations" getProps={isActiveClass('nav-link')}>
-                <I18n>Translations</I18n>
-                <span className="fa fa-fw fa-angle-right" />
-              </Link>
-            )}
           </li>
         </ul>
       </div>
