@@ -384,7 +384,7 @@ const Durations = ({
     labelHeaders,
     scheduled,
     actual,
-    waitTime,
+    // waitTime,
     quantity,
   } = selectedDuration
     ? Object.keys(
