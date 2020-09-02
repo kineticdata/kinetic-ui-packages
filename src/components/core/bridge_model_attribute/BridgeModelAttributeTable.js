@@ -41,7 +41,7 @@ const dataSource = ({ modelName }) => ({
   transform,
 });
 
-const filters = () => () => [{ name: 'name', label: 'Name', type: 'text' }];
+// const filters = () => () => [{ name: 'name', label: 'Name', type: 'text' }];
 
 const columns = [
   {

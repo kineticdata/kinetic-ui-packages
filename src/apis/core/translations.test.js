@@ -492,40 +492,18 @@ describe('translations api', () => {
     });
   });
 
-  const mockSuccessfulContexts = () =>
   describe('fetchContexts', () => {
-    let mockSettings;
-    let mockResults;
     beforeEach(() => {
       axios.get.mockReset();
-      mockSettings = {
-        status: 200,
-        data: {
-          contexts: [{ name: 'name' }, { name: 'kapps.kappName.form.formName' }, { name: 'datastore.form.formName' }],
-        },
-      };
-      mockResults = [
-        {form: null, kapp: null, name: 'name'},
-        {form: 'formName', kapp: 'kappName', name: 'name'},
-      ]
-    });
-
-    test('success fetch all', async () => {
-      axios.get.mockResolvedValue(mockSettings);
-      const result = await fetchContexts();
-      expect(axios.get.mock.calls).toEqual([
-        [
-          'space/app/api/v1/translations/contexts',
-          { params: {}, headers: { 'X-Kinetic-AuthAssumed': 'true' } },
-        ],
-      ]);
-      expect(result).toEqual({
-        contexts: mockResults,
-      });
     });
 
     test('success fetch custom', async () => {
-      mockSuccessfulContexts();
+      axios.get.mockResolvedValue({
+        status: 200,
+        data: {
+          contexts: [{ name: 'custom.foo' }],
+        },
+      });
       const result = await fetchContexts({ custom: true });
       expect(axios.get.mock.calls).toEqual([
         [
@@ -537,12 +515,21 @@ describe('translations api', () => {
         ],
       ]);
       expect(result).toEqual({
-        contexts: mockResults,
+        contexts: [{ name: 'custom.foo', kapp: null, form: null }],
       });
     });
 
     test('success fetch expected', async () => {
-      mockSuccessfulContexts();
+      axios.get.mockResolvedValue({
+        status: 200,
+        data: {
+          contexts: [
+            { name: 'custom.foo' },
+            { name: 'kapps.kappSlug.forms.formSlug' },
+            { name: 'datastore.forms.formSlug' },
+          ],
+        },
+      });
       const result = await fetchContexts({ expected: true });
       expect(axios.get.mock.calls).toEqual([
         [
@@ -554,12 +541,25 @@ describe('translations api', () => {
         ],
       ]);
       expect(result).toEqual({
-        contexts: mockResults,
+        contexts: [
+          { name: 'custom.foo', kapp: null, form: null },
+          {
+            name: 'kapps.kappSlug.forms.formSlug',
+            kapp: 'kappSlug',
+            form: 'formSlug',
+          },
+          { name: 'datastore.forms.formSlug', kapp: null, form: 'formSlug' },
+        ],
       });
     });
 
     test('success fetch unexpected', async () => {
-      mockSuccessfulContexts();
+      axios.get.mockResolvedValue({
+        status: 200,
+        data: {
+          contexts: [{ name: 'kapps.kappSlug.forms.deletedFormSlug' }],
+        },
+      });
       const result = await fetchContexts({ unexpected: true });
       expect(axios.get.mock.calls).toEqual([
         [
@@ -571,7 +571,42 @@ describe('translations api', () => {
         ],
       ]);
       expect(result).toEqual({
-        contexts: mockResults,
+        contexts: [
+          {
+            name: 'kapps.kappSlug.forms.deletedFormSlug',
+            kapp: 'kappSlug',
+            form: 'deletedFormSlug',
+          },
+        ],
+      });
+    });
+
+    test('failure fetch tooManyFlags', async () => {
+      axios.get.mockRejectedValue(
+        createError('Request failed with status code 400', null, 400, null, {
+          status: 400,
+          statusText:
+            'The custom, expected, and unexpected flags can only be specified independently.',
+        }),
+      );
+      const result = await fetchContexts({ expected: true, unexpected: true });
+      expect(axios.get.mock.calls).toEqual([
+        [
+          'space/app/api/v1/translations/contexts',
+          {
+            params: { expected: true },
+            headers: { 'X-Kinetic-AuthAssumed': 'true' },
+          },
+        ],
+      ]);
+      expect(result).toEqual({
+        error: {
+          badRequest: true,
+          statusCode: 400,
+          key: null,
+          message:
+            'The custom, expected, and unexpected flags can only be specified independently.',
+        },
       });
     });
 

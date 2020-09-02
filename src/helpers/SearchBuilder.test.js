@@ -1,5 +1,5 @@
 import { defineFilter, defineKqlQuery } from './SearchBuilder';
-import { Map, fromJS } from 'immutable';
+import { fromJS } from 'immutable';
 
 describe('defineFilter', () => {
   const person = {

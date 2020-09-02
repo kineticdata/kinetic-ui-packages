@@ -1,5 +1,4 @@
 import WS from 'jest-websocket-mock';
-import waitForExpect from 'wait-for-expect';
 import { Socket, SOCKET_STAGE, SOCKET_STATUS } from './socket';
 
 const MOCK_SERVER = 'ws://localhost:1234';

@@ -9,7 +9,7 @@ const clientSide = defineFilter(true)
   .equals('unique', 'unique')
   .end();
 
-const indexStatuses = ['New', 'Building', 'Built', 'Failed'];
+// const indexStatuses = ['New', 'Building', 'Built', 'Failed'];
 
 const BooleanYesNoCell = props => <td>{props.value ? 'Yes' : 'No'}</td>;
 
@@ -29,21 +29,21 @@ const dataSource = ({ formSlug }) => ({
   }),
 });
 
-const filters = () => () => [
-  { name: 'name', label: 'Name', type: 'text' },
-  {
-    name: 'status',
-    label: 'Status',
-    type: 'select',
-    options: indexStatuses.map(el => ({ value: el, label: el })),
-  },
-  {
-    name: 'unique',
-    label: 'Unique',
-    type: 'select',
-    options: ['Yes', 'No'].map(el => ({ value: el, label: el })),
-  },
-];
+// const filters = () => () => [
+//   { name: 'name', label: 'Name', type: 'text' },
+//   {
+//     name: 'status',
+//     label: 'Status',
+//     type: 'select',
+//     options: indexStatuses.map(el => ({ value: el, label: el })),
+//   },
+//   {
+//     name: 'unique',
+//     label: 'Unique',
+//     type: 'select',
+//     options: ['Yes', 'No'].map(el => ({ value: el, label: el })),
+//   },
+// ];
 
 const columns = [
   {
