@@ -1,11 +1,9 @@
 import React, { Fragment } from 'react';
 import {
-  UncontrolledDropdown,
   UncontrolledTooltip,
   Dropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem,
 } from 'reactstrap';
 import { FilterMenuAbstract } from '../filter_menu/FilterMenuAbstract';
 import isarray from 'isarray';

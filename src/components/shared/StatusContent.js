@@ -1,16 +1,12 @@
 import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
-import { UncontrolledTooltip, ButtonGroup } from 'reactstrap';
+import { ButtonGroup } from 'reactstrap';
 import { I18n } from '@kineticdata/react';
-
-const CLOSED_STATUSES = ['Cancelled', 'Complete'];
 
 const getStatusClass = status =>
   `submission-status submission-status--${status
     .toLowerCase()
     .replace(/\s+/g, '-')}`;
-
-const getStatusId = queueItem => `tooltip-${queueItem.id}-status-paragraph`;
 
 const getStatusReason = queueItem => {
   switch (queueItem.values.Status) {
@@ -45,10 +41,6 @@ const PrevAndNextGroup = ({ prevAndNext }) => (
     </Link>
   </ButtonGroup>
 );
-
-const sizeString = str => {
-  return str && str.length > 20 ? `${str.slice(0, 20).trim()}...` : str;
-};
 
 export const StatusContent = ({ queueItem, prevAndNext }) => (
   <Fragment>

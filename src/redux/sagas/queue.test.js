@@ -2,7 +2,6 @@ import { List } from 'immutable';
 import moment from 'moment';
 import { select, call, put } from 'redux-saga/effects';
 import { actions } from '../modules/queue';
-import { addError } from '@kineticdata/bundle-common';
 
 global.bundle = {
   apiLocation: () => '/acme/app/api/v1',
@@ -13,7 +12,10 @@ const {
   updateSubmission,
   SubmissionSearch,
 } = require('@kineticdata/react');
-const { Filter, Profile } = require('../../records');
+const {
+  Filter,
+  // Profile
+} = require('../../records');
 const {
   ERROR_STATUS_STRING,
   TOO_MANY_STATUS_STRING,
@@ -43,17 +45,17 @@ describe('queue saga', () => {
   describe('filter assembling functions', () => {
     let filter;
     let searcher;
-    let appSettings;
+    // let appSettings;
 
     beforeEach(() => {
       filter = new Filter();
       searcher = new SubmissionSearch();
 
-      appSettings = {
-        myTeams: List([{ name: 'REAL_TEAM' }]),
-        myTeammates: List([Profile({ username: 'you@yours.com' })]),
-        profile: new Profile({ username: 'me@mine.com' }),
-      };
+      // appSettings = {
+      //   myTeams: List([{ name: 'REAL_TEAM' }]),
+      //   myTeammates: List([Profile({ username: 'you@yours.com' })]),
+      //   profile: new Profile({ username: 'me@mine.com' }),
+      // };
     });
 
     describe('#prepareStatusFilter', () => {

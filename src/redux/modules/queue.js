@@ -1,6 +1,6 @@
 import { Record, Map, List } from 'immutable';
 import { Utils } from '@kineticdata/bundle-common';
-import { Filter, AssignmentCriteria } from '../../records';
+import { Filter } from '../../records';
 import { getSubmissionDate } from '../sagas/queue';
 import moment from 'moment';
 
