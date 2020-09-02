@@ -74,7 +74,7 @@ const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   noItemsMessage: 'There are no submissions to display.',
 });
 
-const VALUE_FILTER_MATCH = /values\[(.+)]/;
+// const VALUE_FILTER_MATCH = /values\[(.+)]/;
 
 export const SurveySubmissionsComponent = ({
   kapp,
