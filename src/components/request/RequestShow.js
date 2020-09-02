@@ -170,7 +170,7 @@ export const RequestShow = ({
 }) => (
   <div className="page-container page-container--panels page-container--color-bar">
     <div className="page-panel page-panel--three-fifths">
-      <PageTitle parts={[submission && `#${submission.handle}`, 'Requests']} />
+      <PageTitle parts={[submission && submission.label, 'Requests']} />
       {sendMessageModalOpen && <SendMessageModal submission={submission} />}
       <div className="page-panel__header">
         <div className="nav-return">
@@ -254,7 +254,7 @@ export const RequestShow = ({
 
               <div className="submission-tabs">
                 <ul className="nav nav-tabs" role="tablist">
-                  <li role="tab">
+                  <li role="tab" className="nav-item">
                     <Link
                       to={getSubmissionPath(
                         appLocation,
@@ -262,13 +262,13 @@ export const RequestShow = ({
                         null,
                         listType,
                       )}
-                      getProps={isActiveClass()}
+                      getProps={isActiveClass('nav-link')}
                     >
                       <I18n>Timeline</I18n>
                     </Link>
                   </li>
 
-                  <li role="tab">
+                  <li role="tab" className="nav-item">
                     <Link
                       to={`${getSubmissionPath(
                         appLocation,
@@ -276,7 +276,7 @@ export const RequestShow = ({
                         'review',
                         listType,
                       )}`}
-                      getProps={isActiveClass()}
+                      getProps={isActiveClass('nav-link')}
                     >
                       <I18n>Review Request</I18n>
                     </Link>

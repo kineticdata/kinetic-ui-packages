@@ -7,7 +7,7 @@ import { actions as formActions } from '../../redux/modules/settingsForms';
 import { ServicesSettings } from './services_settings/ServicesSettings';
 import { FormsList } from './forms/FormsList';
 import { FormSettings } from './forms/FormSettings';
-import { FormDetails } from './forms/FormDetails';
+import { FormSubmissions } from './forms/FormSubmissions';
 import { FormActivity } from './forms/FormActivity';
 import { CategorySettings } from './categories/CategorySettings';
 import { I18n } from '@kineticdata/react';
@@ -74,7 +74,7 @@ export const FormSettingsWrapper = compose(
       <Router>
         <FormSettings form={form} path="settings" />
         <FormActivity form={form} path="submissions/:id" />
-        <FormDetails form={form} default />
+        <FormSubmissions form={form} default />
       </Router>
     ),
 );
@@ -104,7 +104,7 @@ const SettingsCard = ({ path, icon, name, description }) => (
 
 const SettingsNavigationComponent = ({ kapp, isSpaceAdmin }) => (
   <div className="page-container">
-    <PageTitle parts={[]} />
+    <PageTitle settings />
     <div className="page-panel page-panel--white">
       <div className="page-title">
         <div

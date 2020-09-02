@@ -419,7 +419,7 @@ export const FormSettingsComponent = ({
     >
       {({ form: formContent, initialized }) => (
         <div className="page-container">
-          <PageTitle parts={['Settings', form.name, 'Forms']} />
+          <PageTitle parts={['Settings', form.name, 'Forms']} settings />
           <div className="page-panel page-panel--white">
             <div className="page-title">
               <div
@@ -464,6 +464,7 @@ export const FormSettingsComponent = ({
                   }/builder`}
                   className="btn btn-primary"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <span className="fa fa-fw fa-mouse-pointer" />
                   <I18n>Form Builder</I18n>

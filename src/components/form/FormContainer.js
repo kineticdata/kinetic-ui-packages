@@ -4,6 +4,7 @@ import { Form } from './Form';
 import { actions } from '../../redux/modules/submission';
 import { actions as submissionsActions } from '../../redux/modules/submissions';
 import { connect } from '../../redux/store';
+import { addToast } from '@kineticdata/bundle-common';
 
 const valuesFromQueryParams = queryParams => {
   const params = parse(queryParams);
@@ -24,17 +25,32 @@ export const handleCompleted = props => response => {
           response.submission.id
         }/confirmation`,
       );
+    } else {
+      props.setPage(response.submission.currentPage);
     }
     props.fetchCurrentPage();
   }
 };
 
 export const handleCreated = props => response => {
+  if (props.page === response.submission.currentPage) {
+    addToast('Form saved successfully');
+  } else {
+    props.setPage(response.submission.currentPage);
+  }
   if (
     response.submission.coreState !== 'Submitted' ||
     response.submission.currentPage
   ) {
     props.navigate(response.submission.id);
+  }
+};
+
+export const handleUpdated = props => response => {
+  if (props.page === response.submission.currentPage) {
+    addToast('Form saved successfully');
+  } else {
+    props.setPage(response.submission.currentPage);
   }
 };
 
@@ -50,6 +66,7 @@ export const handleLoaded = props => form => {
     name: form.name(),
     description: form.description(),
   });
+  props.setPage(form.page().name());
 };
 
 export const handleDelete = props => () => {
@@ -81,9 +98,11 @@ const enhance = compose(
     mapDispatchToProps,
   ),
   withState('form', 'setForm', props => props.form),
+  withState('page', 'setPage', ''),
   withHandlers({
     handleCompleted,
     handleCreated,
+    handleUpdated,
     handleLoaded,
     handleDelete,
     handleUnauthorized,

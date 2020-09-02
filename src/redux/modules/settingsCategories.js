@@ -1,4 +1,4 @@
-import { List, Record } from 'immutable';
+import { Record } from 'immutable';
 import { Utils } from '@kineticdata/bundle-common';
 import { CategoryHelper } from '../../models';
 const { noPayload, withPayload } = Utils;
