@@ -6,7 +6,8 @@
   "main:src": "src/index.js",
   "files": [
     "assets",
-    "lib"
+    "lib",
+    "proxyhelper.js"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production babel src --out-dir lib",
