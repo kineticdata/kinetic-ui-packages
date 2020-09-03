@@ -95,7 +95,7 @@ export const RequestList = ({
                   <I18n
                     render={translate => (
                       <button
-                        className="btn btn-link icon-wrapper"
+                        className="btn btn-icon"
                         onClick={handlePreviousPage}
                         disabled={paging || !hasPreviousPage}
                         title={translate('Previous Page')}
@@ -116,7 +116,7 @@ export const RequestList = ({
                   <I18n
                     render={translate => (
                       <button
-                        className="btn btn-link icon-wrapper"
+                        className="btn btn-icon"
                         onClick={handleNextPage}
                         disabled={paging || !hasNextPage}
                         title={translate('Next Page')}

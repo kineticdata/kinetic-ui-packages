@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { takeEvery } from 'redux-saga/effects';
 import { types } from '../modules/app';
 
 function* syncAppState(action) {
