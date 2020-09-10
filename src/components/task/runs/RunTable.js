@@ -27,11 +27,14 @@ const dataSource = ({
     {
       source: sourceName ? sourceName : paramData.filters.get('sourceName'),
       includeSystemRuns: paramData.filters.get('includeSystemRuns'),
-
-      groupFragment: sourceGroup
-        ? sourceGroup
-        : paramData.filters.get('sourceGroup'),
-      treeFragment: treeName ? treeName : paramData.filters.get('tree'),
+      group: sourceGroup ? sourceGroup : paramData.filters.get('sourceGroup'),
+      groupFragment: paramData.filters.get('sourceGroupFragment'),
+      tree: treeName ? treeName : paramData.filters.get('tree'),
+      treeFragment: paramData.filters.get('treeFragment'),
+      // groupFragment: sourceGroup
+      //   ? sourceGroup
+      //   : paramData.filters.get('sourceGroup'),
+      // treeFragment: treeName ? treeName : paramData.filters.get('tree'),
       treeType: treeType ? treeType : paramData.filters.get('type'),
       sourceId: sourceId ? sourceId : paramData.filters.get('sourceId'),
       id: id ? id : paramData.filters.get('id'),
@@ -71,7 +74,9 @@ const filters = () => ({ sourceTypes }) =>
       options: sourceTypes,
     },
     { name: 'sourceGroup', label: 'Group', type: 'text' },
+    { name: 'sourceGroupFragment', label: 'Group', type: 'text' },
     { name: 'tree', label: 'Name', type: 'text' },
+    { name: 'treeFragment', label: 'Name', type: 'text' },
     {
       name: 'includeSystemRuns',
       label: 'Include System Runs',
