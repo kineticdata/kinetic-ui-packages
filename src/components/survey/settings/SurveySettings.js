@@ -20,6 +20,7 @@ import { PageTitle } from '../../shared/PageTitle';
 import { bundle, I18n, FormForm } from '@kineticdata/react';
 import { actions as surveyActions } from '../../../redux/modules/surveys';
 import { actions as notificationsActions } from '../../../redux/modules/notifications';
+import { actions as userActions } from '../../../redux/modules/users';
 import { SettingsWebApiView } from './SettingsWebApiView';
 import { SettingsSidebar } from './SettingsSidebar';
 
@@ -80,6 +81,8 @@ const SurveySettingsComponent = ({
   surveyPollers,
   loading,
   templates,
+  users,
+  teams,
   onSave,
   spaceAdmin,
   associatedTree,
@@ -286,6 +289,20 @@ const SurveySettingsComponent = ({
     surveyPollers.map(s => ({
       value: s['Poller Tree'],
       label: s['Poller Tree'],
+    }));
+
+  const userOptions =
+    !!users &&
+    users.map(u => ({
+      value: u.username,
+      label: u.username,
+    }));
+
+  const teamOptions =
+    !!teams &&
+    teams.map(t => ({
+      value: t.name,
+      label: t.name,
     }));
 
   return (
@@ -601,24 +618,28 @@ const SurveySettingsComponent = ({
                         {
                           name: 'owningTeam',
                           label: 'Owning Team',
-                          type: 'team',
+                          type: 'select',
+                          renderAttributes: { typeahead: true },
                           helpText:
                             'Team allowed to review survey submissions and edit survey',
                           initialValue:
                             surveyConfig && surveyConfig['Owning Team']
                               ? surveyConfig['Owning Team']
-                              : null,
+                              : '',
+                          options: teamOptions && teamOptions,
                         },
                         {
                           name: 'owningIndividual',
                           label: 'Owning Individual',
-                          type: 'user',
+                          type: 'select',
+                          renderAttributes: { typeahead: true },
                           helpText:
                             'Individual allowed to review survey submissions and edit survey (in addition to owning team). Set to creator of the survey by default.',
                           initialValue:
                             surveyConfig && surveyConfig['Owning Individual']
                               ? surveyConfig['Owning Individual']
-                              : null,
+                              : '',
+                          options: userOptions && userOptions,
                         },
                         {
                           name: 'confirmationPageText',
@@ -753,11 +774,15 @@ export const mapStateToProps = (state, { slug }) => ({
   origForm: state.surveys.form,
   templates: state.notifications.notificationTemplates,
   associatedTree: state.surveys.associatedTree,
+  users: state.users.users,
+  teams: state.users.teams,
 });
 
 export const mapDispatchToProps = {
   fetchNotifications: notificationsActions.fetchNotifications,
   fetchSurveyPollers: surveyActions.fetchSurveyPollers,
+  fetchUsers: userActions.fetchUsers,
+  fetchTeams: userActions.fetchTeams,
   fetchFormRequest: surveyActions.fetchFormRequest,
   clearSurveyState: surveyActions.clearSurveyState,
 };
@@ -797,6 +822,8 @@ export const SurveySettings = compose(
       });
       this.props.fetchNotifications();
       this.props.fetchSurveyPollers();
+      this.props.fetchUsers();
+      this.props.fetchTeams();
     },
     componentWillUnmount() {
       this.props.clearSurveyState();

@@ -4,6 +4,7 @@ import { watchNotifications } from './sagas/notifications';
 import { watchRobots } from './sagas/robots';
 import { watchSurveys } from './sagas/surveys';
 import { watchSurveyApp } from './sagas/surveyApp';
+import { watchUsers } from './sagas/users';
 
 export default function*() {
   yield all([
@@ -12,5 +13,6 @@ export default function*() {
     watchRobots(),
     watchSurveys(),
     watchSurveyApp(),
+    watchUsers(),
   ]);
 }
