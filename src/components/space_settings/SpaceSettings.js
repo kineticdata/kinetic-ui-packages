@@ -80,8 +80,6 @@ const buildAdditionalDataSources = bundleName =>
               name: bundleName,
             },
           ],
-          // Filter out any v2 or lower version bundles as they don't support this feature
-          transform: response => response.filter(r => r.major > 2),
         },
         branches: {
           fn: fetchBundleVersions,
@@ -112,23 +110,37 @@ const fetchBundleVersions = (options = {}) => {
       )
         .map(path => {
           const match = path.match(/bundles\/[^/]*\/[^/]*\/([^/]*)\/?/);
-          if (match && (!options.branches || match[1] === 'develop')) {
-            const version =
-              match[1] !== 'develop' ? semver.coerce(match[1]) : null;
+          if (match && !options.branches) {
+            const v =
+              match[1] &&
+              match[1].match(/(v(\d+)\.(\d+|x)\.(\d+|x))(-[\w]+)?(\.\d+)?/i);
+            // Pad the numbers with zeroes for sorting
+            const sort = v
+              ? [
+                  `00${v[2]}`.slice(-2),
+                  `00${v[3]}`.slice(-2),
+                  `00${v[4]}`.slice(-2),
+                  v[5] || '~',
+                  `00${v[6] || ''}`.slice(-2),
+                ].join('|')
+              : match[1];
+
             return {
-              label: options.branches
-                ? 'Development Branch'
-                : `Release - v${match[1]}`,
+              label: `Release - ${match[1]}`,
               value: `https://s3.amazonaws.com/kinops.io/bundles/${options.name ||
-                'kinetic'}/${options.branches ? 'branches' : 'releases'}/${
-                match[1]
-              }/index.html`,
-              major: version && version.major,
+                'kinetic'}/releases/${match[1]}/index.html`,
+              sort,
+            };
+          } else if (match && options.branches && match[1] === 'develop') {
+            return {
+              label: 'Development Branch',
+              value: `https://s3.amazonaws.com/kinops.io/bundles/${options.name ||
+                'kinetic'}/branches/${match[1]}/index.html`,
             };
           }
           return null;
         })
-        .filter(o => o);
+        .filter(Boolean);
     })
     .catch(e => {
       return [];
@@ -250,8 +262,7 @@ export const SpaceSettingsComponent = ({
       ]}
     alterFields={() => ({ space, releases, branches }) =>
       space &&
-      releases &&
-      branches && {
+      (!bundleName || (releases && branches)) && {
         name: {
           helpText: 'The Name of the Space referenced throughout the space.',
         },
@@ -296,7 +307,7 @@ export const SpaceSettingsComponent = ({
               component: FormComponents.SelectField,
               options: ({ values, branches, releases }) => {
                 const versions = releases
-                  .sortBy(option => option.label)
+                  .sortBy(option => option.get('sort'))
                   .reverse()
                   .concat(branches);
                 return List(
@@ -358,7 +369,7 @@ const mapStateToProps = state => ({
   queueKappSlug: selectQueueKappSlug(state),
   servicesKappSlug: selectServicesKappSlug(state),
   bundleName: state.app.bundleName
-    ? state.app.bundleName.replace('request-ce-bundle-', '')
+    ? state.app.bundleName.replace('customer-project-', '')
     : null,
 });
 
