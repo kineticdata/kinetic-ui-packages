@@ -3,11 +3,11 @@ import { bundle } from '../../helpers';
 import { handleErrors, paramBuilder, headerBuilder } from '../http';
 
 export const fetchForms = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), datastore } = options;
+  const { kappSlug } = options;
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/forms`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/forms`;
+  const path = kappSlug
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms`
+    : `${bundle.apiLocation()}/forms`;
 
   // Build URL and fetch the space.
   return axios

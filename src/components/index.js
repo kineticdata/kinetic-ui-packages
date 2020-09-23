@@ -99,6 +99,9 @@ export {
 export { TaskComponentForm } from './core/platform_component/TaskComponentForm';
 export { EntryForm } from './core/translation/EntryForm';
 export { EntryTable } from './core/translation/EntryTable';
+export {
+  FieldDefinitionTable,
+} from './core/field_definition/FieldDefinitionTable';
 export { FormForm } from './core/form/FormForm';
 export { FormTable } from './core/form/FormTable';
 export { FormTypeForm } from './core/form_type/FormTypeForm';
