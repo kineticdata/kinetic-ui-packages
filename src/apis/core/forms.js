@@ -24,15 +24,15 @@ export const fetchForms = (options = {}) => {
 };
 
 export const fetchForm = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), formSlug, datastore } = options;
+  const { kappSlug, formSlug } = options;
 
   if (!formSlug) {
     throw new Error('fetchForm failed! The option "formSlug" is required.');
   }
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/forms/${formSlug}`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`;
+  const path = kappSlug
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`
+    : `${bundle.apiLocation()}/forms/${formSlug}`;
 
   // Build URL and fetch the space.
   return axios
@@ -53,9 +53,9 @@ export const createForm = (options = {}) => {
     throw new Error('createForm failed! The option "form" is required.');
   }
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/forms`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/forms`;
+  const path = kappSlug
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms`
+    : `${bundle.apiLocation()}/datastore/forms`;
 
   return axios
     .post(path, form, {

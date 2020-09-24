@@ -1,4 +1,4 @@
-import { fetchForm, updateForm } from '../../../apis';
+import { fetchForm, fetchKapp, fetchSpace, updateForm } from '../../../apis';
 import { generateForm } from '../../form/Form';
 
 const staticParts = [
@@ -18,42 +18,57 @@ const getIndexDefinition = (form, indexName) =>
     .get('indexDefinitions')
     .find(indexDefinition => indexDefinition.get('name') === indexName);
 
-const dataSources = ({ formSlug, indexName }) => ({
-  form: {
-    fn: fetchForm,
-    params: [
-      {
-        datastore: true,
-        kappSlug: null,
-        formSlug,
-        include: 'fields,indexDefinitions',
-      },
-    ],
-    transform: result => result.form,
-  },
-  fields: {
-    fn: getFields,
-    params: ({ form }) => form && [form],
-  },
-  indexDefinition: {
-    fn: getIndexDefinition,
-    params: ({ form }) => form && indexName && [form, indexName],
-  },
-});
+const dataSources = ({ kappSlug, formSlug, indexName }) => {
+  console.log(kappSlug, formSlug);
+  return {
+    form: {
+      fn:
+        !kappSlug && !formSlug
+          ? fetchSpace
+          : kappSlug && !formSlug
+            ? fetchKapp
+            : fetchForm,
+      params: [
+        {
+          kappSlug,
+          formSlug,
+          include: 'fields,indexDefinitions',
+        },
+      ],
+      transform: result =>
+        !kappSlug && !formSlug
+          ? result.space
+          : kappSlug && !formSlug
+            ? result.kapp
+            : result.form,
+    },
+    fields: {
+      fn: getFields,
+      params: ({ form }) => form && [form],
+    },
+    indexDefinition: {
+      fn: getIndexDefinition,
+      params: ({ form }) => form && indexName && [form, indexName],
+    },
+  };
+};
 
-const handleSubmit = ({ formSlug, indexName }) => (values, { form }) =>
+const handleSubmit = ({ formSlug, kappSlug, indexName }) => (
+  values,
+  { form },
+) =>
   updateForm({
-    datastore: true,
-    kappSlug: null,
+    kappSlug,
     formSlug,
     form: {
       indexDefinitions: indexName
         ? form
             .get('indexDefinitions')
-            .map(indexDefinition =>
-              indexDefinition.get('name') === indexName
-                ? values
-                : indexDefinition,
+            .map(
+              indexDefinition =>
+                indexDefinition.get('name') === indexName
+                  ? values
+                  : indexDefinition,
             )
             .toJS()
         : form
@@ -96,7 +111,7 @@ const fields = ({ formSlug, indexName }) => ({ indexDefinition }) =>
   ];
 
 export const IndexDefinitionForm = generateForm({
-  formOptions: ['formSlug', 'indexName'],
+  formOptions: ['kappSlug', 'formSlug', 'indexName'],
   dataSources,
   fields,
   handleSubmit,

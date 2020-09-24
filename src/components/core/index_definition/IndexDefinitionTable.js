@@ -1,6 +1,6 @@
 import React from 'react';
 import { generateTable } from '../../table/Table';
-import { fetchForm } from '../../../apis';
+import { fetchForm, fetchKapp, fetchSpace } from '../../../apis';
 import { defineFilter } from '../../../helpers';
 
 const clientSide = defineFilter(true)
@@ -13,19 +13,28 @@ const clientSide = defineFilter(true)
 
 const BooleanYesNoCell = props => <td>{props.value ? 'Yes' : 'No'}</td>;
 
-const dataSource = ({ formSlug }) => ({
-  fn: fetchForm,
+const dataSource = ({ kappSlug, formSlug }) => ({
+  fn:
+    !kappSlug && !formSlug
+      ? fetchSpace
+      : kappSlug && !formSlug
+        ? fetchKapp
+        : fetchForm,
   clientSide,
   params: () => [
     {
-      datastore: true,
-      kappSlug: null,
+      kappSlug,
       formSlug,
       include: 'indexDefinitions',
     },
   ],
   transform: result => ({
-    data: result.form.indexDefinitions,
+    data: (!kappSlug && !formSlug
+      ? result.space
+      : kappSlug && !formSlug
+        ? result.kapp
+        : result.form
+    ).indexDefinitions,
   }),
 });
 
@@ -68,7 +77,7 @@ const columns = [
 ];
 
 export const IndexDefinitionTable = generateTable({
-  tableOptions: ['formSlug'],
+  tableOptions: ['kappSlug', 'formSlug'],
   sortable: false,
   columns,
   // filters,
