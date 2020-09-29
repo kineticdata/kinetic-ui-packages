@@ -102,6 +102,9 @@ export { EntryTable } from './core/translation/EntryTable';
 export {
   FieldDefinitionTable,
 } from './core/field_definition/FieldDefinitionTable';
+export {
+  FieldDefinitionForm,
+} from './core/field_definition/FieldDefinitionForm';
 export { FormForm } from './core/form/FormForm';
 export { FormTable } from './core/form/FormTable';
 export { FormTypeForm } from './core/form_type/FormTypeForm';

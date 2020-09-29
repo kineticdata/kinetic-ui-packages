@@ -2,10 +2,19 @@ import { generateTable } from '../../table/Table';
 import { fetchKapp, fetchSpace } from '../../../apis';
 import { defineFilter } from '../../../helpers';
 
+export const FIELD_DATA_TYPES = [
+  { value: 'attachment', label: 'Attachment', dataType: 'file' },
+  { value: 'checkbox', label: 'Checkbox', dataType: 'json' },
+  { value: 'date', label: 'Date', dataType: 'string' },
+  { value: 'datetime', label: 'Date/Time', dataType: 'string' },
+  { value: 'dropdown', label: 'Dropdown', dataType: 'string' },
+  { value: 'radio', label: 'Radio', dataType: 'string' },
+  { value: 'text', label: 'Text', dataType: 'string' },
+  { value: 'time', label: 'Time', dataType: 'string' },
+];
+
 const clientSide = defineFilter(true)
   .startsWith('name', 'name')
-  .equals('status', 'status')
-  .equals('unique', 'unique')
   .end();
 
 const dataSource = ({ kappSlug }) => ({
@@ -22,21 +31,7 @@ const dataSource = ({ kappSlug }) => ({
   }),
 });
 
-// const filters = () => () => [
-//   { name: 'name', label: 'Name', type: 'text' },
-//   {
-//     name: 'status',
-//     label: 'Status',
-//     type: 'select',
-//     options: indexStatuses.map(el => ({ value: el, label: el })),
-//   },
-//   {
-//     name: 'unique',
-//     label: 'Unique',
-//     type: 'select',
-//     options: ['Yes', 'No'].map(el => ({ value: el, label: el })),
-//   },
-// ];
+const filters = () => () => [{ name: 'name', label: 'Name', type: 'text' }];
 
 const columns = [
   {
@@ -52,14 +47,6 @@ const columns = [
     title: 'Type',
   },
   {
-    value: 'createdAt',
-    title: 'Created At',
-  },
-  {
-    value: 'createdBy',
-    title: 'Created By',
-  },
-  {
     value: 'updatedAt',
     title: 'Updated At',
   },
@@ -71,9 +58,8 @@ const columns = [
 
 export const FieldDefinitionTable = generateTable({
   tableOptions: ['kappSlug'],
-  sortable: false,
   columns,
-  // filters,
+  filters,
   dataSource,
 });
 
