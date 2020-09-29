@@ -1,4 +1,11 @@
-import { fetchForm, fetchKapp, fetchSpace, updateForm } from '../../../apis';
+import {
+  fetchForm,
+  fetchKapp,
+  fetchSpace,
+  updateForm,
+  updateSpace,
+  updateKapp,
+} from '../../../apis';
 import { generateForm } from '../../form/Form';
 
 const staticParts = [
@@ -18,71 +25,73 @@ const getIndexDefinition = (form, indexName) =>
     .get('indexDefinitions')
     .find(indexDefinition => indexDefinition.get('name') === indexName);
 
-const dataSources = ({ kappSlug, formSlug, indexName }) => {
-  console.log(kappSlug, formSlug);
-  return {
-    form: {
-      fn:
-        !kappSlug && !formSlug
-          ? fetchSpace
-          : kappSlug && !formSlug
-            ? fetchKapp
-            : fetchForm,
-      params: [
-        {
-          kappSlug,
-          formSlug,
-          include: 'fields,indexDefinitions',
-        },
-      ],
-      transform: result =>
-        !kappSlug && !formSlug
-          ? result.space
-          : kappSlug && !formSlug
-            ? result.kapp
-            : result.form,
-    },
-    fields: {
-      fn: getFields,
-      params: ({ form }) => form && [form],
-    },
-    indexDefinition: {
-      fn: getIndexDefinition,
-      params: ({ form }) => form && indexName && [form, indexName],
-    },
-  };
-};
+const dataSources = ({ kappSlug, formSlug, indexName }) => ({
+  form: {
+    fn:
+      !kappSlug && !formSlug
+        ? fetchSpace
+        : kappSlug && !formSlug
+        ? fetchKapp
+        : fetchForm,
+    params: [
+      {
+        kappSlug,
+        formSlug,
+        include: 'fields,indexDefinitions',
+      },
+    ],
+    transform: result =>
+      !kappSlug && !formSlug
+        ? result.space
+        : kappSlug && !formSlug
+        ? result.kapp
+        : result.form,
+  },
+  fields: {
+    fn: getFields,
+    params: ({ form }) => form && [form],
+  },
+  indexDefinition: {
+    fn: getIndexDefinition,
+    params: ({ form }) => form && indexName && [form, indexName],
+  },
+});
 
 const handleSubmit = ({ formSlug, kappSlug, indexName }) => (
   values,
   { form },
-) =>
-  updateForm({
-    kappSlug,
-    formSlug,
-    form: {
-      indexDefinitions: indexName
-        ? form
-            .get('indexDefinitions')
-            .map(
-              indexDefinition =>
-                indexDefinition.get('name') === indexName
-                  ? values
-                  : indexDefinition,
-            )
-            .toJS()
-        : form
-            .get('indexDefinitions')
-            .push(values)
-            .toJS(),
-    },
-  }).then(({ form, error }) => {
+) => {
+  const indexDefinitions = indexName
+    ? form
+        .get('indexDefinitions')
+        .map(indexDefinition =>
+          indexDefinition.get('name') === indexName ? values : indexDefinition,
+        )
+        .toJS()
+    : form
+        .get('indexDefinitions')
+        .push(values)
+        .toJS();
+
+  return (!kappSlug && !formSlug
+    ? updateSpace({ space: { indexDefinitions } })
+    : kappSlug && !formSlug
+    ? updateKapp({ kappSlug, kapp: { indexDefinitions } })
+    : updateForm({
+        kappSlug,
+        formSlug,
+        form: {
+          indexDefinitions,
+        },
+      })
+  ).then(({ form, kapp, space, error }) => {
     if (error) {
       throw (error.statusCode === 400 && error.message) ||
         'There was an error saving the index definition';
     }
-    return form;
+    return !kappSlug && !formSlug ? space : kappSlug && !formSlug ? kapp : form;
   });
+};
 
 const fields = ({ formSlug, indexName }) => ({ indexDefinition }) =>
   (!indexName || indexDefinition) && [
