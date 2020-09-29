@@ -12,19 +12,6 @@ const dataSources = ({ kappSlug, name }) => ({
     fn: (form, name) => form.get('fields').find(f => f.get('name') === name),
     params: ({ form }) => form && name && [form, name],
   },
-  nextFieldKey: {
-    fn: kappSlug ? fetchKapp : fetchSpace,
-    params: () => [{ kappSlug, include: 'fields' }],
-    transform: result => {
-      const fk = kappSlug
-        ? result.kapp.fields
-            .map(f => Number.parseInt(f.key.slice(1)))
-            .sort((a, b) => a - b)
-            .pop() + 1
-        : 0;
-      return 'k' + fk;
-    },
-  },
 });
 
 const handleSubmit = ({ kappSlug, name }) => (values, { form }) => {
@@ -32,17 +19,15 @@ const handleSubmit = ({ kappSlug, name }) => (values, { form }) => {
     fdt => fdt.value === values.get('renderType'),
   ).dataType;
 
-  const fields = name
-    ? form
-        .get('fields')
-        .map(fd =>
-          fd.get('name') === name ? values.set('dataType', dataType) : fd,
-        )
-        .toJS()
-    : form
-        .get('fields')
-        .push(values.set('dataType', dataType))
-        .toJS();
+  const field = values.set('dataType', dataType);
+  const fields = (name
+    ? form.get('fields').map(fd => (fd.get('name') === name ? field : fd))
+    : form.get('fields').push(field)
+  ).map(fd =>
+    fd.get('key', '') === ''
+      ? fd.set('key', fd.get('name').replace(/\W/g, ''))
+      : fd,
+  );
 
   return (kappSlug
     ? updateKapp({ kapp: { fields }, kappSlug })
@@ -56,22 +41,9 @@ const handleSubmit = ({ kappSlug, name }) => (values, { form }) => {
   });
 };
 
-const fields = ({ kappSlug, name }) => ({
-  form,
-  fieldDefinition,
-  nextFieldKey,
-}) =>
+const fields = ({ name }) => ({ form, fieldDefinition }) =>
   (!name || fieldDefinition) &&
-  form &&
-  nextFieldKey && [
-    kappSlug && {
-      name: 'key',
-      label: 'Key',
-      type: 'text',
-      enabled: false,
-      visible: true,
-      initialValue: fieldDefinition ? fieldDefinition.get('key') : nextFieldKey,
-    },
+  form && [
     {
       name: 'name',
       label: 'Name',
