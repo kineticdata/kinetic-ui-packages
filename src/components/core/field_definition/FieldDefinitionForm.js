@@ -2,49 +2,41 @@ import { generateForm } from '../../form/Form';
 import { fetchKapp, fetchSpace, updateKapp, updateSpace } from '../../../apis';
 import { FIELD_DATA_TYPES } from './FieldDefinitionTable';
 
-const dataSources = ({ kappSlug, fieldKey }) => ({
+const dataSources = ({ kappSlug, name }) => ({
   form: {
     fn: kappSlug ? fetchKapp : fetchSpace,
     params: [{ kappSlug, include: 'fields' }],
     transform: result => (kappSlug ? result.kapp : result.space),
   },
   fieldDefinition: {
-    fn: (form, fieldKey) =>
-      form.get('fields').find(f => f.get('key') === fieldKey),
-    params: ({ form }) => form && fieldKey && [form, fieldKey],
+    fn: (form, name) => form.get('fields').find(f => f.get('name') === name),
+    params: ({ form }) => form && name && [form, name],
   },
   nextFieldKey: {
     fn: kappSlug ? fetchKapp : fetchSpace,
     params: () => [{ kappSlug, include: 'fields' }],
     transform: result => {
-      const keyArray = (kappSlug ? result.kapp.fields : result.space.fields)
-        .length
-        ? (kappSlug ? result.kapp.fields : result.space.fields).sort(function(
-            a,
-            b,
-          ) {
-            return a.key - b.key;
-          })
-        : [{ key: 'k0' }];
-      const newKeySeries = keyArray[keyArray.length - 1].key.slice(0, 1);
-      const newKeyNumber =
-        parseInt(keyArray[keyArray.length - 1].key.slice(1)) + 1;
-      return newKeySeries + newKeyNumber;
+      const fk = kappSlug
+        ? result.kapp.fields
+            .map(f => Number.parseInt(f.key.slice(1)))
+            .sort((a, b) => a - b)
+            .pop() + 1
+        : 0;
+      return 'k' + fk;
     },
   },
 });
 
-const handleSubmit = ({ kappSlug, fieldKey }) => (values, { form }) => {
+const handleSubmit = ({ kappSlug, name }) => (values, { form }) => {
   const dataType = FIELD_DATA_TYPES.find(
     fdt => fdt.value === values.get('renderType'),
   ).dataType;
 
-  const fields = fieldKey
+  const fields = name
     ? form
         .get('fields')
-        .map(
-          fd =>
-            fd.get('key') === fieldKey ? values.set('dataType', dataType) : fd,
+        .map(fd =>
+          fd.get('name') === name ? values.set('dataType', dataType) : fd,
         )
         .toJS()
     : form
@@ -64,15 +56,20 @@ const handleSubmit = ({ kappSlug, fieldKey }) => (values, { form }) => {
   });
 };
 
-const fields = ({ fieldKey }) => ({ form, fieldDefinition, nextFieldKey }) =>
-  (!fieldKey || fieldDefinition) &&
+const fields = ({ kappSlug, name }) => ({
+  form,
+  fieldDefinition,
+  nextFieldKey,
+}) =>
+  (!name || fieldDefinition) &&
   form &&
   nextFieldKey && [
-    {
+    kappSlug && {
       name: 'key',
       label: 'Key',
       type: 'text',
-      visible: false,
+      enabled: false,
+      visible: true,
       initialValue: fieldDefinition ? fieldDefinition.get('key') : nextFieldKey,
     },
     {
@@ -133,7 +130,7 @@ const fields = ({ fieldKey }) => ({ form, fieldDefinition, nextFieldKey }) =>
  * A form for creating and updating Field Definitions within the Kinetic Platform
  */
 export const FieldDefinitionForm = generateForm({
-  formOptions: ['kappSlug', 'fieldKey'],
+  formOptions: ['kappSlug', 'name'],
   dataSources,
   fields,
   handleSubmit,

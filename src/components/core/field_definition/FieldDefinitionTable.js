@@ -43,8 +43,12 @@ const columns = [
     title: 'Name',
   },
   {
+    value: 'renderType',
+    title: 'Render Type',
+  },
+  {
     value: 'dataType',
-    title: 'Type',
+    title: 'Data Type',
   },
   {
     value: 'updatedAt',
