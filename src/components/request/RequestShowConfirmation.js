@@ -8,17 +8,16 @@ import { I18n } from '@kineticdata/react';
 
 export const RequestShowConfirmation = ({ handleOpenFeedback }) => (
   <Fragment>
-    <h2 className="h4">
+    <div className="h4">
       <I18n>Thank you for your submission.</I18n>
-    </h2>
-
-    <p>
+    </div>
+    <div>
       <I18n>With</I18n>{' '}
       <button className="btn btn-text" onClick={handleOpenFeedback}>
         <I18n>Feedback</I18n>
       </button>{' '}
       <I18n>we are able to continuously improve.</I18n>
-    </p>
+    </div>
   </Fragment>
 );
 

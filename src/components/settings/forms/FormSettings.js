@@ -115,6 +115,7 @@ const fieldSet = [
   'description',
   'categorizations',
   'attributesMap',
+  'featuredColor',
   'icon',
   'owningTeam',
   'approver',
@@ -150,6 +151,7 @@ const FormLayout = ({ fields, error, buttons }) => (
     <h2 className="section__title">
       <I18n>Attributes</I18n>
     </h2>
+    {fields.get('featuredColor')}
     {fields.get('icon')}
     {fields.get('owningTeam')}
     {fields.get('approver')}
@@ -219,6 +221,30 @@ export const FormSettingsComponent = ({
       addFields={() => ({ form, notifications }) =>
         form &&
         notifications && [
+          {
+            name: 'featuredColor',
+            label: 'Featured Card Color',
+            type: 'select',
+            helpText:
+              'Color to use when displaying this form in the Featured Services section.',
+            initialValue: form.getIn(['attributesMap', 'Featured Color', 0]),
+            options: [
+              { label: 'Primary', value: 'primary' },
+              { label: 'Secondary', value: 'secondary' },
+              { label: 'Tertiary', value: 'tertiary' },
+              { label: 'Success (Green)', value: 'success' },
+              { label: 'Danger (Red)', value: 'danger' },
+              { label: 'Warning (Yellow)', value: 'warning' },
+              { label: 'Info (Blue)', value: 'info' },
+              { label: 'Dark Gray', value: 'dark' },
+              { label: 'Subtle Gray', value: 'subtle' },
+              { label: 'Light Gray', value: 'light' },
+            ],
+            visible: ({ values }) =>
+              values.get('categorizations').includes('featured-services'),
+            required: ({ values }) =>
+              values.get('categorizations').includes('featured-services'),
+          },
           {
             name: 'icon',
             label: 'Display Icon',
@@ -383,6 +409,11 @@ export const FormSettingsComponent = ({
         },
         attributesMap: {
           serialize: ({ values }) => ({
+            'Featured Color': values
+              .get('categorizations')
+              .includes('featured-services')
+              ? asArray(values.get('featuredColor'))
+              : [],
             Icon: asArray(values.get('icon')),
             'Owning Team': values
               .get('owningTeam')
@@ -419,58 +450,28 @@ export const FormSettingsComponent = ({
     >
       {({ form: formContent, initialized }) => (
         <div className="page-container">
-          <PageTitle parts={['Settings', form.name, 'Forms']} settings />
           <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <span className="breadcrumb-item">
-                    <Link to="../../../../">
-                      <I18n>services</I18n>
-                    </Link>
-                  </span>{' '}
-                  <span aria-hidden="true">/ </span>
-                  <span className="breadcrumb-item">
-                    <Link to="../../../">
-                      <I18n>settings</I18n>
-                    </Link>
-                  </span>{' '}
-                  <span aria-hidden="true">/ </span>
-                  <span className="breadcrumb-item">
-                    <Link to="../../">
-                      <I18n>forms</I18n>
-                    </Link>
-                  </span>{' '}
-                  <span aria-hidden="true">/ </span>
-                  <span className="breadcrumb-item">
-                    <Link to="../">
-                      <I18n>{form.name}</I18n>
-                    </Link>
-                  </span>{' '}
-                  <span aria-hidden="true">/ </span>
-                </span>
-                <h1>
-                  <I18n>Settings</I18n>
-                </h1>
-              </div>
-              <div className="page-title__actions">
-                <a
-                  href={`/app/builder/#/${kapp.slug}/forms/${
+            <PageTitle
+              parts={['Settings', form.name, 'Forms']}
+              settings
+              hero={false}
+              breadcrumbs={[
+                { label: 'services', to: '../../../..' },
+                { label: 'settings', to: '../../..' },
+                { label: 'forms', to: '../..' },
+                { label: form.name, to: '..' },
+              ]}
+              title="Settings"
+              actions={[
+                {
+                  label: 'Form Builder',
+                  icon: 'mouse-pointer',
+                  href: `/app/builder/#/${kapp.slug}/forms/${
                     form.slug
-                  }/builder`}
-                  className="btn btn-primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="fa fa-fw fa-mouse-pointer" />
-                  <I18n>Form Builder</I18n>
-                </a>
-              </div>
-            </div>
+                  }/builder`,
+                },
+              ]}
+            />
             {initialized ? (
               <section className="form">{formContent}</section>
             ) : (

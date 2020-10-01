@@ -9,6 +9,7 @@ const mapStateToProps = state => ({
   forms: state.forms.data,
   submissions: state.submissions.data,
   submissionsError: state.submissions.error,
+  featuredServices: state.servicesApp.categoryGetter('featured-services'),
   appLocation: state.app.location,
 });
 

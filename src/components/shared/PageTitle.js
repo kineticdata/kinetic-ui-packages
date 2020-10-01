@@ -1,14 +1,181 @@
+import React, { Fragment } from 'react';
+import { Link } from '@reach/router';
 import { connect } from '../../redux/store';
 import { compose, withProps } from 'recompose';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
+import classNames from 'classnames';
 import {
   PageTitle as CommonPageTitle,
   selectCurrentKapp,
 } from '@kineticdata/bundle-common';
+import { I18n } from '@kineticdata/react';
 
-export const mapStateToProps = state => ({
+import heroImage from '../../../assets/images/hero_geometry.jpg';
+
+const Breadcrumbs = ({ breadcrumbs }) =>
+  breadcrumbs ? (
+    <div
+      role="navigation"
+      aria-label="breadcrumbs"
+      className="page-title__breadcrumbs"
+    >
+      {breadcrumbs.filter(b => !!b && b.label).map((b, i) => (
+        <span key={`breadcrumb-${i}`}>
+          {b.to ? (
+            <Link to={b.to}>
+              <I18n>{b.label}</I18n>
+            </Link>
+          ) : (
+            <I18n>{b.label}</I18n>
+          )}
+        </span>
+      ))}
+    </div>
+  ) : null;
+
+const actionMapper = light => (a, i) => {
+  const actionClass = classNames({
+    'dropdown-item': a.menu,
+    btn: !a.menu,
+    'btn-icon-light': !a.menu && a.icon && !a.label && light,
+    'btn-icon-primary': !a.menu && a.icon && !a.label && !light,
+    'btn-outline-light': !a.menu && (!a.icon || a.label) && light,
+    'btn-secondary': !a.menu && (!a.icon || a.label) && !light,
+  });
+  const iconClass = classNames(`fa fa-fw fa-${a.icon}`, {
+    'fa-lg': !a.label,
+  });
+  const actionContent = (
+    <>
+      {a.icon && <span className={iconClass} />}
+      {a.icon && a.label && ' '}
+      {a.label && <I18n>{a.label}</I18n>}
+    </>
+  );
+  return a.to ? (
+    <Link
+      key={`action-${i}`}
+      to={a.to}
+      className={actionClass}
+      aria-label={a.aria || a.label}
+    >
+      {actionContent}
+    </Link>
+  ) : a.href ? (
+    <a
+      key={`action-${i}`}
+      href={a.href}
+      className={actionClass}
+      aria-label={a.aria || a.label}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {actionContent}
+    </a>
+  ) : (
+    <button
+      key={`action-${i}`}
+      onClick={a.onClick}
+      className={actionClass}
+      aria-label={a.aria || a.label}
+    >
+      {actionContent}
+    </button>
+  );
+};
+
+const Content = ({ title, actions, hero }) =>
+  title || actions ? (
+    <div className="page-title__content">
+      {title && (
+        <h1>
+          <I18n>{title}</I18n>
+        </h1>
+      )}
+      {actions && (
+        <div className="page-title__actions">
+          {actions.filter(a => !!a && !a.menu).map(actionMapper(hero))}
+          {actions.some(a => !!a && a.menu) && (
+            <UncontrolledDropdown>
+              <DropdownToggle
+                tag="button"
+                className={`btn btn-icon${hero ? '-light' : ''}`}
+                aria-label="More Actions"
+              >
+                <span className="fa fa-chevron-down fa-fw" />
+              </DropdownToggle>
+              <DropdownMenu right>
+                {actions.filter(a => !!a && a.menu).map(actionMapper(hero))}
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          )}
+        </div>
+      )}
+    </div>
+  ) : null;
+
+const Meta = ({ meta }) =>
+  meta ? (
+    <div className="page-title__meta">
+      <dl>
+        {meta.filter(m => !!m && m.label).map((m, i) => (
+          <div key={`meta-${i}`}>
+            <dt>
+              <I18n>{m.label}</I18n>
+            </dt>
+            <dd>
+              <I18n>{m.value}</I18n>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  ) : null;
+
+const mapStateToProps = state => ({
   space: state.app.space,
   kapp: selectCurrentKapp(state),
 });
+
+const PageTitleComponent = ({
+  parts,
+  breadcrumbs,
+  title,
+  actions,
+  meta,
+  hero = true,
+  image = hero,
+  center = false,
+  container = false,
+  children,
+}) => {
+  const Container = container
+    ? ({ children }) => <div className="container">{children}</div>
+    : Fragment;
+  return (
+    <>
+      <CommonPageTitle parts={parts} />
+      {(breadcrumbs || title || actions || meta || children) && (
+        <div
+          className={classNames({
+            'page-title-heading': !hero,
+            'page-title-hero': hero,
+            'page-title-hero--image': hero && image,
+            'page-title-hero--center': hero && center,
+          })}
+          style={hero && image ? { backgroundImage: `url(${heroImage})` } : {}}
+        >
+          <Container>
+            <Breadcrumbs breadcrumbs={breadcrumbs} />
+            <Content title={title} actions={actions} hero={hero} />
+            <Meta meta={meta} />
+            {children}
+          </Container>
+        </div>
+      )}
+    </>
+  );
+};
 
 export const PageTitle = compose(
   connect(mapStateToProps),
@@ -20,4 +187,4 @@ export const PageTitle = compose(
       props.space && props.space.name,
     ]),
   })),
-)(CommonPageTitle);
+)(PageTitleComponent);

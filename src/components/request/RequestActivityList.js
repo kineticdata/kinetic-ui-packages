@@ -23,10 +23,12 @@ export const RequestActivityList = ({ submission }) => (
       ) : (
         <StartNode timestamp={submission.createdAt} label="Created" />
       )}
-      {submission.activities
-        .map(activity => ({ activity, submission, key: activity.id }))
-        .map(props => <ActivityNode {...props} />)}
-      {submission.activities.length === 0 && <EmptyNode />}
+      <div className="cards py-2">
+        {submission.activities
+          .map(activity => ({ activity, submission, key: activity.id }))
+          .map(props => <ActivityNode {...props} />)}
+        {submission.activities.length === 0 && <EmptyNode />}
+      </div>
       {submission.closedAt ? (
         <EndNode timestamp={submission.closedAt} />
       ) : (

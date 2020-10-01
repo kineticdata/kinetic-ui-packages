@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Router } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
-import { ErrorMessage, Icon, LoadingMessage } from '@kineticdata/bundle-common';
+import { ErrorMessage, LoadingMessage } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { actions as formActions } from '../../redux/modules/settingsForms';
 import { ServicesSettings } from './services_settings/ServicesSettings';
@@ -35,34 +35,17 @@ export const FormSettingsWrapper = compose(
   ({ form, error }) =>
     error || !form ? (
       <div className="page-container">
-        <PageTitle parts={[form && form.name, `Forms`]} />
         <div className="page-panel page-panel--white">
-          <div className="page-title">
-            <div
-              role="navigation"
-              aria-label="breadcrumbs"
-              className="page-title__breadcrumbs"
-            >
-              <span className="breadcrumb-item">
-                <Link to="../../../">
-                  <I18n>services</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                <Link to="../../">
-                  <I18n>settings</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                <Link to="../">
-                  <I18n>forms</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-            </div>
-          </div>
+          <PageTitle
+            parts={[form && form.name, `Forms`]}
+            settings
+            hero={false}
+            breadcrumbs={[
+              { label: 'services', to: '../../..' },
+              { label: 'settings', to: '../..' },
+              { label: 'forms', to: '..' },
+            ]}
+          />
           {error ? (
             <ErrorMessage message={error.message} />
           ) : (
@@ -91,40 +74,38 @@ export const Settings = () => (
 );
 
 const SettingsCard = ({ path, icon, name, description }) => (
-  <Link to={path} className="card card--service">
-    <h1>
-      <Icon image={icon || 'fa-gear'} background="blueSlate" />
-      <I18n>{name}</I18n>
-    </h1>
-    <p>
-      <I18n>{description}</I18n>
-    </p>
+  <Link to={path} className="card card--light">
+    <div className="card__bar card__bar--sm card__bar--dark" />
+    <div className="card__col">
+      <div className="card__row-title">
+        <span
+          className={`fa fa-${(icon || 'cog').replace(
+            /^fa-/i,
+            '',
+          )} fa-fw bg-dark`}
+        />
+        <span>
+          <I18n>{name}</I18n>
+        </span>
+      </div>
+      <div className="card__row text-muted">
+        <I18n>{description}</I18n>
+      </div>
+    </div>
   </Link>
 );
 
 const SettingsNavigationComponent = ({ kapp, isSpaceAdmin }) => (
   <div className="page-container">
-    <PageTitle settings />
     <div className="page-panel page-panel--white">
-      <div className="page-title">
-        <div
-          role="navigation"
-          aria-label="breadcrumbs"
-          className="page-title__breadcrumbs"
-        >
-          <span className="breadcrumb-item">
-            <Link to="../">
-              <I18n>{kapp.name.toLowerCase()}</I18n>
-            </Link>{' '}
-            <span aria-hidden="true">/ </span>
-          </span>
-          <h1>
-            <I18n>Settings</I18n>
-          </h1>
-        </div>
-      </div>
+      <PageTitle
+        settings
+        hero={false}
+        breadcrumbs={[{ label: 'services', to: '..' }]}
+        title="Settings"
+      />
 
-      <div className="cards__wrapper cards__wrapper--seconds">
+      <div className="cards cards--seconds">
         {isSpaceAdmin && (
           <SettingsCard
             name="General Settings"

@@ -34,38 +34,26 @@ export const CategoriesComponent = ({
   handleDelete,
 }) => (
   <Fragment>
-    <PageTitle parts={['Categories']} settings />
     <div className="page-container">
       <div className="page-panel page-panel--white page-panel--flex page-panel--no-padding">
         <div className="page-panel__header px-4">
-          <div className="page-title">
-            <div
-              role="navigation"
-              aria-label="breadcrumbs"
-              className="page-title__breadcrumbs"
-            >
-              <span className="breadcrumb-item">
-                <Link to="../..">
-                  <I18n>services</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                <Link to="..">
-                  <I18n>settings</I18n>
-                </Link>{' '}
-              </span>
-              <span aria-hidden="true">/ </span>
-              <h1>
-                <I18n>Categories</I18n>
-              </h1>
-            </div>
-            <div className="page-title__actions">
-              <Link to={'new'} className="btn btn-primary">
-                <span className="fa fa-fw fa-plus" />Add Category
-              </Link>
-            </div>
-          </div>
+          <PageTitle
+            parts={[`Categories`]}
+            settings
+            hero={false}
+            breadcrumbs={[
+              { label: 'services', to: '../..' },
+              { label: 'settings', to: '..' },
+            ]}
+            title="Categories"
+            actions={[
+              {
+                label: 'Add Category',
+                icon: 'plus',
+                to: 'new',
+              },
+            ]}
+          />
         </div>
         <div className="page-panel__body">
           {categoryTree && (

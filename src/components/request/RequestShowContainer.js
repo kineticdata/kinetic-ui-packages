@@ -1,8 +1,15 @@
-import { compose, lifecycle, withState, withHandlers } from 'recompose';
-import { selectDiscussionsEnabled } from '@kineticdata/bundle-common';
+import {
+  compose,
+  lifecycle,
+  withState,
+  withHandlers,
+  withProps,
+} from 'recompose';
+import { openModalForm, selectAdminKappSlug, selectDiscussionsEnabled, Utils } from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/submission';
 import { connect } from '../../redux/store';
-
+import * as constants from '../../constants';
+import { getFeedbackFormConfig } from '../../utils';
 import { RequestShow } from './RequestShow';
 
 export const openDiscussion = props => () => props.setViewDiscussionModal(true);
@@ -20,14 +27,19 @@ export const mapStateToProps = (state, props) => ({
   kappSlug: state.app.kappSlug,
   appLocation: state.app.location,
   discussionsEnabled: selectDiscussionsEnabled(state),
+  isSmallLayout: state.app.layoutSize === 'small',
+  adminKappSlug: selectAdminKappSlug(state),
 });
 
 export const mapDispatchToProps = {
   clearSubmission: actions.clearSubmissionRequest,
   fetchSubmission: actions.fetchSubmissionRequest,
+  cloneSubmission: actions.cloneSubmissionRequest,
+  deleteSubmission: actions.deleteSubmissionRequest,
   startPoller: actions.startSubmissionPoller,
   stopPoller: actions.stopSubmissionPoller,
   fetchDiscussion: actions.fetchDiscussionRequest,
+  setSendMessageModalOpen: actions.setSendMessageModalOpen,
 };
 
 const enhance = compose(
@@ -47,9 +59,71 @@ const enhance = compose(
       this.props.stopPoller();
     },
   }),
+  withProps(props => {
+    return {
+      disableStartDiscussion:
+        !props.submission ||
+        props.submission.coreState !== constants.CORE_STATE_SUBMITTED ||
+        Utils.hasAttributeValue(
+          props.submission.form,
+          'Comment Disabled',
+          ['true', 'yes'],
+          true,
+          false,
+        ),
+      disableProvideFeedback:
+        !props.submission ||
+        props.submission.coreState !== constants.CORE_STATE_CLOSED,
+      disableHandleClone:
+        !props.submission ||
+        Utils.hasAttributeValue(
+          props.submission.form,
+          'Cloning Disabled',
+          ['true', 'yes'],
+          true,
+          false,
+        ),
+      disableHandleCancel:
+        !props.submission ||
+        props.submission.coreState === constants.CORE_STATE_CLOSED ||
+        Utils.hasAttributeValue(
+          props.submission.form,
+          'Cancel Disabled',
+          ['true', 'yes'],
+          true,
+          false,
+        ),
+    };
+  }),
   withHandlers({
     openDiscussion,
     closeDiscussion,
+    startDiscussion: props => () =>
+      props.setSendMessageModalOpen({ isOpen: true, type: 'comment' }),
+    provideFeedback: props => () =>
+      openModalForm(
+        getFeedbackFormConfig(props.adminKappSlug, props.submission.id),
+      ),
+    handleClone: props => () =>
+      props.cloneSubmission({
+        id: props.submission.id,
+        success: clonedSubmission =>
+          props.navigate(
+            `${props.appLocation}/requests/Draft/request/${
+              clonedSubmission.id
+            }`,
+          ),
+      }),
+    handleCancel: props => () => {
+      if (props.submission.coreState === constants.CORE_STATE_DRAFT) {
+        props.deleteSubmission({
+          id: props.submission.id,
+          callback: props.deleteCallback,
+        });
+      } else {
+        props.setSendMessageModalOpen({ isOpen: true, type: 'cancel' });
+      }
+    },
   }),
 );
 
