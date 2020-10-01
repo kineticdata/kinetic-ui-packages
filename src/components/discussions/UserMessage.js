@@ -172,11 +172,21 @@ export const UserMessage = ({ discussion, message, profile, actions }) => (
     {actions && (
       <ul className="message-list__actions meta">
         <li>
-          <button onClick={() => actions.reply(message)}>Reply</button>
+          <button
+            className="btn btn-sm btn-link"
+            onClick={() => actions.reply(message)}
+          >
+            Reply
+          </button>
         </li>
         {message.createdBy.username === profile.username && (
           <li>
-            <button onClick={() => actions.edit(message)}>Edit</button>
+            <button
+              className="btn btn-sm btn-link"
+              onClick={() => actions.edit(message)}
+            >
+              Edit
+            </button>
           </li>
         )}
       </ul>
