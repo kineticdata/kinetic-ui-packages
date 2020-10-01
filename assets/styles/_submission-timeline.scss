@@ -27,20 +27,17 @@
 }
 .card--timeline {
   position: relative;
-  border: 1px solid $gray16;
-  border-radius: $border-radius;
   padding: 0.75rem 1rem;
-  margin: 0.75rem 0 1.5rem 1rem;
+  margin: 1rem 0 1rem 1rem;
   list-style: none;
-  @include setBgColorAndHover($white);
   &__circle {
-    width: 0.5rem;
-    height: 0.5rem;
-    background-color: $blue;
+    width: 0.5625rem;
+    height: 0.5625rem;
+    background-color: $info;
     border-radius: 50%;
     display: block;
     position: absolute;
-    left: -1.3725rem;
+    left: -1.3125rem;
     top: 50%;
   }
   .card-title {

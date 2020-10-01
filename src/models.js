@@ -2,33 +2,38 @@ import { Utils } from '@kineticdata/bundle-common';
 import * as constants from './constants';
 import { List } from 'immutable';
 
-export const Form = object => ({
-  name: object.name,
-  slug: object.slug,
-  description: object.description,
-  icon: Utils.getIcon(object, constants.DEFAULT_FORM_ICON),
-  keywords: Utils.getAttributeValues(object, constants.ATTRIBUTE_KEYWORD),
-  categories:
-    object.categorizations && object.categorizations.map(c => c.category.slug),
-  type: object.type,
-  status: object.status,
-  createdAt: object.createdAt,
-  updatedAt: object.updatedAt,
-  kapp: object.kapp,
+export const Form = o => ({
+  name: o.name,
+  slug: o.slug,
+  description: o.description,
+  icon: Utils.getIcon(o, constants.DEFAULT_FORM_ICON),
+  keywords: Utils.getAttributeValues(o, constants.ATTRIBUTE_KEYWORD),
+  featuredColor: Utils.getAttributeValue(
+    o,
+    constants.ATTRIBUTE_FEATURED_COLOR,
+    'primary',
+  ),
+  categories: o.categorizations && o.categorizations.map(c => c.category.slug),
+  type: o.type,
+  status: o.status,
+  createdAt: o.createdAt,
+  updatedAt: o.updatedAt,
+  kapp: o.kapp,
 });
 
 export const Category = categoryHelper => category => {
   const forms = category.categorizations
     ? List(
-        category.categorizations
-          .map(categorization => Form(categorization.form))
-          .filter(
-            form =>
-              constants.SUBMISSION_FORM_TYPES.includes(form.type) &&
-              constants.SUBMISSION_FORM_STATUSES.includes(form.status),
-          ),
-      )
+        category.categorizations.map(categorization =>
+          Form(categorization.form),
+        ),
+      ).sortBy(form => form.slug)
     : List();
+  const servicesForms = forms.filter(
+    form =>
+      constants.SUBMISSION_FORM_TYPES.includes(form.type) &&
+      constants.SUBMISSION_FORM_STATUSES.includes(form.status),
+  );
   return {
     name: category.name,
     slug: category.slug,
@@ -44,8 +49,9 @@ export const Category = categoryHelper => category => {
         'false',
       ).toLowerCase() === 'true',
     parentSlug: Utils.getAttributeValue(category, constants.ATTRIBUTE_PARENT),
-    forms,
-    formCount: forms.size,
+    allForms: forms,
+    forms: servicesForms,
+    formCount: servicesForms.size,
     hasParent() {
       return categoryHelper.hasCategory(this.parentSlug);
     },
@@ -88,12 +94,14 @@ export const CategoryHelper = (categories = [], includeHidden = false) => {
   const helper = {
     getCategories() {
       return this.categories
+        .filter(includeHidden ? c => c : c => !c.hidden)
         .toList()
         .sortBy(category => category.getFullSortOrder());
     },
     getRootCategories() {
       return this.categories
         .filter(category => !category.hasParent())
+        .filter(includeHidden ? c => c : c => !c.hidden)
         .toList()
         .sortBy(category => category.getFullSortOrder());
     },
@@ -109,12 +117,14 @@ export const CategoryHelper = (categories = [], includeHidden = false) => {
     getChildren(slug) {
       return this.categories
         .filter(category => category.parentSlug === slug)
+        .filter(includeHidden ? c => c : c => !c.hidden)
         .toList()
         .sortBy(category => category.getFullSortOrder());
     },
     getDescendants(slug) {
       return this.getChildren(slug)
         .flatMap(category => [category, ...this.getDescendants(category.slug)])
+        .filter(includeHidden ? c => c : c => !c.hidden)
         .toList()
         .sortBy(category => category.getFullSortOrder());
     },
@@ -126,7 +136,7 @@ export const CategoryHelper = (categories = [], includeHidden = false) => {
   };
   helper.categories = List(categories)
     .map(Category(helper))
-    .filter(includeHidden ? category => category : category => !category.hidden)
+    // .filter(includeHidden ? c => c : c => !c.hidden)
     .toOrderedMap()
     .mapKeys((key, category) => category.slug);
   return helper;

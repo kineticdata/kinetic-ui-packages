@@ -90,60 +90,37 @@ export const CategoryComponent = ({
           : 'New Category';
       return (
         <div className="page-container">
-          <PageTitle parts={[pageName, 'Categories']} settings />
           <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to={`../../..${parent ? '/..' : ''}`}>
-                    <I18n>services</I18n>
-                  </Link>
-                </span>
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to={`../..${parent ? '/..' : ''}`}>
-                    <I18n>settings</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to={`..${parent ? '/..' : ''}`}>
-                    <I18n>categories</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                {(parent
+            <PageTitle
+              parts={[pageName, `Categories`]}
+              settings
+              hero={false}
+              breadcrumbs={[
+                { label: 'services', to: `../../..${parent ? '/..' : ''}` },
+                { label: 'settings', to: `../..${parent ? '/..' : ''}` },
+                { label: 'categories', to: `..${parent ? '/..' : ''}` },
+                ...(parent
                   ? parent.getTrail()
                   : category
                     ? category.getTrail().skipLast(1)
                     : []
-                ).map(ancestorCategory => (
-                  <Fragment key={ancestorCategory.slug}>
-                    <span className="breadcrumb-item">
-                      <Link to={`../../${ancestorCategory.slug}`}>
-                        <I18n>{ancestorCategory.name}</I18n>
-                      </Link>
-                    </span>{' '}
-                    <span aria-hidden="true">/ </span>
-                  </Fragment>
-                ))}
-                <h1>
-                  <I18n>{pageName}</I18n>
-                </h1>
-              </div>
-              {initialized &&
-                slug && (
-                  <div className="page-title__actions">
-                    <Link to={`../new/${slug}`} className="btn btn-primary">
-                      <span className="fa fa-fw fa-plus" />Add Subcategory
-                    </Link>
-                  </div>
-                )}
-            </div>
+                ).map(ancestorCategory => ({
+                  label: ancestorCategory.name,
+                  to: `../../${ancestorCategory.slug}`,
+                })),
+              ]}
+              title={pageName}
+              actions={
+                initialized &&
+                slug && [
+                  {
+                    label: 'Add Subcategory',
+                    icon: 'plus',
+                    to: `../new/${slug}`,
+                  },
+                ]
+              }
+            />
             {initialized && <section className="form">{form}</section>}
           </div>
         </div>

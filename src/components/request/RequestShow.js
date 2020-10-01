@@ -1,9 +1,8 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Link } from '@reach/router';
 import {
-  Icon,
   TimeAgo,
-  Utils as CommonUtils,
+  Utils,
   ErrorMessage,
   LoadingMessage,
 } from '@kineticdata/bundle-common';
@@ -11,11 +10,6 @@ import { bundle } from '@kineticdata/react';
 import { RequestShowConfirmationContainer } from './RequestShowConfirmation';
 import { RequestDiscussion } from './RequestDiscussion';
 import { RequestActivityList } from './RequestActivityList';
-import { CancelButtonContainer } from './CancelButton';
-import { CommentButtonContainer } from './CommentButton';
-import { CloneButtonContainer } from './CloneButton';
-import { FeedbackButtonContainer } from './FeedbackButton';
-import { ViewDiscussionButtonContainer } from './ViewDiscussionButton';
 import { SendMessageModal } from './SendMessageModal';
 import * as constants from '../../constants';
 import {
@@ -23,19 +17,11 @@ import {
   getDurationInDays,
   getStatus,
   getSubmissionPath,
+  isActiveClass,
 } from '../../utils';
 import { ReviewRequest } from './ReviewRequest';
 import { PageTitle } from '../shared/PageTitle';
-
 import { I18n } from '@kineticdata/react';
-import { isActiveClass } from '../../utils';
-
-const getIcon = form =>
-  CommonUtils.getAttributeValue(
-    form,
-    constants.ATTRIBUTE_ICON,
-    constants.DEFAULT_FORM_ICON,
-  );
 
 const ProfileLink = ({ submitter }) => (
   <Link to={`/profile/${encodeURIComponent(submitter)}`}>
@@ -43,114 +29,70 @@ const ProfileLink = ({ submitter }) => (
   </Link>
 );
 
-const StatusItem = ({ submission }) => (
-  <div className="data-list-row__col">
-    <dl>
-      <dt>
-        <I18n>Status</I18n>:
-      </dt>
-      <dd>
-        <I18n>{getStatus(submission)}</I18n>
-      </dd>
-    </dl>
-  </div>
-);
+const displayDateMeta = submission => ({
+  label: submission.submittedAt ? 'Submitted' : 'Created',
+  value: (
+    <>
+      <TimeAgo
+        timestamp={
+          submission.submittedAt ? submission.submittedAt : submission.createdAt
+        }
+      />
+      {` `}
+      <small>
+        <I18n>by</I18n>
+      </small>
+      {` `}
+      <ProfileLink
+        submitter={
+          submission.submittedAt ? submission.submittedBy : submission.createdBy
+        }
+      />
+    </>
+  ),
+});
 
-const DisplayDateItem = ({ submission }) =>
-  !submission.submittedAt ? (
-    <div className="data-list-row__col">
-      <dl>
-        <dt>
-          <I18n>Created</I18n>:
-        </dt>
-        <dd>
-          <TimeAgo timestamp={submission.createdAt} />
-        </dd>
-        <dd>
-          <em>
-            <I18n>by</I18n>
-          </em>
-          {` `}
-          <ProfileLink submitter={submission.createdBy} />
-        </dd>
-      </dl>
-    </div>
-  ) : (
-    <div className="data-list-row__col">
-      <dl>
-        <dt>
-          <I18n>Submitted</I18n>:
-        </dt>
-        <dd className="text-truncate">
-          <TimeAgo timestamp={submission.submittedAt} />
-          <br />
-          <small>
-            <I18n>by</I18n>
-            {` `}
-            <ProfileLink submitter={submission.submittedBy} />
-          </small>
-        </dd>
-      </dl>
-    </div>
-  );
-
-const ServiceOwnerItem = ({ submission }) => {
-  const serviceOwner = CommonUtils.getConfig({
+const serviceOwnerMeta = submission => {
+  const serviceOwner = Utils.getConfig({
     submission,
     name: constants.ATTRIBUTE_SERVICE_OWNING_TEAM,
   });
   return (
-    !!serviceOwner && (
-      <div className="data-list-row__col">
-        <dl>
-          <dt>
-            <I18n>Service Owning Team</I18n>:
-          </dt>
-          <dd>
-            {serviceOwner} <I18n>Team</I18n>
-          </dd>
-        </dl>
-      </div>
-    )
+    !!serviceOwner && {
+      label: 'Service Owning Team',
+      value: (
+        <>
+          {serviceOwner} <I18n>Team</I18n>
+        </>
+      ),
+    }
   );
 };
 
-const EstCompletionItem = ({ submission }) => {
+const estCompletionMeta = submission => {
   const dueDate = getDueDate(submission, constants.ATTRIBUTE_SERVICE_DAYS_DUE);
   return (
     submission.coreState === constants.CORE_STATE_SUBMITTED &&
-    !!dueDate && (
-      <div className="data-list-row__col">
-        <dl>
-          <dt>
-            <I18n>Est. Completion</I18n>:
-          </dt>
-          <dd>
-            <TimeAgo timestamp={dueDate} />
-          </dd>
-        </dl>
-      </div>
-    )
+    !!dueDate && {
+      label: 'Est. Completion',
+      value: <TimeAgo timestamp={dueDate} />,
+    }
   );
 };
 
-const CompletedInItem = ({ submission }) => {
+const completedInMeta = submission => {
   const duration =
     submission.coreState === constants.CORE_STATE_CLOSED &&
     getDurationInDays(submission.createdAt, submission.closedAt);
   return (
-    (duration || duration === 0) && (
-      <div className="data-list-row__col">
-        <dl>
-          <dt>
-            <I18n>Completed in</I18n>:
-          </dt>
-          <dd>
-            {duration} {duration === 1 ? <I18n>day</I18n> : <I18n>days</I18n>}
-          </dd>
-        </dl>
-      </div>
-    )
+    (duration || duration === 0) && {
+      label: 'Completed in',
+      value: (
+        <>
+          {duration} {duration === 1 ? <I18n>day</I18n> : <I18n>days</I18n>}
+        </>
+      ),
+    }
   );
 };
 
@@ -165,58 +107,77 @@ export const RequestShow = ({
   viewDiscussionModal,
   openDiscussion,
   closeDiscussion,
+  disableStartDiscussion,
+  startDiscussion,
+  disableProvideFeedback,
+  provideFeedback,
+  disableHandleClone,
+  handleClone,
+  disableHandleCancel,
+  handleCancel,
   kappSlug,
   appLocation,
+  isSmallLayout,
 }) => (
-  <div className="page-container page-container--panels page-container--color-bar">
+  <div className="page-container page-container--panels">
     <div className="page-panel page-panel--three-fifths">
-      <PageTitle parts={[submission && submission.label, 'Requests']} />
       {sendMessageModalOpen && <SendMessageModal submission={submission} />}
       <div className="page-panel__header">
-        <div className="nav-return">
-          <Link to={`${appLocation}/requests/${listType || ''}`}>
-            <span className="fa fa-fw fa-chevron-left" />
-            <I18n>{listType || 'All'} Requests</I18n>
-          </Link>
-        </div>
-        {!error &&
-          submission && (
-            <div className="submission__meta">
-              <div className="data-list-row">
-                <StatusItem submission={submission} />
-                <div className="data-list-row__col">
-                  <dl>
-                    <dt>
-                      <I18n>Confirmation #</I18n>
-                    </dt>
-                    <dd>{submission.handle}</dd>
-                  </dl>
-                </div>
-                <DisplayDateItem submission={submission} />
-                <ServiceOwnerItem submission={submission} />
-                <EstCompletionItem submission={submission} />
-                <CompletedInItem submission={submission} />
-                <div className="col-lg-auto btn-group-col">
-                  <ViewDiscussionButtonContainer
-                    openDiscussion={openDiscussion}
-                  />
-                  <CloneButtonContainer
-                    submission={submission}
-                    navigate={navigate}
-                  />
-                  {submission.coreState === constants.CORE_STATE_SUBMITTED &&
-                    !discussion && (
-                      <CommentButtonContainer submission={submission} />
-                    )}
-                  {submission.coreState === constants.CORE_STATE_CLOSED && (
-                    <FeedbackButtonContainer submission={submission} />
-                  )}
-
-                  <CancelButtonContainer submission={submission} />
-                </div>
-              </div>
-            </div>
-          )}
+        <PageTitle
+          parts={[submission && submission.label, 'Requests']}
+          breadcrumbs={[
+            { label: 'services', to: appLocation },
+            {
+              label: 'requests',
+              to: `${appLocation}/requests`,
+            },
+            listType && {
+              label: listType,
+              to: `${appLocation}/requests/${listType}`,
+            },
+          ]}
+          title={!error && submission && submission.form.name}
+          actions={
+            !error &&
+            submission && [
+              !disableProvideFeedback && {
+                label: 'Provide Feedback',
+                onClick: provideFeedback,
+              },
+              !disableHandleClone && {
+                label: 'Clone as Draft',
+                onClick: handleClone,
+              },
+              !disableHandleCancel && {
+                label: 'Cancel Request',
+                onClick: handleCancel,
+              },
+              isSmallLayout &&
+                discussion && {
+                  icon: 'comments-o',
+                  aria: 'View Discussion',
+                  onClick: openDiscussion,
+                },
+              !discussion &&
+                !disableStartDiscussion && {
+                  icon: 'comment-o',
+                  aria: 'Start Discussion',
+                  onClick: startDiscussion,
+                },
+            ]
+          }
+          meta={
+            !error &&
+            submission && [
+              { label: 'Status', value: getStatus(submission) },
+              { label: 'Confirmation #', value: submission.handle },
+              displayDateMeta(submission),
+              serviceOwnerMeta(submission),
+              estCompletionMeta(submission),
+              completedInMeta(submission),
+            ]
+          }
+        />
       </div>
       <div className="page-panel__body">
         {error && (
@@ -228,26 +189,13 @@ export const RequestShow = ({
         {!error && !submission && <LoadingMessage />}
         {!error &&
           submission && (
-            <Fragment>
-              <div className="submission-title">
-                <h1>
-                  <Icon
-                    image={getIcon(submission.form)}
-                    background="greenGrass"
-                  />
-                  <I18n
-                    context={`kapps.${kappSlug}.forms.${submission.form.slug}`}
-                  >
-                    {submission.form.name}
-                  </I18n>
-                </h1>
-                {submission.form.name !== submission.label && (
-                  <p>{submission.label}</p>
-                )}
-              </div>
+            <>
+              {submission.form.name !== submission.label && (
+                <p className="h6 text-muted">{submission.label}</p>
+              )}
 
               {mode === 'confirmation' && (
-                <div className="card card--submission-confirmation">
+                <div className="alert alert-primary alert-bar">
                   <RequestShowConfirmationContainer submission={submission} />
                 </div>
               )}
@@ -293,7 +241,7 @@ export const RequestShow = ({
                   )}
                 </div>
               </div>
-            </Fragment>
+            </>
           )}
       </div>
     </div>

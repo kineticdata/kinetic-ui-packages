@@ -15,7 +15,7 @@ export function* fetchAppDataRequestSaga() {
     call(fetchCategories, {
       kappSlug,
       include:
-        'attributes,categorizations.form,categorizations.form.attributes[Icon],categorizations.form.kapp',
+        'attributes,categorizations.form,categorizations.form.attributes[Icon],categorizations.form.attributes[Featured Color],categorizations.form.kapp',
     }),
     call(fetchForms, {
       kappSlug,

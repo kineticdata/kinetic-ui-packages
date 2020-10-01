@@ -237,46 +237,24 @@ export const FormsListComponent = ({
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
         return (
           <div className="page-container">
-            <PageTitle parts={[`Forms`]} settings />
             <div className="page-panel page-panel--white">
-              <div className="page-title">
-                <div
-                  role="navigation"
-                  aria-label="breadcrumbs"
-                  className="page-title__breadcrumbs"
-                >
-                  <span className="breadcrumb-item">
-                    <Link to="../../">
-                      <I18n>services</I18n>
-                    </Link>
-                  </span>{' '}
-                  <span aria-hidden="true">/ </span>
-                  <span className="breadcrumb-item">
-                    <Link to="../">
-                      <I18n>settings</I18n>
-                    </Link>
-                  </span>{' '}
-                  <span aria-hidden="true">/ </span>
-                  <h1>
-                    <I18n>Forms</I18n>
-                  </h1>
-                </div>
-                <div className="page-title__actions">
-                  <I18n
-                    render={translate => (
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        title={translate('New Form')}
-                        onClick={() => toggleModal(true)}
-                      >
-                        <span className="fa fa-plus fa-fw" />{' '}
-                        {translate('New Form')}
-                      </button>
-                    )}
-                  />
-                </div>
-              </div>
+              <PageTitle
+                parts={[`Forms`]}
+                settings
+                hero={false}
+                breadcrumbs={[
+                  { label: 'services', to: '../..' },
+                  { label: 'settings', to: '..' },
+                ]}
+                title="Forms"
+                actions={[
+                  {
+                    label: 'New Form',
+                    icon: 'plus',
+                    onClick: () => toggleModal(true),
+                  },
+                ]}
+              />
               <div>
                 <div className="text-right mb-2">{filter}</div>
                 <TableComponents.FilterPills

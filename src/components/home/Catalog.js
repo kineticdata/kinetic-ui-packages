@@ -15,6 +15,7 @@ export const Catalog = ({
   forms,
   submissions,
   submissionsError,
+  featuredServices,
   homePageMode,
   homePageItems,
   fetchSubmissions,
@@ -22,45 +23,58 @@ export const Catalog = ({
 }) => {
   return (
     <Fragment>
-      <PageTitle />
       <div className="page-container">
         <div className="page-panel">
           <div className="page-panel__header">
-            <div className="search-services-home">
-              <div className="search-services-home__wrapper">
-                <h1 className="text-truncate">
-                  <I18n>Welcome, how can we help?</I18n>
-                </h1>
-                <div className="search-box">
-                  <CatalogSearchContainer
-                    onSearch={q => navigate(`search/${q}`)}
-                  />
-                </div>
-              </div>
+            <PageTitle
+              center={true}
+              container={true}
+              title="Welcome, how can we help?"
+            />
+            <div className="container search-box">
+              <CatalogSearchContainer onSearch={q => navigate(`search/${q}`)} />
             </div>
           </div>
           <div className="page-panel__body">
-            <div className="column-container">
-              <div className="column-panel column-panel--thirds">
-                <div className="page-title">
-                  <div
-                    role="navigation"
-                    aria-label="breadcrumbs recent requests"
-                    className="page-title__breadcrumbs"
-                  >
-                    <span className="breadcrumb-item text-lowercase">
-                      <I18n>{kapp.name}</I18n> /
-                    </span>
-                    <h1>
-                      <I18n>Recent Requests</I18n>
-                    </h1>
-                  </div>
-                  <Link to="requests">
-                    <I18n>View All</I18n>
-                  </Link>
+            {featuredServices &&
+              featuredServices.allForms &&
+              featuredServices.allForms.size > 0 && (
+                <div className="cards cards--seconds">
+                  {featuredServices.allForms.map(form => (
+                    <Link
+                      to={`forms/${form.slug}`}
+                      className={`card card--${form.featuredColor}`}
+                      key={form.slug}
+                    >
+                      <div className="card__col">
+                        <div className="card__row p-4">
+                          <span className={`fa fa-${form.icon} fa-4x mr-5`} />
+                          <div className="card__col">
+                            <div className="card__row-title">{form.name}</div>
+                            <div className="card__row">{form.description}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
+              )}
 
-                <div className="cards__wrapper cards__wrapper--requests">
+            <div className="column-container">
+              <div className="column-panel column-panel--two-thirds">
+                <div className="nav nav-tabs mb-3">
+                  <span className="nav-item">
+                    <span className="nav-link active h5 m-0">
+                      <I18n>Recent Requests</I18n>
+                    </span>
+                  </span>
+                  <div className="ml-auto d-flex align-items-center">
+                    <Link className="btn btn-link" to="requests">
+                      <I18n>View All</I18n>
+                    </Link>
+                  </div>
+                </div>
+                <div className="cards">
                   <StateListWrapper
                     data={submissions}
                     error={submissionsError}
@@ -83,26 +97,24 @@ export const Catalog = ({
                 </div>
               </div>
               <div className="column-panel column-panel--thirds">
-                <div className="page-title">
-                  <div
-                    role="navigation"
-                    aria-label="breadcrumbs categories"
-                    className="page-title__breadcrumbs"
-                  >
-                    <span className="breadcrumb-item text-lowercase">
-                      <I18n>{kapp.name}</I18n> /
-                    </span>
-                    <h1>
+                <div className="nav nav-tabs mb-3">
+                  <span className="nav-item">
+                    <span className="nav-link active h5 m-0">
                       <I18n>{homePageMode}</I18n>
-                    </h1>
+                    </span>
+                  </span>
+                  <div className="ml-auto d-flex align-items-center">
+                    <Link
+                      className="btn btn-link"
+                      to={
+                        homePageMode === 'Categories' ? 'categories' : 'forms'
+                      }
+                    >
+                      <I18n>View All</I18n>
+                    </Link>
                   </div>
-                  <Link
-                    to={homePageMode === 'Categories' ? 'categories' : 'forms'}
-                  >
-                    <I18n>View All</I18n>
-                  </Link>
                 </div>
-                <div className="cards__wrapper cards__wrapper--seconds">
+                <div className="cards">
                   {homePageItems.map(
                     item =>
                       homePageMode === 'Categories' ? (
@@ -110,6 +122,7 @@ export const Catalog = ({
                           key={item.slug}
                           category={item}
                           path={`categories/${item.slug}`}
+                          countOfMatchingForms={item.getTotalFormCount()}
                         />
                       ) : (
                         <ServiceCard
