@@ -1,21 +1,20 @@
-import React from 'react';
 import { fetchEngineSettings, updateEngineSettings } from '../../../apis';
-import { Form } from '../../form/Form';
+import { generateForm } from '../../form/Form';
 
-const dataSources = () => {
+const dataSources = ({ spaceSlug }) => {
   return {
     settings: {
       fn: fetchEngineSettings,
-      params: [],
+      params: [{ spaceSlug }],
       transform: result => result.settings,
     },
   };
 };
 
-const handleSubmit = () => values =>
+const handleSubmit = ({ spaceSlug }) => values =>
   new Promise((resolve, reject) => {
     const settings = values.toJS();
-    updateEngineSettings({ settings }).then(({ message, error }) => {
+    updateEngineSettings({ spaceSlug, settings }).then(({ message, error }) => {
       if (message) {
         resolve(message);
       } else {
@@ -49,29 +48,9 @@ const fields = () => ({ settings }) =>
     },
   ];
 
-export const EngineSettingsForm = ({
-  addFields,
-  alterFields,
-  fieldSet,
-  formKey,
-  components,
-  onSave,
-  onError,
-  children,
-}) => (
-  <Form
-    addFields={addFields}
-    alterFields={alterFields}
-    fieldSet={fieldSet}
-    formKey={formKey}
-    components={components}
-    onSubmit={handleSubmit}
-    onSave={onSave}
-    onError={onError}
-    dataSources={dataSources}
-    fields={fields}
-    formOptions={{}}
-  >
-    {children}
-  </Form>
-);
+export const EngineSettingsForm = generateForm({
+  formOptions: ['spaceSlug'],
+  dataSources,
+  fields,
+  handleSubmit,
+});

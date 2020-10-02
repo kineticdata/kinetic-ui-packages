@@ -738,25 +738,39 @@ export const fetchMissingHandlers = (options = {}) => {
 
 export const stopEngine = (options = {}) =>
   axios
-    .post(`${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`, {
-      action: 'stop',
-      asynchronous: options.asynchronous || 'false',
-    })
+    .post(
+      options.spaceSlug
+        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/engine`
+        : `${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`,
+      {
+        action: 'stop',
+        asynchronous: options.asynchronous || 'false',
+      },
+    )
     .then(response => response.data)
     .catch(handleErrors);
 
 export const startEngine = (options = {}) =>
   axios
-    .post(`${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`, {
-      action: 'start',
-      asynchronous: options.asynchronous || 'false',
-    })
+    .post(
+      options.spaceSlug
+        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/engine`
+        : `${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`,
+      {
+        action: 'start',
+        asynchronous: options.asynchronous || 'false',
+      },
+    )
     .then(response => response.data)
     .catch(handleErrors);
 
-export const fetchEngineStatus = () =>
+export const fetchEngineStatus = (options = {}) =>
   axios
-    .get(`${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`)
+    .get(
+      options.spaceSlug
+        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/engine`
+        : `${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`,
+    )
     .then(response => response.data)
     .catch(handleErrors);
 
@@ -768,10 +782,12 @@ export const fetchEngineLicense = () =>
     .then(response => response.data)
     .catch(handleErrors);
 
-export const fetchEngineSettings = () =>
+export const fetchEngineSettings = (options = {}) =>
   axios
     .get(
-      `${bundle.spaceLocation()}/app/components/task/app/api/v2/config/engine`,
+      options.spaceSlug
+        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/config/engine`
+        : `${bundle.spaceLocation()}/app/components/task/app/api/v2/config/engine`,
     )
     .then(response => ({
       settings: response.data.properties,
@@ -781,7 +797,9 @@ export const fetchEngineSettings = () =>
 export const updateEngineSettings = (options = {}) =>
   axios
     .put(
-      `${bundle.spaceLocation()}/app/components/task/app/api/v2/config/engine`,
+      options.spaceSlug
+        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/config/engine`
+        : `${bundle.spaceLocation()}/app/components/task/app/api/v2/config/engine`,
       options.settings,
     )
     .then(response => ({
