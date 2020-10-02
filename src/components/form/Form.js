@@ -51,7 +51,7 @@ export const Form = ({
               ...(category ? category.getTrail() : []).map(
                 ancestorCategory => ({
                   label: ancestorCategory.name,
-                  to: `../${ancestorCategory.slug}`,
+                  to: `${appLocation}/categories/${ancestorCategory.slug}`,
                 }),
               ),
             ].filter(Boolean)}
