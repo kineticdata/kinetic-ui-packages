@@ -1,11 +1,10 @@
 import React, { Fragment } from 'react';
-import { Link } from '@reach/router';
 import { compose, lifecycle, withHandlers } from 'recompose';
 import { FormComponents, addToast } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
 import { actions } from '../../../redux/modules/settingsCategories';
 import { connect } from '../../../redux/store';
-import { I18n, CategoryForm } from '@kineticdata/react';
+import { CategoryForm } from '@kineticdata/react';
 import * as constants from '../../../constants';
 
 const fieldSet = ['name', 'slug', 'icon', 'hidden', 'attributesMap'];
