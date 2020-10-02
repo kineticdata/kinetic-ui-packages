@@ -304,18 +304,19 @@ export const sendInvites = (discussion, values) => {
   const existingEmails = invitations.map(invitation => invitation.email);
 
   return Promise.all(
-    values.invitees
-      .flatMap(item => (item.team ? item.team.memberships : [item]))
+    values
+      .get('invitees')
       .map(item => ({
         discussionId: discussion.id,
-        type: item.user ? 'username' : 'email',
-        value: item.user ? item.user.username : item.label,
-        message: values.message,
+        type: item.get('username') ? 'username' : 'email',
+        value: item.get('username') ? item.get('username') : item.get('email'),
+        message: values.get('message'),
       }))
-      .filter(args =>
-        args.type === 'username'
-          ? !existingUsernames.contains(args.value)
-          : !existingEmails.contains(args.value),
+      .filter(
+        args =>
+          args.type === 'username'
+            ? !existingUsernames.contains(args.value)
+            : !existingEmails.contains(args.value),
       )
       .map(createInvite),
   );
