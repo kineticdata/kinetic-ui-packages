@@ -5,7 +5,7 @@ import { I18n } from '@kineticdata/react';
 export const StatusPill = props => {
   const statusColor = props.status === 'Active' ? 'green' : 'gray';
   return (
-    <span className={`status status--${statusColor}`}>
+    <span className={`status-pill status-pill__${statusColor}`}>
       <I18n>{props.status === 'Active' ? 'Active' : 'Inactive'}</I18n>
     </span>
   );

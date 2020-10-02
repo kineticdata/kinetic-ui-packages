@@ -4,7 +4,7 @@
  *     -Move css into appropriate sass files when ready
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-.status {
+.status-pill {
   color: $white;
   text-align: center;
   padding: 0.125rem 0.625rem;
@@ -18,20 +18,20 @@
   margin-left: auto;
   flex: 0 0 auto;
 
-  &--gray {
+  &__gray {
     background-color: $gray50;
   }
 
-  &--yellow {
+  &__yellow {
     background-color: $sunflower;
     color: $gray80;
   }
 
-  &--green {
+  &__green {
     background-color: $green-grass;
   }
 
-  &--red {
+  &__red {
     background-color: $red;
   }
 }
