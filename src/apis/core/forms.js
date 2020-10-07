@@ -45,17 +45,14 @@ export const fetchForm = (options = {}) => {
 };
 
 export const createForm = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), form, datastore } = options;
-  if (!kappSlug && !datastore) {
-    throw new Error('createForm failed! The option "kappSlug" is required.');
-  }
+  const { kappSlug, form } = options;
   if (!form) {
     throw new Error('createForm failed! The option "form" is required.');
   }
 
   const path = kappSlug
     ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms`
-    : `${bundle.apiLocation()}/datastore/forms`;
+    : `${bundle.apiLocation()}/forms`;
 
   return axios
     .post(path, form, {
@@ -67,7 +64,7 @@ export const createForm = (options = {}) => {
 };
 
 export const updateForm = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), formSlug, form } = options;
+  const { kappSlug, formSlug, form } = options;
   if (!formSlug) {
     throw new Error('updateForm failed! The option "formSlug" is required.');
   }
@@ -89,17 +86,14 @@ export const updateForm = (options = {}) => {
 };
 
 export const deleteForm = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), formSlug, datastore } = options;
-  if (!kappSlug && !datastore) {
-    throw new Error('deleteForm failed! The option "kappSlug" is required.');
-  }
+  const { kappSlug, formSlug } = options;
   if (!formSlug) {
     throw new Error('deleteForm failed! The option "formSlug" is required.');
   }
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/forms/${formSlug}`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`;
+  const path = kappSlug
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`
+    : `${bundle.apiLocation()}/forms/${formSlug}`;
 
   return axios
     .delete(path, {
