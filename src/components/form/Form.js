@@ -35,11 +35,11 @@ export const Form = ({
             parts={[form ? form.name : '']}
             breadcrumbs={[
               { label: 'services', to: appLocation },
-              path.startsWith('request') && {
+              path.includes('request/') && {
                 label: 'requests',
                 to: `${appLocation}/requests`,
               },
-              path.startsWith('request') &&
+              path.includes('request/') &&
                 type && {
                   label: type,
                   to: `${appLocation}/requests/${type || ''}`,
