@@ -1,42 +1,17 @@
 import React, { Fragment } from 'react';
-import { StateListWrapper } from '@kineticdata/bundle-common';
-import { RequestCard } from '../shared/RequestCard';
+import { compose, lifecycle, withProps } from 'recompose';
+import { connect } from '../../redux/store';
+import { refetchActivityFeed } from '@kineticdata/bundle-common';
+import { RequestActivity } from '../shared/RequestActivity';
 import { PageTitle } from '../shared/PageTitle';
+import * as constants from '../../constants';
+import { actions as submissionCountActions } from '../../redux/modules/submissionCounts';
 
-import { getSubmissionPath } from '../../utils';
-import { I18n } from '@kineticdata/react';
-
-const emptyStateMessage = type => {
-  switch (type) {
-    case 'Draft': {
-      return "You have no draft requests. Draft services are forms you started but haven't submitted yet.";
-    }
-    case 'Open': {
-      return 'You have no open requests. If you request something, it will show up here.';
-    }
-    case 'Closed': {
-      return "Closed requests are services  you've requested that have been completed or canceled.";
-    }
-    default: {
-      return 'No requests found. Submit a service and it will show up here!';
-    }
-  }
-};
-
-export const RequestList = ({
-  forms,
-  submissions,
-  error,
+export const RequestListComponent = ({
   type,
-  paging,
-  hasNextPage,
-  hasPreviousPage,
-  pageIndexStart,
-  pageIndexEnd,
-  handleNextPage,
-  handlePreviousPage,
-  refreshPage,
   appLocation,
+  feedKey,
+  fetchSubmissionCountsRequest,
 }) => (
   <Fragment>
     <div className="page-container">
@@ -49,77 +24,57 @@ export const RequestList = ({
               type && { label: 'requests', to: `${appLocation}/requests` },
             ].filter(Boolean)}
             title={type || 'All Requests'}
+            actions={[
+              {
+                icon: 'refresh',
+                onClick: () => {
+                  refetchActivityFeed(feedKey);
+                  fetchSubmissionCountsRequest();
+                },
+                aria: 'Refresh Requests',
+              },
+            ]}
           />
         </div>
         <div className="page-panel__body">
           <div className="cards">
-            <StateListWrapper
-              data={submissions}
-              error={error}
-              emptyTitle={`No ${
-                type && type !== 'All' ? `${type} ` : ''
-              }Requests Found`}
-              emptyMessage={emptyStateMessage(type)}
-            >
-              {data => (
-                <Fragment>
-                  {data
-                    .map(submission => ({
-                      submission,
-                      forms,
-                      key: submission.id,
-                      path: getSubmissionPath(
-                        appLocation,
-                        submission,
-                        null,
-                        type,
-                      ),
-                      deleteCallback: refreshPage,
-                    }))
-                    .map(props => <RequestCard {...props} />)}
-                  <div className="pagination-bar">
-                    <I18n
-                      render={translate => (
-                        <button
-                          className="btn btn-icon"
-                          onClick={handlePreviousPage}
-                          disabled={paging || !hasPreviousPage}
-                          title={translate('Previous Page')}
-                        >
-                          <span className="icon">
-                            <span className="fa fa-fw fa-caret-left" />
-                          </span>
-                        </button>
-                      )}
-                    />
-                    <small>
-                      {paging ? (
-                        <span className="fa fa-spinner fa-spin" />
-                      ) : (
-                        <strong>{`${pageIndexStart}-${pageIndexEnd}`}</strong>
-                      )}
-                    </small>
-                    <I18n
-                      render={translate => (
-                        <button
-                          className="btn btn-icon"
-                          onClick={handleNextPage}
-                          disabled={paging || !hasNextPage}
-                          title={translate('Next Page')}
-                        >
-                          <span className="icon">
-                            <span className="fa fa-fw fa-caret-right" />
-                          </span>
-                        </button>
-                      )}
-                    />
-                  </div>
-                </Fragment>
-              )}
-            </StateListWrapper>
+            <RequestActivity type={type} feedKey={feedKey} />
           </div>
         </div>
       </div>
     </div>
   </Fragment>
 );
+
+const mapStateToProps = (state, props) => ({
+  type: props.type,
+  appLocation: state.app.location,
+});
+
+const mapDispatchToProps = {
+  fetchSubmissionCountsRequest:
+    submissionCountActions.fetchSubmissionCountsRequest,
+};
+
+const enhance = compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+  withProps(props => ({
+    coreState:
+      props.type === 'Open' ? constants.CORE_STATE_SUBMITTED : props.type,
+  })),
+  lifecycle({
+    componentDidMount() {
+      this.props.fetchSubmissionCountsRequest();
+    },
+    componentDidUpdate(prevProps) {
+      if (this.props.coreState !== prevProps.coreState) {
+        this.props.fetchSubmissionCountsRequest();
+      }
+    },
+  }),
+);
+
+export const RequestList = enhance(RequestListComponent);

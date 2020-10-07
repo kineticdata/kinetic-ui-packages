@@ -1,24 +1,22 @@
 import React, { Fragment } from 'react';
+import { compose } from 'recompose';
+import { connect } from '../../redux/store';
 import { Link } from '@reach/router';
+import { selectCurrentKapp } from '@kineticdata/bundle-common';
 import { CatalogSearchContainer } from '../shared/CatalogSearchContainer';
 import { CategoryCard } from '../shared/CategoryCard';
 import { ServiceCard } from '../shared/ServiceCard';
-import { RequestCard } from '../shared/RequestCard';
+import { RequestActivity } from '../shared/RequestActivity';
 import { PageTitle } from '../shared/PageTitle';
-import { StateListWrapper } from '@kineticdata/bundle-common';
-import { getSubmissionPath } from '../../utils';
 import { I18n } from '@kineticdata/react';
 
-export const Catalog = ({
+const CatalogComponent = ({
   navigate,
   kapp,
   forms,
-  submissions,
-  submissionsError,
   featuredServices,
   homePageMode,
   homePageItems,
-  fetchSubmissions,
   appLocation,
 }) => {
   return (
@@ -75,25 +73,7 @@ export const Catalog = ({
                   </div>
                 </div>
                 <div className="cards">
-                  <StateListWrapper
-                    data={submissions}
-                    error={submissionsError}
-                    emptyTitle="You have no requests yet"
-                    emptyMessage="As you request new services, they’ll appear here"
-                  >
-                    {data =>
-                      data
-                        .take(5)
-                        .map(submission => ({
-                          submission,
-                          forms,
-                          key: submission.id,
-                          path: getSubmissionPath(appLocation, submission),
-                          deleteCallback: fetchSubmissions,
-                        }))
-                        .map(props => <RequestCard {...props} />)
-                    }
-                  </StateListWrapper>
+                  <RequestActivity pageSize={5} hidePaging={true} />
                 </div>
               </div>
               <div className="column-panel column-panel--thirds">
@@ -141,3 +121,12 @@ export const Catalog = ({
     </Fragment>
   );
 };
+
+const mapStateToProps = state => ({
+  kapp: selectCurrentKapp(state),
+  forms: state.forms.data,
+  featuredServices: state.servicesApp.categoryGetter('featured-services'),
+  appLocation: state.app.location,
+});
+
+export const Catalog = compose(connect(mapStateToProps))(CatalogComponent);

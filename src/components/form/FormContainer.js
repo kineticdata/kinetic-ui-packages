@@ -2,9 +2,9 @@ import { compose, withHandlers, withState } from 'recompose';
 import { parse } from 'query-string';
 import { Form } from './Form';
 import { actions } from '../../redux/modules/submission';
-import { actions as submissionsActions } from '../../redux/modules/submissions';
 import { connect } from '../../redux/store';
-import { addToast } from '@kineticdata/bundle-common';
+import { addToast, refetchActivityFeed } from '@kineticdata/bundle-common';
+import { requestFeedKey } from '../../App';
 
 const valuesFromQueryParams = queryParams => {
   const params = parse(queryParams);
@@ -28,7 +28,7 @@ export const handleCompleted = props => response => {
     } else {
       props.setPage(response.submission.currentPage);
     }
-    props.fetchCurrentPage();
+    refetchActivityFeed(requestFeedKey);
   }
 };
 
@@ -71,7 +71,7 @@ export const handleLoaded = props => form => {
 
 export const handleDelete = props => () => {
   const deleteCallback = () => {
-    props.fetchCurrentPage();
+    refetchActivityFeed(requestFeedKey);
     props.navigate(props.appLocation);
   };
   props.deleteSubmission({ id: props.submissionId, callback: deleteCallback });
@@ -89,7 +89,6 @@ export const mapStateToProps = (state, { categorySlug }) => ({
 
 export const mapDispatchToProps = {
   deleteSubmission: actions.deleteSubmissionRequest,
-  fetchCurrentPage: submissionsActions.fetchSubmissionsCurrent,
 };
 
 const enhance = compose(
