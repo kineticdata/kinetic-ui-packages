@@ -1,0 +1,17 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * kinops Services
+ * Copyright (c) 2017 - 2019 Kinetic Data, Inc.
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.package--services {
+  @import 'layout';
+  @import 'navigation';
+  @import 'home';
+  @import 'search';
+  @import 'submission';
+  @import 'submission-timeline';
+  @import 'settings';
+  @import 'multi-page';
+  @import 'cards';
+  @import 'temp';
+}
