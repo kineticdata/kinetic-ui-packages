@@ -11,7 +11,7 @@ const DateBanner = props => (
 );
 DateBanner.propTypes = {
   /** The date object to use for the banner output. */
-  date: t.instanceOf(Date).isRequired,
+  date: t.oneOfType([t.instanceOf(Date), t.string]).isRequired,
 };
 
 export { DateBanner };
