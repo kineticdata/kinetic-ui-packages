@@ -78,126 +78,134 @@ export const HomeComponent = ({
                     )}
                   </div>
                 </div>
-                <div className="hero-card">
-                  <div className="card card--tech-bar-loc">
-                    <div className="card-body">
-                      <span className="icon fa fa-map-marker" />
-                      <div className="content">
-                        <span className="title">
-                          <I18n>{selectedTechBar.values['Name']}</I18n>
-                          {techBars.size > 1 && (
-                            <button
-                              className="btn btn-inverse btn-sm"
-                              onClick={() => setModalOpen(true)}
-                            >
-                              <I18n>Change</I18n>
-                            </button>
+                {selectedTechBar && (
+                  <div className="hero-card">
+                    <div className="card card--tech-bar-loc">
+                      <div className="card-body">
+                        <span className="icon fa fa-map-marker" />
+                        <div className="content">
+                          <span className="title">
+                            <I18n>{selectedTechBar.values['Name']}</I18n>
+                            {techBars.size > 1 && (
+                              <button
+                                className="btn btn-inverse btn-sm"
+                                onClick={() => setModalOpen(true)}
+                              >
+                                <I18n>Change</I18n>
+                              </button>
+                            )}
+                          </span>
+                          {selectedTechBar.values['Location'] && (
+                            <div className="subtitle">
+                              <I18n>{selectedTechBar.values['Location']}</I18n>
+                            </div>
                           )}
-                        </span>
-                        {selectedTechBar.values['Location'] && (
-                          <div className="subtitle">
-                            <I18n>{selectedTechBar.values['Location']}</I18n>
+                          <div className="details">
+                            {selectedTechBar.values['Details'] && (
+                              <p>
+                                <I18n>{selectedTechBar.values['Details']}</I18n>
+                              </p>
+                            )}
                           </div>
-                        )}
-                        <div className="details">
-                          {selectedTechBar.values['Details'] && (
-                            <p>
-                              <I18n>{selectedTechBar.values['Details']}</I18n>
-                            </p>
-                          )}
                         </div>
                       </div>
-                    </div>
-                    <Link
-                      to={`appointment/${selectedTechBar.values['Id']}`}
-                      className="btn btn-primary card-button"
-                    >
-                      <I18n>Schedule Now</I18n> →
-                    </Link>
-                    <div
-                      className={`waiting-users-message ${
-                        waitingUsers === 0 ? '' : ''
-                      }`}
-                    >
-                      <I18n>Currently awaiting assistance</I18n>: {waitingUsers}{' '}
-                      <I18n
-                        render={translate =>
-                          waitingUsers === 1
-                            ? translate('person')
-                            : translate('people')
-                        }
-                      />
+                      <Link
+                        to={`appointment/${selectedTechBar.values['Id']}`}
+                        className="btn btn-primary card-button"
+                      >
+                        <I18n>Schedule Now</I18n> →
+                      </Link>
+                      <div
+                        className={`waiting-users-message ${
+                          waitingUsers === 0 ? '' : ''
+                        }`}
+                      >
+                        <I18n>Currently awaiting assistance</I18n>:{' '}
+                        {waitingUsers}{' '}
+                        <I18n
+                          render={translate =>
+                            waitingUsers === 1
+                              ? translate('person')
+                              : translate('people')
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
 
           <div className="page-panel__body container">
             <section className="mt-4">
-              <div className="info-tile__wrapper">
-                <Link
-                  to={`appointment/${selectedTechBar.values['Id']}`}
-                  className="info-tile"
-                >
-                  <div className="icon">
-                    <span className="fa fa-calendar-o fa-fw" />
-                  </div>
-                  <div className="title">
-                    <span className="fa fa-calendar-o fa-fw" />
-                    <I18n>Schedule</I18n>
-                  </div>
-                  <p className="description">
-                    <I18n>Schedule an appointment.</I18n>
-                  </p>
-                </Link>
-                <Link to="past" className="info-tile">
-                  <div className="icon">
-                    <span className="fa fa-clock-o fa-fw" />
-                  </div>
-                  <div className="title">
-                    <span className="fa fa-clock-o fa-fw" />
-                    <I18n>History</I18n>
-                  </div>
-                  <p className="description">
-                    <I18n>View all of your past appointments.</I18n>
-                  </p>
-                </Link>
-                <I18n
-                  render={translate => (
-                    <div
-                      className="info-tile actionable"
-                      onClick={() =>
-                        openModalForm({
-                          formSlug: 'general-feedback',
-                          kappSlug: kapp.slug,
-                          values: {
-                            'Scheduler Id': selectedTechBar.values['Id'],
-                          },
-                          title: `${translate(
-                            selectedTechBar.values['Name'],
-                          )} ${translate('Feedback')}`,
-                          confirmationMessage: translate(
-                            'Thank you for your feedback.',
-                          ),
-                        })
-                      }
-                    >
-                      <div className="icon">
-                        <span className="fa fa-comment-o fa-fw" />
-                      </div>
-                      <div className="title">
-                        <span className="fa fa-comment-o fa-fw" />
-                        <I18n>Feedback</I18n>
-                      </div>
-                      <p className="description">
-                        <I18n>Questions, comments, or concerns.</I18n>
-                      </p>
+              {selectedTechBar ? (
+                <div className="info-tile__wrapper">
+                  <Link
+                    to={`appointment/${selectedTechBar.values['Id']}`}
+                    className="info-tile"
+                  >
+                    <div className="icon">
+                      <span className="fa fa-calendar-o fa-fw" />
                     </div>
-                  )}
-                />
-              </div>
+                    <div className="title">
+                      <span className="fa fa-calendar-o fa-fw" />
+                      <I18n>Schedule</I18n>
+                    </div>
+                    <p className="description">
+                      <I18n>Schedule an appointment.</I18n>
+                    </p>
+                  </Link>
+                  <Link to="past" className="info-tile">
+                    <div className="icon">
+                      <span className="fa fa-clock-o fa-fw" />
+                    </div>
+                    <div className="title">
+                      <span className="fa fa-clock-o fa-fw" />
+                      <I18n>History</I18n>
+                    </div>
+                    <p className="description">
+                      <I18n>View all of your past appointments.</I18n>
+                    </p>
+                  </Link>
+                  <I18n
+                    render={translate => (
+                      <div
+                        className="info-tile actionable"
+                        onClick={() =>
+                          openModalForm({
+                            formSlug: 'general-feedback',
+                            kappSlug: kapp.slug,
+                            values: {
+                              'Scheduler Id': selectedTechBar.values['Id'],
+                            },
+                            title: `${translate(
+                              selectedTechBar.values['Name'],
+                            )} ${translate('Feedback')}`,
+                            confirmationMessage: translate(
+                              'Thank you for your feedback.',
+                            ),
+                          })
+                        }
+                      >
+                        <div className="icon">
+                          <span className="fa fa-comment-o fa-fw" />
+                        </div>
+                        <div className="title">
+                          <span className="fa fa-comment-o fa-fw" />
+                          <I18n>Feedback</I18n>
+                        </div>
+                        <p className="description">
+                          <I18n>Questions, comments, or concerns.</I18n>
+                        </p>
+                      </div>
+                    )}
+                  />
+                </div>
+              ) : <div className="alert alert-warning alert-bar">
+                <div className="h5">There are no Tech Bars configured.</div>
+                <div>Please contact an administrator.</div>
+              </div>}
             </section>
             <section className="mt-4">
               <h2 className="section__title">
