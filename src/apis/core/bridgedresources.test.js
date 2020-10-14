@@ -3,6 +3,7 @@ import axios from 'axios';
 import { resolvePromiseWith } from '../../../tests/utils/promises';
 import {
   bridgedResourceUrl,
+  bridgedResourceData,
   fetchBridgedResource,
   countBridgedResource,
 } from './bridgedresources';
@@ -60,26 +61,32 @@ describe('bridged resource api', () => {
         'user/mock-kapp/formslug/bridgedResources/Collection',
       );
     });
+  });
+
+  describe('#bridgedResourceData', () => {
+    test('without data options', () => {
+      expect(bridgedResourceData(options)).toEqual('');
+    });
 
     test('with limit option', () => {
       options.limit = 10;
-      expect(bridgedResourceUrl(options)).toMatch(/limit=10/);
+      expect(bridgedResourceData(options)).toMatch(/limit=10/);
     });
 
     test('with offset option', () => {
       options.offset = 10;
-      expect(bridgedResourceUrl(options)).toMatch(/offset=10/);
+      expect(bridgedResourceData(options)).toMatch(/offset=10/);
     });
 
     describe('values option', () => {
       test('with one value', () => {
         options.values = { a: 'b' };
-        expect(bridgedResourceUrl(options)).toMatch(/values%5Ba%5D=b/);
+        expect(bridgedResourceData(options)).toMatch(/values%5Ba%5D=b/);
       });
 
       test('with multiple values', () => {
         options.values = { a: 'b', c: 'd' };
-        const url = bridgedResourceUrl(options);
+        const url = bridgedResourceData(options);
         expect(url).toMatch(/values%5Ba%5D=b/);
         expect(url).toMatch(/values%5Bc%5D=d/);
       });
@@ -88,12 +95,12 @@ describe('bridged resource api', () => {
     describe('metadata option', () => {
       test('with one value', () => {
         options.metadata = { a: 'b' };
-        expect(bridgedResourceUrl(options)).toMatch(/metadata%5Ba%5D=b/);
+        expect(bridgedResourceData(options)).toMatch(/metadata%5Ba%5D=b/);
       });
 
       test('with multiple values', () => {
         options.metadata = { a: 'b', c: 'd' };
-        const url = bridgedResourceUrl(options);
+        const url = bridgedResourceData(options);
         expect(url).toMatch(/metadata%5Ba%5D=b/);
         expect(url).toMatch(/metadata%5Bc%5D=d/);
       });
@@ -102,12 +109,12 @@ describe('bridged resource api', () => {
     describe('attributes option', () => {
       test('with one attribute', () => {
         options.attributes = ['a'];
-        expect(bridgedResourceUrl(options)).toMatch(/attributes=a/);
+        expect(bridgedResourceData(options)).toMatch(/attributes=a/);
       });
 
       test('with multiple values', () => {
         options.attributes = ['a', 'b'];
-        expect(bridgedResourceUrl(options)).toMatch(/attributes=a,b/);
+        expect(bridgedResourceData(options)).toMatch(/attributes=a%2Cb/);
       });
     });
   });
@@ -123,7 +130,7 @@ describe('bridged resource api', () => {
             count: 2,
           },
         };
-        axios.get = resolvePromiseWith(response);
+        axios.post = resolvePromiseWith(response);
       });
 
       test('does not return errors', () => {
@@ -161,7 +168,7 @@ describe('bridged resource api', () => {
               },
             },
           };
-          axios.get = resolvePromiseWith(response);
+          axios.post = resolvePromiseWith(response);
         });
 
         test('does not return errors', () => {
@@ -199,7 +206,7 @@ describe('bridged resource api', () => {
               },
             },
           };
-          axios.get = resolvePromiseWith(response);
+          axios.post = resolvePromiseWith(response);
         });
 
         test('does not return errors', () => {
