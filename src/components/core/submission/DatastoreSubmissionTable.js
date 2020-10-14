@@ -2,7 +2,7 @@ import { generateTable } from '../../table/Table';
 import { searchSubmissions } from '../../../apis';
 import { generatePaginationParams } from '../../../apis/http';
 import { filterDataSources, filters } from './DatastoreSubmissionFilters';
-import { Set } from 'immutable';
+import { Map, Set } from 'immutable';
 
 const dataSource = ({ formSlug, include }) => ({
   fn: searchSubmissions,
@@ -24,6 +24,7 @@ const dataSource = ({ formSlug, include }) => ({
         // need to pass undefined instead of null so the `q` parameter is not
         // added to the query string with empty value
         q: paramData.filters.getIn(['query', 'q']) || undefined,
+        orderBy: paramData.filters.getIn(['query', 'orderBy']) || undefined,
         ...generatePaginationParams(paramData),
       },
     },

@@ -28,7 +28,6 @@ const validateOptions = (functionName, requiredOptions, options) => {
   const attributesRequiringKappSlug = [
     'categoryAttributeDefinitions',
     'kappAttributeDefinitions',
-    'formAttributeDefinitions',
   ];
 
   const kappSlugMissing =
