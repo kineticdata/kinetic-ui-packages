@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Router } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
-import { Icon, ErrorMessage, LoadingMessage } from '@kineticdata/bundle-common';
+import { ErrorMessage, LoadingMessage } from '@kineticdata/bundle-common';
 import { QueueSettings } from './QueueSettings';
 import { actions as formActions } from '../../redux/modules/settingsForms';
 import { PageTitle } from '../shared/PageTitle';
@@ -91,14 +91,24 @@ export const Settings = () => (
 );
 
 const SettingsCard = ({ path, icon, name, description }) => (
-  <Link to={path} className="card card--settings">
-    <h1>
-      <Icon image={icon || 'fa-sticky-note-o'} background="blueSlate" />
-      <I18n>{name}</I18n>
-    </h1>
-    <p>
-      <I18n>{description}</I18n>
-    </p>
+  <Link to={path} className="card card--light">
+    <div className="card__bar card__bar--sm card__bar--dark" />
+    <div className="card__col">
+      <div className="card__row-title">
+        <span
+          className={`fa fa-${(icon || 'cog').replace(
+            /^fa-/i,
+            '',
+          )} fa-fw fa-rounded bg-dark`}
+        />
+        <span>
+          <I18n>{name}</I18n>
+        </span>
+      </div>
+      <div className="card__row text-muted">
+        <I18n>{description}</I18n>
+      </div>
+    </div>
   </Link>
 );
 
@@ -124,7 +134,7 @@ const SettingsNavigationComponent = ({ isSpaceAdmin }) => (
         </div>
       </div>
 
-      <div className="cards__wrapper cards__wrapper--seconds">
+      <div className="cards cards--seconds">
         {isSpaceAdmin && (
           <SettingsCard
             name="General Settings"
