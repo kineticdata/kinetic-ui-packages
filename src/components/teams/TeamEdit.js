@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { TeamForm, I18n, refetchTable } from '@kineticdata/react';
 import { compose, withHandlers } from 'recompose';
-import { FormComponents, TeamCard, addToast } from '@kineticdata/bundle-common';
+import { FormComponents, addToast } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { Link } from '@reach/router';
 
@@ -40,6 +40,7 @@ const TeamEditComponent = ({ formKey, slug, handleSave, handleDelete }) => (
           handleDelete,
           submitLabel: 'Update Team',
           cancelPath: '..',
+          components: { Link },
         }),
         FormLayout,
       }}
@@ -76,7 +77,7 @@ const TeamEditComponent = ({ formKey, slug, handleSave, handleDelete }) => (
       {({ form, bindings: { team, values }, initialized }) =>
         initialized && (
           <Fragment>
-            <div className="page-panel page-panel--two-thirds page-panel--white">
+            <div className="page-panel page-panel--white">
               <div className="page-title">
                 <div
                   role="navigation"
@@ -99,25 +100,6 @@ const TeamEditComponent = ({ formKey, slug, handleSave, handleDelete }) => (
                 </div>
               </div>
               {form}
-            </div>
-            <div className="page-panel page-panel--one-thirds page-panel--sidebar">
-              <br />
-              <TeamCard
-                team={{
-                  name: values.getIn(['parentTeam', 'name'])
-                    ? `${values.getIn(['parentTeam', 'name'])}::${values.get(
-                        'localName',
-                      )}`
-                    : values.get('localName'),
-                  slug,
-                  description: values.get('description'),
-                  attributesMap: { Icon: [values.get('icon')].filter(Boolean) },
-                  memberships: values
-                    .get('memberships')
-                    .map(user => ({ user }))
-                    .toJS(),
-                }}
-              />
             </div>
           </Fragment>
         )

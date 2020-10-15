@@ -60,6 +60,7 @@ export const UserEditComponent = ({
           handleDelete,
           submitLabel: 'Update User',
           cancelPath: '..',
+          components: { Link },
         }),
         FormLayout,
       }}
