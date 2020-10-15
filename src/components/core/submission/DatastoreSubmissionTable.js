@@ -2,7 +2,7 @@ import { generateTable } from '../../table/Table';
 import { searchSubmissions } from '../../../apis';
 import { generatePaginationParams } from '../../../apis/http';
 import { filterDataSources, filters } from './DatastoreSubmissionFilters';
-import { Map, Set } from 'immutable';
+import { Set } from 'immutable';
 
 const dataSource = ({ formSlug, include }) => ({
   fn: searchSubmissions,

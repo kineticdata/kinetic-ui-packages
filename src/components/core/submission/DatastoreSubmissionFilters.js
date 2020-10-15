@@ -112,8 +112,9 @@ const availableOptions = currentPart => ({ values, fields }) => {
   return fields
     .filter(
       f =>
-        (values.get(currentPart) === f || !usedFields.includes(f)) &&
-        !TIMELINES.includes(f),
+        (currentPart.startsWith('range') && TIMELINES.includes(f)) ||
+        ((values.get(currentPart) === f || !usedFields.includes(f)) &&
+          !TIMELINES.includes(f)),
     )
     .map(f => Map({ label: f, value: f }));
 };
@@ -232,23 +233,14 @@ export const filters = () => ({ form, indexOptions, maxLength }) =>
       type: 'select',
       options: availableOptions('range-part'),
       onChange: ({ values }, { setValue }) => {
-        // 1. If you specify a range query that field is the only order by, but there's an open spot to choose a timeline field.
-        // 2. If you specify a timeline in your order by it becomes the last order by.
-        // 3. If you don't specify a timeline in your order by we'll automatically add createdAt at the end.
-        //
-        // [        ]
-        // [ Status ] <--
-        // [        ]
-        //
-        // q=values[Status] IN ("Active", "Pending") AND values[Due] > "2020-09"&orderBy=values[Status],values[Due],createdAt
-
         // Recalculate order by.
         const value = values.get('range-part');
 
         // Clear out all of the order by values, range supersedes.
-        // Range(0, MAX_PART_LENGTH).forEach(i => setValue(`orderby${i}-part`, ''));
         setValue('orderby0-part', value);
-        setValue('orderby1-part', '');
+        Range(1, MAX_PART_LENGTH).forEach(i =>
+          setValue(`orderby${i}-part`, ''),
+        );
       },
       transient: true,
     },
