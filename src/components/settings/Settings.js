@@ -82,7 +82,7 @@ const SettingsCard = ({ path, icon, name, description }) => (
           className={`fa fa-${(icon || 'cog').replace(
             /^fa-/i,
             '',
-          )} fa-fw bg-dark`}
+          )} fa-fw fa-rounded bg-dark`}
         />
         <span>
           <I18n>{name}</I18n>

@@ -2,89 +2,6 @@
  *   Card Overrides ~ services
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-.card--category,
-.card--request,
-.card--service {
-  border: 1px solid $gray16;
-  margin-bottom: 0.75rem;
-  padding: 0.6875rem 1rem;
-  transition: background-color 0.3s;
-  @include setBgColorAndHover($white);
-
-  &:hover {
-    text-decoration: none;
-  }
-
-  h1 {
-    color: $gray80;
-    display: inline-flex;
-    font-size: 1.375rem;
-    font-weight: 600;
-    line-height: 2.25rem;
-    margin: 0;
-  }
-
-  p {
-    color: $gray60;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    margin-bottom: 0;
-    @include word-break;
-  }
-}
-.card--category {
-  p {
-    margin-left: 1.875rem;
-    font-size: 1rem;
-  }
-}
-// Request Card
-.card--request {
-  h1 {
-    align-items: center;
-    display: flex;
-    font-size: 1.125rem;
-    line-height: 1.5rem;
-  }
-
-  p {
-    color: $gray60;
-    font-size: 0.9375rem;
-    line-height: 1rem;
-    padding: 0.625rem 0;
-  }
-
-  .card-icon {
-    margin-top: 0;
-  }
-
-  .fa.edit {
-    color: $gray60;
-    line-height: 1.5rem;
-  }
-
-  .meta dl {
-    color: $gray80;
-    font-size: 0.75rem;
-    margin-bottom: 0;
-    line-height: 0.875rem;
-    dd {
-      margin-bottom: 0;
-    }
-  }
-}
-
-.card-icon {
-  &--greengrass {
-    background-color: $green-grass;
-  }
-
-  &--sunflower {
-    background-color: $sunflower;
-  }
-}
-//
-
 .card .status {
   text-align: center;
   padding: 0.125rem 0.625rem;
@@ -118,26 +35,5 @@
   &--danger {
     color: darken($red, 18);
     background-color: rgba($red, 0.1);
-  }
-}
-
-// Empty State Card
-.card--empty-state {
-  margin-top: 1rem;
-  padding: 1rem;
-  text-align: center;
-  align-items: center;
-  background-color: transparent;
-
-  h1 {
-    font-size: 1.125rem;
-    color: $blue-slate;
-    font-weight: 600;
-    margin-top: 1rem;
-  }
-
-  p {
-    color: $blue-gray;
-    font-size: 0.875rem;
   }
 }
