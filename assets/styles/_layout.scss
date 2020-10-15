@@ -62,11 +62,9 @@
         min-height: 0px;
         width: 330px;
         margin: 0 0 0 auto;
-        border-top-color: $sunflower;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
 
-        .card-body {
-          flex-basis: 0;
+        .card__bar {
+          border-color: $sunflower;
         }
 
         .waiting-users-message {

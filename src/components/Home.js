@@ -80,27 +80,32 @@ export const HomeComponent = ({
                 </div>
                 {selectedTechBar && (
                   <div className="hero-card">
-                    <div className="card card--tech-bar-loc">
-                      <div className="card-body">
-                        <span className="icon fa fa-map-marker" />
-                        <div className="content">
-                          <span className="title">
-                            <I18n>{selectedTechBar.values['Name']}</I18n>
+                    <div className="card">
+                      <div className="card__bar card__bar--xs" />
+                      <div className="card__row flex-grow-1 flex-shrink-1 overflow-auto">
+                        <div className="card__row-prepend">
+                          <span className="fa fa-map-marker fa-3x" />
+                        </div>
+                        <div className="card__col">
+                          <div className="card__row">
+                            <strong>
+                              <I18n>{selectedTechBar.values['Name']}</I18n>
+                            </strong>
                             {techBars.size > 1 && (
                               <button
-                                className="btn btn-inverse btn-sm"
+                                className="btn btn-inverse btn-sm ml-auto"
                                 onClick={() => setModalOpen(true)}
                               >
                                 <I18n>Change</I18n>
                               </button>
                             )}
-                          </span>
+                          </div>
                           {selectedTechBar.values['Location'] && (
-                            <div className="subtitle">
+                            <div className="card__row-meta text-muted pt-0">
                               <I18n>{selectedTechBar.values['Location']}</I18n>
                             </div>
                           )}
-                          <div className="details">
+                          <div className="card__row-meta flex-column flex-grow-1 flex-shrink-1 overflow-auto pt-0 mt-1">
                             {selectedTechBar.values['Details'] && (
                               <p>
                                 <I18n>{selectedTechBar.values['Details']}</I18n>
@@ -109,26 +114,32 @@ export const HomeComponent = ({
                           </div>
                         </div>
                       </div>
-                      <Link
-                        to={`appointment/${selectedTechBar.values['Id']}`}
-                        className="btn btn-primary card-button"
-                      >
-                        <I18n>Schedule Now</I18n> →
-                      </Link>
-                      <div
-                        className={`waiting-users-message ${
-                          waitingUsers === 0 ? '' : ''
-                        }`}
-                      >
-                        <I18n>Currently awaiting assistance</I18n>:{' '}
-                        {waitingUsers}{' '}
-                        <I18n
-                          render={translate =>
-                            waitingUsers === 1
-                              ? translate('person')
-                              : translate('people')
-                          }
-                        />
+                      <div className="card__col pt-0 flex-grow-0 flex-shrink-0">
+                        <div className="card__row">
+                          <Link
+                            to={`appointment/${selectedTechBar.values['Id']}`}
+                            className="btn btn-primary flex-grow-1"
+                          >
+                            <I18n>Schedule Now</I18n> →
+                          </Link>
+                        </div>
+                        <div className="card__row pt-0">
+                          <div
+                            className={`waiting-users-message ${
+                              waitingUsers === 0 ? '' : ''
+                            }`}
+                          >
+                            <I18n>Currently awaiting assistance</I18n>:{' '}
+                            {waitingUsers}{' '}
+                            <I18n
+                              render={translate =>
+                                waitingUsers === 1
+                                  ? translate('person')
+                                  : translate('people')
+                              }
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -202,10 +213,12 @@ export const HomeComponent = ({
                     )}
                   />
                 </div>
-              ) : <div className="alert alert-warning alert-bar">
-                <div className="h5">There are no Tech Bars configured.</div>
-                <div>Please contact an administrator.</div>
-              </div>}
+              ) : (
+                <div className="alert alert-warning alert-bar">
+                  <div className="h5">There are no Tech Bars configured.</div>
+                  <div>Please contact an administrator.</div>
+                </div>
+              )}
             </section>
             <section className="mt-4">
               <h2 className="section__title">
@@ -218,7 +231,7 @@ export const HomeComponent = ({
                 emptyMessage="As you schedule appointments, they'll appear here."
               >
                 {data => (
-                  <div className="cards__wrapper mb-3">
+                  <div className="cards mb-3">
                     {data.map(appt => {
                       const techBar = techBars.find(
                         t => t.values['Id'] === appt.values['Scheduler Id'],
@@ -239,50 +252,56 @@ export const HomeComponent = ({
                           to={`appointment/${appt.values['Scheduler Id']}/${
                             appt.id
                           }`}
-                          className="card card--appt"
+                          className="card"
                           key={appt.id}
                         >
-                          <i
-                            className="fa fa-calendar fa-fw card-icon"
-                            style={{ background: 'rgb(255, 74, 94)' }}
-                          />
-                          <div className="card-body">
-                            <span className="card-title">
-                              <Moment
-                                timestamp={date}
-                                format={Moment.formats.dateWithDay}
+                          <div className="card__row">
+                            <div className="card__row-prepend">
+                              <span
+                                className="fa fa-calendar fa-rounded"
+                                style={{ background: 'rgb(255, 74, 94)' }}
                               />
-                            </span>
-                            <p className="card-subtitle">
-                              <Moment
-                                timestamp={start}
-                                format={Moment.formats.time}
-                              />
-                              {` - `}
-                              <Moment
-                                timestamp={end}
-                                format={Moment.formats.time}
-                              />
-                            </p>
-                            {techBar && (
-                              <p className="card-meta">
-                                <strong>
-                                  <I18n>{techBar.values['Name']}</I18n>
-                                </strong>
-                              </p>
-                            )}
-                            <span
-                              className={`badge ${
-                                appt.coreState === 'Closed'
-                                  ? 'badge-dark'
-                                  : 'badge-success'
-                              }`}
-                            >
-                              <I18n>{appt.values['Status']}</I18n>
-                            </span>
-                            <p className="card-text">
-                              {appt.values['Summary']}
-                            </p>
+                            </div>
+                            <div className="card__col">
+                              <div className="card__row-multi">
+                                <div className="card__row-subtitle">
+                                  <Moment
+                                    timestamp={date}
+                                    format={Moment.formats.dateWithDay}
+                                  />
+                                </div>
+                                <div className="card__row text-muted">
+                                  <Moment
+                                    timestamp={start}
+                                    format={Moment.formats.time}
+                                  />
+                                  {` - `}
+                                  <Moment
+                                    timestamp={end}
+                                    format={Moment.formats.time}
+                                  />
+                                </div>
+                                <div className="card__row-meta">
+                                  <strong>
+                                    <I18n>{techBar.values['Name']}</I18n>
+                                  </strong>
+                                </div>
+                                <div className="card__row-meta">
+                                  {appt.values['Summary']}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="card__row-append">
+                              <span
+                                className={`badge badge-pill badge-${
+                                  appt.coreState === 'Closed'
+                                    ? 'dark'
+                                    : 'success'
+                                }`}
+                              >
+                                <I18n>{appt.values['Status']}</I18n>
+                              </span>
+                            </div>
                           </div>
                         </Link>
                       );

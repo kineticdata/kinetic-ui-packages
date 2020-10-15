@@ -51,10 +51,10 @@ export const TechBarsComponent = ({
           </div>
         </div>
         <section>
-          <div className="cards__wrapper cards__wrapper--thirds">
+          <div className="cards cards--thirds">
             {techBars.map(techBar => (
               <div
-                className="card card--tech-bar-loc"
+                className="card"
                 key={techBar.id}
                 style={
                   currentTechBar && techBar.id === currentTechBar.id
@@ -62,32 +62,42 @@ export const TechBarsComponent = ({
                     : undefined
                 }
               >
-                <div className="card-body">
-                  <span className="icon fa fa-map-marker" />
-                  <div className="content">
-                    <span className="title">
-                      <I18n>{techBar.values['Name']}</I18n>
-                    </span>
+                <div
+                  className="card__bar card__bar--xs card__bar--subtle"
+                  style={
+                    currentTechBar && techBar.id === currentTechBar.id
+                      ? { borderTopColor: Constants.COLORS.sunflower }
+                      : undefined
+                  }
+                />
+                <div className="card__row flex-grow-1">
+                  <div className="card__row-prepend">
+                    <span className="fa fa-map-marker fa-3x" />
+                  </div>
+                  <div className="card__col">
+                    <div className="card__row">
+                      <strong>
+                        <I18n>{techBar.values['Name']}</I18n>
+                      </strong>
+                    </div>
                     {techBar.values['Location'] && (
-                      <div className="subtitle">
+                      <div className="card__row-meta text-muted pt-0">
                         <I18n>{techBar.values['Location']}</I18n>
                       </div>
                     )}
-                    <div className="details">
-                      {techBar.values['Description'] && (
-                        <p>
-                          <I18n>{techBar.values['Description']}</I18n>
-                        </p>
-                      )}
-                      {techBar.values['Details'] && (
-                        <p>
-                          <I18n>{techBar.values['Details']}</I18n>
-                        </p>
-                      )}
-                    </div>
+                    {techBar.values['Description'] && (
+                      <div className="card__row-meta pt-1">
+                        <I18n>{techBar.values['Description']}</I18n>
+                      </div>
+                    )}
+                    {techBar.values['Details'] && (
+                      <div className="card__row-meta pt-1">
+                        <I18n>{techBar.values['Details']}</I18n>
+                      </div>
+                    )}
                   </div>
                   {hasTechBarDisplayRole(techBar.values['Name']) && (
-                    <span>
+                    <div className="card__row-append">
                       <Dropdown
                         toggle={toggleDropdown(techBar.id)}
                         isOpen={openDropdown === techBar.id}
@@ -144,31 +154,35 @@ export const TechBarsComponent = ({
                           </Link>
                         </DropdownMenu>
                       </Dropdown>
-                    </span>
+                    </div>
                   )}
                 </div>
-                <Link
-                  to={`../appointment/${techBar.values['Id']}`}
-                  className="btn btn-primary card-button"
-                >
-                  <I18n>Schedule Now</I18n> →
-                </Link>
-                {techBars.size > 1 && (
-                  <div className="card-actions">
-                    {currentTechBar && techBar.id === currentTechBar.id ? (
-                      <button className="btn btn-sm btn-success" disabled>
-                        <I18n>Current Tech Bar</I18n>
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-link btn-sm"
-                        onClick={() => selectCurrentTechBar(techBar.id)}
-                      >
-                        <I18n>Set as Current Tech Bar</I18n>
-                      </button>
-                    )}
+                <div className="card__col pt-0 flex-grow-0">
+                  <div className="card__row">
+                    <Link
+                      to={`../appointment/${techBar.values['Id']}`}
+                      className="btn btn-primary flex-grow-1"
+                    >
+                      <I18n>Schedule Now</I18n> →
+                    </Link>
                   </div>
-                )}
+                  {techBars.size > 1 && (
+                    <div className="card__row">
+                      {currentTechBar && techBar.id === currentTechBar.id ? (
+                        <button className="btn btn-sm btn-success" disabled>
+                          <I18n>Current Tech Bar</I18n>
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-link btn-sm"
+                          onClick={() => selectCurrentTechBar(techBar.id)}
+                        >
+                          <I18n>Set as Current Tech Bar</I18n>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>

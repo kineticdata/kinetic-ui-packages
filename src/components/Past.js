@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from '../redux/store';
 import { compose, lifecycle } from 'recompose';
-import { Constants, StateListWrapper } from '@kineticdata/bundle-common';
+import { StateListWrapper } from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { Link } from '@reach/router';
 import { actions } from '../redux/modules/appointments';
@@ -39,7 +39,7 @@ export const PastComponent = ({ techBars, error, pastAppointments }) => (
             emptyMessage="Your completed and cancelled appointments will appear here."
           >
             {data => (
-              <div className="cards__wrapper">
+              <div className="cards">
                 {data.map(appt => {
                   const techBar = techBars.find(
                     t => t.values['Id'] === appt.values['Scheduler Id'],
@@ -60,48 +60,54 @@ export const PastComponent = ({ techBars, error, pastAppointments }) => (
                       to={`appointment/${appt.values['Scheduler Id']}/${
                         appt.id
                       }`}
-                      className="card card--appt"
+                      className="card"
                       key={appt.id}
                     >
-                      <i
-                        className="fa fa-calendar fa-fw card-icon"
-                        style={{ background: 'rgb(255, 74, 94)' }}
-                      />
-                      <div className="card-body">
-                        <span className="card-title">
-                          <Moment
-                            timestamp={date}
-                            format={Constants.MOMENT_FORMATS.dateWithDay}
+                      <div className="card__row">
+                        <div className="card__row-prepend">
+                          <span
+                            className="fa fa-calendar fa-rounded"
+                            style={{ background: 'rgb(255, 74, 94)' }}
                           />
-                        </span>
-                        <p className="card-subtitle">
-                          <Moment
-                            timestamp={start}
-                            format={Constants.MOMENT_FORMATS.time}
-                          />
-                          {` - `}
-                          <Moment
-                            timestamp={end}
-                            format={Constants.MOMENT_FORMATS.time}
-                          />
-                        </p>
-                        {techBar && (
-                          <span className="card-meta">
-                            <strong>
-                              <I18n>{techBar.values['Name']}</I18n>
-                            </strong>
+                        </div>
+                        <div className="card__col">
+                          <div className="card__row-multi">
+                            <div className="card__row-subtitle">
+                              <Moment
+                                timestamp={date}
+                                format={Moment.formats.dateWithDay}
+                              />
+                            </div>
+                            <div className="card__row text-muted">
+                              <Moment
+                                timestamp={start}
+                                format={Moment.formats.time}
+                              />
+                              {` - `}
+                              <Moment
+                                timestamp={end}
+                                format={Moment.formats.time}
+                              />
+                            </div>
+                            <div className="card__row-meta">
+                              <strong>
+                                <I18n>{techBar.values['Name']}</I18n>
+                              </strong>
+                            </div>
+                            <div className="card__row-meta">
+                              {appt.values['Summary']}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card__row-append">
+                          <span
+                            className={`badge badge-pill badge-${
+                              appt.coreState === 'Closed' ? 'dark' : 'success'
+                            }`}
+                          >
+                            <I18n>{appt.values['Status']}</I18n>
                           </span>
-                        )}
-                        <span
-                          className={`badge ${
-                            appt.coreState === 'Closed'
-                              ? 'badge-dark'
-                              : 'badge-success'
-                          }`}
-                        >
-                          <I18n>{appt.values['Status']}</I18n>
-                        </span>
-                        <p className="card-text">{appt.values['Summary']}</p>
+                        </div>
                       </div>
                     </Link>
                   );

@@ -54,7 +54,7 @@ export const AppointmentFormComponent = ({ id, kapp, techBar }) => {
               </h1>
             </div>
           </div>
-          <div className="content-wrapper">
+          <div className="content-wrapper form-unstyled">
             <I18n context={`kapps.${kapp.slug}.forms.appointment`}>
               <CoreForm submission={id} review={true} />
             </I18n>
