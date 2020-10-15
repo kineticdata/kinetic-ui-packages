@@ -93,7 +93,7 @@ const SurveyListComponent = ({
               {homepageMode === 'list' ? (
                 <SurveyTable surveyData={surveys} />
               ) : (
-                <div className="cards__wrapper cards__wrapper--seconds">
+                <div className="cards cards--seconds">
                   {surveys.map((survey, i) => (
                     <SurveyCard key={i} survey={survey} />
                   ))}
