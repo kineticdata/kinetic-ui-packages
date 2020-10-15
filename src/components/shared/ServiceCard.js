@@ -12,7 +12,7 @@ export const ServiceCard = ({ path, form }) => (
             className={`fa fa-${(form.icon || 'circle').replace(
               /^fa-/i,
               '',
-            )} fa-fw`}
+            )} fa-fw fa-rounded`}
           />
           <span>
             <I18n>{form.name}</I18n>
