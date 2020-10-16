@@ -77,10 +77,6 @@
     font-size: 1rem;
     line-height: 1.5rem;
   }
-  .card-icon {
-    margin-top: 12px;
-    border-radius: 50%;
-  }
 }
 
 .submission-tabs {
@@ -88,12 +84,4 @@
   .nav-tabs {
     margin-bottom: 1.5rem;
   }
-}
-
-.card--submission-confirmation {
-  padding: 0;
-  margin: 1rem 0;
-  text-align: center;
-  align-items: center;
-  background-color: $white;
 }

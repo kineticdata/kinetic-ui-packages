@@ -4,6 +4,10 @@ export const COMMENT_FORM = 'comment';
 export const FEEDBACK_FORM = 'feedback';
 export const HELP_FORM = 'help';
 
+// Category slugs
+export const FEATURED_SERVICES_CATEGORY = 'featured-services';
+export const HOME_PAGE_SERVICES_CATEGORY = 'home-page-services';
+
 // Attribute names
 export const STATUSES_ACTIVE = 'Statuses - Active';
 export const STATUSES_INACTIVE = 'Statuses - Inactive';
@@ -15,6 +19,7 @@ export const ATTRIBUTE_HIDDEN = 'Hidden';
 export const ATTRIBUTE_SERVICE_DAYS_DUE = 'Service Days Due';
 export const ATTRIBUTE_SERVICE_OWNING_TEAM = 'Service Owning Team';
 export const ATTRIBUTE_KEYWORD = 'Keyword';
+export const ATTRIBUTE_FEATURED_COLOR = 'Featured Color';
 
 // Field names
 export const STATUS_FIELD = 'Status';

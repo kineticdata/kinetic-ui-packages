@@ -8,14 +8,18 @@ import {
   withState,
 } from 'recompose';
 import { Redirect } from '@reach/router';
-import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
+import {
+  ActivityFeed,
+  ErrorUnexpected,
+  Loading,
+} from '@kineticdata/bundle-common';
 import { connect } from './redux/store';
 
 import { actions as categoriesActions } from './redux/modules/servicesApp';
 import { actions as submissionCountActions } from './redux/modules/submissionCounts';
 
 import { PageTitle } from './components/shared/PageTitle';
-import { CatalogContainer } from './components/home/CatalogContainer';
+import { Catalog } from './components/home/Catalog';
 import { CategoryListContainer } from './components/category_list/CategoryListContainer';
 import { CategoryContainer } from './components/category/CategoryContainer';
 import { CatalogSearchResultsContainer } from './components/search_results/CatalogSearchResultsContainer';
@@ -23,7 +27,7 @@ import { Sidebar } from './components/Sidebar';
 import { Sidebar as SettingsSidebar } from './components/settings/Sidebar';
 import { FormContainer } from './components/form/FormContainer';
 import { FormListContainer } from './components/form_list/FormListContainer';
-import { RequestListContainer } from './components/request_list/RequestListContainer';
+import { RequestList } from './components/request_list/RequestList';
 import { RequestShowContainer } from './components/request/RequestShowContainer';
 import { Settings } from './components/settings/Settings';
 import { I18n } from '@kineticdata/react';
@@ -31,6 +35,8 @@ import { I18n } from '@kineticdata/react';
 /*****************************************************************************
  *** PRIVATE APP
  *****************************************************************************/
+
+export const requestFeedKey = 'request-activity-feed';
 
 const SubmissionRedirect = props => (
   <Redirect
@@ -78,7 +84,7 @@ const AppComponent = props => {
                 appLocation={props.appLocation}
               />
 
-              <CatalogContainer
+              <Catalog
                 path="/"
                 homePageMode={props.homePageMode}
                 homePageItems={props.homePageItems}
@@ -92,12 +98,17 @@ const AppComponent = props => {
               <FormContainer path="forms/:formSlug/:submissionId" />
               <CatalogSearchResultsContainer path="search" />
               <CatalogSearchResultsContainer path="search/:query" />
-              <RequestListContainer path="requests" />
-              <RequestListContainer path="requests/:type" />
-              <FormContainer path="requests/request/:submissionId" />
-              <FormContainer path="requests/:type/request/:submissionId" />
-              <RequestShowContainer path="/requests/request/:submissionId/:mode" />
-              <RequestShowContainer path="/requests/:type/request/:submissionId/:mode" />
+              <ActivityFeed.MountWrapper
+                feedKey={requestFeedKey}
+                path="requests"
+              >
+                <RequestList feedKey={requestFeedKey} default />
+                <RequestList feedKey={requestFeedKey} path=":type" />
+                <FormContainer path="request/:submissionId" />
+                <FormContainer path=":type/request/:submissionId" />
+                <RequestShowContainer path="request/:submissionId/:mode" />
+                <RequestShowContainer path=":type/request/:submissionId/:mode" />
+              </ActivityFeed.MountWrapper>
             </Router>
           </main>
         </I18n>
