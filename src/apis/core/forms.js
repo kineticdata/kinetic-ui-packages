@@ -6,8 +6,8 @@ export const fetchForms = (options = {}) => {
   const { kappSlug } = options;
 
   const path = kappSlug
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/form2s`
-    : `${bundle.apiLocation()}/form2s`;
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms`
+    : `${bundle.apiLocation()}/forms`;
 
   // Build URL and fetch the space.
   return axios
@@ -31,8 +31,8 @@ export const fetchForm = (options = {}) => {
   }
 
   const path = kappSlug
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/form2s/${formSlug}`
-    : `${bundle.apiLocation()}/form2s/${formSlug}`;
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`
+    : `${bundle.apiLocation()}/forms/${formSlug}`;
 
   // Build URL and fetch the space.
   return axios
@@ -73,8 +73,8 @@ export const updateForm = (options = {}) => {
   }
 
   const path = !kappSlug
-    ? `${bundle.apiLocation()}/form2s/${formSlug}`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/form2s/${formSlug}`;
+    ? `${bundle.apiLocation()}/forms/${formSlug}`
+    : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`;
 
   return axios
     .put(path, form, {

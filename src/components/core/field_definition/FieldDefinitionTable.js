@@ -35,10 +35,6 @@ const filters = () => () => [{ name: 'name', label: 'Name', type: 'text' }];
 
 const columns = [
   {
-    value: 'key',
-    title: 'Key',
-  },
-  {
     value: 'name',
     title: 'Name',
   },
