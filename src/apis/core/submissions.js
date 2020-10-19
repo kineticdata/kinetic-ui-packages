@@ -461,15 +461,13 @@ export const updateSubmission = options => {
 };
 
 export const deleteSubmission = options => {
-  const { id, datastore = false } = options;
+  const { id } = options;
 
   if (!id) {
     throw new Error('deleteSubmission failed! The option "id" is required.');
   }
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/submissions/${id}`
-    : `${bundle.apiLocation()}/submissions/${id}`;
+  const path = `${bundle.apiLocation()}/submissions/${id}`;
 
   return (
     axios

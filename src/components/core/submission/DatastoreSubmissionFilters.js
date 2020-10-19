@@ -16,11 +16,21 @@ const staticParts = List([
 
 export const MAX_PART_LENGTH = 10;
 
-export const filterDataSources = ({ formSlug }) => ({
+export const filterDataSources = ({ formSlug, kappSlug }) => ({
   form: {
-    fn: fetchForm,
-    params: [{ formSlug, include: 'indexDefinitions,fields' }],
-    transform: result => result.form,
+    fn:
+      !formSlug && !kappSlug
+        ? fetchSpace
+        : kappSlug && !formSlug
+        ? fetchKapp
+        : fetchForm,
+    params: [{ kappSlug, formSlug, include: 'indexDefinitions,fields' }],
+    transform: result =>
+      !formSlug && !kappSlug
+        ? result.space
+        : kappSlug && !formSlug
+        ? result.kapp
+        : result.form,
   },
   fields: {
     fn: form =>

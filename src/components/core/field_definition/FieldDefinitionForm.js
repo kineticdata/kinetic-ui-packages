@@ -20,14 +20,9 @@ const handleSubmit = ({ kappSlug, name }) => (values, { form }) => {
   ).dataType;
 
   const field = values.set('dataType', dataType);
-  const fields = (name
+  const fields = name
     ? form.get('fields').map(fd => (fd.get('name') === name ? field : fd))
-    : form.get('fields').push(field)
-  ).map(fd =>
-    fd.get('key', '') === ''
-      ? fd.set('key', fd.get('name').replace(/\W/g, ''))
-      : fd,
-  );
+    : form.get('fields').push(field);
 
   return (kappSlug
     ? updateKapp({ kapp: { fields }, kappSlug })
