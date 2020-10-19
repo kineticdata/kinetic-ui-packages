@@ -1,5 +1,5 @@
-import { isImmutable, List, Range } from 'immutable';
-import { fetchForm } from '../../../apis';
+import { List, Map, Range } from 'immutable';
+import { fetchForm, fetchKapp, fetchSpace } from '../../../apis';
 import { defineKqlQuery } from '../../../helpers';
 
 const staticParts = List([
@@ -182,21 +182,20 @@ const serializeQuery = ({ values }) => {
   };
 };
 
-export const filters = () => ({ form, indexOptions, maxLength }) =>
+export const filters = () => ({ form, fields, indexOptions }) =>
   form &&
-  indexOptions &&
-  maxLength && [
-    {
-      label: 'Search By',
-      initialValue: indexOptions.first().get('value'),
-      name: 'index',
-      onChange: indexChangeFn,
-      options: indexOptions,
-      transient: true,
-      type: 'select',
-    },
-    ...Range(0, maxLength)
+  indexOptions && [
+    ...Range(0, MAX_PART_LENGTH)
       .flatMap(i => [
+        {
+          enabled: enabledFn(i),
+          name: `op${i}-part`,
+          type: 'select',
+          visible: visibleFn(i),
+          onChange: partChangeFn(i),
+          options: availableOptions(`op${i}-part`),
+          transient: true,
+        },
         {
           enabled: enabledFn(i),
           name: `op${i}-operator`,
@@ -206,15 +205,11 @@ export const filters = () => ({ form, indexOptions, maxLength }) =>
           options: [
             { label: '=', value: 'equals' },
             { label: 'in', value: 'in' },
-            { label: '>', value: 'greaterThan' },
-            { label: '>=', value: 'greaterThanOrEquals' },
-            { label: '<', value: 'lessThan' },
-            { label: '<=', value: 'lessThanOrEquals' },
-            { label: 'between', value: 'between' },
-            { label: 'startsWith', value: 'startsWith' },
           ],
+          initialValue: 'equals',
           transient: true,
         },
+
         {
           enabled: enabledFn(i),
           name: `op${i}-operand1`,

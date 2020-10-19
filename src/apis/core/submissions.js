@@ -335,18 +335,15 @@ export class SubmissionSearch {
 }
 
 export const searchSubmissions = options => {
-  const { kapp, form, search, datastore = false } = options;
-  const kappSlug = datastore ? null : kapp ? kapp : bundle.kappSlug();
+  const { kapp, form, search } = options;
 
-  if (datastore && !form) {
-    throw new Error('Datastore searches must be scoped to a form.');
-  }
-
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/forms/${form}/submissions`
+  const path = !kapp
+    ? form
+      ? `${bundle.apiLocation()}/forms/${form}/submissions`
+      : `${bundle.apiLocation()}/submissions`
     : form
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${form}/submissions`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/submissions`;
+    ? `${bundle.apiLocation()}/kapps/${kapp}/forms/${form}/submissions`
+    : `${bundle.apiLocation()}/kapps/${kapp}/submissions`;
 
   const meta = { ...search };
   // Format includes.

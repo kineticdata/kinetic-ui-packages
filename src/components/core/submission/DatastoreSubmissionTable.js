@@ -4,23 +4,22 @@ import { generatePaginationParams } from '../../../apis/http';
 import { filterDataSources, filters } from './DatastoreSubmissionFilters';
 import { Set } from 'immutable';
 
-const dataSource = ({ formSlug, include }) => ({
-  fn: searchSubmissions,
+const dataSource = ({ kappSlug, formSlug, include }) => ({
+  fn: options => searchSubmissions(options),
   params: paramData => [
     {
-      datastore: true,
       form: formSlug,
+      kapp: kappSlug,
       search: {
-        direction: paramData.sortDirection,
+        direction: paramData.sortDirection.toUpperCase(),
         include: Set([
           ...(typeof include === 'string'
             ? include.split(',')
             : Array.isArray(include)
-              ? include
-              : []),
+            ? include
+            : []),
           'details',
         ]).toJS(),
-        index: paramData.filters.getIn(['query', 'index']),
         // need to pass undefined instead of null so the `q` parameter is not
         // added to the query string with empty value
         q: paramData.filters.getIn(['query', 'q']) || undefined,
@@ -124,7 +123,7 @@ const columns = [
 ];
 
 export const DatastoreSubmissionTable = generateTable({
-  tableOptions: ['formSlug', 'include'],
+  tableOptions: ['kappSlug', 'formSlug', 'include'],
   columns,
   dataSource,
   filters,
