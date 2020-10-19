@@ -65,7 +65,7 @@ export const RequestCard = ({ submission, path }) => {
             className={`fa fa-${(Form(form).icon || 'circle').replace(
               /^fa-/i,
               '',
-            )} fa-fw`}
+            )} fa-fw fa-rounded`}
           />
           <span>
             <I18n>{form.name}</I18n>

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { compose, lifecycle, withHandlers } from 'recompose';
 import { FormComponents, addToast } from '@kineticdata/bundle-common';
+import { Link } from '@reach/router';
 import { PageTitle } from '../../shared/PageTitle';
 import { actions } from '../../../redux/modules/settingsCategories';
 import { connect } from '../../../redux/store';
@@ -42,6 +43,7 @@ export const CategoryComponent = ({
       FormButtons: FormComponents.generateFormButtons({
         submitLabel: 'Save',
         cancelPath: parent ? '../..' : '..',
+        components: { Link },
       }),
     }}
     addFields={() => ({ category }) => [
