@@ -35,7 +35,7 @@ export const filterDataSources = ({ formSlug, kappSlug }) => ({
   fields: {
     fn: form =>
       staticParts.concat(
-        form.get('fields').map(f => `value[${f.get('name')}]`),
+        form.get('fields').map(f => `values[${f.get('name')}]`),
       ),
     params: ({ form }) => form && [form],
   },
