@@ -1,12 +1,16 @@
 import React from 'react';
 import { Link } from '@reach/router';
-
 import { Nav, NavItem } from 'reactstrap';
+import { get } from 'immutable';
+import { services } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import { isActiveClass } from '../utils';
 
-const formatCount = count =>
-  !count ? '' : count >= 1000 ? '(999+)' : `(${count})`;
+const SubmissionCount = get(services, 'SubmissionCount', props => {
+  const count =
+    props.counts && props.coreState && props.counts[props.coreState];
+  return !count ? '' : count >= 1000 ? '(999+)' : `(${count})`;
+});
 
 const itemLink = (mode, slug) =>
   `${mode === 'Categories' ? 'categories' : 'forms'}/${slug}`;
@@ -28,19 +32,22 @@ export const Sidebar = props => (
           <NavItem>
             <Link to="requests/Open" getProps={isActiveClass('nav-link')}>
               <span className="fa fa-fw fa-book" />
-              <I18n>Open</I18n> {formatCount(props.counts.Submitted)}
+              <I18n>Open</I18n>{' '}
+              <SubmissionCount counts={props.counts} coreState="Submitted" />
             </Link>
           </NavItem>
           <NavItem>
             <Link to="requests/Closed" getProps={isActiveClass('nav-link')}>
               <span className="fa fa-fw fa-times" />
-              <I18n>Closed</I18n> {formatCount(props.counts.Closed)}
+              <I18n>Closed</I18n>{' '}
+              <SubmissionCount counts={props.counts} coreState="Closed" />
             </Link>
           </NavItem>
           <NavItem>
             <Link to="requests/Draft" getProps={isActiveClass('nav-link')}>
               <span className="fa fa-fw fa-inbox" />
-              <I18n>Draft</I18n> {formatCount(props.counts.Draft)}
+              <I18n>Draft</I18n>{' '}
+              <SubmissionCount counts={props.counts} coreState="Draft" />
             </Link>
           </NavItem>
         </Nav>

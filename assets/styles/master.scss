@@ -4,9 +4,11 @@
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .package--services {
+  @import 'variables';
   @import 'layout';
   @import 'navigation';
   @import 'home';
+  @import 'page-title';
   @import 'search';
   @import 'submission';
   @import 'submission-timeline';

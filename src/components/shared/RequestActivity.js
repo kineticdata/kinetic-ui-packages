@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from '../../redux/store';
 import { compose, withHandlers, withProps } from 'recompose';
 import { RequestCard } from '../shared/RequestCard';
-import { ActivityFeed } from '@kineticdata/bundle-common';
+import { get } from 'immutable';
+import { ActivityFeed, services } from '@kineticdata/bundle-common';
 import { searchSubmissions, SubmissionSearch } from '@kineticdata/react';
 import * as constants from '../../constants';
 import { getSubmissionPath } from '../../utils';
@@ -87,49 +88,53 @@ const RequestActivityComponent = props => (
   />
 );
 
-export const RequestActivity = compose(
-  connect((state, props) => ({
-    kappSlug: state.app.kapp.slug,
-    username: state.app.profile.username,
-    appLocation: state.app.location,
-    coreState:
-      props.type === 'Draft'
-        ? constants.CORE_STATE_DRAFT
-        : props.type === 'Open'
-          ? constants.CORE_STATE_SUBMITTED
-          : props.type === 'Closed'
-            ? constants.CORE_STATE_CLOSED
-            : null,
-  })),
-  withHandlers({
-    buildRequestCard: props => record => (
-      <RequestCard
-        key={record.id}
-        submission={record}
-        path={getSubmissionPath(props.appLocation, record, null, props.type)}
-      />
-    ),
-  }),
-  withProps(props => ({
-    submissionsDataSource: {
-      requests: {
-        fn: searchSubmissions,
-        params: (prevParams, prevResult) =>
-          prevParams && prevResult
-            ? prevResult.nextPageToken
-              ? { ...prevParams, pageToken: prevResult.nextPageToken }
-              : null
-            : {
-                kapp: props.kappSlug,
-                limit: props.chunkSize || props.pageSize || 10,
-                search: buildSearch(props.coreState, props.username),
-              },
-        transform: result => ({
-          data: result.submissions,
-          nextPageToken: result.nextPageToken,
-        }),
-        component: props.buildRequestCard,
+export const RequestActivity = get(
+  services,
+  'RequestActivity',
+  compose(
+    connect((state, props) => ({
+      kappSlug: state.app.kapp.slug,
+      username: state.app.profile.username,
+      appLocation: state.app.location,
+      coreState:
+        props.type === 'Draft'
+          ? constants.CORE_STATE_DRAFT
+          : props.type === 'Open'
+            ? constants.CORE_STATE_SUBMITTED
+            : props.type === 'Closed'
+              ? constants.CORE_STATE_CLOSED
+              : null,
+    })),
+    withHandlers({
+      buildRequestCard: props => record => (
+        <RequestCard
+          key={record.id}
+          submission={record}
+          path={getSubmissionPath(props.appLocation, record, null, props.type)}
+        />
+      ),
+    }),
+    withProps(props => ({
+      submissionsDataSource: {
+        requests: {
+          fn: searchSubmissions,
+          params: (prevParams, prevResult) =>
+            prevParams && prevResult
+              ? prevResult.nextPageToken
+                ? { ...prevParams, pageToken: prevResult.nextPageToken }
+                : null
+              : {
+                  kapp: props.kappSlug,
+                  limit: props.chunkSize || props.pageSize || 10,
+                  search: buildSearch(props.coreState, props.username),
+                },
+          transform: result => ({
+            data: result.submissions,
+            nextPageToken: result.nextPageToken,
+          }),
+          component: props.buildRequestCard,
+        },
       },
-    },
-  })),
-)(RequestActivityComponent);
+    })),
+  )(get(services, 'RequestActivityComponent', RequestActivityComponent)),
+);

@@ -1,6 +1,13 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { Card, CardCol, CardRow, TimeAgo } from '@kineticdata/bundle-common';
+import { get } from 'immutable';
+import {
+  Card,
+  CardCol,
+  CardRow,
+  TimeAgo,
+  services,
+} from '@kineticdata/bundle-common';
 import * as helpers from '../../utils';
 import * as constants from '../../constants';
 import { Form } from '../../models';
@@ -53,7 +60,8 @@ const ClosedDateListItem = ({ submission }) =>
     </div>
   );
 
-export const RequestCard = ({ submission, path }) => {
+export const RequestCard = get(services, 'RequestCard', props => {
+  const { submission, path } = props;
   const form = submission.form;
   const color = helpers.getStatusColor(submission);
   return (
@@ -102,4 +110,4 @@ export const RequestCard = ({ submission, path }) => {
       </CardCol>
     </Card>
   );
-};
+});
