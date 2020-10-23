@@ -3,12 +3,19 @@ import { Link } from '@reach/router';
 import { connect } from '../redux/store';
 import { PageTitle } from './shared/PageTitle';
 import { I18n } from '@kineticdata/react';
+import { Card, CardCol, CardRow } from '@kineticdata/bundle-common';
 
 const SettingsCard = ({ path, icon, name, description }) => (
-  <Link to={path} className="card card--light">
-    <div className="card__bar card__bar--sm card__bar--dark" />
-    <div className="card__col">
-      <div className="card__row-title">
+  <Card
+    to={path}
+    color="light"
+    components={{ Link }}
+    bar={true}
+    barColor="dark"
+    barSize="sm"
+  >
+    <CardCol>
+      <CardRow type="title">
         <span
           className={`fa fa-${(icon || 'cog').replace(
             /^fa-/i,
@@ -18,12 +25,10 @@ const SettingsCard = ({ path, icon, name, description }) => (
         <span>
           <I18n>{name}</I18n>
         </span>
-      </div>
-      <div className="card__row text-muted">
-        <I18n>{description}</I18n>
-      </div>
-    </div>
-  </Link>
+      </CardRow>
+      <CardRow className="text-muted">{description}</CardRow>
+    </CardCol>
+  </Card>
 );
 
 const SettingsComponent = ({
