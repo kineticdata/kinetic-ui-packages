@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { TimeAgo } from '@kineticdata/bundle-common';
+import { Card, CardCol, CardRow, TimeAgo } from '@kineticdata/bundle-common';
 import * as helpers from '../../utils';
 import * as constants from '../../constants';
 import { Form } from '../../models';
@@ -57,10 +57,15 @@ export const RequestCard = ({ submission, path }) => {
   const form = submission.form;
   const color = helpers.getStatusColor(submission);
   return (
-    <Link to={path} className="card card--left-bar">
-      <div className={`card__bar card__bar--xs card__bar--${color}`} />
-      <div className="card__col">
-        <div className="card__row-title">
+    <Card
+      to={path}
+      bar="left"
+      barColor={color}
+      barSize="xs"
+      components={{ Link }}
+    >
+      <CardCol>
+        <CardRow type="title">
           <span
             className={`fa fa-${(Form(form).icon || 'circle').replace(
               /^fa-/i,
@@ -73,15 +78,15 @@ export const RequestCard = ({ submission, path }) => {
           <span className={`badge badge-pill badge-muted badge-${color}`}>
             <I18n>{helpers.getStatus(submission)}</I18n>
           </span>
-        </div>
-        <div className="card__row text-muted">
+        </CardRow>
+        <CardRow className="text-muted">
           {submission.label === submission.id ? (
             <I18n>{form.description}</I18n>
           ) : (
             submission.label
           )}
-        </div>
-        <div className="card__row-meta text-muted">
+        </CardRow>
+        <CardRow type="meta">
           <dl>
             <div>
               <dt>
@@ -93,8 +98,8 @@ export const RequestCard = ({ submission, path }) => {
             <EstCompletionListItem submission={submission} />
             <ClosedDateListItem submission={submission} />
           </dl>
-        </div>
-      </div>
-    </Link>
+        </CardRow>
+      </CardCol>
+    </Card>
   );
 };
