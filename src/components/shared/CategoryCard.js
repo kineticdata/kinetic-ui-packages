@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from '@reach/router';
 import { I18n } from '@kineticdata/react';
-import { Card, CardCol, CardRow } from '@kineticdata/bundle-common';
+import { get } from 'immutable';
+import { Card, CardCol, CardRow, services } from '@kineticdata/bundle-common';
 
-export const CategoryCard = props => (
+export const CategoryCard = get(services, 'CategoryCard', props => (
   <Card
     to={props.path}
     bar="left"
@@ -23,4 +24,4 @@ export const CategoryCard = props => (
       )}
     </CardCol>
   </Card>
-);
+));

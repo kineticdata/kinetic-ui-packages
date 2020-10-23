@@ -2,24 +2,26 @@ import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
 import { connect } from '../../redux/store';
 import { compose, withProps } from 'recompose';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 import classNames from 'classnames';
+import { get } from 'immutable';
 import {
   PageTitle as CommonPageTitle,
   selectCurrentKapp,
+  services,
 } from '@kineticdata/bundle-common';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu } from 'reactstrap';
 import { I18n } from '@kineticdata/react';
 
 import heroImage from '../../../assets/images/hero_geometry.jpg';
 
-const Breadcrumbs = ({ breadcrumbs }) =>
-  breadcrumbs ? (
+const PageTitleBreadcrumbs = get(services, 'PageTitleBreadcrumbs', props => {
+  return props.breadcrumbs ? (
     <div
       role="navigation"
       aria-label="breadcrumbs"
       className="page-title__breadcrumbs"
     >
-      {breadcrumbs.filter(b => !!b && b.label).map((b, i) => (
+      {props.breadcrumbs.filter(b => !!b && b.label).map((b, i) => (
         <span key={`breadcrumb-${i}`}>
           {b.to ? (
             <Link to={b.to}>
@@ -32,6 +34,7 @@ const Breadcrumbs = ({ breadcrumbs }) =>
       ))}
     </div>
   ) : null;
+});
 
 const actionMapper = light => (a, i) => {
   const actionClass = classNames({
@@ -137,41 +140,52 @@ const mapStateToProps = state => ({
   kapp: selectCurrentKapp(state),
 });
 
-const PageTitleComponent = ({
-  parts,
-  breadcrumbs,
-  title,
-  actions,
-  meta,
-  hero = true,
-  image = hero,
-  center = false,
-  container = false,
-  children,
-}) => {
+const PageTitleContainer = get(services, 'PageTitleContainer', props => {
+  const {
+    hero = true,
+    image = hero,
+    center = false,
+    container = false,
+    children,
+  } = props;
   const Container = container
     ? ({ children }) => <div className="container">{children}</div>
     : Fragment;
   return (
+    <div
+      className={classNames({
+        'page-title-heading': !hero,
+        'page-title-hero': hero,
+        'page-title-hero--image': hero && image,
+        'page-title-hero--center': hero && center,
+      })}
+      style={hero && image ? { backgroundImage: `url(${heroImage})` } : {}}
+    >
+      <Container>{children}</Container>
+    </div>
+  );
+});
+
+const PageTitleComponent = props => {
+  const {
+    parts,
+    breadcrumbs,
+    title,
+    actions,
+    meta,
+    hero = true,
+    children,
+  } = props;
+  return (
     <>
       <CommonPageTitle parts={parts} />
       {(breadcrumbs || title || actions || meta || children) && (
-        <div
-          className={classNames({
-            'page-title-heading': !hero,
-            'page-title-hero': hero,
-            'page-title-hero--image': hero && image,
-            'page-title-hero--center': hero && center,
-          })}
-          style={hero && image ? { backgroundImage: `url(${heroImage})` } : {}}
-        >
-          <Container>
-            <Breadcrumbs breadcrumbs={breadcrumbs} />
-            <Content title={title} actions={actions} hero={hero} />
-            <Meta meta={meta} />
-            {children}
-          </Container>
-        </div>
+        <PageTitleContainer {...props}>
+          <PageTitleBreadcrumbs breadcrumbs={breadcrumbs} />
+          <Content title={title} actions={actions} hero={hero} />
+          <Meta meta={meta} />
+          {children}
+        </PageTitleContainer>
       )}
     </>
   );
