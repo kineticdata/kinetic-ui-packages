@@ -1,7 +1,12 @@
 import React, { Fragment } from 'react';
 import { connect } from '../redux/store';
 import { compose, lifecycle } from 'recompose';
-import { StateListWrapper } from '@kineticdata/bundle-common';
+import {
+  Card,
+  CardCol,
+  CardRow,
+  StateListWrapper,
+} from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
 import { Link } from '@reach/router';
 import { actions } from '../redux/modules/appointments';
@@ -56,29 +61,29 @@ export const PastComponent = ({ techBars, error, pastAppointments }) => (
                     .clone()
                     .add(appt.values['Event Duration'], 'minute');
                   return (
-                    <Link
+                    <Card
+                      key={appt.id}
                       to={`appointment/${appt.values['Scheduler Id']}/${
                         appt.id
                       }`}
-                      className="card"
-                      key={appt.id}
+                      components={{ Link }}
                     >
-                      <div className="card__row">
-                        <div className="card__row-prepend">
+                      <CardRow>
+                        <CardRow type="prepend">
                           <span
                             className="fa fa-calendar fa-rounded"
                             style={{ background: 'rgb(255, 74, 94)' }}
                           />
-                        </div>
-                        <div className="card__col">
-                          <div className="card__row-multi">
-                            <div className="card__row-subtitle">
+                        </CardRow>
+                        <CardCol>
+                          <CardRow type="multi">
+                            <CardRow type="subtitle">
                               <Moment
                                 timestamp={date}
                                 format={Moment.formats.dateWithDay}
                               />
-                            </div>
-                            <div className="card__row text-muted">
+                            </CardRow>
+                            <CardRow className="text-muted">
                               <Moment
                                 timestamp={start}
                                 format={Moment.formats.time}
@@ -88,18 +93,18 @@ export const PastComponent = ({ techBars, error, pastAppointments }) => (
                                 timestamp={end}
                                 format={Moment.formats.time}
                               />
-                            </div>
-                            <div className="card__row-meta">
+                            </CardRow>
+                            <CardRow type="meta">
                               <strong>
                                 <I18n>{techBar.values['Name']}</I18n>
                               </strong>
-                            </div>
-                            <div className="card__row-meta">
+                            </CardRow>
+                            <CardRow type="meta">
                               {appt.values['Summary']}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="card__row-append">
+                            </CardRow>
+                          </CardRow>
+                        </CardCol>
+                        <CardRow type="append">
                           <span
                             className={`badge badge-pill badge-${
                               appt.coreState === 'Closed' ? 'dark' : 'success'
@@ -107,9 +112,9 @@ export const PastComponent = ({ techBars, error, pastAppointments }) => (
                           >
                             <I18n>{appt.values['Status']}</I18n>
                           </span>
-                        </div>
-                      </div>
-                    </Link>
+                        </CardRow>
+                      </CardRow>
+                    </Card>
                   );
                 })}
               </div>

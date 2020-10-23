@@ -2,6 +2,9 @@ import React, { Fragment } from 'react';
 import { connect } from '../redux/store';
 import { compose, withHandlers, withState } from 'recompose';
 import {
+  Card,
+  CardCol,
+  CardRow,
   selectCurrentKapp,
   Constants,
   Utils,
@@ -53,51 +56,45 @@ export const TechBarsComponent = ({
         <section>
           <div className="cards cards--thirds">
             {techBars.map(techBar => (
-              <div
-                className="card"
+              <Card
                 key={techBar.id}
-                style={
+                bar={true}
+                barSize="xs"
+                barColor="subtle"
+                barStyle={
                   currentTechBar && techBar.id === currentTechBar.id
                     ? { borderTopColor: Constants.COLORS.sunflower }
                     : undefined
                 }
               >
-                <div
-                  className="card__bar card__bar--xs card__bar--subtle"
-                  style={
-                    currentTechBar && techBar.id === currentTechBar.id
-                      ? { borderTopColor: Constants.COLORS.sunflower }
-                      : undefined
-                  }
-                />
-                <div className="card__row flex-grow-1">
-                  <div className="card__row-prepend">
+                <CardRow className="flex-grow-1">
+                  <CardRow type="prepend">
                     <span className="fa fa-map-marker fa-3x" />
-                  </div>
-                  <div className="card__col">
-                    <div className="card__row">
+                  </CardRow>
+                  <CardCol>
+                    <CardRow>
                       <strong>
                         <I18n>{techBar.values['Name']}</I18n>
                       </strong>
-                    </div>
+                    </CardRow>
                     {techBar.values['Location'] && (
-                      <div className="card__row-meta text-muted pt-0">
+                      <CardRow type="meta" className="text-muted pt-0">
                         <I18n>{techBar.values['Location']}</I18n>
-                      </div>
+                      </CardRow>
                     )}
                     {techBar.values['Description'] && (
-                      <div className="card__row-meta pt-1">
+                      <CardRow type="meta" className="pt-1">
                         <I18n>{techBar.values['Description']}</I18n>
-                      </div>
+                      </CardRow>
                     )}
                     {techBar.values['Details'] && (
-                      <div className="card__row-meta pt-1">
+                      <CardRow type="meta" className="pt-1">
                         <I18n>{techBar.values['Details']}</I18n>
-                      </div>
+                      </CardRow>
                     )}
-                  </div>
+                  </CardCol>
                   {hasTechBarDisplayRole(techBar.values['Name']) && (
-                    <div className="card__row-append">
+                    <CardRow type="append">
                       <Dropdown
                         toggle={toggleDropdown(techBar.id)}
                         isOpen={openDropdown === techBar.id}
@@ -154,20 +151,20 @@ export const TechBarsComponent = ({
                           </Link>
                         </DropdownMenu>
                       </Dropdown>
-                    </div>
+                    </CardRow>
                   )}
-                </div>
-                <div className="card__col pt-0 flex-grow-0">
-                  <div className="card__row">
+                </CardRow>
+                <CardCol className="pt-0 flex-grow-0">
+                  <CardRow>
                     <Link
                       to={`../appointment/${techBar.values['Id']}`}
                       className="btn btn-primary flex-grow-1"
                     >
                       <I18n>Schedule Now</I18n> →
                     </Link>
-                  </div>
+                  </CardRow>
                   {techBars.size > 1 && (
-                    <div className="card__row">
+                    <CardRow>
                       {currentTechBar && techBar.id === currentTechBar.id ? (
                         <button className="btn btn-sm btn-success" disabled>
                           <I18n>Current Tech Bar</I18n>
@@ -180,10 +177,10 @@ export const TechBarsComponent = ({
                           <I18n>Set as Current Tech Bar</I18n>
                         </button>
                       )}
-                    </div>
+                    </CardRow>
                   )}
-                </div>
-              </div>
+                </CardCol>
+              </Card>
             ))}
           </div>
         </section>

@@ -3,6 +3,9 @@ import { connect } from '../redux/store';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { Modal, ModalBody } from 'reactstrap';
 import {
+  Card,
+  CardCol,
+  CardRow,
   Utils,
   openModalForm,
   StateListWrapper,
@@ -80,14 +83,13 @@ export const HomeComponent = ({
                 </div>
                 {selectedTechBar && (
                   <div className="hero-card">
-                    <div className="card">
-                      <div className="card__bar card__bar--xs" />
-                      <div className="card__row flex-grow-1 flex-shrink-1 overflow-auto">
-                        <div className="card__row-prepend">
+                    <Card bar={true} barSize="xs">
+                      <CardRow className="flex-grow-1 flex-shrink-1 overflow-auto">
+                        <CardRow type="prepend">
                           <span className="fa fa-map-marker fa-3x" />
-                        </div>
-                        <div className="card__col">
-                          <div className="card__row">
+                        </CardRow>
+                        <CardCol>
+                          <CardRow>
                             <strong>
                               <I18n>{selectedTechBar.values['Name']}</I18n>
                             </strong>
@@ -99,31 +101,34 @@ export const HomeComponent = ({
                                 <I18n>Change</I18n>
                               </button>
                             )}
-                          </div>
+                          </CardRow>
                           {selectedTechBar.values['Location'] && (
-                            <div className="card__row-meta text-muted pt-0">
+                            <CardRow type="meta" className="text-muted p-0">
                               <I18n>{selectedTechBar.values['Location']}</I18n>
-                            </div>
+                            </CardRow>
                           )}
-                          <div className="card__row-meta flex-column flex-grow-1 flex-shrink-1 overflow-auto pt-0 mt-1">
+                          <CardRow
+                            type="meta"
+                            className="flex-column flex-grow-1 flex-shrink-1 overflow-auto pt-0 mt-1"
+                          >
                             {selectedTechBar.values['Details'] && (
                               <p>
                                 <I18n>{selectedTechBar.values['Details']}</I18n>
                               </p>
                             )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="card__col pt-0 flex-grow-0 flex-shrink-0">
-                        <div className="card__row">
+                          </CardRow>
+                        </CardCol>
+                      </CardRow>
+                      <CardCol className="pt-0 flex-grow-0 flex-shrink-0">
+                        <CardRow>
                           <Link
                             to={`appointment/${selectedTechBar.values['Id']}`}
                             className="btn btn-primary flex-grow-1"
                           >
                             <I18n>Schedule Now</I18n> →
                           </Link>
-                        </div>
-                        <div className="card__row pt-0">
+                        </CardRow>
+                        <CardRow className="pt-0">
                           <div
                             className={`waiting-users-message ${
                               waitingUsers === 0 ? '' : ''
@@ -139,9 +144,9 @@ export const HomeComponent = ({
                               }
                             />
                           </div>
-                        </div>
-                      </div>
-                    </div>
+                        </CardRow>
+                      </CardCol>
+                    </Card>
                   </div>
                 )}
               </div>
@@ -248,29 +253,29 @@ export const HomeComponent = ({
                         .clone()
                         .add(appt.values['Event Duration'], 'minute');
                       return (
-                        <Link
+                        <Card
+                          key={appt.id}
                           to={`appointment/${appt.values['Scheduler Id']}/${
                             appt.id
                           }`}
-                          className="card"
-                          key={appt.id}
+                          components={{ Link }}
                         >
-                          <div className="card__row">
-                            <div className="card__row-prepend">
+                          <CardRow>
+                            <CardRow type="prepend">
                               <span
                                 className="fa fa-calendar fa-rounded"
                                 style={{ background: 'rgb(255, 74, 94)' }}
                               />
-                            </div>
-                            <div className="card__col">
-                              <div className="card__row-multi">
-                                <div className="card__row-subtitle">
+                            </CardRow>
+                            <CardCol>
+                              <CardRow type="multi">
+                                <CardRow type="subtitle">
                                   <Moment
                                     timestamp={date}
                                     format={Moment.formats.dateWithDay}
                                   />
-                                </div>
-                                <div className="card__row text-muted">
+                                </CardRow>
+                                <CardRow className="text-muted">
                                   <Moment
                                     timestamp={start}
                                     format={Moment.formats.time}
@@ -280,18 +285,18 @@ export const HomeComponent = ({
                                     timestamp={end}
                                     format={Moment.formats.time}
                                   />
-                                </div>
-                                <div className="card__row-meta">
+                                </CardRow>
+                                <CardRow type="meta">
                                   <strong>
                                     <I18n>{techBar.values['Name']}</I18n>
                                   </strong>
-                                </div>
-                                <div className="card__row-meta">
+                                </CardRow>
+                                <CardRow type="meta">
                                   {appt.values['Summary']}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="card__row-append">
+                                </CardRow>
+                              </CardRow>
+                            </CardCol>
+                            <CardRow type="append">
                               <span
                                 className={`badge badge-pill badge-${
                                   appt.coreState === 'Closed'
@@ -301,9 +306,9 @@ export const HomeComponent = ({
                               >
                                 <I18n>{appt.values['Status']}</I18n>
                               </span>
-                            </div>
-                          </div>
-                        </Link>
+                            </CardRow>
+                          </CardRow>
+                        </Card>
                       );
                     })}
                   </div>
