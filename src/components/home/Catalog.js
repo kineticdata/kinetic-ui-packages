@@ -2,7 +2,12 @@ import React, { Fragment } from 'react';
 import { compose } from 'recompose';
 import { connect } from '../../redux/store';
 import { Link } from '@reach/router';
-import { selectCurrentKapp } from '@kineticdata/bundle-common';
+import {
+  Card,
+  CardCol,
+  CardRow,
+  selectCurrentKapp,
+} from '@kineticdata/bundle-common';
 import { CatalogSearchContainer } from '../shared/CatalogSearchContainer';
 import { CategoryCard } from '../shared/CategoryCard';
 import { ServiceCard } from '../shared/ServiceCard';
@@ -39,21 +44,23 @@ const CatalogComponent = ({
               featuredServices.allForms.size > 0 && (
                 <div className="cards cards--seconds">
                   {featuredServices.allForms.map(form => (
-                    <Link
-                      to={`forms/${form.slug}`}
-                      className={`card card--${form.featuredColor}`}
+                    <Card
                       key={form.slug}
+                      className="p-4"
+                      to={`forms/${form.slug}`}
+                      color={form.featuredColor}
+                      components={{ Link }}
                     >
-                      <div className="card__col">
-                        <div className="card__row p-4">
-                          <span className={`fa fa-${form.icon} fa-4x mr-5`} />
-                          <div className="card__col">
-                            <div className="card__row-title">{form.name}</div>
-                            <div className="card__row">{form.description}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
+                      <CardRow>
+                        <CardRow type="prepend">
+                          <span className={`fa fa-${form.icon} fa-4x mr-4`} />
+                        </CardRow>
+                        <CardCol>
+                          <CardRow type="title">{form.name}</CardRow>
+                          <CardRow>{form.description}</CardRow>
+                        </CardCol>
+                      </CardRow>
+                    </Card>
                   ))}
                 </div>
               )}

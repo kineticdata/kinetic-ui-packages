@@ -1,33 +1,26 @@
 import React from 'react';
 import { Link } from '@reach/router';
 import { I18n } from '@kineticdata/react';
+import { Card, CardCol, CardRow } from '@kineticdata/bundle-common';
 
 export const CategoryCard = props => (
-  <Link to={props.path} className="card card--left-bar">
-    <div className="card__bar card__bar--sm">
-      <div className="card__bar-icon">
-        <span
-          className={`fa fa-${(props.category.icon || 'circle').replace(
-            /^fa-/i,
-            '',
-          )} fa-fw`}
-        />
-      </div>
-    </div>
-    <div className="card__col card__col--middle">
-      <div className="card__row-title">
-        <I18n>{props.category.name}</I18n>
-      </div>
-      <div className="card__row text-muted">
-        <I18n>{props.category.description}</I18n>
-      </div>
+  <Card
+    to={props.path}
+    bar="left"
+    barSize="sm"
+    barIcon={props.category.icon}
+    components={{ Link }}
+  >
+    <CardCol middle={true}>
+      <CardRow type="title">{props.category.name}</CardRow>
+      <CardRow className="text-muted">{props.category.description}</CardRow>
       {props.countOfMatchingForms > 0 && (
-        <div className="card__row">
+        <CardRow>
           <small>
             {props.countOfMatchingForms} <I18n>Services</I18n>
           </small>
-        </div>
+        </CardRow>
       )}
-    </div>
-  </Link>
+    </CardCol>
+  </Card>
 );
