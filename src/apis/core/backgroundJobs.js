@@ -2,18 +2,22 @@ import axios from 'axios';
 import { bundle } from '../../helpers';
 import { handleErrors, paramBuilder, headerBuilder } from '../http';
 
-const backgroundJobPath = job =>
-  job
-    ? job.parentType === 'Datastore'
-      ? `${bundle.apiLocation()}/datastore/forms/${
-          job.parent.slug
-        }/backgroundJobs/${job.id || ''}`
-      : null
-    : `${bundle.apiLocation()}/backgroundJobs`;
+const backgroundJobPath = ({ formSlug, kappSlug, job } = {}) => {
+  const basePath =
+    !formSlug && !kappSlug
+      ? `${bundle.apiLocation()}/backgroundJobs`
+      : !formSlug && kappSlug
+      ? `${bundle.apiLocation()}/kapps/${kappSlug}/backgroundJobs`
+      : formSlug && !kappSlug
+      ? `${bundle.apiLocation()}/forms/${formSlug}/backgroundJobs`
+      : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/backgroundJobs`;
+
+  return basePath + (job ? `/${job}` : '');
+};
 
 export const fetchBackgroundJobs = (options = {}) =>
   axios
-    .get(backgroundJobPath(), {
+    .get(backgroundJobPath(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -23,18 +27,11 @@ export const fetchBackgroundJobs = (options = {}) =>
     .catch(handleErrors);
 
 export const createBackgroundJob = (options = {}) => {
-  const { job, type, content } = options;
-  const path = backgroundJobPath(job);
-  if (job === null) {
-    throw new Error(`createBackgroundJob failed! Property "job" is required.`);
-  }
-  if (path === null) {
-    throw new Error(
-      `createBackgroundJob failed! Unsupported parentType: 'job.parentType'`,
-    );
-  }
+  const { type, content } = options;
+  const path = backgroundJobPath(options);
+
   return axios
-    .post(path, { type, content })
+    .post(path + '?simulate', { type, content })
     .then(response => ({
       backgroundJob: response.data.backgroundJob,
     }))
@@ -42,19 +39,9 @@ export const createBackgroundJob = (options = {}) => {
 };
 
 export const updateBackgroundJob = (options = {}) => {
-  const { job, status } = options;
+  const { status } = options;
 
-  const path = backgroundJobPath(job);
-
-  if (job === null) {
-    throw new Error(`updateBackgroundJob failed! Property "job" is required.`);
-  }
-
-  if (path === null) {
-    throw new Error(
-      `updateBackgroundJob failed! Unsupported parentType: 'job.parentType'`,
-    );
-  }
+  const path = backgroundJobPath(options);
 
   return axios
     .put(
@@ -72,19 +59,7 @@ export const updateBackgroundJob = (options = {}) => {
 };
 
 export const deleteBackgroundJob = (options = {}) => {
-  const { job } = options;
-
-  const path = backgroundJobPath(job);
-
-  if (job === null) {
-    throw new Error(`deleteBackgroundJob failed! Property "job" is required.`);
-  }
-
-  if (path === null) {
-    throw new Error(
-      `deleteBackgroundJob failed! Unsupported parentType: 'job.parentType'`,
-    );
-  }
+  const path = backgroundJobPath(options);
 
   return axios
     .delete(path, {

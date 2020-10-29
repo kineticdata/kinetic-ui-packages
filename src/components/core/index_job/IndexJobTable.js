@@ -1,7 +1,8 @@
 import React from 'react';
-import { fetchBackgroundJobs, fetchForm } from '../../../apis';
+import { fetchBackgroundJobs } from '../../../apis';
 import { generateTable } from '../../table/Table';
 import { defineFilter } from '../../../helpers';
+import { isImmutable } from 'immutable';
 
 const clientSide = defineFilter(true)
   .equals('status', 'status')
@@ -10,15 +11,12 @@ const clientSide = defineFilter(true)
 
 const indexJobStatuses = ['Running', 'Paused'];
 
-const dataSource = ({ formSlug }) => ({
-  fn: () =>
-    formSlug
-      ? fetchForm({ datastore: true, formSlug, include: 'backgroundJobs' })
-      : fetchBackgroundJobs(),
+const dataSource = ({ formSlug, kappSlug }) => ({
+  fn: () => fetchBackgroundJobs({ formSlug, kappSlug }),
   clientSide,
   params: () => [],
   transform: result => ({
-    data: formSlug ? result.form.backgroundJobs : result.backgroundJobs,
+    data: result.backgroundJobs,
   }),
 });
 
@@ -65,8 +63,10 @@ const columns = [
     components: {
       BodyCell: props => (
         <td>
-          {props.value && props.value.get('count')
+          {props.value && isImmutable(props.value) && props.value.get('count')
             ? `${props.value.get('count')} submissions`
+            : props.value
+            ? props.value
             : 'None'}
         </td>
       ),
@@ -79,7 +79,7 @@ const columns = [
 ];
 
 export const IndexJobTable = generateTable({
-  tableOptions: ['formSlug'],
+  tableOptions: ['formSlug', 'kappSlug'],
   dataSource,
   columns,
   filters,

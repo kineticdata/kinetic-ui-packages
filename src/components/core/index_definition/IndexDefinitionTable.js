@@ -18,41 +18,26 @@ const dataSource = ({ kappSlug, formSlug }) => ({
     !kappSlug && !formSlug
       ? fetchSpace
       : kappSlug && !formSlug
-        ? fetchKapp
-        : fetchForm,
+      ? fetchKapp
+      : fetchForm,
   clientSide,
   params: () => [
     {
       kappSlug,
       formSlug,
-      include: 'indexDefinitions',
+      include:
+        'indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms',
     },
   ],
   transform: result => ({
     data: (!kappSlug && !formSlug
       ? result.space
       : kappSlug && !formSlug
-        ? result.kapp
-        : result.form
+      ? result.kapp
+      : result.form
     ).indexDefinitions,
   }),
 });
-
-// const filters = () => () => [
-//   { name: 'name', label: 'Name', type: 'text' },
-//   {
-//     name: 'status',
-//     label: 'Status',
-//     type: 'select',
-//     options: indexStatuses.map(el => ({ value: el, label: el })),
-//   },
-//   {
-//     name: 'unique',
-//     label: 'Unique',
-//     type: 'select',
-//     options: ['Yes', 'No'].map(el => ({ value: el, label: el })),
-//   },
-// ];
 
 const columns = [
   {
@@ -73,6 +58,14 @@ const columns = [
   {
     value: 'parts',
     title: 'Parts',
+  },
+  {
+    value: 'unpopulatedForms',
+    title: 'Unpopulated Forms',
+  },
+  {
+    value: 'detatchedForms',
+    title: 'Detatched Forms',
   },
 ];
 
