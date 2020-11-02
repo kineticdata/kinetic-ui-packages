@@ -59,6 +59,7 @@ const fields = ({ bridgeSlug, adapterClass }) => ({
       getName: property => property.get('name'),
       getRequired: property => property.get('required'),
       getSensitive: property => property.get('sensitive'),
+      getOptions: property => property.get('options'),
       getValue: property =>
         getIn(bridge, ['properties', property.get('name')], ''),
     });
