@@ -378,15 +378,13 @@ export const searchSubmissions = options => {
 };
 
 export const fetchSubmission = options => {
-  const { id, datastore } = options;
+  const { id } = options;
 
   if (!id) {
     throw new Error('fetchSubmission failed! The option "id" is required.');
   }
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/submissions/${id}`
-    : `${bundle.apiLocation()}/submissions/${id}`;
+  const path = `${bundle.apiLocation()}/submissions/${id}`;
 
   return (
     axios
