@@ -19,7 +19,7 @@ const FORM_INCLUDES =
 const KAPP_INCLUDES =
   'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms';
 const SPACE_INCLUDES =
-  'spaceAttributeDefinitions,datastoreFormAttributeDefinitions,indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms';
+  'spaceAttributeDefinitions,datastoreFormAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms';
 
 const dataSources = ({ formSlug, kappSlug, datastore }) => ({
   form: {
