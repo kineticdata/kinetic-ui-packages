@@ -10,6 +10,15 @@ import { onBlur, onChange as onChangeHandler, onFocus } from './Form';
 
 const sameName = field1 => field2 => field1.name === field2.name;
 
+export const handleSubmitErrorObject = key => results => {
+  const { [key]: value, error } = results;
+  if (error) {
+    throw (error.statusCode === 400 && error.message) ||
+      'There was an error saving.';
+  }
+  return value;
+};
+
 export const resolveFieldConfig = (
   formOptions,
   bindings,
