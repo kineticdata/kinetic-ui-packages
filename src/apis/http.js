@@ -124,28 +124,22 @@ export const apiGroup = ({ dataOption, name, plural, singular }) => ({
   }),
 });
 
-export const formPath = ({ form, kapp, datastore }) =>
-  datastore
+export const formPath = ({ form, kapp }) =>
+  !kapp
     ? form
-      ? `${bundle.spaceLocation()}/app/datastore/forms/${form}`
-      : `${bundle.spaceLocation()}/app/datastore/forms`
+      ? `${bundle.spaceLocation()}/app/forms/${form}`
+      : `${bundle.spaceLocation()}/app/forms`
     : form
     ? `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}/${form}`
     : `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}`;
 
-export const submissionPath = ({ submission, datastore }) =>
-  datastore
-    ? submission
-      ? `${bundle.spaceLocation()}/app/datastore/submissions/${submission}`
-      : `${bundle.spaceLocation()}/app/datastore/submissions`
-    : submission
+export const submissionPath = ({ submission }) =>
+  submission
     ? `${bundle.spaceLocation()}/submissions/${submission}`
     : `${bundle.spaceLocation()}/submissions`;
 
-export const corePath = ({ submission, kapp, form, datastore = false }) =>
-  submission
-    ? submissionPath({ submission, datastore })
-    : formPath({ form, kapp, datastore });
+export const corePath = ({ submission, kapp, form }) =>
+  submission ? submissionPath({ submission }) : formPath({ form, kapp });
 
 export const operations = Map({
   startsWith: (field, value) => `${field} =* "${value}"`,

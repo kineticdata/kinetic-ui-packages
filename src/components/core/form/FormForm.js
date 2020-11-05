@@ -45,9 +45,7 @@ const dataSources = ({ formSlug, kappSlug, datastore }) => ({
       {
         kappSlug,
         formSlug,
-        attributeType: !kappSlug
-          ? 'datastoreFormAttributeDefinitions'
-          : 'formAttributeDefinitions',
+        attributeType: 'formAttributeDefinitions',
       },
     ],
     transform: result => result.attributeDefinitions,

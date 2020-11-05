@@ -60,12 +60,6 @@ describe('http module', () => {
 
   describe('corePath', () => {
     describe('kapp forms and submissions', () => {
-      test('builds url with default kapp', () => {
-        expect(corePath({ form: 'ipad-request' })).toBe(
-          '/kinetic/acme/catalog/ipad-request',
-        );
-      });
-
       test('builds url with specified kapp', () => {
         expect(corePath({ form: 'ipad-request', kapp: 'services' })).toBe(
           '/kinetic/acme/services/ipad-request',
@@ -79,16 +73,14 @@ describe('http module', () => {
       });
     });
 
-    describe('datastore forms and submissions', () => {
+    describe('space forms and submissions', () => {
       test('builds url to form', () => {
-        expect(corePath({ form: 'cars', datastore: true })).toBe(
-          '/kinetic/acme/app/datastore/forms/cars',
-        );
+        expect(corePath({ form: 'cars' })).toBe('/kinetic/acme/app/forms/cars');
       });
 
       test('builds url with the submission id', () => {
-        expect(corePath({ submission: 'abc123', datastore: true })).toBe(
-          '/kinetic/acme/app/datastore/submissions/abc123',
+        expect(corePath({ submission: 'abc123' })).toBe(
+          '/kinetic/acme/submissions/abc123',
         );
       });
     });
