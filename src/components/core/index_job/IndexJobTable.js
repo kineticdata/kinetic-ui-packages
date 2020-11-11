@@ -2,7 +2,6 @@ import React from 'react';
 import { fetchBackgroundJobs } from '../../../apis';
 import { generateTable } from '../../table/Table';
 import { defineFilter } from '../../../helpers';
-import { isImmutable } from 'immutable';
 
 const clientSide = defineFilter(true)
   .equals('status', 'status')
