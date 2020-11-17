@@ -11,13 +11,13 @@ const dataSource = ({ kappSlug, formSlug, include }) => ({
       form: formSlug,
       kapp: kappSlug,
       search: {
-        direction: paramData.sortDirection.toUpperCase(),
+        direction: paramData.filters.get('orderDirection', 'ASC'),
         include: Set([
           ...(typeof include === 'string'
             ? include.split(',')
             : Array.isArray(include)
-            ? include
-            : []),
+              ? include
+              : []),
           'details',
         ]).toJS(),
         // need to pass undefined instead of null so the `q` parameter is not
