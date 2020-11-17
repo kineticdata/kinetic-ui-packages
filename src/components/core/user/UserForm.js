@@ -8,9 +8,11 @@ import {
   fetchLocales,
   fetchTimezones,
 } from '../../../apis';
+import { handleSubmitErrorObject } from '../../form/Form.helpers';
 
 const USER_INCLUDES =
   'attributesMap,authorization,memberships,profileAttributesMap';
+const EMAIL_REGEX = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
 const dataSources = ({ username, spaceSlug }) => ({
   locales: {
@@ -44,9 +46,10 @@ const dataSources = ({ username, spaceSlug }) => ({
 
 const handleSubmit = ({ username, spaceSlug }) => values => {
   const user = values.toJS();
-  return username
+  return (username
     ? updateUser({ spaceSlug, username, user })
-    : createUser({ spaceSlug, user });
+    : createUser({ spaceSlug, user })
+  ).then(handleSubmitErrorObject('user'));
 };
 
 const fields = ({ username }) => ({ user }) =>
@@ -64,6 +67,8 @@ const fields = ({ username }) => ({ user }) =>
       label: 'Email',
       type: 'text',
       initialValue: get(user, 'email') || '',
+      pattern: EMAIL_REGEX,
+      patternMessage: 'You must specify a valid email address.',
     },
     {
       name: 'displayName',

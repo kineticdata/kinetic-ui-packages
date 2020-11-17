@@ -108,6 +108,7 @@ class ChatInput extends Component {
     this.handleChatInput = this.handleChatInput.bind(this);
     this.handleAttachmentDrop = this.handleAttachmentDrop.bind(this);
     this.handleAttachmentClick = this.handleAttachmentClick.bind(this);
+    this.handleImagePaste = this.handleImagePaste.bind(this);
     this.handleDropzoneRef = this.handleDropzoneRef.bind(this);
     this.isChatInputInvalid = this.isChatInputInvalid.bind(this);
     this.toggleActionsOpen = this.toggleActionsOpen.bind(this);
@@ -155,7 +156,8 @@ class ChatInput extends Component {
     if (
       e.keyCode === 13 &&
       !e.shiftKey &&
-      this.state.chatInput.trim().length > 0
+      (this.state.chatInput.trim().length > 0 ||
+        this.state.fileAttachments.length > 0)
     ) {
       // Handle enter (but not shift enter.)
       this.handleSendChatMessage(e);
@@ -203,6 +205,29 @@ class ChatInput extends Component {
 
   handleAttachmentClick() {
     this.dropzone.open();
+  }
+
+  handleImagePaste(e) {
+    // Get the pasted image file
+    const files = [...(e.clipboardData || e.originalEvent.clipboardData).items]
+      .filter(i => /image/.test(i.type))
+      .map(i => i.getAsFile());
+
+    const notAlreadyAttached = files.filter(
+      file => !this.state.fileAttachments.find(fa => fa.name === file.name),
+    );
+
+    if (notAlreadyAttached.length > 0) {
+      // Add preview property to files
+      notAlreadyAttached.forEach(f => {
+        f.preview = URL.createObjectURL(f);
+      });
+
+      // Store the pasted image file.
+      this.setState({
+        fileAttachments: this.state.fileAttachments.concat(notAlreadyAttached),
+      });
+    }
   }
 
   handleAttachmentCancel = attachment => _e => {
@@ -327,6 +352,7 @@ class ChatInput extends Component {
                 onKeyPress={this.handleChatHotKey}
                 onFocus={this.handleFocus}
                 onBlur={this.handleBlur}
+                onPaste={this.handleImagePaste}
                 aria-label="Type your message here…"
               />
             ) : (

@@ -11,7 +11,7 @@ export const InvitationFormComponent = props => {
           <label>Invitees</label>
           <InviteesInput
             id="invitees"
-            onChange={props.handleChange}
+            onChange={props.handleUserChange}
             value={props.values.get('invitees')}
             disabledFn={props.disabledFn}
           />
@@ -34,13 +34,13 @@ export const InvitationFormComponent = props => {
         </div>
       </form>
     ),
-    invalid: props.required && props.values.get('invitees').length === 0,
+    invalid: props.required && props.values.get('invitees').size === 0,
     submit: props.handleSubmit,
     buttonProps: {
       onClick: props.handleSubmit,
       disabled:
         props.saving ||
-        (props.required && props.values.get('invitees').length === 0),
+        (props.required && props.values.get('invitees').size === 0),
     },
   });
 };
@@ -66,11 +66,15 @@ const handleChange = props => event => {
   props.setValues(values => values.set(field, value));
 };
 
+const handleUserChange = props => user => {
+  props.setValues(values => values.set('invitees', user ? user : List()));
+};
+
 const handleSubmit = props => event => {
   event && event.preventDefault && event.preventDefault();
   props.setSaving(true);
   if (typeof props.onSubmit === 'function') {
-    props.onSubmit(props.values.toJS(), () => props.setSaving(false));
+    props.onSubmit(props.values, () => props.setSaving(false));
   }
 };
 
@@ -88,8 +92,8 @@ const disabledFn = props => option => {
 export const InvitationForm = compose(
   withProps(mapProps),
   withState('saving', 'setSaving', false),
-  withState('values', 'setValues', Map({ invitees: [], message: '' })),
-  withHandlers({ handleChange, handleSubmit, disabledFn }),
+  withState('values', 'setValues', Map({ invitees: List(), message: '' })),
+  withHandlers({ handleChange, handleUserChange, handleSubmit, disabledFn }),
 )(InvitationFormComponent);
 
 export default InvitationForm;

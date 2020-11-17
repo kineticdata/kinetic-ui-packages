@@ -23,8 +23,8 @@ export const logoutDirect = () =>
 const checkedOrigin = process.env.REACT_APP_API_HOST
   ? process.env.REACT_APP_API_HOST
   : typeof window !== 'undefined'
-  ? window.location.origin
-  : null;
+    ? window.location.origin
+    : null;
 
 const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID || 'system';
 
@@ -70,26 +70,26 @@ export const singleSignOn = (spaceSlug, dimensions, target = '_blank') =>
 
     // use a larger interval in dev mode because we are going to be checking
     // by making an ajax call
-    const popupPollingInterval =
-      process.env.NODE_ENV === 'development' ? 2000 : 1000;
+    const popupPollingInterval = 2000;
+    let pollCounter = 30;
 
-    // Check the status of the popup window.  Was it closed, was it redirected
-    // back to the same host as the parent window, othewise try again later.
+    // Check the status of the popup window. If closed or open for too long,
+    // show error. Otherwise, check if profile is avilable to verify successful
+    // authentication.
     const checkPopup = async () => {
       if (popup.closed) {
         resolve({ error: 'Single Sign-on cancelled' });
-      } else if (await sameHost(window, popup)) {
-        if (
-          process.env.NODE_ENV !== 'development' &&
-          popup.location.href.includes('authentication_error')
-        ) {
-          resolve({ error: 'Single Sign-on failed' });
+      } else if (await profileAvailable()) {
+        popup.close();
+        resolve({});
+      } else {
+        if (pollCounter > 0) {
+          pollCounter--;
+          setTimeout(checkPopup, popupPollingInterval);
         } else {
           popup.close();
-          resolve({});
+          resolve({ error: 'Single Sign-on timed out' });
         }
-      } else {
-        setTimeout(checkPopup, popupPollingInterval);
       }
     };
 
@@ -97,18 +97,13 @@ export const singleSignOn = (spaceSlug, dimensions, target = '_blank') =>
     setTimeout(checkPopup, popupPollingInterval);
   });
 
-// Checks to see if the parent window and popup window have the same host, wraps
-// the check in try/catch because trying to access the location of the popup
-// throws an error if it is not the same host but we just want `false`.
-const sameHost = async (window, popup) =>
+// Checks to see if the user has been authenticated via SSO by checking if the
+// profile endpoint successfully returns data.
+const profileAvailable = async () =>
   new Promise(async resolve => {
     try {
-      if (process.env.NODE_ENV === 'development') {
-        const result = await fetchProfile({ public: true });
-        resolve(!!result.profile);
-      } else {
-        resolve(window.location.host === popup.location.host);
-      }
+      const result = await fetchProfile({ public: true });
+      resolve(!!result.profile);
     } catch (e) {
       resolve(false);
     }

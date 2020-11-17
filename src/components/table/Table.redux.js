@@ -53,25 +53,27 @@ const getInitialFilterValue = column =>
   column.has('initial')
     ? column.get('initial')
     : column.get('filter') === 'between'
-      ? List(['', ''])
-      : column.get('filter') === 'in'
-        ? List()
-        : '';
+    ? List(['', ''])
+    : column.get('filter') === 'in'
+    ? List()
+    : '';
 
 export const generateFilters = (tableKey, columns) =>
   Map(
-    columns.filter(c => c.get('filter')).reduce(
-      (filters, column) =>
-        filters.set(
-          column.get('value'),
-          Map({
-            value: getInitialFilterValue(column),
-            column,
-          }),
-        ),
+    columns
+      .filter(c => c.get('filter'))
+      .reduce(
+        (filters, column) =>
+          filters.set(
+            column.get('value'),
+            Map({
+              value: getInitialFilterValue(column),
+              column,
+            }),
+          ),
 
-      Map(),
-    ),
+        Map(),
+      ),
   );
 
 const evaluateValidFilters = table => {
@@ -109,41 +111,41 @@ regHandlers({
     !state.getIn(['tables', tableKey, 'mounted'])
       ? state
       : state.hasIn(['tables', tableKey, 'configured'])
-        ? state.setIn(['tables', tableKey, 'initialize'], false)
-        : state.mergeIn(
-            ['tables', tableKey],
-            Map({
-              data: hasData(data) ? fromJS(data) : data,
-              dataSource,
-              tableOptions,
-              columns,
-              rows: List(),
+      ? state.setIn(['tables', tableKey, 'initialize'], false)
+      : state.mergeIn(
+          ['tables', tableKey],
+          Map({
+            data: hasData(data) ? fromJS(data) : data,
+            dataSource,
+            tableOptions,
+            columns,
+            rows: List(),
 
-              initializing: true,
-              loading: true,
+            initializing: true,
+            loading: true,
 
-              pageSize,
-              sortColumn: generateInitialSortColumn(defaultSortColumn, columns),
-              sortDirection: defaultSortDirection,
+            pageSize,
+            sortColumn: generateInitialSortColumn(defaultSortColumn, columns),
+            sortDirection: defaultSortDirection,
 
-              // Pagination
-              currentPageToken: null,
-              nextPageToken: null,
-              pageTokens: List(),
-              pageOffset: 0,
-              error: null,
+            // Pagination
+            currentPageToken: null,
+            nextPageToken: null,
+            pageTokens: List(),
+            pageOffset: 0,
+            error: null,
 
-              // Filtering
-              filterForm,
-              filters: generateFilters(tableKey, columns),
-              appliedFilters: generateFilters(tableKey, columns),
-              validFilters: true,
-              onValidateFilters,
+            // Filtering
+            filterForm,
+            filters: generateFilters(tableKey, columns),
+            appliedFilters: generateFilters(tableKey, columns),
+            validFilters: true,
+            onValidateFilters,
 
-              configured: true,
-              initialize: true,
-            }),
-          ),
+            configured: true,
+            initialize: true,
+          }),
+        ),
 
   SET_ROWS: (
     state,
@@ -164,22 +166,18 @@ regHandlers({
     ),
   NEXT_PAGE: (state, { payload: { tableKey } }) =>
     state
-      .updateIn(
-        ['tables', tableKey],
-        tableData =>
-          isClientSide(tableData)
-            ? clientSideNextPage(tableData)
-            : serverSideNextPage(tableData),
+      .updateIn(['tables', tableKey], tableData =>
+        isClientSide(tableData)
+          ? clientSideNextPage(tableData)
+          : serverSideNextPage(tableData),
       )
       .setIn(['tables', tableKey, 'error'], null),
   PREV_PAGE: (state, { payload: { tableKey } }) =>
     state
-      .updateIn(
-        ['tables', tableKey],
-        tableData =>
-          isClientSide(tableData)
-            ? clientSidePrevPage(tableData)
-            : serverSidePrevPage(tableData),
+      .updateIn(['tables', tableKey], tableData =>
+        isClientSide(tableData)
+          ? clientSidePrevPage(tableData)
+          : serverSidePrevPage(tableData),
       )
       .setIn(['tables', tableKey, 'error'], null),
   SORT_COLUMN: (state, { payload: { tableKey, column } }) =>
@@ -232,20 +230,20 @@ regHandlers({
         .set('error', null),
     ),
   REFETCH_TABLE_DATA: (state, { payload: { tableKey } }) =>
-    state.updateIn(
-      ['tables', tableKey],
-      tableData =>
-        tableData.get('dataSource')
-          ? tableData
-              .set('loading', true)
-              .set('pageOffset', 0)
-              .set('currentPageToken', null)
-              .set('nextPageToken', null)
-              .set('pageTokens', List())
-              .set('data', null)
-              .set('error', null)
-          : tableData,
-    ),
+    state.hasIn(['tables', tableKey])
+      ? state.updateIn(['tables', tableKey], tableData =>
+          tableData.get('dataSource')
+            ? tableData
+                .set('loading', true)
+                .set('pageOffset', 0)
+                .set('currentPageToken', null)
+                .set('nextPageToken', null)
+                .set('pageTokens', List())
+                .set('data', null)
+                .set('error', null)
+            : tableData,
+        )
+      : state,
   CLEAR_TABLE_FILTERS: (state, { payload: { tableKey } }) =>
     state.setIn(
       ['tables', tableKey, 'filters'],
@@ -262,6 +260,9 @@ function* calculateRowsTask({ payload }) {
   try {
     const { tableKey } = payload;
     const tableData = yield select(state => state.getIn(['tables', tableKey]));
+
+    // Skip this process if the table hasn't been mounted yet.
+    if (!tableData) return;
 
     const response = yield call(calculateRows, tableData);
 
@@ -391,14 +392,14 @@ const applyClientSideFilters = (tableData, data) => {
     !dataSource || dataSource.clientSideSearch === true
       ? row => clientSideRowFilter(row, filters)
       : typeof dataSource.clientSide === 'function'
-        ? row => dataSource.clientSide(row.toJS(), clientSideFilters)
-        : () => true;
+      ? row => dataSource.clientSide(row.toJS(), clientSideFilters)
+      : () => true;
 
   return List(data)
     .map(d => Map(d))
     .update(d => d.filter(rowFilter))
-    .update(
-      d => (sortColumn ? d.sortBy(r => r.get(sortColumn.get('value'))) : d),
+    .update(d =>
+      sortColumn ? d.sortBy(r => r.get(sortColumn.get('value'))) : d,
     )
     .update(d => (sortDirection === 'asc' ? d.reverse() : d))
     .update(d => d.slice(startIndex, endIndex));

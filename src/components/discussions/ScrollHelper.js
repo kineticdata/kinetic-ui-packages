@@ -12,7 +12,12 @@ export class ScrollHelper extends React.Component {
     this.position = ScrollPositions.BOTTOM;
   }
 
-  handleScroll = ({ target: { scrollTop } }) => {
+  handleScroll = ({ target }) => {
+    if (this.helper !== target) {
+      return;
+    }
+
+    const { scrollTop } = target;
     let nextPosition = null;
     if (scrollTop === this.helper.scrollHeight - this.helper.clientHeight) {
       nextPosition = ScrollPositions.BOTTOM;

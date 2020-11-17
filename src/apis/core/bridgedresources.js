@@ -1,14 +1,7 @@
 import axios from 'axios';
+import qs from 'qs';
 import { bundle } from '../../helpers';
 import { handleErrors, headerBuilder } from '../http';
-
-/**
- * Determines the appropriate parameter separator (? | &) depending if the query separator (?)
- * has already been used or not.
- *
- * @param {string} url - the URL to test
- */
-const paramSeparator = url => (url.indexOf('?') > -1 ? '&' : '?');
 
 /**
  * Returns the URL to a bridged resource.
@@ -20,11 +13,6 @@ const paramSeparator = url => (url.indexOf('?') > -1 ? '&' : '?');
  * @param {string} options.bridgedResourceName - name of the bridged resource
  * @param {string} options.formSlug - form slug where the bridged resource is defined
  * @param {string} options.kappSlug - kapp slug where the bridged resource is defined
- * @param {string[]=} options.attributes - array of attributes (fields) to return
- * @param {number=} options.limit - maximum number of records to retrieve
- * @param {number=} options.offset - offset to retrieve as first record
- * @param {object=} options.values - hash of value names to values
- * @param {object=} options.metadata - hash of metadata names to values
  * @returns {string}
  */
 export const bridgedResourceUrl = (options, counting = false) => {
@@ -44,37 +32,38 @@ export const bridgedResourceUrl = (options, counting = false) => {
   if (counting) {
     url += '/count';
   }
+  return url;
+};
+
+/**
+ * Returns the url encoded data to a bridged resource.
+ *
+ * @param {*} options - properties to build the bridged resource url
+ * @param {string[]=} options.attributes - array of attributes (fields) to return
+ * @param {number=} options.limit - maximum number of records to retrieve
+ * @param {number=} options.offset - offset to retrieve as first record
+ * @param {object=} options.values - hash of value names to values
+ * @param {object=} options.metadata - hash of metadata names to values
+ * @returns {string}
+ */
+export const bridgedResourceData = options => {
+  let data = {};
+  // append any attributes if they were specified
   if (options.attributes) {
     if (!Array.isArray(options.attributes)) {
       throw new Error('Property "attributes" expected as array of strings.');
     }
     if (options.attributes.length > 0) {
-      url += `${paramSeparator(url)}attributes=${options.attributes
-        .map(encodeURIComponent)
-        .join(',')}`;
+      data.attributes = options.attributes.join(',');
     }
   }
   // append any parameter values if they were specified
   if (options.values && Object.keys(options.values).length > 0) {
-    const parameters = Object.keys(options.values).map(
-      key =>
-        `${encodeURIComponent(`values[${key}]`)}=${encodeURIComponent(
-          options.values[key],
-        )}`,
-    );
-    // Add the appropriate parameter separator and value parameters
-    url += `${paramSeparator(url)}${parameters.join('&')}`;
+    data.values = options.values;
   }
   // append any metadata if it was specified
   if (options.metadata && Object.keys(options.metadata).length > 0) {
-    const parameters = Object.keys(options.metadata).map(
-      key =>
-        `${encodeURIComponent(`metadata[${key}]`)}=${encodeURIComponent(
-          options.metadata[key],
-        )}`,
-    );
-    // Add the appropriate parameter separator and value parameters
-    url += `${paramSeparator(url)}${parameters.join('&')}`;
+    data.metadata = options.metadata;
   }
   // append the limit if it was specified
   if (options.limit) {
@@ -86,8 +75,7 @@ export const bridgedResourceUrl = (options, counting = false) => {
         throw new Error('Property "limit" expected as a number.');
       }
     }
-    // Add the appropriate parameter separator and limit
-    url += `${paramSeparator(url)}limit=${limit}`;
+    data.limit = limit;
   }
   // append the offset if it was specified
   if (options.offset) {
@@ -99,10 +87,9 @@ export const bridgedResourceUrl = (options, counting = false) => {
         throw new Error('Property "offset" expected as a number.');
       }
     }
-    // Add the appropriate parameter separator and offset
-    url += `${paramSeparator(url)}offset=${offset}`;
+    data.offset = offset;
   }
-  return url;
+  return qs.stringify(data);
 };
 
 /**
@@ -149,7 +136,9 @@ export const fetchBridgedResource = (options = {}) => {
   }
 
   return axios
-    .get(bridgedResourceUrl(options), { headers: headerBuilder(options) })
+    .post(bridgedResourceUrl(options), bridgedResourceData(options), {
+      headers: headerBuilder(options),
+    })
     .then(({ data }) => {
       const { record, records } = data;
 
@@ -185,7 +174,7 @@ export const countBridgedResource = (options = {}) => {
   const counting = true;
 
   return axios
-    .get(`${bridgedResourceUrl(options, counting)}`, {
+    .post(bridgedResourceUrl(options, counting), bridgedResourceData(options), {
       headers: headerBuilder(options),
     })
     .then(({ data }) => ({ count: data.count }))
