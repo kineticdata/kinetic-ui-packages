@@ -29,14 +29,15 @@ export class I18n extends React.Component {
           // Otherwise fetch the submission
           fetchSubmission({
             id: this.props.submissionId,
-            datastore: !!this.props.datastore,
             include: 'form,form.kapp',
           }).then(({ submission }) => {
             // Build context using submission data
             const context = submission
-              ? !!this.props.datastore
-                ? `datastore.forms.${submission.form.slug}`
-                : `kapps.${submission.form.kapp.slug}.forms.${submission.form.slug}`
+              ? !submission.form.kapp.slug
+                ? `forms.${submission.form.slug}`
+                : `kapps.${submission.form.kapp.slug}.forms.${
+                    submission.form.slug
+                  }`
               : null;
             // Store the context for the submissionId
             submissionContexts[this.props.submissionId] = context;

@@ -55,7 +55,6 @@ const formQuery = defineKqlQuery()
 
 const dataSource = ({
   kappSlug = null,
-  datastore,
   manage = false,
   surveyList = false,
 }) => ({
@@ -65,8 +64,7 @@ const dataSource = ({
       ...generateSortParams(paramData),
       ...generatePaginationParams(paramData),
       q: formQuery(paramData.filters.toJS()),
-      include: `details${datastore ? ',indexDefinitions,backgroundJobs' : ''}`,
-      datastore,
+      include: 'details,indexDefinitions,backgroundJobs',
       kappSlug,
       manage,
     },
@@ -129,7 +127,7 @@ const columns = [
 ];
 
 export const FormTable = generateTable({
-  tableOptions: ['kappSlug', 'datastore', 'manage', 'surveyList'],
+  tableOptions: ['kappSlug', 'manage', 'surveyList'],
   columns,
   filters,
   filterDataSources,
@@ -141,6 +139,4 @@ FormTable.displayName = 'FormTable';
 FormTable.propTypes = {
   /** Kapp Slug of associated forms to render.  */
   kappSlug: t.string,
-  /** If datastore forms should be rendered.  */
-  datastore: t.bool,
 };

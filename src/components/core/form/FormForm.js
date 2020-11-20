@@ -19,14 +19,12 @@ const FORM_INCLUDES =
 const KAPP_INCLUDES =
   'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms';
 const SPACE_INCLUDES =
-  'spaceAttributeDefinitions,datastoreFormAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms';
+  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms';
 
-const dataSources = ({ formSlug, kappSlug, datastore }) => ({
+const dataSources = ({ formSlug, kappSlug }) => ({
   form: {
     fn: fetchForm,
-    params: formSlug && [
-      { datastore, formSlug, kappSlug, include: FORM_INCLUDES },
-    ],
+    params: formSlug && [{ formSlug, kappSlug, include: FORM_INCLUDES }],
     transform: result => result.form,
   },
   kapp: {
@@ -62,9 +60,8 @@ const dataSources = ({ formSlug, kappSlug, datastore }) => ({
   },
 });
 
-const handleSubmit = ({ formSlug, kappSlug, datastore }) => values =>
+const handleSubmit = ({ formSlug, kappSlug }) => values =>
   (formSlug ? updateForm : createForm)({
-    datastore,
     kappSlug,
     formSlug,
     form: values.toJS(),
@@ -80,36 +77,22 @@ const securityEndpoints = {
   formDisplay: {
     endpoint: 'Display',
     label: 'Form Display',
-    types: ['Space', 'Kapp', 'Form', 'Datastore Form'],
+    types: ['Space', 'Kapp', 'Form'],
   },
   formModification: {
     endpoint: 'Modification',
     label: 'Form Modification',
-    types: ['Space', 'Kapp', 'Form', 'Datastore Form'],
+    types: ['Space', 'Kapp', 'Form'],
   },
   submissionAccess: {
     endpoint: 'Submission Access',
     label: 'Submission Access',
-    types: [
-      'Space',
-      'Kapp',
-      'Form',
-      'Datastore Form',
-      'Submission',
-      'Datastore Submission',
-    ],
+    types: ['Space', 'Kapp', 'Form', 'Submission'],
   },
   submissionModification: {
     endpoint: 'Submission Modification',
     label: 'Submission Modification',
-    types: [
-      'Space',
-      'Kapp',
-      'Form',
-      'Datastore Form',
-      'Submission',
-      'Datastore Submission',
-    ],
+    types: ['Space', 'Kapp', 'Form', 'Submission'],
   },
 };
 
@@ -193,7 +176,7 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
           space,
           kapp,
           form,
-          scope: kappSlug ? 'Submission' : 'Datastore Submission',
+          scope: kappSlug ? 'Submission' : 'Submission',
         }),
     },
     !!kappSlug && {

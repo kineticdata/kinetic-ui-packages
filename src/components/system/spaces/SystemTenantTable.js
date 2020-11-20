@@ -103,18 +103,18 @@ const columns = [
       row.getIn(['space', 'customTranslationContexts']),
   },
   {
-    value: 'space.defaultDatastoreFormConfirmationPage',
-    title: 'Default Datastore Form Confirmation Page',
+    value: 'space.defaultFormConfirmationPage',
+    title: 'Default Form Confirmation Page',
     sortable: false,
     valueTransform: (_value, row) =>
-      row.getIn(['space', 'defaultDatastoreFormConfirmationPage']),
+      row.getIn(['space', 'defaultFormConfirmationPage']),
   },
   {
-    value: 'space.defaultDatastoreFormDisplayPage',
-    title: 'Default Datastore Form Display Page',
+    value: 'space.defaultFormDisplayPage',
+    title: 'Default Form Display Page',
     sortable: false,
     valueTransform: (_value, row) =>
-      row.getIn(['space', 'defaultDatastoreFormDisplayPage']),
+      row.getIn(['space', 'defaultFormDisplayPage']),
   },
   {
     value: 'space.defaultLocale',

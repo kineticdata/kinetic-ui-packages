@@ -3,11 +3,9 @@ import { bundle } from '../../helpers';
 import { handleErrors, headerBuilder, paramBuilder } from '../http';
 
 const validateOptions = (functionName, requiredOptions, options) => {
-  const typesRequiringKapp = ['Kapp', 'Form', 'Submission'];
   const { kappSlug, webhook = {} } = options;
 
-  const kappSlugMissing =
-    typesRequiringKapp.includes(webhook.type) && !kappSlug;
+  const kappSlugMissing = webhook.type === 'Kapp' && !kappSlug;
 
   const missing = requiredOptions.filter(
     requiredOption => !options[requiredOption],
@@ -20,7 +18,9 @@ const validateOptions = (functionName, requiredOptions, options) => {
   }
   if (kappSlugMissing) {
     throw new Error(
-      `${functionName} failed! A kappSlug is required when using type: ${webhook.type}`,
+      `${functionName} failed! A kappSlug is required when using type: ${
+        webhook.type
+      }`,
     );
   }
 };

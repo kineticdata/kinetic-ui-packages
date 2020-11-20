@@ -12,7 +12,7 @@ import { generateForm } from '../../form/Form';
 import { buildBindings } from '../../../helpers';
 
 const SPACE_INCLUDES =
-  'datastoreFormAttributeDefinitions,spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
+  'formAttributeDefinitions,spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
 const KAPP_INCLUDES =
   'formAttributeDefinitions,kappAttributeDefinitions,fields';
 

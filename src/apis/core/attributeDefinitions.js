@@ -6,10 +6,9 @@ import { handleErrors, headerBuilder, paramBuilder } from '../http';
 // except for userProfileAttributeDefinitions and datastoreFormAttributeDefinitions
 // TODO: KCORE-2982
 const responseEnvelope = attributeType =>
-  [
-    'userProfileAttributeDefinitions',
-    'datastoreFormAttributeDefinitions',
-  ].includes(attributeType)
+  ['userProfileAttributeDefinitions', 'formAttributeDefinitions'].includes(
+    attributeType,
+  )
     ? attributeType
     : attributeType.replace(/s$/, '');
 
@@ -22,7 +21,6 @@ const validateOptions = (functionName, requiredOptions, options) => {
     'categoryAttributeDefinitions',
     'kappAttributeDefinitions',
     'formAttributeDefinitions',
-    'datastoreFormAttributeDefinitions',
   ];
 
   const attributesRequiringKappSlug = [
@@ -47,12 +45,16 @@ const validateOptions = (functionName, requiredOptions, options) => {
   }
   if (kappSlugMissing) {
     throw new Error(
-      `${functionName} failed! A kappSlug is required when using ${options.attributeType}`,
+      `${functionName} failed! A kappSlug is required when using ${
+        options.attributeType
+      }`,
     );
   }
   if (invalidType) {
     throw new Error(
-      `${functionName} failed! The provided attributeType (${options.attributeType}) is not valid`,
+      `${functionName} failed! The provided attributeType (${
+        options.attributeType
+      }) is not valid`,
     );
   }
 };

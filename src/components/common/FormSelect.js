@@ -37,10 +37,11 @@ const searchForms = ({ options, search }) => (field, value, callback) => {
     // user input query options.
     const fixedSearchParts = searchFields
       .filter(field => field.name && field.value)
-      .map(field =>
-        Array.isArray(field.value)
-          ? `${field.name} IN [${field.value.map(v => `"${v}"`).join(',')}]`
-          : `${field.name} ${field.exact ? '=' : '=*'} "${field.value}"`,
+      .map(
+        field =>
+          Array.isArray(field.value)
+            ? `${field.name} IN [${field.value.map(v => `"${v}"`).join(',')}]`
+            : `${field.name} ${field.exact ? '=' : '=*'} "${field.value}"`,
       );
 
     // If value is not specified in the fields array, user entered value will be
@@ -51,7 +52,6 @@ const searchForms = ({ options, search }) => (field, value, callback) => {
       .join(' OR ');
 
     return fetchForms({
-      datastore: search.get('datastore'),
       kappSlug: search.get('kappSlug'),
       q: [...fixedSearchParts, userSearchParts].join(' AND '),
       include: 'categorizations.category',
@@ -72,17 +72,17 @@ const getStatusProps = props => ({
   info: props.short
     ? 'Type to find a form.'
     : props.pending
-    ? 'Searching…'
-    : null,
+      ? 'Searching…'
+      : null,
   warning:
     props.error || props.more || props.empty
       ? props.error
         ? 'There was an error fetching forms.'
         : props.more
-        ? 'Too many forms, first 25 shown. Please refine your search.'
-        : props.empty && !props.custom
-        ? 'No matching forms.'
-        : null
+          ? 'Too many forms, first 25 shown. Please refine your search.'
+          : props.empty && !props.custom
+            ? 'No matching forms.'
+            : null
       : null,
 });
 
