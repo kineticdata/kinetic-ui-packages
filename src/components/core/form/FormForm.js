@@ -78,6 +78,26 @@ const handleSubmit = ({ formSlug, kappSlug, datastore }) => values =>
     return form;
   });
 
+const buildLabel = ({ name, category, categories }) => {
+  let match = null;
+  if (category.get('attributes').size) {
+    category.get('attributes').map(c => {
+      if (c.get('name') === 'Parent') {
+        match = categories.find(
+          cat => cat.get('slug') === c.getIn(['values', 0]),
+        );
+        name = buildLabel({
+          name: `${match.get('name')}::${name}`,
+          category: match,
+          categories,
+        });
+      }
+      return name;
+    });
+  }
+  return name;
+};
+
 const securityEndpoints = {
   formDisplay: {
     endpoint: 'Display',
@@ -278,22 +298,11 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
         categories
           ? categories.map(category =>
               Map({
-                // check for attributes
-                label: category.get('attributes').size
-                  ? category.get('attributes').map(
-                      c =>
-                        // check each attribute for name Parent
-                        c.get('name') === 'Parent'
-                          ? `${categories
-                              // match parent slug to get its name and append child name
-                              .find(
-                                cat =>
-                                  cat.get('slug') === c.getIn(['values', 0]),
-                              )
-                              .get('name')}::${category.get('name')}`
-                          : category.get('name'),
-                    )
-                  : category.get('name'),
+                label: buildLabel({
+                  name: category.get('name'),
+                  category,
+                  categories,
+                }),
                 value: category.get('slug'),
               }),
             )
