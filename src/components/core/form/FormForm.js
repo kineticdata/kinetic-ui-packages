@@ -59,7 +59,7 @@ const dataSources = ({ formSlug, kappSlug, datastore }) => ({
   },
   categories: {
     fn: fetchCategories,
-    params: kappSlug && [{ kappSlug }],
+    params: kappSlug && [{ kappSlug, include: 'attributes[Parent]' }],
     transform: result => result.categories,
   },
 });
@@ -278,7 +278,22 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
         categories
           ? categories.map(category =>
               Map({
-                label: category.get('name'),
+                // check for attributes
+                label: category.get('attributes').size
+                  ? category.get('attributes').map(
+                      c =>
+                        // check each attribute for name Parent
+                        c.get('name') === 'Parent'
+                          ? `${categories
+                              // match parent slug to get its name and append child name
+                              .find(
+                                cat =>
+                                  cat.get('slug') === c.getIn(['values', 0]),
+                              )
+                              .get('name')}::${category.get('name')}`
+                          : category.get('name'),
+                    )
+                  : category.get('name'),
                 value: category.get('slug'),
               }),
             )
