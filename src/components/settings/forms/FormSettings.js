@@ -6,6 +6,7 @@ import {
   searchSubmissions,
 } from '@kineticdata/react';
 import { compose, withHandlers } from 'recompose';
+import { List } from 'immutable';
 import { connect } from '../../../redux/store';
 import {
   FormComponents,
@@ -277,7 +278,7 @@ export const FormSettingsComponent = ({
             helpText:
               'The Queue kapp form which approvals should be created in. Defaults to value at Kapp level.',
             initialValue: form
-              .getIn(['attributesMap', 'Approval Form Slug'])
+              .getIn(['attributesMap', 'Approval Form Slug'], List())
               .map(slug => ({ slug }))
               .toJS()[0],
             search: { kappSlug: queueKappSlug },
@@ -344,7 +345,7 @@ export const FormSettingsComponent = ({
             helpText:
               'Team to assign tasks to. Defaults to value at Kapp level.',
             initialValue: form
-              .getIn(['attributesMap', 'Task Assignee Team'])
+              .getIn(['attributesMap', 'Task Assignee Team'], List())
               .map(name => ({ name }))
               .toJS()[0],
           },
@@ -355,7 +356,7 @@ export const FormSettingsComponent = ({
             helpText:
               'The Queue kapp form to use when creating a task item. Defaults to value at Kapp level.',
             initialValue: form
-              .getIn(['attributesMap', 'Task Form Slug'])
+              .getIn(['attributesMap', 'Task Form Slug'], List())
               .map(slug => ({ slug }))
               .toJS()[0],
             search: { kappSlug: queueKappSlug },
@@ -366,7 +367,7 @@ export const FormSettingsComponent = ({
             type: 'checkbox',
             helpText: 'If unchecked, default workflow will be used.',
             initialValue: form
-              .getIn(['attributesMap', 'Custom Submission Workflow'])
+              .getIn(['attributesMap', 'Custom Submission Workflow'], List())
               .includes('Created'),
             component: WorkflowField,
           },
@@ -376,7 +377,7 @@ export const FormSettingsComponent = ({
             type: 'checkbox',
             helpText: 'If unchecked, default workflow will be used.',
             initialValue: form
-              .getIn(['attributesMap', 'Custom Submission Workflow'])
+              .getIn(['attributesMap', 'Custom Submission Workflow'], List())
               .includes('Submitted'),
             component: WorkflowField,
           },
@@ -386,7 +387,7 @@ export const FormSettingsComponent = ({
             type: 'checkbox',
             helpText: 'If unchecked, default workflow will be used.',
             initialValue: form
-              .getIn(['attributesMap', 'Custom Submission Workflow'])
+              .getIn(['attributesMap', 'Custom Submission Workflow'], List())
               .includes('Updated'),
             component: WorkflowField,
           },
