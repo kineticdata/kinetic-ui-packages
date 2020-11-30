@@ -16,6 +16,8 @@ const staticParts = [
   'submittedBy',
   'updatedAt',
   'updatedBy',
+  'type',
+  'coreState',
 ];
 
 const getFields = form => form.get('fields');
@@ -31,8 +33,8 @@ const dataSources = ({ kappSlug, formSlug, indexName }) => ({
       !kappSlug && !formSlug
         ? fetchSpace
         : kappSlug && !formSlug
-        ? fetchKapp
-        : fetchForm,
+          ? fetchKapp
+          : fetchForm,
     params: [
       {
         kappSlug,
@@ -45,8 +47,8 @@ const dataSources = ({ kappSlug, formSlug, indexName }) => ({
       !kappSlug && !formSlug
         ? result.space
         : kappSlug && !formSlug
-        ? result.kapp
-        : result.form,
+          ? result.kapp
+          : result.form,
   },
   fields: {
     fn: getFields,
@@ -65,8 +67,11 @@ const handleSubmit = ({ formSlug, kappSlug, indexName }) => (
   const indexDefinitions = indexName
     ? form
         .get('indexDefinitions')
-        .map(indexDefinition =>
-          indexDefinition.get('name') === indexName ? values : indexDefinition,
+        .map(
+          indexDefinition =>
+            indexDefinition.get('name') === indexName
+              ? values
+              : indexDefinition,
         )
         .toJS()
     : form
@@ -77,14 +82,14 @@ const handleSubmit = ({ formSlug, kappSlug, indexName }) => (
   return (!kappSlug && !formSlug
     ? updateSpace({ space: { indexDefinitions } })
     : kappSlug && !formSlug
-    ? updateKapp({ kappSlug, kapp: { indexDefinitions } })
-    : updateForm({
-        kappSlug,
-        formSlug,
-        form: {
-          indexDefinitions,
-        },
-      })
+      ? updateKapp({ kappSlug, kapp: { indexDefinitions } })
+      : updateForm({
+          kappSlug,
+          formSlug,
+          form: {
+            indexDefinitions,
+          },
+        })
   ).then(({ form, kapp, space, error }) => {
     if (error) {
       throw (error.statusCode === 400 && error.message) ||
