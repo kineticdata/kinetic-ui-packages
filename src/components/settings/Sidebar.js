@@ -5,9 +5,9 @@ import { I18n } from '@kineticdata/react';
 import { connect } from '../../redux/store';
 import { isActiveClass } from '../../utils';
 
-export const SidebarComponent = ({ spaceAdmin }) => (
+export const SidebarComponent = ({ appLocation, spaceAdmin }) => (
   <div className="sidebar">
-    <Link to="/kapps/queue" className="nav-return">
+    <Link to={appLocation} className="nav-return">
       <span className="fa fa-fw fa-chevron-left" role="presentation" />
       <I18n>Return to Queue</I18n>
     </Link>
@@ -32,6 +32,7 @@ export const SidebarComponent = ({ spaceAdmin }) => (
 
 export const mapStateToProps = state => ({
   spaceAdmin: state.app.profile.spaceAdmin,
+  appLocation: state.app.location,
 });
 
 export const Sidebar = compose(connect(mapStateToProps))(SidebarComponent);

@@ -148,14 +148,14 @@ const SettingsNavigationComponent = ({ isSpaceAdmin }) => (
         {isSpaceAdmin && (
           <SettingsCard
             name="General Settings"
-            path={`/kapps/queue/settings/general`}
+            path="general"
             icon="fa-gear"
             description="View and Modify all Queue Settings"
           />
         )}
         <SettingsCard
           name="Forms"
-          path={`/kapps/queue/settings/forms`}
+          path="forms"
           icon="fa-gear"
           description="View Forms and their Submissions."
         />
