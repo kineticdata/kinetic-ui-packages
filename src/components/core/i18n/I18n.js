@@ -36,7 +36,9 @@ export class I18n extends React.Component {
             const context = submission
               ? !!this.props.datastore
                 ? `datastore.forms.${submission.form.slug}`
-                : `kapps.${submission.form.kapp.slug}.forms.${submission.form.slug}`
+                : `kapps.${submission.form.kapp.slug}.forms.${
+                    submission.form.slug
+                  }`
               : null;
             // Store the context for the submissionId
             submissionContexts[this.props.submissionId] = context;
@@ -124,7 +126,10 @@ export class I18nTranslate extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.context !== prevProps.context) {
+    if (
+      this.props.context !== prevProps.context ||
+      this.props.locale !== prevProps.locale
+    ) {
       this.props.loadTranslations(
         this.props.locale,
         this.props.context,
