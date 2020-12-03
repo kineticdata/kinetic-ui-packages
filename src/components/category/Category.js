@@ -3,6 +3,7 @@ import { ServiceCard } from '../shared/ServiceCard';
 import { CategoryCard } from '../shared/CategoryCard';
 import { I18n } from '@kineticdata/react';
 import { PageTitle } from '../shared/PageTitle';
+import { EmptyMessage } from '@kineticdata/bundle-common';
 
 export const Category = ({ category }) => (
   <Fragment>
@@ -26,7 +27,7 @@ export const Category = ({ category }) => (
           />
         </div>
         <div className="page-panel__body">
-          {category.hasChildren() && (
+          {category.getChildren().some(c => !c.isEmpty()) && (
             <section>
               <div className="section__title">
                 <I18n>Subcategories</I18n>
@@ -34,6 +35,7 @@ export const Category = ({ category }) => (
               <div className="cards cards--thirds">
                 {category
                   .getChildren()
+                  .filterNot(c => c.isEmpty())
                   .map(childCategory => (
                     <CategoryCard
                       key={childCategory.slug}
@@ -58,6 +60,9 @@ export const Category = ({ category }) => (
                   key: form.slug,
                 }))
                 .map(props => <ServiceCard {...props} />)}
+              {category.formCount === 0 && (
+                <EmptyMessage title="There are no services in this category." />
+              )}
             </div>
           </section>
         </div>
