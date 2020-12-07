@@ -1,0 +1,55 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Assignments ~ Queue
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.assignment-badge,
+.modal-body .assignment-badge {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+  color: $gray50;
+  margin: 1.5rem 0;
+  padding: 0.3125rem 1rem;
+  .badge {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: space-around;
+    align-items: center;
+    background-color: $blue-lake;
+    border-radius: 50%;
+    color: $white;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    height: 2rem;
+    width: 2rem;
+    text-align: center;
+    cursor: pointer;
+  }
+  &:focus,
+  &.focus {
+    outline: none;
+    border-color: $gray50;
+    box-shadow: 0 0 1px 4px rgba($orange-kinops, .25);
+  }
+
+  &.read-only .badge {
+    cursor: default;
+  }
+  &__team {
+    font-size: 0.625rem;
+    color: $gray80;
+  }
+  &__individual {
+    font-size: 0.875rem;
+    color: $blue-lake;
+  }
+  .icon {
+    margin-left: auto;
+  }
+
+  &.read-only div[role='button'] {
+    cursor: default;
+  }
+}
