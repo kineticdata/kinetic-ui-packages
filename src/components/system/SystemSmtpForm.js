@@ -3,7 +3,7 @@ import {
   fetchSystemDefaultSmtpAdapter,
   updateSystemDefaultSmtpAdapter,
 } from '../../apis/system';
-import { handleFormErrors } from '../../helpers';
+import { handleFormErrors } from '../form/Form.helpers';
 
 const dataSources = () => ({
   adapter: {

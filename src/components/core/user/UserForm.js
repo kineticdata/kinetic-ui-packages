@@ -8,7 +8,7 @@ import {
   fetchLocales,
   fetchTimezones,
 } from '../../../apis';
-import { handleSubmitErrorObject } from '../../form/Form.helpers';
+import { handleFormErrors } from '../../form/Form.helpers';
 
 const USER_INCLUDES =
   'attributesMap,authorization,memberships,profileAttributesMap';
@@ -49,7 +49,7 @@ const handleSubmit = ({ username, spaceSlug }) => values => {
   return (username
     ? updateUser({ spaceSlug, username, user })
     : createUser({ spaceSlug, user })
-  ).then(handleSubmitErrorObject('user'));
+  ).then(handleFormErrors('user', 'There was an error saving the User.'));
 };
 
 const fields = ({ username }) => ({ user }) =>

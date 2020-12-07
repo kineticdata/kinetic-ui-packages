@@ -6,7 +6,7 @@ import {
   fetchTenant,
   updateTenant,
 } from '../../../apis/system';
-import { handleFormErrors, slugify } from '../../../helpers';
+import { slugify } from '../../../helpers';
 import {
   VALIDATE_DB_ADAPTERS,
   ORACLE_FIELDS,
@@ -14,6 +14,7 @@ import {
   POSTGRES_FIELDS,
   adapterProperties,
 } from '../helpers';
+import { handleFormErrors } from '../../form/Form.helpers';
 
 const TENANT_INCLUDES = 'details';
 
@@ -59,8 +60,12 @@ const handleSubmit = ({ slug }) => values => {
     users: values.get('users'),
   };
   return slug
-    ? updateTenant({ slug, tenant }).then(handleFormErrors('space'))
-    : createTenant({ tenant }).then(handleFormErrors());
+    ? updateTenant({ slug, tenant }).then(
+        handleFormErrors('space', 'There was an error saving the Space.'),
+      )
+    : createTenant({ tenant }).then(
+        handleFormErrors(null, 'There was an error saving the Space.'),
+      );
 };
 
 const getSpaceValue = (tenant, key) =>

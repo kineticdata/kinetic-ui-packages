@@ -1,7 +1,7 @@
 import { get } from 'immutable';
 import { generateForm } from '../form/Form';
 import { fetchSystem, updateSystem } from '../../apis/system';
-import { handleFormErrors } from '../../helpers';
+import { handleFormErrors } from '../form/Form.helpers';
 
 const DISPLAY_TYPES = ['Display Page', 'Redirect', 'Default'];
 
