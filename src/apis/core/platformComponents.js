@@ -117,3 +117,16 @@ export const validateAgent = (options = {}) => {
     }))
     .catch(handleErrors);
 };
+
+export const fetchAgentComponentVersion = (options = {}) => {
+  validateOptions('validateAgent', [], options);
+  return axios
+    .get(`${buildAgentPath(options)}/app/api/v1/version`, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({
+      version: response.data.version,
+    }))
+    .catch(handleErrors);
+};
