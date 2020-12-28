@@ -301,3 +301,13 @@ export const handleFormErrors = key => result => {
 
   return key ? result[key] : result;
 };
+
+export const INDEX_STATIC_PARTS = [
+  'closedBy',
+  'coreState',
+  'createdBy',
+  'handle',
+  'submittedBy',
+  'type',
+  'updatedBy',
+];

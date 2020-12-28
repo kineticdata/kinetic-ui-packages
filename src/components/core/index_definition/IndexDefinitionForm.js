@@ -7,18 +7,7 @@ import {
   updateKapp,
 } from '../../../apis';
 import { generateForm } from '../../form/Form';
-
-const staticParts = [
-  'createdAt',
-  'createdBy',
-  'handle',
-  'submittedAt',
-  'submittedBy',
-  'updatedAt',
-  'updatedBy',
-  'type',
-  'coreState',
-];
+import { INDEX_STATIC_PARTS } from '../../../helpers';
 
 const getFields = form => form.get('fields');
 
@@ -111,7 +100,7 @@ const fields = ({ formSlug, indexName }) => ({ indexDefinition }) =>
           ? fields
               .map(field => `values[${field.get('name')}]`)
               .sort()
-              .concat(staticParts)
+              .concat(INDEX_STATIC_PARTS)
               .map(name => ({ label: name, value: name }))
               .toArray()
           : [],

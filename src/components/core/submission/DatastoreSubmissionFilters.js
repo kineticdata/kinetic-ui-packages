@@ -1,18 +1,6 @@
 import { List, Map, Range } from 'immutable';
 import { fetchForm, fetchKapp, fetchSpace } from '../../../apis';
-import { defineKqlQuery } from '../../../helpers';
-
-const staticParts = List([
-  'createdAt',
-  'createdBy',
-  'handle',
-  'submittedAt',
-  'submittedBy',
-  'updatedAt',
-  'updatedBy',
-  'closedAt',
-  'closedBy',
-]);
+import { defineKqlQuery, INDEX_STATIC_PARTS } from '../../../helpers';
 
 export const MAX_PART_LENGTH = 10;
 
@@ -22,19 +10,19 @@ export const filterDataSources = ({ formSlug, kappSlug }) => ({
       !formSlug && !kappSlug
         ? fetchSpace
         : kappSlug && !formSlug
-        ? fetchKapp
-        : fetchForm,
+          ? fetchKapp
+          : fetchForm,
     params: [{ kappSlug, formSlug, include: 'indexDefinitions,fields' }],
     transform: result =>
       !formSlug && !kappSlug
         ? result.space
         : kappSlug && !formSlug
-        ? result.kapp
-        : result.form,
+          ? result.kapp
+          : result.form,
   },
   fields: {
     fn: form =>
-      staticParts.concat(
+      INDEX_STATIC_PARTS.concat(
         form.get('fields').map(f => `values[${f.get('name')}]`),
       ),
     params: ({ form }) => form && [form],
@@ -133,8 +121,8 @@ const getRValues = (operator, values, opBase) =>
   operator === 'between'
     ? [values.get(`${opBase}-operand1`), values.get(`${opBase}-operand2`)]
     : operator === 'in'
-    ? [values.get(`${opBase}-operand3`)]
-    : [values.get(`${opBase}-operand1`)];
+      ? [values.get(`${opBase}-operand3`)]
+      : [values.get(`${opBase}-operand1`)];
 
 const getSerializedParts = values =>
   Range(0, MAX_PART_LENGTH)
@@ -168,10 +156,10 @@ const serializeQuery = ({ values }) => {
         return operator === 'between'
           ? query.between(part, `${opBase}-operand1`, `${opBase}-operand2`)
           : operator === 'in'
-          ? query.in(part, `${opBase}-operand3`)
-          : operator
-          ? query[operator](part, `${opBase}-operand1`)
-          : query;
+            ? query.in(part, `${opBase}-operand3`)
+            : operator
+              ? query[operator](part, `${opBase}-operand1`)
+              : query;
       }, defineKqlQuery())
       .end()(values.toJS()),
     orderBy: Range(0, MAX_PART_LENGTH)
