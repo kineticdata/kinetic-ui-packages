@@ -1,6 +1,10 @@
 import { List, Map, Range } from 'immutable';
 import { fetchForm, fetchKapp, fetchSpace } from '../../../apis';
-import { defineKqlQuery, INDEX_STATIC_PARTS } from '../../../helpers';
+import {
+  defineKqlQuery,
+  INDEX_STATIC_PARTS,
+  TIMELINES,
+} from '../../../helpers';
 
 export const MAX_PART_LENGTH = 10;
 
@@ -79,7 +83,6 @@ const partChangeFn = i => ({ values }, { setValue }) => {
   }
 };
 
-const TIMELINES = ['createdAt', 'updatedAt', 'submittedAt', 'closedAt'];
 const orderChangeFn = i => ({ values }, { setValue }) => {
   const value = values.get(`orderby${i}-part`);
 
@@ -108,12 +111,14 @@ const availableOptions = currentPart => ({ values, fields }) => {
     .filter(f => f !== '');
 
   return fields
+    .concat(currentPart.startsWith('range') ? TIMELINES : [])
     .filter(
       f =>
         (currentPart.startsWith('range') && TIMELINES.includes(f)) ||
         ((values.get(currentPart) === f || !usedFields.includes(f)) &&
           !TIMELINES.includes(f)),
     )
+    .sort()
     .map(f => Map({ label: f, value: f }));
 };
 
@@ -287,12 +292,14 @@ export const filters = () => ({ form, fields, indexOptions }) =>
 
             return (
               fields
+                .concat(TIMELINES)
                 // Filter out the fields that are already used in parts.
                 .filter(
                   f =>
                     values.get(`orderby${i}-part`) === f ||
                     !usedFields.includes(f),
                 )
+                .sort()
                 .map(f => Map({ label: f, value: f }))
             );
           },

@@ -311,3 +311,5 @@ export const INDEX_STATIC_PARTS = [
   'type',
   'updatedBy',
 ];
+
+export const TIMELINES = ['createdAt', 'updatedAt', 'submittedAt', 'closedAt'];
