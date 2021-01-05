@@ -52,7 +52,7 @@ const fields = ({ name }) => ({ form, fieldDefinition }) =>
       type: 'select',
       required: true,
       options: FIELD_DATA_TYPES,
-      initialValue: fieldDefinition ? fieldDefinition.get('dataType') : '',
+      initialValue: fieldDefinition ? fieldDefinition.get('renderType') : '',
     },
     {
       name: 'createdAt',
