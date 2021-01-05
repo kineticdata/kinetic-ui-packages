@@ -111,6 +111,7 @@ const fields = ({ formSlug, indexName }) => ({ indexDefinition }) =>
       label: 'Unique',
       type: 'checkbox',
       initialValue: indexDefinition ? indexDefinition.get('unique') : false,
+      visible: !!formSlug,
     },
   ];
 
