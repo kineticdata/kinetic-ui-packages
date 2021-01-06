@@ -79,7 +79,7 @@ const partChangeFn = i => ({ values }, { setValue }) => {
   if (!value) {
     values
       .filter((value, name) => getPartIndex(name) > i)
-      .forEach((_value, name) => setValue(name, ''));
+      .forEach((_value, name) => setValue(name, '', false));
   }
 };
 
@@ -89,7 +89,7 @@ const orderChangeFn = i => ({ values }, { setValue }) => {
   if (!value || TIMELINES.includes(value)) {
     values
       .filter((value, name) => getOrderPartIndex(name) > i)
-      .forEach((_value, name) => setValue(name, ''));
+      .forEach((_value, name) => setValue(name, '', false));
   }
 };
 
