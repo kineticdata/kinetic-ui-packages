@@ -85,6 +85,7 @@ export const FormListComponent = ({
   toggleModal,
   filterOpen,
   setFilterOpen,
+  profile,
   navigate,
 }) => {
   const FilterFormLayout = TableComponents.generateFilterFormLayout({
@@ -145,21 +146,23 @@ export const FormListComponent = ({
                   <I18n>Datastore Forms</I18n>
                 </h1>
               </div>
-              <div className="page-title__actions">
-                <I18n
-                  render={translate => (
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      title={translate('New Datastore')}
-                      onClick={() => toggleModal(true)}
-                    >
-                      <span className="fa fa-plus fa-fw" />{' '}
-                      {translate('New Datastore')}
-                    </button>
-                  )}
-                />
-              </div>
+              {profile.spaceAdmin && (
+                <div className="page-title__actions">
+                  <I18n
+                    render={translate => (
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        title={translate('New Datastore')}
+                        onClick={() => toggleModal(true)}
+                      >
+                        <span className="fa fa-plus fa-fw" />{' '}
+                        {translate('New Datastore')}
+                      </button>
+                    )}
+                  />
+                </div>
+              )}
             </div>
             <div>
               <div className="text-right mb-2">{filter}</div>
@@ -219,7 +222,7 @@ export const FormListComponent = ({
 // Datastore Container
 export const FormList = compose(
   connect(
-    null,
+    state => ({ profile: state.app.profile }),
     { resetSearch: actions.resetSearchParams },
   ),
   withState('modalOpen', 'setModalOpen', false),
