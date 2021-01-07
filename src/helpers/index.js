@@ -310,6 +310,11 @@ export const INDEX_STATIC_PARTS = [
   'submittedBy',
   'type',
   'updatedBy',
-];
+].sort();
 
-export const TIMELINES = ['createdAt', 'updatedAt', 'submittedAt', 'closedAt'];
+export const TIMELINES = [
+  'createdAt',
+  'updatedAt',
+  'submittedAt',
+  'closedAt',
+].sort();

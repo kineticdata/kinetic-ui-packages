@@ -8,6 +8,8 @@ import {
 
 export const MAX_PART_LENGTH = 10;
 
+const TIMELINES_AND_STATICS = TIMELINES.concat(INDEX_STATIC_PARTS).sort();
+
 export const filterDataSources = ({ formSlug, kappSlug }) => ({
   form: {
     fn:
@@ -25,10 +27,7 @@ export const filterDataSources = ({ formSlug, kappSlug }) => ({
           : result.form,
   },
   fields: {
-    fn: form =>
-      INDEX_STATIC_PARTS.concat(
-        form.get('fields').map(f => `values[${f.get('name')}]`),
-      ),
+    fn: form => form.get('fields').map(f => `values[${f.get('name')}]`),
     params: ({ form }) => form && [form],
   },
   indexOptions: {
@@ -111,14 +110,17 @@ const availableOptions = currentPart => ({ values, fields }) => {
     .filter(f => f !== '');
 
   return fields
-    .concat(currentPart.startsWith('range') ? TIMELINES : [])
+    .concat(
+      currentPart.startsWith('range')
+        ? TIMELINES_AND_STATICS
+        : INDEX_STATIC_PARTS,
+    )
     .filter(
       f =>
         (currentPart.startsWith('range') && TIMELINES.includes(f)) ||
         ((values.get(currentPart) === f || !usedFields.includes(f)) &&
           !TIMELINES.includes(f)),
     )
-    .sort()
     .map(f => Map({ label: f, value: f }));
 };
 
@@ -292,14 +294,13 @@ export const filters = () => ({ form, fields, indexOptions }) =>
 
             return (
               fields
-                .concat(TIMELINES)
+                .concat(TIMELINES_AND_STATICS)
                 // Filter out the fields that are already used in parts.
                 .filter(
                   f =>
                     values.get(`orderby${i}-part`) === f ||
                     !usedFields.includes(f),
                 )
-                .sort()
                 .map(f => Map({ label: f, value: f }))
             );
           },
