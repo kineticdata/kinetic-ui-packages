@@ -157,6 +157,10 @@ export const SettingsSidebarComponent = ({
         receive future notifications/copies of this particular survey.
       </p>
       <p>
+        <b>Unique</b> ensures only one survey is ever sent to a unique
+        combination of Recipient and Reference Id.
+      </p>
+      <p>
         <b>Max Frequency Count</b> and <b>Max Frequency Days</b> allows you to
         control the maximum number of surveys that will be sent to a given
         individual in those number of days. For example, if this is an incident

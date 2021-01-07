@@ -65,6 +65,7 @@ const fieldSet = [
   'pollingInterval',
   'expiration',
   'allowOptOut',
+  'unique',
   'maxFrequencyCount',
   'maxFrequencyDays',
   // 'eventInterval',
@@ -244,6 +245,7 @@ const SurveySettingsComponent = ({
               <p className="small">
                 Allows a user to opt-out of retrieving this survey
               </p>
+              {fields.get('unique')}
               <div className="form-group__columns">
                 {fields.get('maxFrequencyCount')}
                 {fields.get('maxFrequencyDays')}
@@ -577,6 +579,19 @@ const SurveySettingsComponent = ({
                           ],
                         },
                         {
+                          name: 'unique',
+                          label: 'Unique',
+                          type: 'radio',
+                          initialValue:
+                            surveyConfig && surveyConfig['Unique']
+                              ? surveyConfig['Unique']
+                              : 'false',
+                          options: [
+                            { value: 'true', label: 'Yes' },
+                            { value: 'false', label: 'No' },
+                          ],
+                        },
+                        {
                           name: 'maxFrequencyCount',
                           label: 'Max Frequency Count',
                           type: 'text',
@@ -709,6 +724,7 @@ const SurveySettingsComponent = ({
                           },
                           Expiration: values.get('expiration'),
                           'Allow Opt-out': values.get('allowOptOut'),
+                          Unique: values.get('unique'),
                           'Maximum Survey Frequency': {
                             Count: values.get('maxFrequencyCount'),
                             Days: values.get('maxFrequencyDays'),
