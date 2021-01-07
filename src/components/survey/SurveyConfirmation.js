@@ -3,6 +3,7 @@ import { connect } from '../../redux/store';
 import { actions } from '../../redux/modules/surveys';
 import { compose, withProps } from 'recompose';
 import { I18n } from '@kineticdata/react';
+import { InfoMessage } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 
 const SurveyConfirmationComponent = props => {
@@ -27,11 +28,13 @@ const SurveyConfirmationComponent = props => {
             context={`kapps.${props.kappSlug}.forms.${props.slug}`}
             public={!props.authenticated}
           >
-            <h4>
-              {customText
-                ? customText
-                : 'Thank you for taking the time to complete this survey.'}
-            </h4>
+            <InfoMessage
+              title={
+                customText
+                  ? customText
+                  : 'Thank you for taking the time to complete this survey.'
+              }
+            />
           </I18n>
         </div>
       </div>

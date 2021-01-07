@@ -8,6 +8,7 @@ import {
   ErrorUnauthorized,
   ErrorUnexpected,
   LoadingMessage,
+  InfoMessage,
 } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import { parse } from 'query-string';
@@ -35,17 +36,21 @@ export const SurveyComponent = ({
           >
             <div className="embedded-core-form--wrapper">
               {submission ? (
-                <CoreForm
-                  submission={submission.id}
-                  public={!authenticated}
-                  review={submission.coreState !== 'Draft'}
-                  form={submission.form.slug}
-                  values={values}
-                  completed={handleCompleted}
-                  notFoundComponent={ErrorNotFound}
-                  unauthorizedComponent={ErrorUnauthorized}
-                  unexpectedErrorComponent={ErrorUnexpected}
-                />
+                submission.coreState !== 'Draft' ? (
+                  <InfoMessage title="This survey has already been completed." />
+                ) : (
+                  <CoreForm
+                    submission={submission.id}
+                    public={!authenticated}
+                    review={submission.coreState !== 'Draft'}
+                    form={submission.form.slug}
+                    values={values}
+                    completed={handleCompleted}
+                    notFoundComponent={ErrorNotFound}
+                    unauthorizedComponent={ErrorUnauthorized}
+                    unexpectedErrorComponent={ErrorUnexpected}
+                  />
+                )
               ) : (
                 <CoreForm
                   public={!authenticated}
