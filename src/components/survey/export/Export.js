@@ -137,7 +137,7 @@ const handleDownload = props => () => {
 
   if (filter.values) {
     Object.entries(filter.values).map(
-      ([key, value]) => (q[`values[${value.field}]`] = value.value),
+      ([key, value]) => (q[`values[${key}]`] = value),
     );
   }
 
