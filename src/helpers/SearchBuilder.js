@@ -63,6 +63,10 @@ class SearchBuilder {
     return pushExpression(this, {}, 'sw', field, value);
   }
 
+  matches(field, value) {
+    return pushExpression(this, {}, 'mt', field, value);
+  }
+
   end() {
     if (this.expressionStack.length === 1) {
       return this.type === 'kql'
@@ -117,6 +121,10 @@ const compileKqlQuery = ({ operator, operands, options }, values) => {
     case 'sw':
       return values[operands[1]]
         ? `${operands[0]} =* ${nullFix(values[operands[1]])}`
+        : '';
+    case 'mt':
+      return values[operands[1]]
+        ? `${operands[0]} *=* ${nullFix(values[operands[1]])}`
         : '';
     case 'in': {
       const rval = values[operands[1]];
@@ -179,6 +187,8 @@ const compileExpression = ({ operator, operands, options }) => {
       return orOperation(operands);
     case 'sw':
       return startsWithOperation(options, ...operands);
+    case 'mt':
+      return matchesOperation(options, ...operands);
     default:
       return constant(true);
   }
@@ -276,6 +286,14 @@ const startsWithOperation = (options, lvalue, rvalue) => {
       normalize(object[lvalue]).startsWith(normalize(get(filters, rvalue))));
 };
 
+const matchesOperation = (options, lvalue, rvalue) => {
+  const normalize = normalization(options);
+  return (object, filters) =>
+    isNullOrEmpty(get(filters, rvalue)) ||
+    (object[lvalue] &&
+      normalize(object[lvalue]).includes(normalize(get(filters, rvalue))));
+};
+
 const skip = (filterValue, options) =>
   isNullOrEmpty(filterValue) && !options.strict;
 
@@ -287,8 +305,8 @@ const compare = (left, right, options, type = typeof left) => {
     return normalize(right, type) > normalize(left, type)
       ? 1
       : normalize(right, type) === normalize(left, type)
-      ? 0
-      : -1;
+        ? 0
+        : -1;
   } else {
     const falsyRanks = [undefined, null, ''];
     const leftRank = nonNull(left) ? 3 : falsyRanks.indexOf(left);

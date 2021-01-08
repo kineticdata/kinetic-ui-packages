@@ -7,8 +7,8 @@ import {
 } from '../../../apis/http';
 
 const kappQuery = defineKqlQuery()
-  .startsWith('name', 'name')
-  .startsWith('slug', 'slug')
+  .matches('name', 'name')
+  .matches('slug', 'slug')
   .end();
 
 const dataSource = () => ({
