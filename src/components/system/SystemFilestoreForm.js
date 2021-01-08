@@ -3,7 +3,6 @@ import {
   fetchSystemFilestore,
   updateSystemFilestore,
 } from '../../apis';
-import { handleFormErrors } from '../../helpers';
 import { generateForm } from '../index';
 import { get, Map } from 'immutable';
 import {
@@ -11,6 +10,7 @@ import {
   propertiesFromAdapters,
   propertiesFromValues,
 } from './helpers';
+import { handleFormErrors } from '../form/Form.helpers';
 
 const dataSources = () => ({
   filestoreAdapters: {
@@ -34,7 +34,9 @@ const dataSources = () => ({
 const handleSubmit = () => values =>
   updateSystemFilestore({
     filestore: values.toJS(),
-  }).then(handleFormErrors('filestore'));
+  }).then(
+    handleFormErrors('filestore', 'There was an error saving the Filestore.'),
+  );
 
 const fields = () => ({ filestoreAdapters, filestore, adapterProperties }) => {
   if (filestore && filestoreAdapters && adapterProperties) {

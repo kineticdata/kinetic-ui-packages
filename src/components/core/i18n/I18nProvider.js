@@ -41,34 +41,25 @@ export class I18nProvider extends React.Component {
       this.loading = this.loading.setIn([locale, context], true);
       // check to see if the translation context was already loaded by the CE
       // client-side code (like if K.load is used in a form event)
-      if (bundle.config.translations[context]) {
-        this.setState(state => ({
-          translations: state.translations.setIn(
-            [locale, context],
-            Map(bundle.config.translations[context]),
-          ),
-        }));
-      } else {
-        fetchTranslations({
-          cache: true,
-          contextName: context,
-          localeCode: locale,
-          public: isPublic,
-        }).then(({ error, entries }) => {
-          if (entries) {
-            this.setState(state => ({
-              translations: state.translations.setIn(
-                [locale, context],
-                Map(entries.map(entry => [entry.key, entry.value])),
-              ),
-            }));
-          } else {
-            this.setState(state => ({
-              translations: state.translations.setIn([locale, context], Map()),
-            }));
-          }
-        });
-      }
+      fetchTranslations({
+        cache: true,
+        contextName: context,
+        localeCode: locale,
+        public: isPublic,
+      }).then(({ error, entries }) => {
+        if (entries) {
+          this.setState(state => ({
+            translations: state.translations.setIn(
+              [locale, context],
+              Map(entries.map(entry => [entry.key, entry.value])),
+            ),
+          }));
+        } else {
+          this.setState(state => ({
+            translations: state.translations.setIn([locale, context], Map()),
+          }));
+        }
+      });
     }
   };
 

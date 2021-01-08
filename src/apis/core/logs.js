@@ -11,6 +11,12 @@ const parseNDLog = logLine => {
   return {};
 };
 
+export const fetchLogsVersion = () =>
+  axios
+    .get(`${bundle.spaceLocation()}/app/loghub/api/v1/version`, {})
+    .then(response => response.data)
+    .catch(response => ({ error: response }));
+
 export const fetchLogs = (options = {}) => {
   const format = options.format || 'ndjson';
 

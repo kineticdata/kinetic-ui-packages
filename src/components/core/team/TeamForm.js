@@ -7,6 +7,7 @@ import {
 } from '../../../apis';
 import { splitTeamName } from '../../../helpers';
 import { get, List, Map } from 'immutable';
+import { handleFormErrors } from '../../form/Form.helpers';
 
 const TEAM_INCLUDES = 'attributesMap,authorization,memberships.user';
 
@@ -23,19 +24,13 @@ const dataSources = ({ teamSlug }) => ({
   },
 });
 
-const handleSubmit = ({ teamSlug }) => values =>
-  new Promise((resolve, reject) => {
-    const team = values.toJS();
-    (teamSlug ? updateTeam({ teamSlug, team }) : createTeam({ team })).then(
-      ({ team, error }) => {
-        if (team) {
-          resolve(team);
-        } else {
-          reject(error.message || 'There was an error saving the team');
-        }
-      },
-    );
-  });
+const handleSubmit = ({ teamSlug }) => values => {
+  const team = values.toJS();
+  return (teamSlug
+    ? updateTeam({ teamSlug, team })
+    : createTeam({ team })
+  ).then(handleFormErrors('team', 'There was an error saving the Team.'));
+};
 
 const fields = ({ teamSlug }) => ({ team }) =>
   (!teamSlug || team) && [

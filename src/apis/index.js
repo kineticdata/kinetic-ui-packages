@@ -38,8 +38,9 @@ export * from './discussions';
 // Http
 export { generateCESearchParams } from './http';
 
-// Sockets
+// Topics
 export { socket } from './socket';
+export * from './topics';
 
 // Task
 export * from './task';

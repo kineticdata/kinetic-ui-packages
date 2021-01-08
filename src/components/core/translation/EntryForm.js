@@ -6,6 +6,7 @@ import {
   upsertTranslations,
 } from '../../../apis';
 import { Map, List } from 'immutable';
+import { handleFormErrors } from '../../form/Form.helpers';
 
 const dataSources = ({ contextName, keyHash }) => ({
   contexts: {
@@ -26,17 +27,12 @@ const dataSources = ({ contextName, keyHash }) => ({
   },
 });
 
-const handleSubmit = ({ contextName }) => values =>
-  new Promise((resolve, reject) => {
-    const translation = values.toJS();
-    upsertTranslations({ translation }).then(({ message, error }) => {
-      if (message) {
-        resolve(message); // needs fix
-      } else {
-        reject(error || 'There was an error saving the entry');
-      }
-    });
-  });
+const handleSubmit = () => values => {
+  const translation = values.toJS();
+  return upsertTranslations({ translation }).then(
+    handleFormErrors('message', 'There was an error saving the Entry.'),
+  );
+};
 
 const fields = ({ locale, contextName, keyHash }) => ({
   contexts,

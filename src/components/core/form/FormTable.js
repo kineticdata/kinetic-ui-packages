@@ -46,8 +46,8 @@ const filters = ({ kappSlug }) => ({ types }) =>
   ];
 
 const formQuery = defineKqlQuery()
-  .startsWith('name', 'name')
-  .startsWith('slug', 'slug')
+  .matches('name', 'name')
+  .matches('slug', 'slug')
   .startsWith('updatedBy', 'updatedBy')
   .equals('type', 'type')
   .equals('status', 'status')

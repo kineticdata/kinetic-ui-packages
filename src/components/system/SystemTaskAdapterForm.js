@@ -11,7 +11,7 @@ import {
   VALIDATE_DB_ADAPTERS,
 } from './helpers';
 import { getIn } from 'immutable';
-import { handleFormErrors } from '../../helpers';
+import { handleFormErrors } from '../form/Form.helpers';
 
 const dataSources = () => ({
   defaultTaskDbAdapter: {
@@ -29,7 +29,7 @@ const handleSubmit = () => values => {
     properties: adapterProperties(values, type),
   };
   return updateSystemDefaultTaskDbAdapter({ adapter }).then(
-    handleFormErrors('adapter'),
+    handleFormErrors('adapter', 'There was an error saving the Adapter.'),
   );
 };
 

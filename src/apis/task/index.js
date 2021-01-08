@@ -6,8 +6,8 @@ export const buildTreeId = options =>
   options.definitionId
     ? options.definitionId
     : options.sourceName && options.sourceGroup
-    ? `${options.sourceName} :: ${options.sourceGroup} :: ${options.name}`
-    : options.name;
+      ? `${options.sourceName} :: ${options.sourceGroup} :: ${options.name}`
+      : options.name;
 
 const generateNextPageToken = data =>
   data.offset >= 0 && data.limit && data.count
@@ -684,8 +684,8 @@ export const fetchUsage = (options = {}) => {
         options.usageType === 'handler'
           ? response.data.handlerUsage
           : options.usageType === 'routine'
-          ? response.data.routineUsage
-          : [],
+            ? response.data.routineUsage
+            : [],
       totalTrees: response.data.totalTrees,
       totalRoutines: response.data.totalRoutines,
       totalNodes: response.data.totalNodes,
@@ -740,7 +740,9 @@ export const stopEngine = (options = {}) =>
   axios
     .post(
       options.spaceSlug
-        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/engine`
+        ? `/app/system-coordinator/components/task/${
+            options.spaceSlug
+          }/app/api/v2/engine`
         : `${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`,
       {
         action: 'stop',
@@ -754,7 +756,9 @@ export const startEngine = (options = {}) =>
   axios
     .post(
       options.spaceSlug
-        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/engine`
+        ? `/app/system-coordinator/components/task/${
+            options.spaceSlug
+          }/app/api/v2/engine`
         : `${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`,
       {
         action: 'start',
@@ -768,7 +772,9 @@ export const fetchEngineStatus = (options = {}) =>
   axios
     .get(
       options.spaceSlug
-        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/engine`
+        ? `/app/system-coordinator/components/task/${
+            options.spaceSlug
+          }/app/api/v2/engine`
         : `${bundle.spaceLocation()}/app/components/task/app/api/v2/engine`,
     )
     .then(response => response.data)
@@ -786,7 +792,9 @@ export const fetchEngineSettings = (options = {}) =>
   axios
     .get(
       options.spaceSlug
-        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/config/engine`
+        ? `/app/system-coordinator/components/task/${
+            options.spaceSlug
+          }/app/api/v2/config/engine`
         : `${bundle.spaceLocation()}/app/components/task/app/api/v2/config/engine`,
     )
     .then(response => ({
@@ -798,7 +806,9 @@ export const updateEngineSettings = (options = {}) =>
   axios
     .put(
       options.spaceSlug
-        ? `/app/system-coordinator/components/task/${options.spaceSlug}/app/api/v2/config/engine`
+        ? `/app/system-coordinator/components/task/${
+            options.spaceSlug
+          }/app/api/v2/config/engine`
         : `${bundle.spaceLocation()}/app/components/task/app/api/v2/config/engine`,
       options.settings,
     )
@@ -1057,6 +1067,15 @@ export const resolveTaskErrors = (options = {}) => {
     )
     .then(response => ({
       message: response.data,
+    }))
+    .catch(handleErrors);
+};
+
+export const fetchTaskVersion = (options = {}) => {
+  return axios
+    .get(`${bundle.spaceLocation()}/app/components/task/app/api/v2/version`)
+    .then(response => ({
+      version: response.data,
     }))
     .catch(handleErrors);
 };

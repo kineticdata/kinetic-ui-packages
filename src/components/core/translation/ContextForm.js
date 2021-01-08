@@ -1,22 +1,16 @@
 import { generateForm } from '../../form/Form';
 import { createContext, updateContext } from '../../../apis';
+import { handleFormErrors } from '../../form/Form.helpers';
 
 const dataSources = () => ({});
 
-const handleSubmit = ({ contextName }) => values =>
-  new Promise((resolve, reject) => {
-    const context = values.toJS();
-    (contextName
-      ? updateContext({ contextName, context })
-      : createContext({ context })
-    ).then(({ context, error }) => {
-      if (context) {
-        resolve(context);
-      } else {
-        reject(error.message || 'There was an error saving the context');
-      }
-    });
-  });
+const handleSubmit = ({ contextName }) => values => {
+  const context = values.toJS();
+  return (contextName
+    ? updateContext({ contextName, context })
+    : createContext({ context })
+  ).then(handleFormErrors('context', 'There was an error saving the Context.'));
+};
 
 const fields = ({ contextName }) => ({ values }) => {
   return [

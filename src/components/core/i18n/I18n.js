@@ -29,6 +29,7 @@ export class I18n extends React.Component {
           // Otherwise fetch the submission
           fetchSubmission({
             id: this.props.submissionId,
+            datastore: !!this.props.datastore,
             include: 'form,form.kapp',
           }).then(({ submission }) => {
             // Build context using submission data
@@ -125,7 +126,10 @@ export class I18nTranslate extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.context !== prevProps.context) {
+    if (
+      this.props.context !== prevProps.context ||
+      this.props.locale !== prevProps.locale
+    ) {
       this.props.loadTranslations(
         this.props.locale,
         this.props.context,

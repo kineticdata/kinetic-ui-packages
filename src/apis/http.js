@@ -19,14 +19,17 @@ export const handleErrors = error => {
 
   // Destructure out the information needed.
   const { data = {}, status: statusCode, statusText } = error.response;
-  const { error: errorMessage, errorKey: key = null, message, ...rest } = data;
   const type = types[statusCode];
-  const result = {
-    ...rest,
-    message: errorMessage || message || statusText,
-    key,
-    statusCode,
-  };
+  const { error: errorMessage, errorKey: key = null, message, ...rest } = data;
+  const result =
+    typeof data === 'string'
+      ? { message: data, statusCode, key }
+      : {
+          ...rest,
+          message: errorMessage || message || statusText,
+          key,
+          statusCode,
+        };
   if (type) {
     result[type] = true;
   }
@@ -130,8 +133,8 @@ export const formPath = ({ form, kapp }) =>
       ? `${bundle.spaceLocation()}/app/forms/${form}`
       : `${bundle.spaceLocation()}/app/forms`
     : form
-    ? `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}/${form}`
-    : `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}`;
+      ? `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}/${form}`
+      : `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}`;
 
 export const submissionPath = ({ submission }) =>
   submission
@@ -184,8 +187,8 @@ export const generatePaginationParams = ({ pageSize, nextPageToken }) =>
         pageToken: nextPageToken,
       }
     : pageSize
-    ? { limit: pageSize }
-    : {};
+      ? { limit: pageSize }
+      : {};
 
 const sortParams = (sortColumn, sortDirection) =>
   sortColumn

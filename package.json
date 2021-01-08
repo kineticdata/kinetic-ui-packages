@@ -1,6 +1,6 @@
 {
   "name": "@kineticdata/react",
-  "version": "5.0.12",
+  "version": "5.0.13",
   "description": "A React library for the Kinetic Platform",
   "main": "lib/index.js",
   "main:src": "src/index.js",

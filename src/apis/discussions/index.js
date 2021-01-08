@@ -321,3 +321,12 @@ export const sendInvites = (discussion, values) => {
       .map(createInvite),
   );
 };
+
+export const fetchDiscussionsVersion = () =>
+  axios
+    .request({
+      url: `${baseUrl()}/api/v1/version`,
+      method: 'get',
+    })
+    .then(response => response.data)
+    .catch(response => ({ error: response }));

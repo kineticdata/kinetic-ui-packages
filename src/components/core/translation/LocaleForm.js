@@ -1,6 +1,7 @@
 import { List, Map } from 'immutable';
 import { generateForm } from '../../form/Form';
 import { fetchAvailableLocales, enableLocale } from '../../../apis';
+import { handleFormErrors } from '../../form/Form.helpers';
 
 const dataSources = () => ({
   locales: {
@@ -12,7 +13,9 @@ const dataSources = () => ({
 
 const handleSubmit = () => values => {
   const localeCode = values.toJS();
-  return enableLocale({ localeCode: localeCode.code });
+  return enableLocale({ localeCode: localeCode.code }).then(
+    handleFormErrors('user', 'There was an error saving the Locale.'),
+  );
 };
 
 const fields = () => () => [

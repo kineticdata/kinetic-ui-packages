@@ -7,6 +7,7 @@ import {
   fetchTimezones,
 } from '../../../apis';
 import { get, List, Map } from 'immutable';
+import { handleFormErrors } from '../../form/Form.helpers';
 
 const PROFILE_INCLUDES =
   'details,attributesMap,memberships,profileAttributesMap';
@@ -41,7 +42,9 @@ const dataSources = () => ({
 
 const handleSubmit = () => values => {
   const profile = values.toJS();
-  return updateProfile({ profile });
+  return updateProfile({ profile }).then(
+    handleFormErrors('user', 'There was an error saving your profile.'),
+  );
 };
 
 const fields = () => ({ profile }) =>

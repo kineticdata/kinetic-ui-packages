@@ -55,7 +55,7 @@ const dataSources = ({ formSlug, kappSlug }) => ({
   },
   categories: {
     fn: fetchCategories,
-    params: kappSlug && [{ kappSlug }],
+    params: kappSlug && [{ kappSlug, include: 'attributes[Parent]' }],
     transform: result => result.categories,
   },
 });
@@ -72,6 +72,26 @@ const handleSubmit = ({ formSlug, kappSlug }) => values =>
     }
     return form;
   });
+
+const buildLabel = ({ name, category, categories }) => {
+  let match = null;
+  if (category.get('attributes').size) {
+    category.get('attributes').map(c => {
+      if (c.get('name') === 'Parent') {
+        match = categories.find(
+          cat => cat.get('slug') === c.getIn(['values', 0]),
+        );
+        name = buildLabel({
+          name: `${match.get('name')}::${name}`,
+          category: match,
+          categories,
+        });
+      }
+      return name;
+    });
+  }
+  return name;
+};
 
 const securityEndpoints = {
   formDisplay: {
@@ -259,7 +279,11 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
         categories
           ? categories.map(category =>
               Map({
-                label: category.get('name'),
+                label: buildLabel({
+                  name: category.get('name'),
+                  category,
+                  categories,
+                }),
                 value: category.get('slug'),
               }),
             )
