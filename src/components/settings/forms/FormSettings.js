@@ -21,6 +21,7 @@ import {
 } from '../../../redux/modules/settingsForms';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { PageTitle } from '../../shared/PageTitle';
+import { List } from 'immutable';
 
 export const FieldsTableField = props => (
   <table className="table table-hover table--settings table-draggable">
@@ -259,7 +260,7 @@ export const FormSettingsComponent = ({
             type: 'team-multi',
             helpText: 'Teams responsible for maintaining this form.',
             initialValue: form
-              .getIn(['attributesMap', 'Owning Team'])
+              .getIn(['attributesMap', 'Owning Team'], List())
               .map(name => ({ name }))
               .toJS(),
           },
