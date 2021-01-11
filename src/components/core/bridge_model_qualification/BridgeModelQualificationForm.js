@@ -62,16 +62,18 @@ const handleSubmit = ({ modelName, qualificationName }) => (
               mappingName,
               qualificationName: name,
               bridgeModelQualificationMapping: { name, query },
+            }).then(result => {
+              if (result.error && !qualificationName) {
+                return deleteBridgeModelQualification({
+                  modelName,
+                  qualificationName: name,
+                }).then(() => ({ error: result.error }));
+              }
+              return result;
             }),
     )
     .then(({ bridgeModelQualificationMapping, error }) => {
       if (error) {
-        if (!qualificationName) {
-          deleteBridgeModelQualification({
-            modelName,
-            qualificationName: name,
-          });
-        }
         throw (error.statusCode === 400 && error.message) ||
           'There was an error saving the qualification';
       }
