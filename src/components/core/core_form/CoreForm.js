@@ -184,12 +184,21 @@ export const unlockSubmission = ({
   });
 };
 
-export const queryString = ({ review, values }) => {
+export const queryString = (
+  { review, values },
+  { reviewPages, reviewPageIndex },
+) => {
   const parameters = [];
-  if (review === true) {
-    parameters.push('review');
-  } else if (isString(review)) {
-    parameters.push(`review=${encodeURIComponent(review)}`);
+  if (!!review) {
+    if (typeof reviewPageIndex === 'number') {
+      parameters.push(
+        `review=${encodeURIComponent(reviewPages[reviewPageIndex])}`,
+      );
+    } else if (isString(review)) {
+      parameters.push(`review=${encodeURIComponent(review)}`);
+    } else {
+      parameters.push('review');
+    }
   }
   if (isPlainObject(values)) {
     Object.keys(values).forEach(field => {
@@ -212,6 +221,8 @@ const defaultState = {
   form: null,
   error: false,
   lock: null,
+  reviewPageIndex: null,
+  reviewPages: [],
 };
 
 export class CoreFormComponent extends Component {
@@ -372,6 +383,17 @@ export class CoreFormComponent extends Component {
     if (!this.state.lock && prevState.lock && prevState.lock.poller) {
       clearInterval(prevState.lock.poller);
     }
+
+    // If in review mode and page index changes, close and reload form
+    if (
+      !!this.props.review &&
+      typeof prevState.reviewPageIndex === 'number' &&
+      typeof this.state.reviewPageIndex === 'number' &&
+      this.state.reviewPageIndex !== prevState.reviewPageIndex
+    ) {
+      this.closeForm();
+      this.loadForm(this.props);
+    }
   }
 
   componentWillUnmount() {
@@ -514,6 +536,30 @@ export class CoreFormComponent extends Component {
         );
   }
 
+  previousReviewPage() {
+    this.setStateSafe({
+      reviewPageIndex: Math.max(this.state.reviewPageIndex - 1, 0),
+    });
+  }
+
+  nextReviewPage() {
+    this.setStateSafe({
+      reviewPageIndex: Math.min(
+        this.state.reviewPageIndex + 1,
+        Math.max(this.state.reviewPages.length - 1, 0),
+      ),
+    });
+  }
+
+  goToReviewPage(page) {
+    this.setStateSafe({
+      reviewPageIndex: Math.max(
+        Math.min(page, Math.max(this.state.reviewPages.length - 1, 0)),
+        0,
+      ),
+    });
+  }
+
   getGlobalsPromise() {
     if (!this.globalsPromise) {
       if (typeof this.props.globals === 'function') {
@@ -538,11 +584,25 @@ export class CoreFormComponent extends Component {
     this.form = new Promise(resolve => {
       this.getGlobalsPromise().then(() => {
         K.load({
-          path: `${corePath(props)}?${queryString(props)}`,
+          path: `${corePath(props)}?${queryString(props, this.state)}`,
           container: this.container,
           loaded: form => {
             resolve(form);
-            this.setStateSafe({ pending: false, error: null });
+            const reviewState = !!props.review
+              ? {
+                  reviewPageIndex: form
+                    .displayablePages()
+                    .findIndex(
+                      currentPage => currentPage === form.page().name(),
+                    ),
+                  reviewPages: form.displayablePages(),
+                }
+              : {};
+            this.setStateSafe({
+              pending: false,
+              error: null,
+              ...reviewState,
+            });
             applyGuard(props.onLoaded || props.loaded, undefined, [form]);
           },
           unauthorized: (...args) => {
@@ -591,6 +651,7 @@ export class CoreFormComponent extends Component {
       notFoundComponent: NotFound = DefaultErrorComponent,
       unexpectedErrorComponent: Unexpected = DefaultErrorComponent,
       lockMessageComponent: LockMessage = DefaultLockMessage,
+      reviewPagingComponent: ReviewPaging = DefaultReviewPaging,
       layoutComponent: Layout,
     } = this.props;
     const { init, poller, ...lockProps } = this.state.lock || {};
@@ -600,10 +661,33 @@ export class CoreFormComponent extends Component {
         ? adminLockOverride => this.releaseLock({ adminLockOverride })
         : undefined,
       obtainLock: this.state.lock ? () => this.obtainLock() : undefined,
+      previousPage:
+        !!this.props.review && this.state.reviewPageIndex > 0
+          ? () => this.previousReviewPage()
+          : undefined,
+      nextPage:
+        !!this.props.review &&
+        this.state.reviewPageIndex < this.state.reviewPages.length - 1
+          ? () => this.nextReviewPage()
+          : undefined,
+      goToPage: !!this.props.review
+        ? page => this.goToReviewPage(page)
+        : undefined,
     };
     const lockMessage = (
       <LockMessage lock={init ? lockProps : undefined} actions={actions} />
     );
+    const reviewPaging =
+      !!this.props.review &&
+      !this.state.pending &&
+      !this.state.error &&
+      this.state.reviewPages.length > 1 ? (
+        <ReviewPaging
+          pages={this.state.reviewPages}
+          index={this.state.reviewPageIndex}
+          actions={actions}
+        />
+      ) : null;
     const content = (
       <div className="embedded-core-form">
         {!Layout && lockMessage}
@@ -628,6 +712,7 @@ export class CoreFormComponent extends Component {
           ) : (
             <Unexpected />
           ))}
+        {!Layout && reviewPaging}
       </div>
     );
     return Layout ? (
@@ -638,6 +723,7 @@ export class CoreFormComponent extends Component {
         content={content}
         actions={actions}
         lockMessage={lockMessage}
+        reviewPaging={reviewPaging}
         lock={init ? lockProps : undefined}
       />
     ) : (
@@ -676,6 +762,25 @@ const DefaultErrorComponent = ({ message }) => (
         <I18n>{message}</I18n>
       </small>
     )}
+  </div>
+);
+
+const DefaultReviewPaging = ({ actions }) => (
+  <div>
+    <button
+      className="btn btn-link"
+      onClick={actions.previousPage}
+      disabled={!actions.previousPage}
+    >
+      Previous Page
+    </button>
+    <button
+      className="btn btn-link"
+      onClick={actions.nextPage}
+      disabled={!actions.nextPage}
+    >
+      Next Page
+    </button>
   </div>
 );
 
@@ -760,8 +865,8 @@ CoreForm.propTypes = {
   datastore: t.bool,
   /** Map of field values to pass to the form. */
   values: t.object,
-  /** Boolean determining if the form should be opened in review mode. */
-  review: t.bool,
+  /** Boolean determining if the form should be opened in review mode, or name of the page to open in review mode */
+  review: t.oneOfType([t.bool, t.string]),
   /** Boolean determining if the submission should be locked when opened. */
   lock: t.bool,
   /** Callback function that will execute when the form is loaded. */
