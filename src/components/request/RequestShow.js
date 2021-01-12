@@ -19,9 +19,8 @@ import {
   getSubmissionPath,
   isActiveClass,
 } from '../../utils';
-import { ReviewRequest } from './ReviewRequest';
 import { PageTitle } from '../shared/PageTitle';
-import { I18n } from '@kineticdata/react';
+import { CoreForm, I18n } from '@kineticdata/react';
 
 const ProfileLink = ({ submitter }) => (
   <Link to={`/profile/${encodeURIComponent(submitter)}`}>
@@ -232,10 +231,13 @@ export const RequestShow = ({
                 </ul>
                 <div className="submission-tabs__content">
                   {mode === 'review' ? (
-                    <ReviewRequest
-                      kappSlug={kappSlug}
-                      submission={submission}
-                    />
+                    <I18n
+                      context={`kapps.${kappSlug}.forms.${
+                        submission.form.slug
+                      }`}
+                    >
+                      <CoreForm submission={submission.id} review />
+                    </I18n>
                   ) : (
                     <RequestActivityList submission={submission} />
                   )}
