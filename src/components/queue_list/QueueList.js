@@ -1,12 +1,11 @@
 import React from 'react';
-import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
-import wallyMissingImage from '@kineticdata/bundle-common/assets/images/wally-missing.svg';
 import { QueueListItemSmall } from './QueueListItem';
 import { TOO_MANY_STATUS_STRING } from '../../redux/sagas/queue';
 import {
   Constants,
   GroupDivider,
   LoadingMessage,
+  EmptyMessage,
 } from '@kineticdata/bundle-common';
 import { FilterMenuToolbar } from './FilterMenuToolbar';
 import { FilterMenuMobile } from './FilterMenuMobile';
@@ -14,71 +13,37 @@ import { QueueListPagination } from './QueueListPagination';
 import { PageTitle } from '../shared/PageTitle';
 
 import moment from 'moment';
-import { I18n, Moment } from '@kineticdata/react';
+import { Moment } from '@kineticdata/react';
 
-const WallyEmptyMessage = ({ filter }) => {
+const QueueEmptyMessage = ({ filter }) => {
   if (filter.type === 'adhoc') {
     return (
-      <div className="empty-state empty-state--wally">
-        <div className="empty-state__title">
-          <I18n>No Results</I18n>
-        </div>
-        <img src={wallyMissingImage} alt="Missing Wally" />
-        <div className="empty-state__message">
-          <I18n>Try a less specific filter.</I18n>
-        </div>
-        <h5>
-          <I18n>Try again</I18n>
-        </h5>
-      </div>
+      <EmptyMessage title="No Results" message="Try a less specific filter." />
     );
   }
 
   return (
-    <div className="empty-state empty-state--wally">
-      <div className="empty-state__title">
-        <I18n>No Assignments</I18n>
-      </div>
-      <img src={wallyHappyImage} alt="Happy Wally" />
-      <div className="empty-state__message">
-        <I18n>An empty queue is a happy queue.</I18n>
-      </div>
-    </div>
+    <EmptyMessage
+      title="No Assignments"
+      message="An empty queue is a happy queue."
+    />
   );
 };
 
-const WallyErrorMessage = ({ message }) => {
-  return (
-    <div className="empty-state empty-state--wally">
-      <div className="empty-state__title">
-        <I18n>
-          {message === TOO_MANY_STATUS_STRING ? 'Too Many Items' : 'Error'}
-        </I18n>
-      </div>
-      <img src={wallyMissingImage} alt="Missing Wally" />
-      <div className="empty-state__message">
-        <I18n>{message}</I18n>
-      </div>
-      <div className="empty-state__message">
-        <I18n>Try again</I18n>
-      </div>
-    </div>
-  );
-};
+const QueueErrorMessage = ({ message }) => (
+  <EmptyMessage
+    title={message === TOO_MANY_STATUS_STRING ? 'Too Many Items' : 'Error'}
+    message={message}
+  />
+);
 
-const WallyBadFilter = ({ message }) => (
-  <div className="empty-state empty-state--wally">
-    <div className="empty-state__title">
-      <I18n>Invalid List</I18n>
-    </div>
-    <img src={wallyMissingImage} alt="Missing Wally" />
-    <div className="empty-state__message">
-      <I18n>
-        {message ||
-          'Invalid list, please choose a valid list from the left side.'}
-      </I18n>
-    </div>
-  </div>
+const QueueBadFilterMessage = ({ message }) => (
+  <EmptyMessage
+    title="Invalid List"
+    message={
+      message || 'Invalid list, please choose a valid list from the left side.'
+    }
+  />
 );
 
 const GroupByValue = ({ value }) => {
@@ -151,7 +116,7 @@ export const QueueList = ({
       {!filter ? (
         <div className="page-panel page-panel--no-padding">
           <PageTitle parts={['Invalid List']} />
-          <WallyBadFilter />
+          <QueueBadFilterMessage />
         </div>
       ) : (
         <div className="page-panel page-panel--no-padding page-panel--white page-panel--flex">
@@ -179,7 +144,7 @@ export const QueueList = ({
                 ref={setQueueListRef}
               >
                 {statusMessage ? (
-                  <WallyErrorMessage message={statusMessage} />
+                  <QueueErrorMessage message={statusMessage} />
                 ) : isLoading ? (
                   <LoadingMessage />
                 ) : queueItems && queueItems.size > 0 ? (
@@ -218,11 +183,11 @@ export const QueueList = ({
                     </ul>
                   )
                 ) : (
-                  <WallyEmptyMessage filter={filter} />
+                  <QueueEmptyMessage filter={filter} />
                 )}
               </div>
             ) : (
-              <WallyBadFilter
+              <QueueBadFilterMessage
                 message={filterValidations.map((v, i) => <p key={i}>{v}</p>)}
               />
             )}
