@@ -7,10 +7,10 @@ const backgroundJobPath = ({ formSlug, kappSlug, job } = {}) => {
     !formSlug && !kappSlug
       ? `${bundle.apiLocation()}/backgroundJobs`
       : !formSlug && kappSlug
-      ? `${bundle.apiLocation()}/kapps/${kappSlug}/backgroundJobs`
-      : formSlug && !kappSlug
-      ? `${bundle.apiLocation()}/forms/${formSlug}/backgroundJobs`
-      : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/backgroundJobs`;
+        ? `${bundle.apiLocation()}/kapps/${kappSlug}/backgroundJobs`
+        : formSlug && !kappSlug
+          ? `${bundle.apiLocation()}/forms/${formSlug}/backgroundJobs`
+          : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/backgroundJobs`;
 
   return basePath + (job ? `/${job}` : '');
 };
@@ -18,7 +18,7 @@ const backgroundJobPath = ({ formSlug, kappSlug, job } = {}) => {
 export const fetchBackgroundJobs = (options = {}) =>
   axios
     .get(backgroundJobPath(options), {
-      params: paramBuilder(options),
+      params: { ...paramBuilder(options), complete: options.complete },
       headers: headerBuilder(options),
     })
     .then(response => ({

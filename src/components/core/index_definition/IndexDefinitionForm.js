@@ -29,7 +29,7 @@ const dataSources = ({ kappSlug, formSlug, indexName }) => ({
         kappSlug,
         formSlug,
         include:
-          'fields,indexDefinitions,indexDefinitions.unpopulatedForms,indexDefinitions.detatchedForms',
+          'fields,indexDefinitions,indexDefinitions.unpopulatedForms,indexDefinitions.detachedForms',
       },
     ],
     transform: result =>

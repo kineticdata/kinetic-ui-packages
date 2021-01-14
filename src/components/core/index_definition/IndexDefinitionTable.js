@@ -18,23 +18,23 @@ const dataSource = ({ kappSlug, formSlug }) => ({
     !kappSlug && !formSlug
       ? fetchSpace
       : kappSlug && !formSlug
-      ? fetchKapp
-      : fetchForm,
+        ? fetchKapp
+        : fetchForm,
   clientSide,
   params: () => [
     {
       kappSlug,
       formSlug,
       include:
-        'indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms',
+        'indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms',
     },
   ],
   transform: result => ({
     data: (!kappSlug && !formSlug
       ? result.space
       : kappSlug && !formSlug
-      ? result.kapp
-      : result.form
+        ? result.kapp
+        : result.form
     ).indexDefinitions,
   }),
 });
