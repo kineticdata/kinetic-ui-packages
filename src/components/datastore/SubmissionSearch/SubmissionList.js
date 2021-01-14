@@ -4,9 +4,13 @@ import { compose, withHandlers } from 'recompose';
 import { actions } from '../../../redux/modules/settingsDatastore';
 import { context } from '../../../redux/store';
 import { SubmissionListItem } from './SubmissionListItem';
-import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
-import wallyMissingImage from '@kineticdata/bundle-common/assets/images/wally-missing.svg';
 import { I18n } from '@kineticdata/react';
+import {
+  EmptyMessage,
+  LoadingMessage,
+  InfoMessage,
+  ErrorMessage,
+} from '@kineticdata/bundle-common';
 
 const DiscussionIcon = () => (
   <span className="icon">
@@ -19,65 +23,6 @@ const DiscussionIcon = () => (
     />
   </span>
 );
-
-const WallyNoResultsFoundMessage = ({ form }) => {
-  return (
-    <div className="empty-state empty-state--wally">
-      <div className="empty-state__title">
-        <I18n>No {form.name} Submissions Found</I18n>
-      </div>
-      <img src={wallyHappyImage} alt="Happy Wally" />
-      <div className="empty-state__message">
-        <I18n>Add a new one by hitting the new button!</I18n>
-      </div>
-    </div>
-  );
-};
-
-const WallyEnterSearchTerm = ({ form }) => {
-  return (
-    <div className="empty-state empty-state--wally">
-      <div className="empty-state__title">
-        <I18n>Enter a term to search</I18n>
-      </div>
-      <img src={wallyHappyImage} alt="Happy Wally" />
-      <div className="empty-state__message">
-        <I18n>
-          You can search by any field on the form, or by choosing an index and
-          building a search query.
-        </I18n>
-      </div>
-    </div>
-  );
-};
-
-const WallyErrorMessage = ({ error }) => {
-  return (
-    <div className="empty-state empty-state--wally">
-      <div className="empty-state__title text-danger">
-        <I18n>An Error Occurred</I18n>
-      </div>
-      <img src={wallyMissingImage} alt="Happy Wally" />
-      <div className="empty-state__message">
-        <I18n>{error.message}</I18n>
-      </div>
-    </div>
-  );
-};
-
-const WallySearching = () => {
-  return (
-    <div className="empty-state empty-state--wally">
-      <div className="empty-state__title">
-        <I18n>Searching</I18n>
-      </div>
-      <img src={wallyHappyImage} alt="Happy Wally" />
-      <div className="empty-state__message">
-        <I18n>Just a sec while we find those submissions.</I18n>
-      </div>
-    </div>
-  );
-};
 
 const sortTable = ({ clientSortInfo, setClientSortInfo }) => column => {
   if (
@@ -290,19 +235,34 @@ const SubmissionListComponent = ({
                 </table>
               </div>
             )}
-          {searching && <WallySearching />}
+          {searching && (
+            <LoadingMessage
+              title="Searching"
+              message="Just a sec while we find those submissions."
+            />
+          )}
           {!searching &&
             hasStartedSearching &&
             !submissionsError &&
             submissions.size === 0 && (
-              <WallyNoResultsFoundMessage form={form} />
+              <EmptyMessage
+                title={`No ${form.name} Submissions Found`}
+                message="Add a new one by hitting the new button!"
+              />
             )}
           {!searching &&
             hasStartedSearching &&
-            submissionsError && <WallyErrorMessage error={submissionsError} />}
+            submissionsError && (
+              <ErrorMessage message={submissionsError.message} />
+            )}
           {!searching &&
             !hasStartedSearching &&
-            submissions.size === 0 && <WallyEnterSearchTerm form={form} />}
+            submissions.size === 0 && (
+              <InfoMessage
+                title="Enter a term to search"
+                message="You can search by any field on the form, or by choosing an index and building a search query."
+              />
+            )}
         </div>
       )}
     </div>
