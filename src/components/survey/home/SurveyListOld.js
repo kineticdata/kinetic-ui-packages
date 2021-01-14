@@ -2,27 +2,11 @@ import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
 import { connect } from '../../../redux/store';
 import { compose, withState } from 'recompose';
-import wallyHappyImage from '@kineticdata/bundle-common/assets/images/wally-happy.svg';
 import { PageTitle } from '../../shared/PageTitle';
 import { I18n } from '@kineticdata/react';
 import { SurveyCard } from './SurveyCard';
 import { SurveyTable } from './SurveyTable';
-
-const WallyEmptyMessage = () => {
-  return (
-    <div className="empty-state empty-state--wally">
-      <div className="empty-state__title">
-        <I18n>No Surveys Found</I18n>
-      </div>
-      <img src={wallyHappyImage} alt="Happy Wally" />
-      <div className="empty-state__message">
-        <I18n>
-          Surveys are Kapp Forms with additional configuration attributes.
-        </I18n>
-      </div>
-    </div>
-  );
-};
+import { EmptyMessage } from '@kineticdata/bundle-common';
 
 const SurveyListComponent = ({
   kapp,
@@ -101,7 +85,10 @@ const SurveyListComponent = ({
               )}
             </Fragment>
           ) : (
-            <WallyEmptyMessage />
+            <EmptyMessage
+              title="No Surveys Found"
+              message="Surveys are Kapp Forms with additional configuration attributes."
+            />
           )}
         </div>
       </div>
