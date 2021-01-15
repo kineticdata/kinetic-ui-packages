@@ -20,13 +20,13 @@ import { actions as submissionCountActions } from './redux/modules/submissionCou
 
 import { PageTitle } from './components/shared/PageTitle';
 import { Catalog } from './components/home/Catalog';
-import { CategoryListContainer } from './components/category_list/CategoryListContainer';
-import { CategoryContainer } from './components/category/CategoryContainer';
-import { CatalogSearchResultsContainer } from './components/search_results/CatalogSearchResultsContainer';
+import { CategoryList } from './components/category_list/CategoryList';
+import { Category } from './components/category/Category';
+import { CatalogSearchResults } from './components/search_results/CatalogSearchResults';
 import { Sidebar } from './components/Sidebar';
 import { Sidebar as SettingsSidebar } from './components/settings/Sidebar';
 import { FormContainer } from './components/form/FormContainer';
-import { FormListContainer } from './components/form_list/FormListContainer';
+import { FormList } from './components/form_list/FormList';
 import { RequestList } from './components/request_list/RequestList';
 import { RequestShowContainer } from './components/request/RequestShowContainer';
 import { Settings } from './components/settings/Settings';
@@ -89,15 +89,15 @@ const AppComponent = props => {
                 homePageMode={props.homePageMode}
                 homePageItems={props.homePageItems}
               />
-              <CategoryListContainer path="categories" />
-              <CategoryContainer path="categories/:categorySlug" />
+              <CategoryList path="categories" />
+              <Category path="categories/:categorySlug" />
               <FormContainer path="categories/:categorySlug/:formSlug" />
               <FormContainer path="categories/:categorySlug/:formSlug/:submissionId" />
-              <FormListContainer path="forms" />
+              <FormList path="forms" />
               <FormContainer path="forms/:formSlug" />
               <FormContainer path="forms/:formSlug/:submissionId" />
-              <CatalogSearchResultsContainer path="search" />
-              <CatalogSearchResultsContainer path="search/:query" />
+              <CatalogSearchResults path="search" />
+              <CatalogSearchResults path="search/:query" />
               <ActivityFeed.MountWrapper
                 feedKey={requestFeedKey}
                 path="requests"

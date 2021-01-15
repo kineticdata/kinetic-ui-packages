@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react';
+import { connect } from '../../redux/store';
 import { ServiceCard } from '../shared/ServiceCard';
 import { CategoryCard } from '../shared/CategoryCard';
 import { I18n } from '@kineticdata/react';
 import { PageTitle } from '../shared/PageTitle';
 import { EmptyMessage } from '@kineticdata/bundle-common';
 
-export const Category = ({ category }) => (
+const CategoryComponent = ({ category }) => (
   <Fragment>
     <div className="page-container">
       <div className="page-panel">
@@ -70,3 +71,9 @@ export const Category = ({ category }) => (
     </div>
   </Fragment>
 );
+
+const mapStateToProps = (state, props) => ({
+  category: state.servicesApp.categoryGetter(props.categorySlug),
+});
+
+export const Category = connect(mapStateToProps)(CategoryComponent);
