@@ -18,7 +18,7 @@ const backgroundJobPath = ({ formSlug, kappSlug, job } = {}) => {
 export const fetchBackgroundJobs = (options = {}) =>
   axios
     .get(backgroundJobPath(options), {
-      params: { ...paramBuilder(options), complete: options.complete },
+      params: { ...paramBuilder(options), completed: options.completed },
       headers: headerBuilder(options),
     })
     .then(response => ({

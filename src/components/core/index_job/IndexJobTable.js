@@ -10,8 +10,8 @@ const clientSide = defineFilter(true)
 
 const indexJobStatuses = ['Running', 'Paused'];
 
-const dataSource = ({ formSlug, kappSlug, complete = false }) => ({
-  fn: () => fetchBackgroundJobs({ formSlug, kappSlug, complete }),
+const dataSource = ({ formSlug, kappSlug, completed = false }) => ({
+  fn: () => fetchBackgroundJobs({ formSlug, kappSlug, completed }),
   clientSide,
   params: () => [],
   transform: result => ({
@@ -70,7 +70,7 @@ const columns = [
 ];
 
 export const IndexJobTable = generateTable({
-  tableOptions: ['formSlug', 'kappSlug', 'complete'],
+  tableOptions: ['formSlug', 'kappSlug', 'completed'],
   dataSource,
   columns,
   filters,

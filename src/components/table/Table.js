@@ -666,6 +666,7 @@ export const generateTable = ({
     defaultSortDirection: props.defaultSortDirection,
     omitHeader: props.omitHeader,
     includeFooter: props.includeFooter,
+    refreshInterval: props.refreshInterval,
     renderOptions: props.renderOptions,
     uncontrolled: props.uncontrolled,
     // For full client-side tables, with no datasource.
@@ -718,21 +719,19 @@ export class Table extends Component {
 
     return (
       <ComponentConfigContext.Consumer>
-        {componentConfig => {
-          return (
-            <TableImpl
-              {...this.props}
-              components={componentConfig.merge(this.props.components).toJS()}
-              columnComponents={columnComponents}
-              columns={columns}
-              columnSet={columnSet}
-              tableKey={this.tableKey}
-              auto={this.auto}
-            >
-              {this.props.children}
-            </TableImpl>
-          );
-        }}
+        {componentConfig => (
+          <TableImpl
+            {...this.props}
+            components={componentConfig.merge(this.props.components).toJS()}
+            columnComponents={columnComponents}
+            columns={columns}
+            columnSet={columnSet}
+            tableKey={this.tableKey}
+            auto={this.auto}
+          >
+            {this.props.children}
+          </TableImpl>
+        )}
       </ComponentConfigContext.Consumer>
     );
   }
