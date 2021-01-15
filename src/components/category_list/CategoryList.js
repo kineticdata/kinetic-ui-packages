@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
+import { connect } from '../../redux/store';
 import { CategoryCard } from '../shared/CategoryCard';
 import { PageTitle } from '../shared/PageTitle';
 
-export const CategoryList = ({ categories }) => (
+const CategoryListComponent = ({ categories }) => (
   <Fragment>
     <div className="page-container">
       <div className="page-panel">
@@ -31,3 +32,9 @@ export const CategoryList = ({ categories }) => (
     </div>
   </Fragment>
 );
+
+const mapStateToProps = state => ({
+  categories: state.servicesApp.categories,
+});
+
+export const CategoryList = connect(mapStateToProps)(CategoryListComponent);

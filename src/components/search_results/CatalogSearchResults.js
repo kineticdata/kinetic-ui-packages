@@ -1,118 +1,114 @@
-import React, { Fragment } from 'react';
-import { StateListWrapper } from '@kineticdata/bundle-common';
+import React from 'react';
+import { connect } from '../../redux/store';
+import { compose, withHandlers, withProps } from 'recompose';
 import { ServiceCard } from '../shared/ServiceCard';
 import { PageTitle } from '../shared/PageTitle';
 import { CatalogSearchContainer } from '../shared/CatalogSearchContainer';
-import { I18n } from '@kineticdata/react';
+import { I18n, fetchForms } from '@kineticdata/react';
+import { ActivityFeed, EmptyMessage } from '@kineticdata/bundle-common';
+import {
+  SUBMISSION_FORM_STATUSES,
+  SUBMISSION_FORM_TYPES,
+} from '../../constants';
 
-export const CatalogSearchResults = ({
-  navigate,
-  query,
-  error,
-  forms,
-  appLocation,
-  paging,
-  hasNextPage,
-  hasPreviousPage,
-  pageIndexStart,
-  pageIndexEnd,
-  loadPreviousHandler,
-  loadNextHandler,
-  clientSideSearch,
-}) => (
+// Available search fields: attributes[*], category, createdAt, createdBy,
+// description, name, slug, status, type, updatedAt, updatedBy
+const SEARCH_FIELDS = ['name', 'description', 'attributes[Keyword]'];
+
+const CatalogSearchResultsComponent = props => (
   <div>
     <div className="page-container">
       <div className="page-panel">
         <div className="page-panel__header">
           <PageTitle
-            parts={[query, 'Search']}
-            breadcrumbs={[{ label: 'services', to: `..${query ? '/..' : ''}` }]}
+            parts={[props.query, 'Search']}
+            breadcrumbs={[
+              { label: 'services', to: `..${props.query ? '/..' : ''}` },
+            ]}
             title={
               <>
                 <I18n>Search Results</I18n>
-                {query && <small className="ml-2">({query})</small>}
+                {props.query && <small className="ml-2">({props.query})</small>}
               </>
             }
           />
           <div className="search-box">
             <CatalogSearchContainer
-              onSearch={q => navigate(`${query ? '../' : ''}${q}`)}
+              onSearch={q => props.navigate(`${props.query ? '../' : ''}${q}`)}
             />
           </div>
         </div>
         <div className="page-panel__body">
-          <div className="search-results">
-            {!clientSideSearch && (
-              <div className="mb-4 text-info">
-                <em>
-                  <I18n>Searching by name and keywords only.</I18n>
-                </em>
-              </div>
+          <div className="cards">
+            {!!props.query ? (
+              <ActivityFeed
+                pageSize={10}
+                joinByDirection="ASC"
+                joinBy="name"
+                options={{ query: props.query }}
+                dataSources={{
+                  ...props.formsDataSource,
+                }}
+                contentProps={{
+                  emptyMessage: {
+                    title: 'No forms found.',
+                    message:
+                      'Make sure words are spelled correctly or use a less specific search term.',
+                  },
+                }}
+                showCount={true}
+              />
+            ) : (
+              <EmptyMessage title="Enter a search term to find matching forms by name, description, or keyword." />
             )}
-            <StateListWrapper
-              data={clientSideSearch ? clientSideSearch.data : forms}
-              error={error}
-              loadingTitle="Searching"
-              emptyTitle="No results found"
-              emptyMessage="Make sure words are spelled correctly, use less specific or different keywords"
-            >
-              {data => (
-                <Fragment>
-                  <div>
-                    <ul className="cards">
-                      {data.map(form => (
-                        <li key={form.slug}>
-                          <ServiceCard
-                            path={`${appLocation}/forms/${form.slug}`}
-                            form={form}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="pagination-bar">
-                    <I18n
-                      render={translate => (
-                        <button
-                          className="btn btn-icon"
-                          onClick={loadPreviousHandler}
-                          disabled={paging || !hasPreviousPage}
-                          title={translate('Previous Page')}
-                        >
-                          <span className="icon">
-                            <span className="fa fa-fw fa-caret-left" />
-                          </span>
-                        </button>
-                      )}
-                    />
-                    <small>
-                      {paging ? (
-                        <span className="fa fa-spinner fa-spin" />
-                      ) : (
-                        <strong>{`${pageIndexStart}-${pageIndexEnd}`}</strong>
-                      )}
-                    </small>
-                    <I18n
-                      render={translate => (
-                        <button
-                          className="btn btn-icon"
-                          onClick={loadNextHandler}
-                          disabled={paging || !hasNextPage}
-                          title={translate('Next Page')}
-                        >
-                          <span className="icon">
-                            <span className="fa fa-fw fa-caret-right" />
-                          </span>
-                        </button>
-                      )}
-                    />
-                  </div>
-                </Fragment>
-              )}
-            </StateListWrapper>
           </div>
         </div>
       </div>
     </div>
   </div>
 );
+
+export const CatalogSearchResults = compose(
+  connect((state, props) => ({
+    kappSlug: state.app.kapp.slug,
+    appLocation: state.app.location,
+  })),
+  withHandlers({
+    buildFormCard: props => record => (
+      <ServiceCard
+        key={record.slug}
+        form={record}
+        path={`${props.appLocation}/forms/${record.slug}`}
+      />
+    ),
+  }),
+  withProps(props => ({
+    formsDataSource: {
+      forms: {
+        fn: fetchForms,
+        params: (prevParams, prevResult, options) =>
+          prevParams && prevResult
+            ? prevResult.nextPageToken
+              ? { ...prevParams, pageToken: prevResult.nextPageToken }
+              : null
+            : {
+                kappSlug: props.kappSlug,
+                q: `type IN (${SUBMISSION_FORM_TYPES.map(
+                  t => `"${t}"`,
+                )}) AND status IN (${SUBMISSION_FORM_STATUSES.map(
+                  s => `"${s}"`,
+                )}) AND (${SEARCH_FIELDS.map(
+                  f => `${f} *=* "${options.query}"`,
+                ).join(' OR ')})`,
+                include: 'details,categorizations,attributesMap,kapp',
+                limit: 50,
+              },
+        transform: result => ({
+          data: result.forms,
+          nextPageToken: result.nextPageToken,
+        }),
+        component: props.buildFormCard,
+      },
+    },
+  })),
+)(CatalogSearchResultsComponent);
