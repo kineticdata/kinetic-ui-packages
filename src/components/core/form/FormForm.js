@@ -17,9 +17,9 @@ const FORM_STATUSES = ['New', 'Active', 'Inactive', 'Delete'];
 const FORM_INCLUDES =
   'details,attributesMap,securityPolicies,indexDefinitions,backgroundJobs,fields,categorizations';
 const KAPP_INCLUDES =
-  'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms';
+  'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms';
 const SPACE_INCLUDES =
-  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detatchedForms,indexDefinitions.unpopulatedForms';
+  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms';
 
 const dataSources = ({ formSlug, kappSlug }) => ({
   form: {
@@ -299,7 +299,7 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
   ];
 
 export const FormForm = generateForm({
-  formOptions: ['formSlug', 'kappSlug', 'datastore'],
+  formOptions: ['formSlug', 'kappSlug'],
   dataSources,
   fields,
   handleSubmit,
