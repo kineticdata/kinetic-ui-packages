@@ -1,5 +1,5 @@
 import React from 'react';
-import { compose, lifecycle, withProps } from 'recompose';
+import { compose, lifecycle, withHandlers, withProps } from 'recompose';
 import { Link } from '@reach/router';
 import {
   DiscussionsPanel,
@@ -8,7 +8,7 @@ import {
 import { actions } from '../../redux/modules/queue';
 import { QueueItemDetailsContainer } from './QueueItemDetails';
 import { getFilterByPath } from '../../redux/modules/queueApp';
-import { I18n } from '@kineticdata/react';
+import { I18n, createRelatedItem } from '@kineticdata/react';
 import { connect } from '../../redux/store';
 import { PageTitle } from '../shared/PageTitle';
 
@@ -62,7 +62,7 @@ export const QueueItem = ({
   queueItem,
   discussionsEnabled,
   creationFields,
-  onCreated,
+  onDiscussionCreated,
   profile,
   isSmallLayout,
 }) =>
@@ -91,7 +91,7 @@ export const QueueItem = ({
           <QueueItemDetailsContainer
             filter={filter}
             creationFields={creationFields}
-            onCreated={onCreated}
+            onCreated={onDiscussionCreated}
             CreationForm={CreationForm}
           />
         </div>
@@ -102,7 +102,7 @@ export const QueueItem = ({
             itemType="Submission"
             itemKey={queueItem.id}
             creationFields={creationFields}
-            onCreated={onCreated}
+            onCreated={onDiscussionCreated}
             CreationForm={CreationForm}
             me={profile}
           />
@@ -147,6 +147,16 @@ export const QueueItemContainer = compose(
         },
       },
   ),
+  withHandlers({
+    onDiscussionCreated: props => (discussion, values) => {
+      if (values.relateOriginatingRequest) {
+        createRelatedItem(discussion.id, {
+          type: 'Submission',
+          key: props.queueItem.origin.id,
+        });
+      }
+    },
+  }),
   lifecycle({
     componentDidMount() {
       this.props.fetchCurrentItem(this.props.id);
