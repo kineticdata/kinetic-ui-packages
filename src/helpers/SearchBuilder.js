@@ -113,13 +113,15 @@ const compileKqlQuery = ({ operator, operands, options }, values) => {
         .filter(op => op !== '');
 
       const combinator = operator === 'and' ? 'AND' : 'OR';
-      return `( ${andContents.join(` ${combinator} `)} )`;
+      return andContents.length > 0
+        ? `( ${andContents.join(` ${combinator} `)} )`
+        : '';
     case 'eq':
       return options.strict || values[operands[1]]
         ? `${operands[0]} = ${nullFix(values[operands[1]])}`
         : '';
     case 'sw':
-      return values[operands[1]]
+      return options.strict || values[operands[1]]
         ? `${operands[0]} =* ${nullFix(values[operands[1]])}`
         : '';
     case 'mt':
