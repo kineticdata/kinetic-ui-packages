@@ -427,7 +427,7 @@ SpaceForm.propTypes = {
   /**
    * A set of fields that should be added to the form
    */
-  addFields: t.array,
+  addFields: t.oneOfType([t.array, t.func]),
   /**
    * The layout of the form.
    * - @param {Node} form The react `Node` of the rendered form
