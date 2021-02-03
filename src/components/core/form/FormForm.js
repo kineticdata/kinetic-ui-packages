@@ -17,9 +17,9 @@ const FORM_STATUSES = ['New', 'Active', 'Inactive', 'Delete'];
 const FORM_INCLUDES =
   'details,attributesMap,securityPolicies,indexDefinitions,backgroundJobs,fields,categorizations';
 const KAPP_INCLUDES =
-  'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms';
+  'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms,baseIndex,baseIndex.details,baseIndex.detachedForms,baseIndex.unpopulatedForms';
 const SPACE_INCLUDES =
-  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms';
+  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms,baseIndex,baseIndex.details,baseIndex.detachedForms,baseIndex.unpopulatedForms';
 
 const dataSources = ({ formSlug, kappSlug }) => ({
   form: {
