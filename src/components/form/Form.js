@@ -180,6 +180,10 @@ regHandlers({
           ['forms', payload.formKey],
           digest(createFormState(payload)),
         ),
+  REFETCH_FORM: (state, { payload }) =>
+    state.getIn(['forms', payload.formKey]) !== null
+      ? state.setIn(['forms', payload.formKey, 'callOnLoad'], false)
+      : state,
   SET_VALUE: (state, { payload: { formKey, name, value } }) =>
     state
       .updateIn(['forms', formKey, 'fields', name], field =>
@@ -281,6 +285,19 @@ regSaga('CHECK_ON_LOAD', function*() {
     }
   });
 });
+
+regSaga(
+  takeEvery('REFETCH_FORM', function*(action) {
+    const { formKey } = action.payload;
+    const { dataSources } = yield select(selectForm(formKey));
+    yield all(
+      dataSources
+        .map((ds, name) => fork(runDataSource, formKey, name, ds))
+        .valueSeq()
+        .toArray(),
+    );
+  }),
+);
 
 regSaga(
   takeEvery('CONFIGURE_FORM', function*(action) {
