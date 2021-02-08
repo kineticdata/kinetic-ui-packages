@@ -66,46 +66,6 @@ const searchForms = ({ search = Map() }) => (field, value, callback) => {
       ? search.get('fields').toJS()
       : fields(search.get('datastore'));
 
-  // If value is specified in the fields array, given value will be used.
-  // These query aprts will be joined with AND statements to the grouping of
-  // user input query options.
-  const fixedSearchParts = searchFields
-    .filter(field => field.name && field.value)
-    .map(
-      field =>
-        Array.isArray(field.value)
-          ? `${field.name} IN (${field.value.map(v => `"${v}"`).join(',')})`
-          : `${field.name} ${
-              field.exact ? '=' : field.contains ? '*=*' : '=*'
-            } "${field.value}"`,
-    );
-
-  // If value is not specified in the fields array, user entered value will be
-  // matched. These query parts will be joined with OR statements.
-  const userSearchParts = searchFields
-    .filter(field => field.name && !field.value)
-    .map(
-      field =>
-        `${field.name} ${
-          field.exact ? '=' : field.contains ? '*=*' : '=*'
-        } "${value}"`,
-    )
-    .join(' OR ');
-
-  console.log(
-    'FormSelect Query',
-    value,
-    '|||',
-    [
-      ...fixedSearchParts,
-      userSearchParts.length > 0 ? `(${userSearchParts})` : null,
-    ]
-      .filter(Boolean)
-      .join(' AND '),
-    '|||',
-    buildQuery(searchFields, value),
-  );
-
   return fetchForms({
     datastore: search.get('datastore'),
     kappSlug: search.get('kappSlug'),
