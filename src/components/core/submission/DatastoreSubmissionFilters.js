@@ -1,4 +1,5 @@
 import { List, Map, Range } from 'immutable';
+import moment from 'moment';
 import { fetchForm, fetchKapp, fetchSpace } from '../../../apis';
 import {
   defineKqlQuery,
@@ -124,12 +125,20 @@ const availableOptions = currentPart => ({ values, fields }) => {
     .map(f => Map({ label: f, value: f }));
 };
 
-const getRValues = (operator, values, opBase) =>
-  operator === 'between'
-    ? [values.get(`${opBase}-operand1`), values.get(`${opBase}-operand2`)]
+const getRValues = (operator, values, opBase, isTimeline = false) => {
+  const v1 = isTimeline
+    ? values.get(`${opBase}-operand3`)
+    : values.get(`${opBase}-operand1`);
+  const v2 = isTimeline
+    ? values.get(`${opBase}-operand4`)
+    : values.get(`${opBase}-operand2`);
+
+  return operator === 'between'
+    ? [v1, v2]
     : operator === 'in'
       ? [values.get(`${opBase}-operand3`)]
-      : [values.get(`${opBase}-operand1`)];
+      : [v1];
+};
 
 const getSerializedParts = values =>
   Range(0, MAX_PART_LENGTH)
@@ -146,7 +155,12 @@ const getSerializedParts = values =>
     .update(ps => {
       const rangePart = values.get('range-part');
       const rangeOp = values.get('range-operator');
-      const rangeValues = getRValues(rangeOp, values, 'range');
+      const rangeValues = getRValues(
+        rangeOp,
+        values,
+        'range',
+        TIMELINES.includes(rangePart),
+      );
 
       return rangePart
         ? ps.push(List([rangePart, rangeOp, 'range', ...rangeValues]))
@@ -160,15 +174,29 @@ const serializeQuery = ({ values }) => {
     q: parts
       .reduce((query, partEntry) => {
         const [part, operator, opBase] = partEntry;
+        const op1 =
+          opBase === 'range' && TIMELINES.includes(part)
+            ? `${opBase}-operand3`
+            : `${opBase}-operand1`;
+        const op2 =
+          opBase === 'range' && TIMELINES.includes(part)
+            ? `${opBase}-operand4`
+            : `${opBase}-operand2`;
+        const op3 = `${opBase}-operand3`;
+
         return operator === 'between'
-          ? query.between(part, `${opBase}-operand1`, `${opBase}-operand2`)
+          ? query.between(part, op1, op2)
           : operator === 'in'
-            ? query.in(part, `${opBase}-operand3`)
+            ? query.in(part, op3)
             : operator
-              ? query[operator](part, `${opBase}-operand1`)
+              ? query[operator](part, op1)
               : query;
       }, defineKqlQuery())
-      .end()(values.toJS()),
+      .end()(
+      values
+        .map((v, k) => (TIMELINES.includes(k) ? moment(v).toISOString() : v))
+        .toJS(),
+    ),
     orderBy: Range(0, MAX_PART_LENGTH)
       .map(i => values.get(`orderby${i}-part`))
       .filter(v => v)
@@ -261,12 +289,29 @@ export const filters = () => ({ form, fields, indexOptions }) =>
       name: 'range-operand1',
       transient: true,
       type: 'text',
+      visible: ({ values }) => !TIMELINES.includes(values.get('range-part')),
     },
     {
       name: 'range-operand2',
       transient: true,
       type: 'text',
-      visible: ({ values }) => values.get('range-operator') === 'between',
+      visible: ({ values }) =>
+        !TIMELINES.includes(values.get('range-part')) &&
+        values.get('range-operator') === 'between',
+    },
+    {
+      name: 'range-operand3',
+      transient: true,
+      type: 'datetime',
+      visible: ({ values }) => TIMELINES.includes(values.get('range-part')),
+    },
+    {
+      name: 'range-operand4',
+      transient: true,
+      type: 'datetime',
+      visible: ({ values }) =>
+        TIMELINES.includes(values.get('range-part')) &&
+        values.get('range-operator') === 'between',
     },
     {
       name: 'orderDirection',
