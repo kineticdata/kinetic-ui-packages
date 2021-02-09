@@ -147,7 +147,10 @@ export const fetchBridgedResource = (options = {}) => {
 
   return axios
     .post(bridgedResourceUrl(options), bridgedResourceData(options), {
-      headers: headerBuilder(options),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        ...headerBuilder(options),
+      },
     })
     .then(({ data }) => {
       const { record, records } = data;
@@ -185,7 +188,10 @@ export const countBridgedResource = (options = {}) => {
 
   return axios
     .post(bridgedResourceUrl(options, counting), bridgedResourceData(options), {
-      headers: headerBuilder(options),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        ...headerBuilder(options),
+      },
     })
     .then(({ data }) => ({ count: data.count }))
     .catch(handleErrors);
