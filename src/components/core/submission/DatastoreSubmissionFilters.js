@@ -19,7 +19,9 @@ export const filterDataSources = ({ formSlug, kappSlug }) => ({
         : kappSlug && !formSlug
           ? fetchKapp
           : fetchForm,
-    params: [{ kappSlug, formSlug, include: 'indexDefinitions,fields' }],
+    params: [
+      { kappSlug, formSlug, include: 'indexDefinitions,fields,fields.details' },
+    ],
     transform: result =>
       !formSlug && !kappSlug
         ? result.space
@@ -28,7 +30,11 @@ export const filterDataSources = ({ formSlug, kappSlug }) => ({
           : result.form,
   },
   fields: {
-    fn: form => form.get('fields').map(f => `values[${f.get('name')}]`),
+    fn: form =>
+      form
+        .get('fields')
+        .filter(f => f.get('dataType') !== 'file')
+        .map(f => `values[${f.get('name')}]`),
     params: ({ form }) => form && [form],
   },
   indexOptions: {
