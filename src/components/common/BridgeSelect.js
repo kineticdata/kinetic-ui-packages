@@ -85,7 +85,9 @@ export const BridgeSelect = props => (
     multiple={props.multiple}
     custom={props.allowNew && valueToCustomOption(props)}
     search={searchOptions(props)}
-    minSearchLength={props.minSearchLength || 1}
+    minSearchLength={
+      typeof props.minSearchLength === 'number' ? props.minSearchLength : 1
+    }
     getSuggestionValue={optionToValue(props)}
     getStatusProps={getStatusProps(props)}
     value={props.value}
