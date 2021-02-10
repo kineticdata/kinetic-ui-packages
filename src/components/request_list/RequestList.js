@@ -68,6 +68,7 @@ const enhance = compose(
   lifecycle({
     componentDidMount() {
       this.props.fetchSubmissionCountsRequest();
+      window.fetchSubmissionCountsRequest = this.props.fetchSubmissionCountsRequest;
     },
     componentDidUpdate(prevProps) {
       if (this.props.coreState !== prevProps.coreState) {

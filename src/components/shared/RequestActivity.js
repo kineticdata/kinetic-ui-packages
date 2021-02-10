@@ -77,10 +77,11 @@ const RequestActivityComponent = props => (
     pageSize={props.pageSize || 10}
     joinByDirection="DESC"
     joinBy="createdAt"
-    options={{ type: props.type }}
-    dataSources={{
-      ...props.submissionsDataSource,
+    options={{
+      type: props.type,
     }}
+    dataSources={props.dataSources}
+    showCount={props.dataSourceFullCounts}
     contentProps={{
       hidePaging: props.hidePaging,
       emptyMessage: emptyStateMessage,
@@ -104,6 +105,7 @@ export const RequestActivity = get(
             : props.type === 'Closed'
               ? constants.CORE_STATE_CLOSED
               : null,
+      submissionCounts: state.submissionCounts.data,
     })),
     withHandlers({
       buildRequestCard: props => record => (
@@ -115,7 +117,8 @@ export const RequestActivity = get(
       ),
     }),
     withProps(props => ({
-      submissionsDataSource: {
+      // The sources for the data shown in the activity feed
+      dataSources: {
         requests: {
           fn: searchSubmissions,
           params: (prevParams, prevResult) =>
@@ -125,7 +128,7 @@ export const RequestActivity = get(
                 : null
               : {
                   kapp: props.kappSlug,
-                  limit: props.chunkSize || props.pageSize || 10,
+                  limit: props.chunkSize || 25,
                   search: buildSearch(props.coreState, props.username),
                 },
           transform: result => ({
@@ -134,6 +137,12 @@ export const RequestActivity = get(
           }),
           component: props.buildRequestCard,
         },
+      },
+      // The full count values for the data sources
+      dataSourceFullCounts: {
+        requests: props.coreState
+          ? props.submissionCounts[props.coreState]
+          : Object.values(props.submissionCounts).reduce((t, v) => t + v, 0),
       },
     })),
   )(get(services, 'RequestActivityComponent', RequestActivityComponent)),
