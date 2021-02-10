@@ -1,8 +1,10 @@
 import React from 'react';
 import { Typeahead } from './Typeahead';
 import { fetchUsers } from '../../apis';
+import { Map } from 'immutable';
 
 const emailPattern = /^.+@.+\..+$/;
+const validateCustomOption = value => value.match(emailPattern);
 
 const fields = {
   username: 'Username',
@@ -10,13 +12,14 @@ const fields = {
   email: 'Email',
 };
 
-const searchUsers = (searchField, value, callback) =>
+const searchUsers = ({ search = Map() }) => (searchField, value, callback) =>
   fetchUsers({
     q: Object.keys(fields)
       .filter(field => !searchField || field === searchField)
       .map(field => `${field} =* "${value}"`)
       .join(' OR '),
-    limit: 25,
+    limit: search.get('limit') || 25,
+    include: search.get('include') || '',
   })
     .then(({ users, error, nextPageToken }) => ({
       suggestions: users || [],
@@ -28,27 +31,47 @@ const searchUsers = (searchField, value, callback) =>
 const userToValue = user =>
   (user && (user.get('username') || user.get('email') || '')) || '';
 
-const valueToCustomUser = value =>
-  value.match(emailPattern) && { email: value };
+// Converts a typed in value to an option object. Used when adding custom values
+// when allowNew is true.
+const valueToCustomUser = ({ allowNew }) => value =>
+  value.length > 0
+    ? (typeof allowNew === 'function' && allowNew(value)) ||
+      validateCustomOption(value)
+      ? { email: value }
+      : null
+    : null;
 
-const getStatusProps = props => ({
+const getStatusProps = ({
+  search = Map(),
+  messages: {
+    // Not enough characters have been typed in to trigger a search.
+    short = 'Type to find a user.',
+    // No results found; custom options not allowed.
+    empty = 'No matching users.',
+    // No results found; custom options allowed.
+    custom = 'No matching users. You may also enter a valid email.',
+    // Searching in progress.
+    pending = 'Searching...',
+    // Too many results to show all.
+    more = `Too many users, first ${search.get('limit') ||
+      ''} shown. Please refine your search.`,
+    // An error ocurred when searching.
+    error = 'There was an error fetching users.',
+  } = {},
+}) => props => ({
   meta: props.searchField ? `Find Users by ${fields[props.searchField]}` : null,
-  info: props.short
-    ? 'Type to find a user.'
-    : props.pending
-    ? 'Searching…'
-    : null,
+  info: props.short ? short : props.pending ? pending : null,
   warning:
     props.error || props.more || props.empty
       ? props.error && props.error.key === 'too_many_matches'
-        ? 'Too many users to display. Please refine your search below'
+        ? 'Too many users to display. Please refine your search below.'
         : props.more
-        ? 'Too many users, first 25 shown. Please refine your search.'
-        : props.empty && !props.custom
-        ? 'No matching users.'
-        : props.empty && props.custom
-        ? 'No matching users. You may also enter a valid email.'
-        : 'There was an error fetching users.'
+          ? more
+          : props.empty && !props.custom
+            ? empty
+            : props.empty && props.custom
+              ? custom
+              : error
       : null,
   clearFilterField: props.searchField ? props.setSearchField(null) : null,
   filterFieldOptions:
@@ -68,11 +91,11 @@ export const UserSelect = props => (
     components={props.components || {}}
     disabled={props.disabled}
     multiple={props.multiple}
-    custom={props.allowNew && valueToCustomUser}
-    search={searchUsers}
+    custom={props.allowNew && valueToCustomUser(props)}
+    search={searchUsers(props)}
     minSearchLength={props.minSearchLength}
     getSuggestionValue={userToValue}
-    getStatusProps={getStatusProps}
+    getStatusProps={getStatusProps(props)}
     value={props.value}
     onChange={props.onChange}
     onFocus={props.onFocus}

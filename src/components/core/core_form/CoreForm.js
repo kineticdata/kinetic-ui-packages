@@ -1,16 +1,15 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import t from 'prop-types';
 import isPlainObject from 'lodash.isplainobject';
 import isString from 'lodash.isstring';
 import deepEqual from 'deepequal';
-import moment from 'moment';
+import { Map, get } from 'immutable';
 import { connect } from '../../../store';
 import { K, bundle } from '../../../helpers';
 import { corePath } from '../../../apis/http';
 import { fetchSubmission, updateSubmission, fetchForm } from '../../../apis';
-import { I18n } from '../i18n/I18n';
-import { Moment } from '../i18n/Moment';
 import { GlobalsContext } from './globals';
+import { ComponentConfigContext } from '../../common/ComponentConfigContext';
 import {
   LOCKED_BY_FIELD,
   LOCKED_UNTIL_FIELD,
@@ -20,6 +19,7 @@ import {
   LOCK_CHECK_INTERVAL_DEFAULT_VALUE,
   LOCK_PROMPT_TIME_ATTRIBUTE,
   LOCK_PROMPT_TIME_DEFAULT_VALUE,
+  DefaultCoreFormConfig,
 } from './defaults';
 
 const submissionIncludes =
@@ -184,12 +184,21 @@ export const unlockSubmission = ({
   });
 };
 
-export const queryString = ({ review, values }) => {
+export const queryString = (
+  { review, values },
+  { reviewPages, reviewPageIndex },
+) => {
   const parameters = [];
-  if (review === true) {
-    parameters.push('review');
-  } else if (isString(review)) {
-    parameters.push(`review=${encodeURIComponent(review)}`);
+  if (!!review) {
+    if (typeof reviewPageIndex === 'number') {
+      parameters.push(
+        `review=${encodeURIComponent(reviewPages[reviewPageIndex])}`,
+      );
+    } else if (isString(review)) {
+      parameters.push(`review=${encodeURIComponent(review)}`);
+    } else {
+      parameters.push('review');
+    }
   }
   if (isPlainObject(values)) {
     Object.keys(values).forEach(field => {
@@ -212,6 +221,8 @@ const defaultState = {
   form: null,
   error: false,
   lock: null,
+  reviewPageIndex: null,
+  reviewPages: [],
 };
 
 export class CoreFormComponent extends Component {
@@ -372,6 +383,17 @@ export class CoreFormComponent extends Component {
     if (!this.state.lock && prevState.lock && prevState.lock.poller) {
       clearInterval(prevState.lock.poller);
     }
+
+    // If in review mode and page index changes, close and reload form
+    if (
+      !!this.props.review &&
+      typeof prevState.reviewPageIndex === 'number' &&
+      typeof this.state.reviewPageIndex === 'number' &&
+      this.state.reviewPageIndex !== prevState.reviewPageIndex
+    ) {
+      this.closeForm();
+      this.loadForm(this.props);
+    }
   }
 
   componentWillUnmount() {
@@ -514,6 +536,30 @@ export class CoreFormComponent extends Component {
         );
   }
 
+  previousReviewPage() {
+    this.setStateSafe({
+      reviewPageIndex: Math.max(this.state.reviewPageIndex - 1, 0),
+    });
+  }
+
+  nextReviewPage() {
+    this.setStateSafe({
+      reviewPageIndex: Math.min(
+        this.state.reviewPageIndex + 1,
+        Math.max(this.state.reviewPages.length - 1, 0),
+      ),
+    });
+  }
+
+  goToReviewPage(page) {
+    this.setStateSafe({
+      reviewPageIndex: Math.max(
+        Math.min(page, Math.max(this.state.reviewPages.length - 1, 0)),
+        0,
+      ),
+    });
+  }
+
   getGlobalsPromise() {
     if (!this.globalsPromise) {
       if (typeof this.props.globals === 'function') {
@@ -538,11 +584,25 @@ export class CoreFormComponent extends Component {
     this.form = new Promise(resolve => {
       this.getGlobalsPromise().then(() => {
         K.load({
-          path: `${corePath(props)}?${queryString(props)}`,
+          path: `${corePath(props)}?${queryString(props, this.state)}`,
           container: this.container,
           loaded: form => {
             resolve(form);
-            this.setStateSafe({ pending: false, error: null });
+            const reviewState = !!props.review
+              ? {
+                  reviewPageIndex: form
+                    .displayablePages()
+                    .findIndex(
+                      currentPage => currentPage === form.page().name(),
+                    ),
+                  reviewPages: form.displayablePages(),
+                }
+              : {};
+            this.setStateSafe({
+              pending: false,
+              error: null,
+              ...reviewState,
+            });
             applyGuard(props.onLoaded || props.loaded, undefined, [form]);
           },
           unauthorized: (...args) => {
@@ -585,14 +645,15 @@ export class CoreFormComponent extends Component {
 
   render() {
     const {
-      pendingComponent: Pending = DefaultLoadingComponent,
-      unauthorizedComponent: Unauthorized = DefaultErrorComponent,
-      forbiddenComponent: Forbidden = DefaultErrorComponent,
-      notFoundComponent: NotFound = DefaultErrorComponent,
-      unexpectedErrorComponent: Unexpected = DefaultErrorComponent,
-      lockMessageComponent: LockMessage = DefaultLockMessage,
-      layoutComponent: Layout,
-    } = this.props;
+      Pending,
+      Unauthorized,
+      Forbidden,
+      NotFound,
+      Unexpected,
+      LockMessage,
+      ReviewPaginationControl,
+      Layout,
+    } = this.props.components;
     const { init, poller, ...lockProps } = this.state.lock || {};
     const actions = {
       refreshSubmission: () => this.pollSubmission(),
@@ -600,10 +661,33 @@ export class CoreFormComponent extends Component {
         ? adminLockOverride => this.releaseLock({ adminLockOverride })
         : undefined,
       obtainLock: this.state.lock ? () => this.obtainLock() : undefined,
+      previousPage:
+        !!this.props.review && this.state.reviewPageIndex > 0
+          ? () => this.previousReviewPage()
+          : undefined,
+      nextPage:
+        !!this.props.review &&
+        this.state.reviewPageIndex < this.state.reviewPages.length - 1
+          ? () => this.nextReviewPage()
+          : undefined,
+      goToPage: !!this.props.review
+        ? page => this.goToReviewPage(page)
+        : undefined,
     };
     const lockMessage = (
       <LockMessage lock={init ? lockProps : undefined} actions={actions} />
     );
+    const reviewPaginationControl =
+      !!this.props.review &&
+      !this.state.pending &&
+      !this.state.error &&
+      this.state.reviewPages.length > 1 ? (
+        <ReviewPaginationControl
+          pages={this.state.reviewPages}
+          index={this.state.reviewPageIndex}
+          actions={actions}
+        />
+      ) : null;
     const content = (
       <div className="embedded-core-form">
         {!Layout && lockMessage}
@@ -628,6 +712,7 @@ export class CoreFormComponent extends Component {
           ) : (
             <Unexpected />
           ))}
+        {!Layout && reviewPaginationControl}
       </div>
     );
     return Layout ? (
@@ -638,6 +723,7 @@ export class CoreFormComponent extends Component {
         content={content}
         actions={actions}
         lockMessage={lockMessage}
+        reviewPaginationControl={reviewPaginationControl}
         lock={init ? lockProps : undefined}
       />
     ) : (
@@ -646,106 +732,47 @@ export class CoreFormComponent extends Component {
   }
 }
 
-const GlobalsCoreFormComponent = props => (
-  <GlobalsContext.Consumer>
-    {value => <CoreFormComponent {...props} globals={value} />}
-  </GlobalsContext.Consumer>
-);
+const ContextCoreFormComponent = ({ components, ...props }) => {
+  // Components passed in via deprecated props
+  const deprecatedComponents = {
+    Pending: props.pendingComponent,
+    Unauthorized: props.unauthorizedComponent,
+    Forbidden: props.forbiddenComponent,
+    Unexpected: props.unexpectedErrorComponent,
+    NotFound: props.notFoundComponent,
+    LockMessage: props.lockMessageComponent,
+    ReviewPaginationControl: props.reviewPaginationControlComponent,
+    Layout: props.layoutComponent,
+  };
+
+  return (
+    <GlobalsContext.Consumer>
+      {globals => (
+        <ComponentConfigContext.Consumer>
+          {config => (
+            <CoreFormComponent
+              {...props}
+              globals={globals}
+              // Override components. Start with RKL defaults, merge in defaults
+              // passed into KineticLib, then merge in deprecated components,
+              // and lastly merge in components prop.
+              components={DefaultCoreFormConfig.merge(
+                Map(get(config, 'coreForm', {})),
+              )
+                .merge(Map(deprecatedComponents).filter(Boolean))
+                .merge(Map(components || {}).filter(Boolean))
+                .toObject()}
+            />
+          )}
+        </ComponentConfigContext.Consumer>
+      )}
+    </GlobalsContext.Consumer>
+  );
+};
 
 export const CoreForm = connect(state => ({
   csrfToken: state.getIn(['session', 'csrfToken']),
-}))(GlobalsCoreFormComponent);
-
-const DefaultLoadingComponent = () => (
-  <div className="text-center p-3">
-    <div>
-      <span className="fa fa-spinner fa-spin fa-lg fa-fw" />
-    </div>
-  </div>
-);
-
-const DefaultErrorComponent = ({ message }) => (
-  <div className="text-center text-danger p-3">
-    <div>
-      <strong>
-        <I18n>Oops!</I18n> <I18n>An error occurred.</I18n>
-      </strong>
-    </div>
-    {message && (
-      <small>
-        <I18n>{message}</I18n>
-      </small>
-    )}
-  </div>
-);
-
-const DefaultLockMessage = ({ lock, actions }) => {
-  if (!lock) {
-    return null;
-  }
-  return lock.isLocked ? (
-    !lock.isLockedByMe ? (
-      <div>
-        <Fragment>
-          <span>
-            <span className="fa fa-lock fw-fw mr-1" />
-            <I18n>This submission is locked by</I18n> {lock.lockedBy}{' '}
-            <I18n>until</I18n>{' '}
-            <Moment
-              timestamp={moment().add(lock.timeLeft, 'ms')}
-              format={Moment.formats.timeWithSeconds}
-            />
-            .
-          </span>
-          <button className="btn btn-link" onClick={actions.refreshSubmission}>
-            Refresh
-          </button>
-        </Fragment>
-      </div>
-    ) : lock.isExpiring ? (
-      <div>
-        <Fragment>
-          <span>
-            <span className="fa fa-lock fw-fw mr-1" />
-            <I18n>Your lock on this submission will expire at</I18n>{' '}
-            <Moment
-              timestamp={moment().add(lock.timeLeft, 'ms')}
-              format={Moment.formats.timeWithSeconds}
-            />
-            .
-          </span>
-          <button className="btn btn-link" onClick={actions.obtainLock}>
-            Renew Lock
-          </button>
-        </Fragment>
-      </div>
-    ) : null
-  ) : (
-    <div>
-      {!lock.lockLost ? (
-        <Fragment>
-          <span>
-            <span className="fa fa-unlock fw-fw mr-1" />
-            <I18n>This submission is currently unlocked.</I18n>
-          </span>
-          <button className="btn btn-link" onClick={actions.obtainLock}>
-            Obtain Lock
-          </button>
-        </Fragment>
-      ) : (
-        <Fragment>
-          <span>
-            <span className="fa fa-unlock fw-fw mr-1" />
-            <I18n>Your lock on this submission has expired.</I18n>
-          </span>
-          <button className="btn btn-link" onClick={actions.obtainLock}>
-            Obtain Lock
-          </button>
-        </Fragment>
-      )}
-    </div>
-  );
-};
+}))(ContextCoreFormComponent);
 
 CoreForm.propTypes = {
   /** Code to load prior to loading the form. */
@@ -760,8 +787,8 @@ CoreForm.propTypes = {
   datastore: t.bool,
   /** Map of field values to pass to the form. */
   values: t.object,
-  /** Boolean determining if the form should be opened in review mode. */
-  review: t.bool,
+  /** Boolean determining if the form should be opened in review mode, or name of the page to open in review mode */
+  review: t.oneOfType([t.bool, t.string]),
   /** Boolean determining if the submission should be locked when opened. */
   lock: t.bool,
   /** Callback function that will execute when the form is loaded. */
@@ -791,20 +818,41 @@ CoreForm.propTypes = {
   /**  */
   originId: t.string,
   parentId: t.string,
-  /** Component to display when the form is loading. */
+  /** Component to display when the form is loading. (Deprecated: Use components prop.) */
   pendingComponent: t.func,
-  /** Component to display when the form returns a 401 error. */
+  /** Component to display when the form returns a 401 error. (Deprecated: Use components prop.) */
   unauthorizedComponent: t.func,
-  /** Component to display when the form returns a 403 error. */
+  /** Component to display when the form returns a 403 error. (Deprecated: Use components prop.) */
   forbiddenComponent: t.func,
-  /** Component to display when the form returns a 404 error. */
+  /** Component to display when the form returns a 404 error. (Deprecated: Use components prop.) */
   notFoundComponent: t.func,
-  /** Component to display when the form returns any other error. */
+  /** Component to display when the form returns any other error. (Deprecated: Use components prop.) */
   unexpectedErrorComponent: t.func,
-  /** Component used to display the locking messages. */
+  /** Component used to display the locking messages. (Deprecated: Use components prop.) */
   lockMessageComponent: t.func,
-  /** Component used to display the entire content of the CoreForm. */
+  /** Component used to display the review pagination control. (Deprecated: Use components prop.) */
+  reviewPaginationControlComponent: t.func,
+  /** Component used to display the entire content of the CoreForm. (Deprecated: Use components prop.) */
   layoutComponent: t.func,
+  /** Map of component overrides. */
+  components: t.shape({
+    /** Override the loading state message. */
+    Pending: t.func,
+    /** Override the unauthorized error state message. */
+    Unauthorized: t.func,
+    /** Override the forbidden error state message. */
+    Forbidden: t.func,
+    /** Override the unexpected error state message. */
+    Unexpected: t.func,
+    /** Override the not found error state message. */
+    NotFound: t.func,
+    /** Override the lockMessage component shown when a form is lockable. */
+    LockMessage: t.func,
+    /** Override the reviewPaginationControl component shown when a form in review has multiple displayable pages. */
+    ReviewPaginationControl: t.func,
+    /** Override the default form layout. */
+    Layout: t.func,
+  }),
   /** Name of field which should be used to store the locked by username. */
   lockedByField: t.string,
   /** Name of field which should be used to store the locked until value. */

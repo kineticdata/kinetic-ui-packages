@@ -81,11 +81,14 @@ const buildLabel = ({ name, category, categories }) => {
         match = categories.find(
           cat => cat.get('slug') === c.getIn(['values', 0]),
         );
-        name = buildLabel({
-          name: `${match.get('name')}::${name}`,
-          category: match,
-          categories,
-        });
+
+        name = match
+          ? buildLabel({
+              name: `${match.get('name')}::${name}`,
+              category: match,
+              categories,
+            })
+          : `(Missing Category ${c.getIn(['values', 0])})::${name}`;
       }
       return name;
     });

@@ -858,6 +858,43 @@ describe('defineKqlQuery', () => {
     };
   });
 
+  test('empty expression', () => {
+    const query = defineKqlQuery()
+      .equals('empty', 'empty')
+      .equals('nullName', 'nullName')
+      .equals('undefinedName', 'undefinedName')
+      .end();
+
+    expect(query).toBeDefined();
+    expect(query(values)).toBe('');
+  });
+
+  test('empty root expression', () => {
+    const query = defineKqlQuery()
+      .equals('empty', 'empty')
+      .or()
+      .equals('slug', 'slug')
+      .equals('nullName', 'nullName')
+      .equals('undefinedName', 'undefinedName')
+      .end()
+      .end();
+
+    expect(query).toBeDefined();
+    expect(query(values)).toBe('( slug = "acme" )');
+  });
+
+  test('empty expression stack', () => {
+    const query = defineKqlQuery()
+      .equals('slug', 'slug')
+      .equals('empty', 'empty')
+      .equals('nullName', 'nullName')
+      .equals('undefinedName', 'undefinedName')
+      .end();
+
+    expect(query).toBeDefined();
+    expect(query(values)).toBe('slug = "acme"');
+  });
+
   test('equals', () => {
     const query = defineKqlQuery()
       .equals('name', 'name')
@@ -885,9 +922,9 @@ describe('defineKqlQuery', () => {
     const query = defineKqlQuery()
       .startsWith('name', 'name')
       .startsWith('slug', 'slug')
-      .startsWith('empty', 'empty', true)
-      .startsWith('nullName', 'nullName', true)
-      .startsWith('undefinedName', 'undefinedName', true)
+      .startsWith('empty', 'empty')
+      .startsWith('nullName', 'nullName')
+      .startsWith('undefinedName', 'undefinedName')
       .end();
 
     expect(query).toBeDefined();
@@ -902,6 +939,7 @@ describe('defineKqlQuery', () => {
     expect(query).toBeDefined();
     expect(query(values)).toBe(`name IN ("Bob", "Matt")`);
   });
+
   test('in strict', () => {
     const query = defineKqlQuery()
       .in('name', 'names', true)

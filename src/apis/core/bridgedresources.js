@@ -13,21 +13,31 @@ import { handleErrors, headerBuilder } from '../http';
  * @param {string} options.bridgedResourceName - name of the bridged resource
  * @param {string} options.formSlug - form slug where the bridged resource is defined
  * @param {string} options.kappSlug - kapp slug where the bridged resource is defined
+ * @param {string} options.datastore - flag if the bridged resource is defined on a datastore form
  * @returns {string}
  */
 export const bridgedResourceUrl = (options, counting = false) => {
-  if (!options.formSlug) {
+  const {
+    kappSlug = bundle.kappSlug(),
+    datastore,
+    formSlug,
+    bridgedResourceName,
+  } = options;
+
+  if (!formSlug) {
     throw new Error('Property "formSlug" is required.');
   }
-  if (!options.bridgedResourceName) {
+  if (!bridgedResourceName) {
     throw new Error('Property "bridgedResourceName" is required.');
   }
-  const kappSlug = options.kappSlug || bundle.kappSlug();
-  const bridgedResourceName = encodeURIComponent(options.bridgedResourceName);
   // build the url
-  let url = `${bundle.spaceLocation()}/${kappSlug}/${
-    options.formSlug
-  }/bridgedResources/${bridgedResourceName}`;
+  let url = datastore
+    ? `${bundle.spaceLocation()}/app/datastore/forms/${
+        options.formSlug
+      }/bridgedResources/${encodeURIComponent(options.bridgedResourceName)}`
+    : `${bundle.spaceLocation()}/${kappSlug}/${
+        options.formSlug
+      }/bridgedResources/${encodeURIComponent(options.bridgedResourceName)}`;
   // append any attributes if they were specified
   if (counting) {
     url += '/count';
@@ -137,7 +147,10 @@ export const fetchBridgedResource = (options = {}) => {
 
   return axios
     .post(bridgedResourceUrl(options), bridgedResourceData(options), {
-      headers: headerBuilder(options),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        ...headerBuilder(options),
+      },
     })
     .then(({ data }) => {
       const { record, records } = data;
@@ -148,14 +161,14 @@ export const fetchBridgedResource = (options = {}) => {
         return {
           records: convertMultipleBridgeRecords(records),
           metadata: {
-            count: records.metadata.size,
-            nextPageToken: records.metadata.nextPageToken,
+            count: records.metadata && records.metadata.size,
+            nextPageToken: records.metadata && records.metadata.nextPageToken,
           },
         };
       }
 
       return {
-        serverError: { status: '500', statusText: 'Invalid server response.' },
+        error: { statusCode: '500', message: 'Invalid server response.' },
       };
     })
     .catch(handleErrors);
@@ -175,7 +188,10 @@ export const countBridgedResource = (options = {}) => {
 
   return axios
     .post(bridgedResourceUrl(options, counting), bridgedResourceData(options), {
-      headers: headerBuilder(options),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        ...headerBuilder(options),
+      },
     })
     .then(({ data }) => ({ count: data.count }))
     .catch(handleErrors);

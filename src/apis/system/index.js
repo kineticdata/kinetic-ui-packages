@@ -290,7 +290,9 @@ export const postPlatformComponentRestart = (options = {}) => {
 
   return axios
     .post(
-      `/app/system-coordinator/api/v1/platform/components/${options.component}/restart`,
+      `/app/system-coordinator/api/v1/platform/components/${
+        options.component
+      }/restart`,
     )
     .then(({ data }) => ({ component: data.component, message: data.message }))
     .catch(handleErrors);
@@ -350,5 +352,73 @@ export const fetchElasticSearchConfig = (options = {}) => {
       },
     )
     .then(response => ({ adapter: response.data.adapter }))
+    .catch(handleErrors);
+};
+
+export const fetchSystemLicense = (options = {}) => {
+  return axios
+    .get('/app/system-coordinator/components/core/app/api/v1/license', {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ system: response.data }))
+    .catch(handleErrors);
+};
+
+export const deleteSystemLicense = (options = {}) => {
+  return axios
+    .delete('/app/system-coordinator/components/core/app/api/v1/license', {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ system: response.data }))
+    .catch(handleErrors);
+};
+
+export const resetSystemLicense = (options = {}) => {
+  return axios
+    .put('/app/system-coordinator/components/core/app/api/v1/license/reset', {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ system: response.data }))
+    .catch(handleErrors);
+};
+
+export const importSystemLicense = (options = {}) => {
+  const { content } = options;
+
+  const data = new FormData();
+  data.set('content', content);
+  const headers = { 'Content-Type': 'multipart/form-data' };
+
+  return axios
+    .post('/app/system-coordinator/components/core/app/api/v1/license', data, {
+      headers,
+    })
+    .then(response => ({ system: response.data }))
+    .catch(handleErrors);
+};
+
+export const fetchSystemLicenseStats = (options = {}) => {
+  return axios
+    .get(
+      '/app/system-coordinator/components/core/app/api/v1/license/statistics',
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({ system: response.data }))
+    .catch(handleErrors);
+};
+
+export const fetchSystemLicenseCheck = (options = {}) => {
+  return axios
+    .get('/app/system-coordinator/components/core/app/api/v1/license/check', {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ system: response.data }))
     .catch(handleErrors);
 };

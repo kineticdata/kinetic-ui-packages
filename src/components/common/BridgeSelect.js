@@ -1,69 +1,34 @@
 import React from 'react';
 import { Typeahead } from './Typeahead';
-import { List, Map } from 'immutable';
-import { defineFilter } from '@kineticdata/react';
+import { fetchBridgedResource } from '../../apis';
+import { Map } from 'immutable';
 
-const fields = [{ name: 'label' }, { name: 'value' }];
-
-const OPERATORS = Map({
-  equals: 'equals',
-  matches: 'matches',
-  startsWith: 'startsWith',
-});
-
-// Dynamically build filter function with correct operators
-const buildFilter = searchFields => {
-  const filter = searchFields
-    .reduce(
-      (filter, { name, operator }) =>
-        filter[OPERATORS.get(operator, 'startsWith')](name, name),
-      defineFilter(true, 'or'),
-    )
-    .end();
-  // Build values object to pass into above filter option
-  return (options, value) => {
-    const values = searchFields.reduce(
-      (values, { name }) => ({ ...values, [name]: value }),
-      {},
-    );
-    return options.filter(option => filter(option, values));
-  };
-};
-
-const searchOptions = ({ allowNew, options, search = Map() }) => (
-  field,
-  value,
-  callback,
-) => {
-  // Determine the fields config
+const searchOptions = ({ search = Map() }) => (field, value, callback) => {
   const searchFields =
     Map.isMap(search) && search.has('fields') && !search.get('fields').isEmpty()
       ? search.get('fields').toJS()
-      : fields;
+      : [];
 
-  if (List.isList(options) && (allowNew || !options.isEmpty())) {
-    // Get or build the filter function
-    const filter =
-      typeof search.get('fn') === 'function'
-        ? search.get('fn')
-        : buildFilter(searchFields);
-
-    // Filter the options
-    const suggestions = filter(options.toJS(), value);
-    const limit = search.get('limit') || 25;
-
-    // Return the matching suggestions
-    return callback({
-      suggestions: suggestions.slice(0, limit),
-      nextPageToken: suggestions.length > limit,
-    });
-  } else {
-    // If no options provided, return error message
-    return callback({
-      error: 'No options provided.',
-      suggestions: [],
-    });
-  }
+  const limit = search.get('limit') || 25;
+  return fetchBridgedResource({
+    datastore: search.get('datastore'),
+    kappSlug: search.get('kappSlug'),
+    formSlug: search.get('formSlug'),
+    bridgedResourceName: search.get('bridgedResourceName'),
+    values: searchFields.reduce(
+      (values, { name, value: staticValue }) => ({
+        ...values,
+        [name]: staticValue || value,
+      }),
+      {},
+    ),
+  })
+    .then(({ records, error }) => ({
+      suggestions: records ? records.slice(0, limit) : [],
+      error,
+      nextPageToken: records && records.length > limit,
+    }))
+    .then(callback);
 };
 
 // Converts an option object to a single unique value. Used for comparing values
@@ -94,13 +59,15 @@ const getStatusProps = ({
     // Too many results to show all.
     more = `Too many results, first ${search.get('limit') ||
       25} shown. Please refine your search.`,
+    // An error ocurred when searching.
+    error = 'There was an error fetching data.',
   } = {},
 }) => props => ({
   info: props.short ? short : props.pending ? pending : null,
   warning:
     props.error || props.empty || props.more
       ? props.error
-        ? props.error
+        ? error
         : props.more
           ? more
           : props.empty
@@ -111,14 +78,16 @@ const getStatusProps = ({
       : null,
 });
 
-export const StaticSelect = props => (
+export const BridgeSelect = props => (
   <Typeahead
     components={props.components || {}}
     disabled={props.disabled}
     multiple={props.multiple}
     custom={props.allowNew && valueToCustomOption(props)}
     search={searchOptions(props)}
-    minSearchLength={props.minSearchLength}
+    minSearchLength={
+      typeof props.minSearchLength === 'number' ? props.minSearchLength : 1
+    }
     getSuggestionValue={optionToValue(props)}
     getStatusProps={getStatusProps(props)}
     value={props.value}

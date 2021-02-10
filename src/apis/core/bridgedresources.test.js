@@ -55,6 +55,12 @@ describe('bridged resource api', () => {
       );
     });
 
+    test('datastore form', () => {
+      expect(bridgedResourceUrl({ ...options, datastore: true })).toBe(
+        'user/app/datastore/forms/formslug/bridgedResources/Collection',
+      );
+    });
+
     test('default the kapp option', () => {
       delete options.kappSlug;
       expect(bridgedResourceUrl(options)).toBe(
@@ -135,8 +141,8 @@ describe('bridged resource api', () => {
 
       test('does not return errors', () => {
         expect.assertions(1);
-        return countBridgedResource(options).then(({ serverError }) => {
-          expect(serverError).toBeUndefined();
+        return countBridgedResource(options).then(({ error }) => {
+          expect(error).toBeUndefined();
         });
       });
 
@@ -211,8 +217,8 @@ describe('bridged resource api', () => {
 
         test('does not return errors', () => {
           expect.assertions(1);
-          return fetchBridgedResource(options).then(({ serverError }) => {
-            expect(serverError).toBeUndefined();
+          return fetchBridgedResource(options).then(({ error }) => {
+            expect(error).toBeUndefined();
           });
         });
 
