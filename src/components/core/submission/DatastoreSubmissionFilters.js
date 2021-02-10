@@ -200,7 +200,12 @@ const serializeQuery = ({ values }) => {
       }, defineKqlQuery())
       .end()(
       values
-        .map((v, k) => (TIMELINES.includes(k) ? moment(v).toISOString() : v))
+        .map(
+          (v, k) =>
+            ['range-operand3', 'range-operand4'].includes(k) && v
+              ? moment(v).toISOString()
+              : v,
+        )
         .toJS(),
     ),
     orderBy: Range(0, MAX_PART_LENGTH)
