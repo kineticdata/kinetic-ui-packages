@@ -1,6 +1,6 @@
 import React from "react";
 import { compose, lifecycle } from "recompose";
-import { connect } from "../../redux/store";
+import { connect } from "../redux/store";
 
 const HomeComponent = (props) => (
   <div className="page-container">
