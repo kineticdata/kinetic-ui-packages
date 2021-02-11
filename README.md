@@ -12,7 +12,10 @@ _Note: Once you do this and start customizing a pre-built package, any improveme
 
 ## Available Packages
 
+- **Queue** `packages/queue`
 - **Services** `packages/services`
+
+* **Scaffold** `packages/scaffold` - _Used to build your own custom package._
 
 _Please contact us to request the addition of the source code for any other pre-built packages._
 
@@ -32,9 +35,35 @@ $ git subtree add --prefix bundle/packages/services https://github.com/kineticda
 
 Once this completes, you should have a `services` folder inside the `bundle/packages` directory. You will also have a large number of commits made, as this command will pull in all of the git history for the source code. This will allow you to later use the `git subtree pull` command to pull in changes from the source package.
 
-You will just need to run `yarn install` in your bundle to update its dependencies and have it use the added source code.
+### Connecting the Imported Package
 
-**Note: The added source code has the same package name in its `package.json` file as the published version of that package in NPM. It is very important that the version of the dependency for this package in your bundle's `app/package.json` file matches the version in the added package. Otherwise, the dependency will be fetched from NPM and your local code will not be used.**
+When you add the source code for one of these packages, the name of the package will be the same as the name of the corresponding NPM package. If you leave everything as is, you will need to make sure that the version of your modified package always matches the latest version available on NPM so that your bundle uses your modified package as its dependency, instead of the one from NPM.
+
+We recommend renaming the package you just added so you won't have to worry about this. Follow the steps below to do this.
+
+#### Rename Imported Package
+
+In `bundle/packages/<PACKAGE_DIR>/package.json` update the name and (optionally) version.
+
+- You can set the name to anything you'd like.  
+  Example: `@kineticdata/bundle-services` => `@kineticdata/bundle-services-custom`
+- You may optionally change the version number if you'd like. We'll be adding this package as a dependency within the `app` package which is where this version will be used.  
+  Example: `5.1.2` => `5.0.0`
+
+#### Update References to Imported Package
+
+Next, you will need to update the references that used the original package to use this modified one.
+
+- In `bundle/packages/app/package.json`, replace the dependency for the original package, using the name and version from the previous step.  
+  Example: `"@kineticdata/bundle-services": "^5.1.2"` => `"@kineticdata/bundle-services-custom": "^5.0.0"`
+- In `bundle/packages/app/src/App.js`, replace the import from the original package.  
+  Example: `import ServicesApp from '@kineticdata/bundle-services'` => `import ServicesApp from '@kineticdata/bundle-services-custom'`
+- In `bundle/packages/app/src/assets/styles/master.scss`, replace references to any style sheets from the original package.  
+  Example: `@import '~@kineticdata/bundle-services/assets/styles/master'` => `@import '~@kineticdata/bundle-services-custom/assets/styles/master'`
+
+_If you would like to use both the original package from NPM and the modified version, instead of replacing the parts defined in the three steps above, add new lines for your modified package._
+
+**Lastly, you will need to run `yarn install` in your bundle to update its dependencies and have it use the added source code.**
 
 ## Updating Source Code of Pre-Built Package in Your Custom Bundle
 
