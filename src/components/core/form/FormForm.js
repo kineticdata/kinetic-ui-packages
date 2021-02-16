@@ -15,11 +15,11 @@ import { buildBindings, slugify } from '../../../helpers';
 const FORM_STATUSES = ['New', 'Active', 'Inactive', 'Delete'];
 
 const FORM_INCLUDES =
-  'details,attributesMap,securityPolicies,indexDefinitions,backgroundJobs,fields,categorizations';
+  'details,attributesMap,securityPolicies,backgroundJobs,fields,categorizations';
 const KAPP_INCLUDES =
-  'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms,baseIndex,baseIndex.details,baseIndex.detachedForms,baseIndex.unpopulatedForms';
+  'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies';
 const SPACE_INCLUDES =
-  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies,indexDefinitions,indexDefinitions.detachedForms,indexDefinitions.unpopulatedForms,baseIndex,baseIndex.details,baseIndex.detachedForms,baseIndex.unpopulatedForms';
+  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies';
 
 const dataSources = ({ formSlug, kappSlug }) => ({
   form: {
@@ -119,7 +119,7 @@ const securityEndpoints = {
   },
 };
 
-const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
+const fields = ({ formSlug, kappSlug }) => ({ form }) =>
   (!formSlug || form) && [
     !!kappSlug && {
       name: 'anonymous',
