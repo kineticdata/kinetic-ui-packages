@@ -19,7 +19,14 @@ const valuesFromQueryParams = queryParams => {
 
 export const handleCompleted = props => response => {
   if (props.authenticated) {
-    if (!response.submission.currentPage) {
+    // Check if either currentPage is null (pre form consolidation) or
+    // displayedPage.type is not 'confirmation' (post form-consolidation)
+    // to determine that there is no confirmation page and we should redirect.
+    if (
+      !response.submission.currentPage ||
+      (response.submission.displayedPage &&
+        response.submission.displayedPage.type !== 'confirmation')
+    ) {
       props.navigate(
         `${props.appLocation}/requests/request/${
           response.submission.id
@@ -33,21 +40,33 @@ export const handleCompleted = props => response => {
 };
 
 export const handleCreated = props => response => {
-  if (props.page === response.submission.currentPage) {
+  if (
+    response.submission.coreState !== 'Submitted' &&
+    props.page === response.submission.currentPage
+  ) {
     addToast('Form saved successfully');
   } else {
     props.setPage(response.submission.currentPage);
   }
+  // Redirect to route with submission id if submission is not submitted or
+  // there is a confirmation page to render, defined as currentPage is set and
+  // displayedPage is undefined (pre form consolidation) or displayedPage.type
+  // is 'confirmation' (post form-consolidation).
   if (
     response.submission.coreState !== 'Submitted' ||
-    response.submission.currentPage
+    (response.submission.currentPage &&
+      (!response.submission.displayedPage ||
+        response.submission.displayedPage.type === 'confirmation'))
   ) {
     props.navigate(response.submission.id);
   }
 };
 
 export const handleUpdated = props => response => {
-  if (props.page === response.submission.currentPage) {
+  if (
+    response.submission.coreState !== 'Submitted' &&
+    props.page === response.submission.currentPage
+  ) {
     addToast('Form saved successfully');
   } else {
     props.setPage(response.submission.currentPage);
