@@ -83,7 +83,14 @@ const valuesFromQueryParams = queryParams => {
 };
 
 export const handleCompleted = props => response => {
-  if (!response.submission.currentPage) {
+  // Check if either currentPage is null (pre form consolidation) or
+  // displayedPage.type is not 'confirmation' (post form-consolidation)
+  // to determine that there is no confirmation page and we should redirect.
+  if (
+    !response.submission.currentPage ||
+    (response.submission.displayedPage &&
+      response.submission.displayedPage.type !== 'confirmation')
+  ) {
     props.navigate(`confirmation`);
   }
 };
