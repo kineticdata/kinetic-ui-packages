@@ -4,11 +4,12 @@ import {
   fetchContexts,
   fetchContextKeys,
   upsertTranslations,
+  fetchTranslations,
 } from '../../../apis';
 import { Map, List } from 'immutable';
 import { handleFormErrors } from '../../form/Form.helpers';
 
-const dataSources = ({ contextName, keyHash }) => ({
+const dataSources = ({ contextName, keyHash, locale }) => ({
   contexts: {
     fn: fetchContexts,
     params: () => [{ expected: true }],
@@ -25,6 +26,17 @@ const dataSources = ({ contextName, keyHash }) => ({
     params: [{ include: 'authorization,details' }],
     transform: result => result.locales,
   },
+  entry: {
+    fn: fetchTranslations,
+    params: () =>
+      contextName && keyHash && locale && [{ contextName, localeCode: locale }],
+    transform: result => {
+      const currentEntry = result.entries.find(
+        entry => entry.keyHash === keyHash,
+      );
+      return currentEntry ? currentEntry.value : '';
+    },
+  },
 });
 
 const handleSubmit = () => values => {
@@ -38,6 +50,7 @@ const fields = ({ locale, contextName, keyHash }) => ({
   contexts,
   keys,
   locales,
+  entry,
 }) => {
   return (
     contexts &&
@@ -87,6 +100,7 @@ const fields = ({ locale, contextName, keyHash }) => ({
         name: 'value',
         label: 'Value',
         type: 'text',
+        initialValue: entry ? entry : '',
         required: true,
       },
     ]
