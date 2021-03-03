@@ -85,9 +85,12 @@ export const apiFunction = ({
     dataOption ? [...requiredOptions, dataOption] : requiredOptions,
     options,
   );
+  const urlPostfix = url(options);
   return axios({
     method,
-    url: bundle.apiLocation() + url(options),
+    url: urlPostfix.startsWith('/app')
+      ? urlPostfix
+      : bundle.apiLocation() + urlPostfix,
     data: dataOption && options[dataOption],
     params: paramBuilder(options),
     headers: headerBuilder(options),
