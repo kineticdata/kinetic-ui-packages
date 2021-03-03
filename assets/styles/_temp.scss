@@ -1,0 +1,43 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Temp ~ Service
+ *     -Used for development
+ *     -Move css into appropriate sass files when ready
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+button[data-element-type='button']:not(.btn) {
+  &[data-button-type='previous-page'] {
+    position: relative;
+    padding-left: 2rem;
+    float: left;
+    // Left chevron icon
+    &:before {
+      font-family: 'FontAwesome';
+      font-weight: inherit;
+      content: '\f053';
+      position: absolute;
+      top: 50%;
+      left: 0.5rem;
+      width: 1.4rem;
+      height: 1.4rem;
+      line-height: 1;
+      margin-top: -0.4rem;
+    }
+  }
+  &[data-button-type='save'] {
+    position: relative;
+    padding-left: 2rem;
+    // Save icon
+    &:before {
+      font-family: 'FontAwesome';
+      font-weight: inherit;
+      content: '\f0c7';
+      position: absolute;
+      top: 50%;
+      left: 0.5rem;
+      width: 1rem;
+      height: 1rem;
+      line-height: 1;
+      margin-top: -0.4rem;
+    }
+  }
+}
