@@ -66,6 +66,7 @@ export { BridgeForm } from './agent/bridge/BridgeForm';
 export { AgentHandlerTable } from './agent/handler/AgentHandlerTable';
 export { AgentHandlerForm } from './agent/handler/AgentHandlerForm';
 export { FilestoreTable } from './agent/filestore/FilestoreTable';
+export { FilestoreForm } from './agent/filestore/FilestoreForm';
 
 // Core
 export {

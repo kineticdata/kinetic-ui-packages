@@ -1,5 +1,5 @@
 import { defineFilter } from '../../../helpers';
-import { fetchFilestores } from '../../../apis/core/filestores';
+import { fetchFilestores } from '../../../apis';
 import { generateTable } from '../../table/Table';
 
 const clientSide = defineFilter(true)
@@ -17,7 +17,20 @@ const dataSource = ({ agentSlug }) => ({
 
 const filters = () => () => [{ name: 'slug', label: 'Slug', type: 'text' }];
 
-const columns = [{ value: 'slug', title: 'Slug', sortable: true }];
+const columns = [
+  { value: 'slug', title: 'Slug', sortable: true },
+  {
+    value: 'adapterClass',
+    title: 'Adapter',
+    sortable: true,
+    valueTransform: _value =>
+      _value
+        .split('.')
+        .pop()
+        .match(/[A-Z][a-z]+/g)
+        .join(' '),
+  },
+];
 
 export const FilestoreTable = generateTable({
   tableOptions: ['agentSlug'],
