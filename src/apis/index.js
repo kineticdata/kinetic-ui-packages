@@ -11,6 +11,7 @@ export * from './core/bridgeModelMappings';
 export * from './core/bridgeModelQualifications';
 export * from './core/bridgeModelQualificationMappings';
 export * from './core/categories';
+export * from './core/fileResources';
 export * from './core/filestores';
 export * from './core/forms';
 export * from './core/formTypes';
