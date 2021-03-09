@@ -13,6 +13,7 @@ export const SPACE_SECURITY_DEFINITION_TYPES = [
   'Space',
   'Datastore Form',
   'Datastore Submission',
+  'File Resource',
   'Team',
   'User',
 ];
@@ -88,8 +89,8 @@ const fields = ({ securityPolicyName, kappSlug }) => ({ securityPolicy }) =>
       initialValue: securityPolicy
         ? securityPolicy.get('type')
         : kappSlug
-        ? 'Kapp'
-        : 'Space',
+          ? 'Kapp'
+          : 'Space',
       helpText:
         'Determines what information is available to the definition rule, as well as what security policies the security definition can be applied to.',
     },
