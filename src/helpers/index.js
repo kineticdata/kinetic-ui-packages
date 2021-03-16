@@ -84,6 +84,11 @@ export const buildDefinitionId = text =>
     // Remove unwanted chars
     .replace(/[^A-Za-z0-9_]+/g, '');
 
+const FILE_STATIC_BINDINGS = [
+  ['Folder', 'folder'],
+  ['Name', 'name'],
+  ['Path', 'path'],
+];
 const SUBMISSION_STATIC_BINDINGS = [
   ['Anonymous', 'anonymous'],
   ['Closed At', 'closedAt'],
@@ -189,6 +194,14 @@ export const buildBindings = ({ space, kapp, form, scope, profile }) => {
             get(profile, 'attributesMap'),
             get(profile, 'profileAttributesMap'),
           ),
+      }),
+    ],
+    [
+      'File Resource',
+      Map({
+        children:
+          ['File Resource'].includes(scope) &&
+          bindify('file', FILE_STATIC_BINDINGS),
       }),
     ],
     [
