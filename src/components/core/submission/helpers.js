@@ -1,6 +1,5 @@
 import { fromJS, List, Range } from 'immutable';
-import { MAX_PART_LENGTH } from './DatastoreSubmissionFilters';
-import { TIMELINES } from '../../../helpers';
+import { TIMELINES, MAX_PART_LENGTH } from '../../../helpers';
 
 export const getUsedFields = (values, partIndex, partType = 'eq') => {
   let equalities = List();
@@ -53,7 +52,6 @@ export const availableParts = (
   equalityFields,
   partType = 'eq',
 ) => {
-  console.log(indexes.toJS());
   const remainingParts = indexes.map(index =>
     getRemainingParts(index.get('parts', List()), equalityFields),
   );

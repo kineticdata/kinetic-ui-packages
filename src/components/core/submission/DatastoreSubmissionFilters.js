@@ -1,10 +1,8 @@
 import { List, Map, Range } from 'immutable';
 import moment from 'moment';
 import { fetchForm, fetchKapp, fetchSpace } from '../../../apis';
-import { defineKqlQuery, TIMELINES } from '../../../helpers';
+import { defineKqlQuery, MAX_PART_LENGTH, TIMELINES } from '../../../helpers';
 import { availableParts, getUsedFields } from './helpers';
-
-export const MAX_PART_LENGTH = 10;
 
 export const filterDataSources = ({ formSlug, kappSlug }) => ({
   form: {
@@ -147,34 +145,6 @@ const visibleFn = (currentPart, i, operatorType) => ({
   // this equality has available options.
   return (i === 0 || values.get(`op${i - 1}-part`)) && partsAvailable.size > 0;
 };
-
-/* order by logic:
- * 1. if no index is "fully used" then there are no options.
- * 2. if an index is "fully used" then timelines are available.
- * 3. if an index is "fully used" but the last part is used by a range, only that is available.
- * 4. if an index is using all but the last element then that element is the only option and there is a timeline option
- */
-
-/*
- ({ values }) => {
-            const usedFields = Range(0, MAX_PART_LENGTH)
-              .map(i => values.get(`orderby${i}-part`))
-              .toList()
-              .filter(f => f !== '');
-
-            return (
-              fields
-                .concat(TIMELINES_AND_STATICS)
-                // Filter out the fields that are already used in parts.
-                .filter(
-                  f =>
-                    values.get(`orderby${i}-part`) === f ||
-                    !usedFields.includes(f),
-                )
-                .map(f => Map({ label: f, value: f }))
-            );
-          }
- */
 
 const orderVisibleFn = partIndex => bindings => {
   const { values } = bindings;

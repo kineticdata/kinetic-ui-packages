@@ -318,3 +318,5 @@ export const TIMELINES = [
   'submittedAt',
   'closedAt',
 ].sort();
+
+export const MAX_PART_LENGTH = 10;
