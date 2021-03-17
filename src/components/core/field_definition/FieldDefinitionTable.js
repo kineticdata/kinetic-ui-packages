@@ -3,7 +3,6 @@ import { fetchKapp, fetchSpace } from '../../../apis';
 import { defineFilter } from '../../../helpers';
 
 export const FIELD_DATA_TYPES = [
-  { value: 'attachment', label: 'Attachment', dataType: 'file' },
   { value: 'checkbox', label: 'Checkbox', dataType: 'json' },
   { value: 'date', label: 'Date', dataType: 'string' },
   { value: 'datetime', label: 'Date/Time', dataType: 'string' },
