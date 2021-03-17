@@ -95,7 +95,7 @@ const fields = ({ fileResourceSlug }) => ({
     },
     {
       name: 'filestoreSlug',
-      label: 'File Store Slug',
+      label: 'Filestore Slug',
       type: 'select',
       required: true,
       initialValue: get(fileResource, 'filestoreSlug', ''),
