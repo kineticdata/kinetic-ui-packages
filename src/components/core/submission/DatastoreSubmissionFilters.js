@@ -213,6 +213,7 @@ const getSerializedParts = values =>
 
 const serializeQuery = ({ values }) => {
   const parts = getSerializedParts(values);
+  console.log('parts', parts.toJS());
   return {
     parts,
     q: parts
@@ -229,11 +230,11 @@ const serializeQuery = ({ values }) => {
         const op3 = `${opBase}-operand3`;
 
         return operator === 'between'
-          ? query.between(part, op1, op2)
+          ? query.between(part, op1, op2, true)
           : operator === 'in'
-            ? query.in(part, op3)
+            ? query.in(part, op3, true)
             : operator
-              ? query[operator](part, op1)
+              ? query[operator](part, op1, true)
               : query;
       }, defineKqlQuery())
       .end()(
