@@ -31,7 +31,7 @@ export const createBackgroundJob = (options = {}) => {
   const path = backgroundJobPath(options);
 
   return axios
-    .post(path, { type, content })
+    .post(path, { type, content }, { params: { simulate: options.simulate } })
     .then(response => ({
       backgroundJob: response.data.backgroundJob,
     }))
