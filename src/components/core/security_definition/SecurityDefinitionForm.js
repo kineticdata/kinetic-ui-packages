@@ -9,13 +9,7 @@ import {
 } from '../../../apis';
 import { buildBindings } from '../../../helpers';
 
-export const SPACE_SECURITY_DEFINITION_TYPES = [
-  'Space',
-  'Datastore Form',
-  'Datastore Submission',
-  'Team',
-  'User',
-];
+export const SPACE_SECURITY_DEFINITION_TYPES = ['Space', 'Team', 'User'];
 
 export const KAPP_SECURITY_DEFINITION_TYPES = ['Kapp', 'Form', 'Submission'];
 
@@ -88,8 +82,8 @@ const fields = ({ securityPolicyName, kappSlug }) => ({ securityPolicy }) =>
       initialValue: securityPolicy
         ? securityPolicy.get('type')
         : kappSlug
-        ? 'Kapp'
-        : 'Space',
+          ? 'Kapp'
+          : 'Space',
       helpText:
         'Determines what information is available to the definition rule, as well as what security policies the security definition can be applied to.',
     },

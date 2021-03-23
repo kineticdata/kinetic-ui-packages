@@ -5,9 +5,7 @@ import { handleErrors, paramBuilder, headerBuilder } from '../http';
 export const fetchForms = (options = {}) => {
   const { kappSlug } = options;
 
-  const path = kappSlug
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms`
-    : `${bundle.apiLocation()}/forms`;
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms`;
 
   // Build URL and fetch the space.
   return axios
@@ -30,9 +28,7 @@ export const fetchForm = (options = {}) => {
     throw new Error('fetchForm failed! The option "formSlug" is required.');
   }
 
-  const path = kappSlug
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`
-    : `${bundle.apiLocation()}/forms/${formSlug}`;
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`;
 
   // Build URL and fetch the space.
   return axios
@@ -50,9 +46,7 @@ export const createForm = (options = {}) => {
     throw new Error('createForm failed! The option "form" is required.');
   }
 
-  const path = kappSlug
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms`
-    : `${bundle.apiLocation()}/forms`;
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms`;
 
   return axios
     .post(path, form, {
@@ -72,9 +66,7 @@ export const updateForm = (options = {}) => {
     throw new Error('updateForm failed! The option "form" is required.');
   }
 
-  const path = !kappSlug
-    ? `${bundle.apiLocation()}/forms/${formSlug}`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`;
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`;
 
   return axios
     .put(path, form, {
@@ -91,9 +83,7 @@ export const deleteForm = (options = {}) => {
     throw new Error('deleteForm failed! The option "formSlug" is required.');
   }
 
-  const path = kappSlug
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`
-    : `${bundle.apiLocation()}/forms/${formSlug}`;
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}`;
 
   return axios
     .delete(path, {

@@ -21,8 +21,8 @@ const nullFix = (val, nullable = true) =>
       ? 'null'
       : `"${val}"`
     : val === null
-    ? '""'
-    : `"${val}"`;
+      ? '""'
+      : `"${val}"`;
 
 export class SubmissionSearch {
   constructor(datastore = false) {
@@ -230,8 +230,9 @@ export class SubmissionSearch {
   }
 
   includes(includes) {
-    const newIncludes = [...new Set([...this.searchMeta.include, ...includes])];
-    this.searchMeta.include = newIncludes;
+    this.searchMeta.include = [
+      ...new Set([...this.searchMeta.include, ...includes]),
+    ];
     // _.uniq(_.concat(this.searchMeta.include, includes));
     return this;
   }
@@ -322,7 +323,9 @@ export class SubmissionSearch {
             break;
           default:
             throw new Error(
-              `Unexpected operator type "${op.op}" encountered. Expected: eq, in, or, and.`,
+              `Unexpected operator type "${
+                op.op
+              }" encountered. Expected: eq, in, or, and.`,
             );
         }
       });
@@ -337,11 +340,7 @@ export class SubmissionSearch {
 export const searchSubmissions = options => {
   const { kapp, form, search } = options;
 
-  const path = !kapp
-    ? form
-      ? `${bundle.apiLocation()}/forms/${form}/submissions`
-      : `${bundle.apiLocation()}/submissions`
-    : form
+  const path = form
     ? `${bundle.apiLocation()}/kapps/${kapp}/forms/${form}/submissions`
     : `${bundle.apiLocation()}/kapps/${kapp}/submissions`;
 
@@ -405,7 +404,6 @@ export const createSubmission = options => {
     kappSlug = bundle.kappSlug(),
     formSlug,
     values,
-    datastore = false,
     completed = true,
   } = options;
 
@@ -419,9 +417,7 @@ export const createSubmission = options => {
     );
   }
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/forms/${formSlug}/submissions`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions`;
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions`;
 
   const params = { ...paramBuilder(options), completed };
 
@@ -437,11 +433,9 @@ export const createSubmission = options => {
 };
 
 export const updateSubmission = options => {
-  const { id, values, datastore = false } = options;
+  const { id, values } = options;
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/submissions/${id}`
-    : `${bundle.apiLocation()}/submissions/${id}`;
+  const path = `${bundle.apiLocation()}/submissions/${id}`;
   const params = { ...paramBuilder(options) };
 
   return (
