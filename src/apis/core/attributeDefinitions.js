@@ -6,9 +6,7 @@ import { handleErrors, headerBuilder, paramBuilder } from '../http';
 // except for userProfileAttributeDefinitions and datastoreFormAttributeDefinitions
 // TODO: KCORE-2982
 const responseEnvelope = attributeType =>
-  ['userProfileAttributeDefinitions', 'formAttributeDefinitions'].includes(
-    attributeType,
-  )
+  'userProfileAttributeDefinitions' === attributeType
     ? attributeType
     : attributeType.replace(/s$/, '');
 
