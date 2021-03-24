@@ -188,45 +188,6 @@ describe('forms api', () => {
       expect(error).toBeUndefined();
     });
 
-    test('space form', async () => {
-      axios.post.mockResolvedValue({
-        status: 200,
-        data: {
-          form: {
-            name: 'Test Space Form',
-            attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-          },
-        },
-      });
-      const { form, error, errors, serverError } = await createForm({
-        form: {
-          name: 'Test Space Form',
-          attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-        },
-        include: 'attributes,pages',
-      });
-      expect(axios.post.mock.calls).toEqual([
-        [
-          'form/app/api/v1/forms',
-          {
-            name: 'Test Space Form',
-            attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-          },
-          {
-            params: { include: 'attributes,pages' },
-            headers: { 'X-Kinetic-AuthAssumed': 'true' },
-          },
-        ],
-      ]);
-      expect(form).toEqual({
-        name: 'Test Space Form',
-        attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-      });
-      expect(error).toBeUndefined();
-      expect(errors).toBeUndefined();
-      expect(serverError).toBeUndefined();
-    });
-
     test('missing form', () => {
       expect(() => {
         createForm({});
@@ -323,44 +284,6 @@ describe('forms api', () => {
       ]);
       expect(form).toEqual({
         name: 'Test Form',
-        attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-      });
-      expect(error).toBeUndefined();
-    });
-
-    test('space form', async () => {
-      axios.put.mockResolvedValue({
-        status: 200,
-        data: {
-          form: {
-            name: 'Test Space Form',
-            attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-          },
-        },
-      });
-      const { form, error } = await updateForm({
-        formSlug: 'test-form',
-        form: {
-          name: 'Test Space Form',
-          attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-        },
-        include: 'attributes,pages',
-      });
-      expect(axios.put.mock.calls).toEqual([
-        [
-          'form/app/api/v1/forms/test-form',
-          {
-            name: 'Test Space Form',
-            attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-          },
-          {
-            params: { include: 'attributes,pages' },
-            headers: { 'X-Kinetic-AuthAssumed': 'true' },
-          },
-        ],
-      ]);
-      expect(form).toEqual({
-        name: 'Test Space Form',
         attributes: [{ name: 'Icon', values: ['fa-gear'] }],
       });
       expect(error).toBeUndefined();
