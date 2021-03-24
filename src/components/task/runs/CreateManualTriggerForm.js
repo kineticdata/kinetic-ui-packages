@@ -38,7 +38,7 @@ const handleSubmit = formOptions => values => {
   });
 };
 
-const fields = ({ name }) => ({ nodes }) =>
+const fields = ({ name }) => () =>
   name && [
     {
       name: 'nodeId',
@@ -67,6 +67,9 @@ const fields = ({ name }) => ({ nodes }) =>
         'Required when executing a node defined after an update connect (ex. 11023)',
       placeholder:
         'Required when executing a node defined after an update connect (ex. 11023)',
+      pattern: /^\d*$/,
+      patternMessage: 'Branch ID must be a number',
+      serialize: ({ values }) => parseInt(values.get('branchId')),
     },
   ];
 
