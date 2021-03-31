@@ -12,7 +12,7 @@ export class AssignmentItem extends Component {
         role="menuitem"
         tabIndex={-1}
       >
-        {item.displayName}
+        {item.displayName || item.username}
       </div>
     );
   }
