@@ -7,18 +7,10 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 import { List } from 'immutable';
-import {
-  fetchProfile,
-  fetchForms,
-  fetchTeams,
-  updateProfile,
-} from '@kineticdata/react';
-import { Utils } from '@kineticdata/bundle-common';
+import { fetchForms, fetchTeams, updateProfile } from '@kineticdata/react';
+import { Utils, addToast } from '@kineticdata/bundle-common';
 import { actions, types } from '../modules/queueApp';
 import { filterReviver } from '../../records';
-
-const PROFILE_INCLUDES =
-  'attributes,profileAttributes,profileAttributesMap,memberships,memberships.team,memberships.team.attributes,memberships.team.memberships,memberships.team.memberships.user';
 
 // We'll implicitly believe teams to be assignable.
 export const isAssignable = team => {
@@ -43,31 +35,28 @@ export const isAssignable = team => {
   return true;
 };
 
-// TODO decide on error handling for these calls.
 export function* fetchAppSettingsTask() {
   const kappSlug = yield select(state => state.app.kappSlug);
+  const profile = yield select(state => state.app.profile);
+
   const {
-    profile: { profile, error: profileError },
     forms: { forms, error: formsError },
     teams: { teams, error: teamsError },
   } = yield all({
-    profile: call(fetchProfile, {
-      include: PROFILE_INCLUDES,
-    }),
     forms: call(fetchForms, {
       kappSlug,
       include: 'details,attributes,fields,fields.details,kapp',
     }),
     teams: call(fetchTeams, {
       include:
-        'details,attributes,memberships.memberships.user,memberships.user.details',
+        'details,attributes,memberships,memberships.user,memberships.user.details',
     }),
   });
 
-  if (profileError || formsError || teamsError) {
+  if (formsError || teamsError) {
     yield put(
       actions.fetchAppDataFailure(
-        List([profileError, formsError, teamsError]).filter(e => e),
+        List([formsError, teamsError]).filter(e => e),
       ),
     );
   } else {
@@ -77,17 +66,6 @@ export function* fetchAppSettingsTask() {
         .map(membership => membership.team)
         .filter(isAssignable),
     ).sortBy(team => team.name);
-    const myTeammates = myTeams
-      // Get all of the users from all of the teams.
-      .flatMap(t => t.memberships)
-      // Clean up the odd 'memberships' wrapper on user.
-      .map(u => u.user)
-      // Remove duplicates
-      .groupBy(u => u.username)
-      .map(g => g.first())
-      .toList()
-      // Ditch any of those users that are me.
-      .filter(u => u.username !== profile.username);
 
     const myFilters = Utils.getProfileAttributeValues(
       profile,
@@ -97,9 +75,7 @@ export function* fetchAppSettingsTask() {
       .filter(f => f);
 
     const appSettings = {
-      profile,
       myTeams,
-      myTeammates,
       myFilters,
       forms,
       allTeams,
@@ -109,26 +85,27 @@ export function* fetchAppSettingsTask() {
   }
 }
 
-export function* updatePersonalFilterTask() {
+export function* updatePersonalFilterTask(action) {
   const myFilters = yield select(state => state.queueApp.myFilters);
-  const profile = yield select(state => state.queueApp.profile);
 
   const { error } = yield call(updateProfile, {
     profile: {
       profileAttributesMap: {
-        ...profile.profileAttributesMap,
         'Queue Personal Filters': myFilters
           .toJS()
           .map(filter => JSON.stringify(filter)),
       },
     },
-    include: PROFILE_INCLUDES,
   });
-  if (!error) {
-    // TODO: What should we do on success/error?
-    // const newFilters = newProfile.profileAttributes['Queue Personal Filters']
-    //   ? newProfile.profileAttributes['Queue Personal Filters'].map(f => f)
-    //   : List();
+
+  if (error) {
+    const actionText =
+      action.type === types.REMOVE_PERSONAL_FILTER ? 'deleting' : 'saving';
+    addToast({ severity: 'danger', message: `Error ${actionText} filter.` });
+  } else {
+    const actionText =
+      action.type === types.REMOVE_PERSONAL_FILTER ? 'deleted' : 'saved';
+    addToast(`Filter ${actionText} successfully.`);
   }
 }
 

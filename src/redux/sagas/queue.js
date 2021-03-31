@@ -20,6 +20,7 @@ export const SUBMISSION_INCLUDES =
 
 export const getAppSettings = state => state.queueApp;
 export const getCurrentItem = state => state.queue.currentItem;
+export const getProfile = state => state.app.profile;
 export const getKappSlug = state => state.app.kappSlug;
 
 /* eslint-disable no-param-reassign */
@@ -80,7 +81,7 @@ const calculateTeams = (myTeams, teams) =>
     ? myTeams.map(t => t.name)
     : teams.toSet().intersect(myTeams.map(t => t.name));
 
-export const buildSearch = (filter, appSettings) => {
+export const buildSearch = (filter, appSettings, profile) => {
   let searcher = new SubmissionSearch();
 
   searcher = prepareDateRangeFilter(searcher, filter, moment());
@@ -90,12 +91,12 @@ export const buildSearch = (filter, appSettings) => {
   let invalidAssignment = true;
 
   if (filter.createdByMe) {
-    searcher.eq('createdBy', appSettings.profile.username);
+    searcher.eq('createdBy', profile.username);
     invalidAssignment = false;
   }
 
   if (filter.assignments === 'mine') {
-    searcher.eq('values[Assigned Individual]', appSettings.profile.username);
+    searcher.eq('values[Assigned Individual]', profile.username);
     invalidAssignment = false;
   } else if (
     filter.assignments === 'unassigned' &&
@@ -166,11 +167,13 @@ export function* fetchListTask(action) {
   const filter = action.payload;
   if (filter) {
     const appSettings = yield select(getAppSettings);
+    const profile = yield select(getProfile);
     const kappSlug = yield select(getKappSlug);
     const { search, invalidAssignment } = yield call(
       buildSearch,
       filter,
       appSettings,
+      profile,
     );
 
     // If invalidAssignment is true, then there is a problem with the query

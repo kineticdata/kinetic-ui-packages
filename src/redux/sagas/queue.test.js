@@ -53,7 +53,6 @@ describe('queue saga', () => {
 
       // appSettings = {
       //   myTeams: List([{ name: 'REAL_TEAM' }]),
-      //   myTeammates: List([Profile({ username: 'you@yours.com' })]),
       //   profile: new Profile({ username: 'me@mine.com' }),
       // };
     });
