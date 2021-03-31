@@ -48,12 +48,15 @@ export class AssignmentSelector extends Component {
 
   shouldItemRender(item, value) {
     // Return true for all assignments whose team matches.
-    if (item.team.toUpperCase().includes(value.toUpperCase())) {
+    if (item.team && item.team.toUpperCase().includes(value.toUpperCase())) {
       return true;
     }
 
     // Otherwise check to see if the user itself matches.
-    return item.displayName.toUpperCase().includes(value.toUpperCase());
+    return (
+      item.displayName &&
+      item.displayName.toUpperCase().includes(value.toUpperCase())
+    );
   }
 
   renderItem(item, isHighlighted) {
