@@ -65,6 +65,9 @@ export class I18nProvider extends React.Component {
         }
       });
     } else {
+      // If the context is already loaded for the locale but we're loading due
+      // to the locale changing then we need to populate the bundle's translation
+      // config from the already-loaded translations.
       this.populateBundleTranslations(locale);
     }
   };
