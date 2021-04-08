@@ -29,12 +29,16 @@ export class I18nProvider extends React.Component {
       this.state.translations.get(this.props.locale) &&
       bundle.config
     ) {
-      bundle.config.translations = {
-        ...bundle.config.translations,
-        ...this.state.translations.get(this.props.locale).toJS(),
-      };
+      this.populateBundleTranslations(this.props.locale);
     }
   }
+
+  populateBundleTranslations = locale => {
+    bundle.config.translations = {
+      ...bundle.config.translations,
+      ...this.state.translations.get(locale).toJS(),
+    };
+  };
 
   loadTranslations = (locale, context, isPublic) => {
     if (!this.loading.hasIn([locale, context])) {
@@ -60,6 +64,8 @@ export class I18nProvider extends React.Component {
           }));
         }
       });
+    } else {
+      this.populateBundleTranslations(locale);
     }
   };
 
