@@ -12,6 +12,7 @@ export class I18nProvider extends React.Component {
     // this effectively enables translations for the CE client-side code
     bundle.config = bundle.config || {};
     bundle.config.translations = bundle.config.translations || {};
+    bundle.config.translationsLocale = props.locale;
   }
 
   componentDidMount() {
@@ -38,6 +39,7 @@ export class I18nProvider extends React.Component {
       ...bundle.config.translations,
       ...this.state.translations.get(locale).toJS(),
     };
+    bundle.config.translationsLocale = locale;
   };
 
   loadTranslations = (locale, context, isPublic) => {
@@ -64,10 +66,13 @@ export class I18nProvider extends React.Component {
           }));
         }
       });
-    } else {
+    } else if (
+      locale !== bundle.config.translationsLocale &&
+      this.state.translations.has(locale)
+    ) {
       // If the context is already loaded for the locale but we're loading due
-      // to the locale changing then we need to populate the bundle's translation
-      // config from the already-loaded translations.
+      // to the locale changing then we need to populate the bundle's
+      // translation config from the already-loaded translations.
       this.populateBundleTranslations(locale);
     }
   };
