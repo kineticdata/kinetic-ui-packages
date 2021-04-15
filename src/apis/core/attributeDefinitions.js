@@ -5,8 +5,12 @@ import { handleErrors, headerBuilder, paramBuilder } from '../http';
 // The API returns the singular name of the attribute type, so we remove the "s",
 // except for userProfileAttributeDefinitions and datastoreFormAttributeDefinitions
 // TODO: KCORE-2982
+// TODO: Remove datastoreFormAttributeDefinitions when fully deprecated. See b4a24c6
 const responseEnvelope = attributeType =>
-  'userProfileAttributeDefinitions' === attributeType
+  [
+    'userProfileAttributeDefinitions',
+    'datastoreFormAttributeDefinitions',
+  ].includes(attributeType)
     ? attributeType
     : attributeType.replace(/s$/, '');
 

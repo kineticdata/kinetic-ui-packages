@@ -3,6 +3,8 @@ import qs from 'qs';
 import { bundle } from '../../helpers';
 import { handleErrors, headerBuilder, paramBuilder } from '../http';
 
+// TODO: datastore is deprecated, remove datastore routes from paths.
+
 export const VALID_TIMELINES = [
   'closedAt',
   'createdAt',
@@ -340,9 +342,13 @@ export class SubmissionSearch {
 export const searchSubmissions = options => {
   const { kapp, form, search } = options;
 
-  const path = form
-    ? `${bundle.apiLocation()}/kapps/${kapp}/forms/${form}/submissions`
-    : `${bundle.apiLocation()}/kapps/${kapp}/submissions`;
+  const path = kapp
+    ? form
+      ? `${bundle.apiLocation()}/kapps/${kapp}/forms/${form}/submissions`
+      : `${bundle.apiLocation()}/kapps/${kapp}/submissions`
+    : form
+      ? `${bundle.apiLocation()}/datastore/forms/${form}/submissions`
+      : `${bundle.apiLocation()}/submissions`;
 
   const meta = { ...search };
   // Format includes.
@@ -417,7 +423,9 @@ export const createSubmission = options => {
     );
   }
 
-  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions`;
+  const path = kappSlug
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions`
+    : `${bundle.apiLocation()}/datastore/forms/${formSlug}/submissions`;
 
   const params = { ...paramBuilder(options), completed };
 
