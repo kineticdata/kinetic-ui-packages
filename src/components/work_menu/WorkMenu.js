@@ -93,10 +93,14 @@ export const WorkMenuContainer = compose(
         kineticForm = form;
       },
       handleUpdated: props => (response, actions) => {
+        console.log('handleUpdated', response);
         // If the result of submitPage is an update and we do not advance pages
         // on the submission we will close the work menu. Also call actions.stop
         // to prevent a needless AJAX call to reload the embedded form.
-        if (response.submission.currentPage === kineticForm.page().name()) {
+        if (
+          response.submission.coreState !== 'Submitted' &&
+          response.submission.currentPage === kineticForm.page().name()
+        ) {
           actions.stop();
           props.closeWorkMenu();
         }
@@ -105,12 +109,18 @@ export const WorkMenuContainer = compose(
         }
       },
       handleCompleted: props => (response, actions) => {
+        console.log('handleCompleted', response);
         // If the result of submitPage is a complete and we advance to a virtual
-        // confirmation page (currentPage === null) we close the work menu and
-        // stop the subsequent AJAX call. If the page is not null then we will
-        // set the 'completed' state to true and let the embedded form reload
-        // so the confirmation page is shown.
-        if (response.submission.currentPage === null) {
+        // confirmation page (currentPage === null (pre form consolidation_, or
+        // displayedPage.type is not 'confirmation' (post form consolidation))
+        // we close the work menu and stop the subsequent AJAX call. If the page
+        // is not null then we will set the 'completed' state to true and let
+        // the embedded form reload so the confirmation page is shown.
+        if (
+          response.submission.currentPage === null ||
+          (response.submission.displayedPage &&
+            response.submission.displayedPage.type !== 'confirmation')
+        ) {
           actions.stop();
           props.closeWorkMenu();
         } else {

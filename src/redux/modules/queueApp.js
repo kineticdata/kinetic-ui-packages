@@ -1,7 +1,7 @@
 import { Record, List, Set } from 'immutable';
 import matchPath from 'rudy-match-path';
 import { Utils } from '@kineticdata/bundle-common';
-import { Profile, Filter, filterReviver } from '../../records';
+import { Filter, filterReviver } from '../../records';
 const { withPayload, noPayload, getAttributeValue } = Utils;
 const ns = Utils.namespaceBuilder('queue/app');
 
@@ -9,7 +9,6 @@ export const types = {
   FETCH_APP_DATA_REQUEST: ns('FETCH_APP_DATA_REQUEST'),
   FETCH_APP_DATA_SUCCESS: ns('FETCH_APP_DATA_SUCCESS'),
   FETCH_APP_DATA_FAILURE: ns('FETCH_APP_DATA_FAILURE'),
-  SET_PROFILE: ns('SET_PROFILE'),
   ADD_PERSONAL_FILTER: ns('ADD_PERSONAL_FILTER'),
   UPDATE_PERSONAL_FILTER: ns('UPDATE_PERSONAL_FILTER'),
   REMOVE_PERSONAL_FILTER: ns('REMOVE_PERSONAL_FILTER'),
@@ -18,7 +17,6 @@ export const types = {
 export const actions = {
   fetchAppDataRequest: noPayload(types.FETCH_APP_DATA_REQUEST),
   fetchAppDataSuccess: withPayload(types.FETCH_APP_DATA_SUCCESS),
-  setProfile: withPayload(types.SET_PROFILE),
   addPersonalFilter: withPayload(types.ADD_PERSONAL_FILTER),
   updatePersonalFilter: withPayload(types.UPDATE_PERSONAL_FILTER),
   removePersonalFilter: withPayload(types.REMOVE_PERSONAL_FILTER),
@@ -117,7 +115,6 @@ export const selectAssignments = (allTeams, form, queueItem) => {
  */
 
 export const State = Record({
-  profile: Profile(),
   filters: List([
     Filter({
       name: 'Mine',
@@ -134,7 +131,6 @@ export const State = Record({
   ]),
   allTeams: List(),
   myTeams: List(),
-  myTeammates: List(),
   teamFilters: List(),
   myFilters: List(),
   forms: List(),
@@ -148,10 +144,8 @@ export const reducer = (state = State(), { type, payload }) => {
       return state.set('loading', true).set('error', null);
     case types.FETCH_APP_DATA_SUCCESS:
       return state
-        .set('profile', payload.profile)
         .set('allTeams', List(payload.allTeams))
         .set('myTeams', List(payload.myTeams))
-        .set('myTeammates', payload.myTeammates)
         .set(
           'teamFilters',
           List(payload.myTeams)
@@ -190,8 +184,6 @@ export const reducer = (state = State(), { type, payload }) => {
         .set('loading', false);
     case types.FETCH_APP_DATA_FAILURE:
       return state.set('error', payload).set('loading', false);
-    case types.SET_PROFILE:
-      return state.set('profile', payload);
     case types.ADD_PERSONAL_FILTER:
       return state.update('myFilters', filters => filters.push(payload));
     case types.UPDATE_PERSONAL_FILTER:
