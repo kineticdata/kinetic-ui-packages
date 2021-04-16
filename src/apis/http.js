@@ -136,13 +136,19 @@ export const formPath = ({ form, kapp }) =>
       ? `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}/${form}`
       : `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}`;
 
-export const submissionPath = ({ submission }) =>
-  submission
-    ? `${bundle.spaceLocation()}/submissions/${submission}`
-    : `${bundle.spaceLocation()}/submissions`;
+export const submissionPath = ({ submission, datastore }) =>
+  datastore
+    ? submission
+      ? `${bundle.spaceLocation()}/app/datastore/submissions/${submission}`
+      : `${bundle.spaceLocation()}/app/datastore/submissions`
+    : submission
+      ? `${bundle.spaceLocation()}/submissions/${submission}`
+      : `${bundle.spaceLocation()}/submissions`;
 
-export const corePath = ({ submission, kapp, form }) =>
-  submission ? submissionPath({ submission }) : formPath({ form, kapp });
+export const corePath = ({ submission, kapp, form, datastore }) =>
+  submission
+    ? submissionPath({ datastore, submission })
+    : formPath({ form, kapp });
 
 export const operations = Map({
   startsWith: (field, value) => `${field} =* "${value}"`,
