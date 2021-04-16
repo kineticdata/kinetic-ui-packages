@@ -389,7 +389,9 @@ export const fetchSubmission = options => {
     throw new Error('fetchSubmission failed! The option "id" is required.');
   }
 
-  const path = `${bundle.apiLocation()}/submissions/${id}`;
+  const path = options.datastore
+    ? `${bundle.apiLocation()}/datastore/submissions/${id}`
+    : `${bundle.apiLocation()}/submissions/${id}`;
 
   return (
     axios
@@ -443,7 +445,9 @@ export const createSubmission = options => {
 export const updateSubmission = options => {
   const { id, values } = options;
 
-  const path = `${bundle.apiLocation()}/submissions/${id}`;
+  const path = options.datastore
+    ? `${bundle.apiLocation()}/datastore/submissions/${id}`
+    : `${bundle.apiLocation()}/submissions/${id}`;
   const params = { ...paramBuilder(options) };
 
   return (
@@ -464,7 +468,9 @@ export const deleteSubmission = options => {
     throw new Error('deleteSubmission failed! The option "id" is required.');
   }
 
-  const path = `${bundle.apiLocation()}/submissions/${id}`;
+  const path = options.datastore
+    ? `${bundle.apiLocation()}/datastore/submissions/${id}`
+    : `${bundle.apiLocation()}/submissions/${id}`;
 
   return (
     axios
