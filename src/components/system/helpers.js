@@ -19,7 +19,11 @@ export const generateInitialValues = (
 ) => (key, initialValue = '') => {
   const sameAsTenant =
     getIn(persistedObject, persistedPath.concat(['type']), '') === adapter;
-  const defaultObjectValue = getValueFromList(get(defaultObject, 'properties', List()), key, initialValue);
+  const defaultObjectValue = getValueFromList(
+    get(defaultObject, 'properties', List()),
+    key,
+    initialValue,
+  );
 
   if (sameAsTenant) {
     // Get the properties from the persisted object.
@@ -113,7 +117,6 @@ export const MSSQL_FIELDS = (
       name: 'mssql_host',
       label: 'Host',
       type: 'text',
-      transient: true,
       required: trueIfAdapter,
       visible: trueIfAdapter,
       initialValue: initialValues('host', '127.0.0.1'),
@@ -122,7 +125,6 @@ export const MSSQL_FIELDS = (
       name: 'mssql_port',
       label: 'Port',
       type: 'text',
-      transient: true,
       required: trueIfAdapter,
       visible: trueIfAdapter,
       initialValue: initialValues('port', '1433'),
@@ -131,7 +133,6 @@ export const MSSQL_FIELDS = (
       name: 'mssql_database',
       label: 'Database',
       type: 'text',
-      transient: true,
       required: trueIfAdapter,
       visible: trueIfAdapter,
       initialValue: initialValues('database', ''),
@@ -140,7 +141,6 @@ export const MSSQL_FIELDS = (
       name: 'mssql_instance',
       label: 'Instance',
       type: 'text',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('instance', ''),
@@ -149,7 +149,6 @@ export const MSSQL_FIELDS = (
       name: 'mssql_username',
       label: 'Username',
       type: 'text',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('username', ''),
@@ -166,7 +165,6 @@ export const MSSQL_FIELDS = (
       name: 'mssql_sslEnabled',
       label: 'Enable SSL',
       type: 'select',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       options: [
@@ -180,7 +178,6 @@ export const MSSQL_FIELDS = (
       description: 'Protocol to use with SSL encryption',
       label: 'SSL Protocol',
       type: 'text',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('sslProtocol', 'TLSv1.2'),
@@ -189,7 +186,6 @@ export const MSSQL_FIELDS = (
       name: 'mssql_sslrootcert',
       label: 'Root Certificate',
       type: 'text-area',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('sslrootcert', ''),
@@ -198,7 +194,6 @@ export const MSSQL_FIELDS = (
       name: 'mssql_sslcert',
       label: 'Client Certificate',
       type: 'text-area',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('sslcert', ''),
@@ -240,7 +235,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_host',
       label: 'Host',
       type: 'text',
-      transient: true,
       required: trueIfAdapter,
       visible: trueIfAdapter,
       initialValue: initialValues('host', '127.0.0.1'),
@@ -249,7 +243,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_port',
       label: 'Port',
       type: 'text',
-      transient: true,
       required: trueIfAdapter,
       visible: trueIfAdapter,
       initialValue: initialValues('port', '1521'),
@@ -258,7 +251,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_service',
       label: 'Service Name',
       type: 'text',
-      transient: true,
       required: trueIfAdapter,
       visible: trueIfAdapter,
       initialValue: initialValues('service', 'ORCLCDB'),
@@ -267,7 +259,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_username',
       label: 'Username',
       type: 'text',
-      transient: true,
       required: false,
       initialValue: initialValues('username', ''),
       visible: trueIfAdapter,
@@ -282,7 +273,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_sslEnabled',
       label: 'Enable SSL',
       type: 'select',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       options: [
@@ -295,7 +285,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_sslVersion',
       label: 'TLS Version',
       type: 'text',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('sslVersion', '1.2'),
@@ -304,7 +293,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_sslServerDnMatch',
       label: 'Server DN Match',
       type: 'select',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       options: [
@@ -317,7 +305,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_ciphersuites',
       label: 'Cipher Suites',
       type: 'text',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('ciphersuites', ''),
@@ -326,7 +313,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_serverCert',
       label: 'Server Certificate',
       type: 'text-area',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('serverCert', ''),
@@ -335,7 +321,6 @@ export const ORACLE_FIELDS = (
       name: 'oracle_clientCert',
       label: 'Client Certificate',
       type: 'text-area',
-      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('clientCert', ''),
@@ -547,13 +532,12 @@ export const adapterPropertiesFields = ({
       type: property.get('sensitive')
         ? 'password'
         : property.has('options')
-        ? 'select'
-        : 'text',
+          ? 'select'
+          : 'text',
       helpText: property.get('description'),
       required: ({ values }) =>
         values.get(formPropertyName(prefix, adapterType)) ===
           property.get('type') && property.get('required', false),
-      transient: true,
       options: property.get('options', undefined),
       initialValue: getPropertyValue(property, defaultAdapter, adapterType),
     };
