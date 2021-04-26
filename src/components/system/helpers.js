@@ -55,17 +55,24 @@ const generatePasswordFields = (
   defaultAdapter,
   label = 'Password',
   fieldName = 'password',
+  additionalValidation,
 ) => {
   const required = ({ values }) => {
     const currentAdapterName = values.get(currentAdapter);
 
+    // If this adapter is the same as the currently chosen adapter.
     if (currentAdapterName === adapterName) {
+      // And we are editing an existing adaptedr, it is required if changing.
       if (persistedObject) {
         return values.get(`${adapterName}_${fieldName}Change`);
+        // Otherwise it's only required, when editing, if the adapter is different than the default.
+      } else if (typeof additionalValidation === 'function') {
+        return additionalValidation(values);
       } else {
         return getIn(defaultAdapter, ['type'], '') !== adapterName;
       }
     }
+
     return false;
   };
 
@@ -205,6 +212,7 @@ export const MSSQL_FIELDS = (
       defaultAdapter,
       'Truststore Password',
       'ssltruststorepw',
+      values => values.get('mssql_sslrootcert', '') !== '',
     ),
     ...generatePasswordFields(
       'mssql',
@@ -213,6 +221,7 @@ export const MSSQL_FIELDS = (
       defaultAdapter,
       'Keystore Password',
       'sslkeystorepw',
+      values => values.get('mssql_sslcert', '') !== '',
     ),
   ];
 };

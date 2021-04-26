@@ -166,6 +166,8 @@ const fields = ({ slug }) => ({ tenant, defaultTaskDbAdapter }) =>
       type: 'checkbox',
       visible: ({ values }) =>
         values.get('task_databaseAdapter_type') === 'postgres',
+      transient: ({ values }) =>
+        values.get('task_databaseAdapter_type') !== 'postgres',
       initialValue: slug
         ? get(tenant, ['task', 'autoCreateDatabase'], true)
         : true,
