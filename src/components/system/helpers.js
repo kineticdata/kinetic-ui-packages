@@ -341,6 +341,7 @@ export const ORACLE_FIELDS = (
       defaultAdapter,
       'Truststore Password',
       'truststorePassword',
+      values => values.get('oracle_serverCert', '') !== '',
     ),
     ...generatePasswordFields(
       'oracle',
@@ -349,6 +350,7 @@ export const ORACLE_FIELDS = (
       defaultAdapter,
       'Keystore Password',
       'keystorePassword',
+      values => values.get('oracle_clientCert', '') !== '',
     ),
   ];
 };
