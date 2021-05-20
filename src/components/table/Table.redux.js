@@ -262,7 +262,7 @@ function* calculateRowsTask({ payload }) {
     const tableData = yield select(state => state.getIn(['tables', tableKey]));
 
     // Skip this process if the table hasn't been mounted yet.
-    if (!tableData) return;
+    if (!tableData || !tableData.get('configured')) return;
 
     const response = yield call(calculateRows, tableData);
 
