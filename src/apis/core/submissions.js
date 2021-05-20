@@ -21,8 +21,8 @@ const nullFix = (val, nullable = true) =>
       ? 'null'
       : `"${val}"`
     : val === null
-    ? '""'
-    : `"${val}"`;
+      ? '""'
+      : `"${val}"`;
 
 export class SubmissionSearch {
   constructor(datastore = false) {
@@ -322,7 +322,9 @@ export class SubmissionSearch {
             break;
           default:
             throw new Error(
-              `Unexpected operator type "${op.op}" encountered. Expected: eq, in, or, and.`,
+              `Unexpected operator type "${
+                op.op
+              }" encountered. Expected: eq, in, or, and.`,
             );
         }
       });
@@ -345,8 +347,8 @@ export const searchSubmissions = options => {
   const path = datastore
     ? `${bundle.apiLocation()}/datastore/forms/${form}/submissions`
     : form
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${form}/submissions`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/submissions`;
+      ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${form}/submissions`
+      : `${bundle.apiLocation()}/kapps/${kappSlug}/submissions`;
 
   const meta = { ...search };
   // Format includes.
@@ -371,6 +373,8 @@ export const searchSubmissions = options => {
     submissions: response.data.submissions,
     messages: response.data.messages,
     nextPageToken: response.data.nextPageToken,
+    count: response.data.count,
+    countPageToken: response.data.countPageToken,
   }));
 
   // Clean up any errors we receive. Make srue this is the last thing so that it
