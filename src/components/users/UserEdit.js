@@ -165,7 +165,7 @@ export const UserEditComponent = ({
 // TODO implement handleDelete?
 export const UserEdit = compose(
   withHandlers({
-    handleSave: props => () => ({ user }) => {
+    handleSave: props => () => user => {
       refetchTable(props.tableKey);
       addToast(`${user.username} updated successfully.`);
     },
