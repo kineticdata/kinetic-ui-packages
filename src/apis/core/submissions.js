@@ -373,6 +373,8 @@ export const searchSubmissions = options => {
     submissions: response.data.submissions,
     messages: response.data.messages,
     nextPageToken: response.data.nextPageToken,
+    count: response.data.count,
+    countPageToken: response.data.countPageToken,
   }));
 
   // Clean up any errors we receive. Make srue this is the last thing so that it
