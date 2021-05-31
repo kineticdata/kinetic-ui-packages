@@ -33,7 +33,7 @@
     "lodash.isstring": "^4.0.1",
     "modularscale-sass": "^3.0.8",
     "moment": "^2.21.0",
-    "prismjs": "1.17.0",
+    "prismjs": "1.23.0",
     "prop-types": "^15.7.2",
     "react-autosuggest": "^9.4.3",
     "react-avatar": "^3.5.0",
