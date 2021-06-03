@@ -230,8 +230,9 @@ export class SubmissionSearch {
   }
 
   includes(includes) {
-    const newIncludes = [...new Set([...this.searchMeta.include, ...includes])];
-    this.searchMeta.include = newIncludes;
+    this.searchMeta.include = [
+      ...new Set([...this.searchMeta.include, ...includes]),
+    ];
     // _.uniq(_.concat(this.searchMeta.include, includes));
     return this;
   }
@@ -416,6 +417,8 @@ export const createSubmission = options => {
     values,
     datastore = false,
     completed = true,
+    coreState,
+    parent,
   } = options;
 
   if (!formSlug) {
@@ -432,7 +435,7 @@ export const createSubmission = options => {
     ? `${bundle.apiLocation()}/datastore/forms/${formSlug}/submissions`
     : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions`;
 
-  const params = { ...paramBuilder(options), completed };
+  const params = { ...paramBuilder(options), completed, coreState, parent };
 
   return (
     axios
