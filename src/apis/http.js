@@ -40,7 +40,7 @@ export const paramBuilder = options => {
   const params = {};
 
   if (options.include) params.include = options.include;
-  if (options.limit) params.limit = options.limit;
+  if (options.limit >= 0) params.limit = options.limit;
   if (options.pageToken) params.pageToken = options.pageToken;
   if (options.q) params.q = options.q;
   if (options.direction) params.direction = options.direction;
