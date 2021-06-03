@@ -24,7 +24,7 @@ const AppComponent = props => {
     return <Loading text="App is loading ..." />;
   } else {
     return props.render({
-      sidebar: !props.isGuest && (
+      sidebar: (
         <Router>
           <Sidebar path="/*" />
         </Router>
@@ -61,10 +61,7 @@ const mapDispatchToProps = {
 };
 
 const enhance = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   lifecycle({
     componentDidMount() {
       this.props.fetchForms();
