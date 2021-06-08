@@ -1,10 +1,13 @@
 import { generateTable } from '../../table/Table';
 import { searchSubmissions } from '../../../apis';
-import { generatePaginationParams } from '../../../apis/http';
+import {
+  generatePaginationParams,
+  transformCoreResult,
+} from '../../../apis/http';
 import { filterDataSources, filters } from './FormSubmissionFilters';
 import { Set } from 'immutable';
 
-const dataSource = ({ kappSlug, formSlug, include }) => ({
+const dataSource = ({ kappSlug, formSlug, include, count }) => ({
   fn: options => searchSubmissions(options),
   params: paramData => [
     {
@@ -26,12 +29,10 @@ const dataSource = ({ kappSlug, formSlug, include }) => ({
         orderBy: paramData.filters.getIn(['query', 'orderBy']) || undefined,
         ...generatePaginationParams(paramData),
       },
+      count: count ? true : undefined,
     },
   ],
-  transform: result => ({
-    data: result.submissions,
-    nextPageToken: result.nextPageToken,
-  }),
+  transform: transformCoreResult('submissions'),
 });
 
 const columns = [
@@ -123,7 +124,7 @@ const columns = [
 ];
 
 export const FormSubmissionTable = generateTable({
-  tableOptions: ['kappSlug', 'formSlug', 'include'],
+  tableOptions: ['kappSlug', 'formSlug', 'include', 'count'],
   columns,
   dataSource,
   filters,

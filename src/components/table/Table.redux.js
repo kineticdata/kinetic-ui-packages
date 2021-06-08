@@ -139,6 +139,7 @@ regHandlers({
               nextPageToken: null,
               pageTokens: List(),
               pageOffset: 0,
+              count: null,
               error: null,
 
               // Filtering
@@ -155,7 +156,7 @@ regHandlers({
 
   SET_ROWS: (
     state,
-    { payload: { tableKey, rows, data, nextPageToken, error = null } },
+    { payload: { tableKey, rows, data, nextPageToken, count, error = null } },
   ) =>
     state.updateIn(
       ['tables', tableKey],
@@ -166,6 +167,7 @@ regHandlers({
           .set('data', data)
           .set('currentPageToken', nextPageToken)
           .set('nextPageToken', null)
+          .set('count', count)
           .set('error', error)
           .set('initializing', false)
           .set('loading', false),
@@ -278,7 +280,7 @@ function* calculateRowsTask({ payload }) {
 
     const response = yield call(calculateRows, tableData);
 
-    const { rows, data, nextPageToken, error } = response;
+    const { rows, data, nextPageToken, count, error } = response;
 
     if (error) {
       yield put({
@@ -289,12 +291,13 @@ function* calculateRowsTask({ payload }) {
           rows: List(),
           data: List(),
           nextPageToken: null,
+          count: null,
         },
       });
     } else {
       yield put({
         type: 'SET_ROWS',
-        payload: { tableKey, rows, data, nextPageToken },
+        payload: { tableKey, rows, data, nextPageToken, count },
       });
     }
   } catch (e) {
@@ -466,31 +469,45 @@ const calculateRows = tableData => {
     const data = transformData(tableData.get('data'), tableData);
     const rows = applyClientSideFilters(tableData, data);
 
-    return Promise.resolve({ rows, data });
+    return Promise.resolve({
+      rows,
+      data,
+      count: rows.size,
+    });
   } else if (dataSource) {
-    const transform = dataSource.transform || (result => result);
-    const params = dataSource.params({
+    const paramData = {
       pageSize: tableData.get('pageSize'),
       filters: tableData.get('appliedFilters'),
       sortColumn: tableData.getIn(['sortColumn', 'value']),
       sortDirection: tableData.get('sortDirection'),
       nextPageToken: tableData.get('nextPageToken'),
-    });
+      pageTokens: tableData.get('pageTokens'),
+    };
+    const transform = dataSource.transform || (result => result);
+    const params = dataSource.params(paramData);
 
     return dataSource.fn(...params).then(response => {
       if (response.error) return response;
 
-      const { nextPageToken, data: responseData } = transform(response);
+      const { nextPageToken, data: responseData, count } = transform(
+        response,
+        paramData,
+      );
       const data = fromJS(responseData);
-      const rows = transformData(data, tableData);
+      const transformedRows = transformData(data, tableData);
+      const rows =
+        dataSource.clientSideSearch || dataSource.clientSide
+          ? applyClientSideFilters(tableData, transformedRows)
+          : transformedRows;
 
       return {
         nextPageToken,
-        data,
-        rows:
+        count:
           dataSource.clientSideSearch || dataSource.clientSide
-            ? applyClientSideFilters(tableData, rows)
-            : rows,
+            ? rows.size
+            : count,
+        data,
+        rows,
       };
     });
   } else {

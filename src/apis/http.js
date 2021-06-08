@@ -216,3 +216,15 @@ export const generateCESearchParams = ({
   ...searchFilters(filters),
   ...sortParams(sortColumn, sortDirection),
 });
+
+export const transformCoreResult = envelope => (result, paramData) => {
+  const count = paramData.nextPageToken
+    ? result.count + paramData.pageTokens.size * paramData.pageSize
+    : result.count;
+
+  return {
+    data: result[envelope],
+    nextPageToken: result.nextPageToken,
+    count,
+  };
+};

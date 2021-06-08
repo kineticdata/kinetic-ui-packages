@@ -1,4 +1,4 @@
-import { fetchTaskTriggers, fetchSources } from '../../../apis/task';
+import { fetchTaskTriggers, fetchSources } from '../../../apis';
 import { generateTable } from '../../table/Table';
 import { get } from 'immutable';
 
@@ -35,6 +35,7 @@ const dataSource = ({
   transform: result => ({
     data: result.triggers,
     nextPageToken: result.nextPageToken,
+    count: result.count,
   }),
 });
 
@@ -43,12 +44,10 @@ const filterDataSources = () => ({
     fn: fetchSources,
     params: [],
     transform: result =>
-      result.sources
-        .filter(s => s.name !== '-')
-        .map(s => ({
-          label: s.name,
-          value: s.name,
-        })),
+      result.sources.filter(s => s.name !== '-').map(s => ({
+        label: s.name,
+        value: s.name,
+      })),
   },
 });
 
