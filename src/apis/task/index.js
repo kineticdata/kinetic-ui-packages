@@ -945,6 +945,7 @@ export const fetchTaskTriggers = (options = {}) =>
     .then(response => ({
       triggers: response.data.triggers,
       nextPageToken: generateNextPageToken(response.data),
+      count: response.data.count,
     }))
     .catch(handleErrors);
 

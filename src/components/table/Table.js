@@ -31,6 +31,7 @@ const TableComponent = props => {
       components,
       tableKey,
       filterFormKey,
+      count,
     } = props;
     const table = buildTable(props);
     const filter = components.FilterForm
@@ -48,6 +49,7 @@ const TableComponent = props => {
       initializing,
       loading,
       rows,
+      count,
       error,
     });
   }
@@ -270,6 +272,7 @@ const buildPaginationControl = props => {
     pageSize,
     pageOffset,
     currentPageToken,
+    count,
     components,
     loading,
   } = props;
@@ -315,6 +318,7 @@ const buildPaginationControl = props => {
       loading={loading}
       startIndex={startIndex}
       endIndex={endIndex}
+      count={count}
     />
   );
 };
