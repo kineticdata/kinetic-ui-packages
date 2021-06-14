@@ -101,19 +101,19 @@ describe('http module', () => {
   describe('#paramBuilder', () => {
     test('returns parameter values', () => {
       const params = [
-        'include',
-        'limit',
-        'pageToken',
-        'q',
-        'direction',
-        'orderBy',
-        'manage',
-        'export',
+        ['include', 'include'],
+        ['limit', 1],
+        ['pageToken', 'pageToken'],
+        ['q', 'q'],
+        ['direction', 'direction'],
+        ['orderBy', 'orderBy'],
+        ['manage', 'manage'],
+        ['export', 'export'],
       ];
 
-      params.forEach(param =>
-        expect(paramBuilder({ [param]: param })).toMatchObject({
-          [param]: param,
+      params.forEach(([param, value]) =>
+        expect(paramBuilder({ [param]: value })).toMatchObject({
+          [param]: value,
         }),
       );
     });
