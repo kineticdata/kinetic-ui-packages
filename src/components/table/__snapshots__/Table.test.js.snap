@@ -171,6 +171,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                   }
                 }
                 configured={true}
+                count={null}
                 data={
                   Immutable.List [
                     Immutable.Map {
@@ -261,6 +262,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                     }
                   }
                   configured={true}
+                  count={null}
                   data={
                     Immutable.List [
                       Immutable.Map {
@@ -304,6 +306,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                 >
                   <TableViewMock
                     appliedFilters={Immutable.Map {}}
+                    count={null}
                     error={null}
                     filter={
                       <FilterLayout
@@ -326,6 +329,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                     loading={false}
                     pagination={
                       <PaginationControl
+                        count={null}
                         endIndex={1}
                         filterFormKey="mock-table-key.filter-form"
                         loading={false}
@@ -574,6 +578,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                       </table>
                     </TableLayout>
                     <PaginationControl
+                      count={null}
                       endIndex={1}
                       filterFormKey="mock-table-key.filter-form"
                       loading={false}
@@ -1014,6 +1019,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                   }
                 }
                 configured={true}
+                count={null}
                 data={
                   Immutable.List [
                     Immutable.Map {
@@ -1199,6 +1205,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                     }
                   }
                   configured={true}
+                  count={null}
                   data={
                     Immutable.List [
                       Immutable.Map {
@@ -1290,6 +1297,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                         },
                       }
                     }
+                    count={null}
                     error={null}
                     filter={
                       <FilterLayout
@@ -1424,6 +1432,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                     loading={false}
                     pagination={
                       <PaginationControl
+                        count={null}
                         endIndex={1}
                         filterFormKey="mock-table-key.filter-form"
                         loading={false}
@@ -2485,6 +2494,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                       </table>
                     </TableLayout>
                     <PaginationControl
+                      count={null}
                       endIndex={1}
                       filterFormKey="mock-table-key.filter-form"
                       loading={false}
