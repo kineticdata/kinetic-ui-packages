@@ -165,8 +165,12 @@ const availableOptions = (partType, partIndex) => bindings => {
     indexDefinitions,
     usedFields,
     partType,
-  );
-  return partsAvailable.flatten().map(f => Map({ label: f, value: f }));
+  ).flatten();
+  const valueParts = partsAvailable.filter(f => f.startsWith('values[')).sort();
+  const staticParts = partsAvailable
+    .filterNot(f => f.startsWith('values['))
+    .sort();
+  return valueParts.concat(staticParts).map(f => Map({ label: f, value: f }));
 };
 
 const getRValues = (operator, values, opBase, isTimeline = false) => {
