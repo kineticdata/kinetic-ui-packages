@@ -40,8 +40,8 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
         )
           ? 'This name is already used by another node'
           : values.get('name').length > 128
-          ? 'Name cannot exceed 128 characters'
-          : true,
+            ? 'Name cannot exceed 128 characters'
+            : true,
       pattern: /^[^'"]*$/,
       patternMessage: 'Node names may not contain apostrophes or quotes',
     },
@@ -145,9 +145,12 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
           values.get('defers')
             ? ['Create', 'Update', 'Complete']
             : ['Complete'],
-        ).map(type =>
-          NodeMessage({ type, value: values.get(`message_${type}`) }),
-        ),
+        )
+          .map(type =>
+            NodeMessage({ type, value: values.get(`message_${type}`) }),
+          )
+          // Do not serialize empty messages.
+          .filter(message => !!message.value),
     },
   ];
 
