@@ -33,6 +33,20 @@ export const isClientSide = tableData => {
   );
 };
 
+export const clientSideGotoPage = (tableData, pageNumber) => {
+  const data = tableData.get('data');
+  const pageSize = tableData.get('pageSize');
+  const newOffset = (pageNumber - 1) * pageSize;
+
+  if (typeof pageNumber !== 'number' || pageNumber < 1) {
+    return tableData;
+  }
+
+  if (newOffset > data.size) return tableData;
+
+  return tableData.set('pageOffset', newOffset);
+};
+
 const clientSideNextPage = tableData =>
   tableData.update(
     'pageOffset',
@@ -43,6 +57,31 @@ const clientSidePrevPage = tableData =>
   tableData.update('pageOffset', pageOffset =>
     Math.max(0, pageOffset - tableData.get('pageSize')),
   );
+
+export const serverSideGotoPage = (tableData, pageNumber) => {
+  const pageTokens = tableData.get('pageTokens');
+  const tokenLocation = pageNumber - 2;
+
+  if (
+    typeof pageNumber !== 'number' ||
+    pageNumber < 1 ||
+    pageNumber > pageTokens.size
+  ) {
+    return tableData;
+  }
+
+  if (pageNumber === 1) {
+    return tableData
+      .set('loading', true)
+      .set('nextPageToken', null)
+      .set('pageTokens', List());
+  }
+
+  return tableData
+    .set('loading', true)
+    .set('nextPageToken', pageTokens.get(tokenLocation))
+    .set('pageTokens', pageTokens.slice(0, tokenLocation));
+};
 
 const serverSideNextPage = tableData =>
   tableData
@@ -111,6 +150,7 @@ regHandlers({
         tableOptions,
         onValidateFilters,
         filterForm,
+        onFetch,
       },
     },
   ) =>
@@ -148,6 +188,8 @@ regHandlers({
               appliedFilters: generateFilters(tableKey, columns),
               validFilters: true,
               onValidateFilters,
+
+              onFetch,
 
               configured: true,
               initialize: true,
@@ -190,6 +232,16 @@ regHandlers({
           isClientSide(tableData)
             ? clientSidePrevPage(tableData)
             : serverSidePrevPage(tableData),
+      )
+      .setIn(['tables', tableKey, 'error'], null),
+  GOTO_PAGE: (state, { payload: { tableKey, pageNumber } }) =>
+    state
+      .updateIn(
+        ['tables', tableKey],
+        tableData =>
+          isClientSide(tableData)
+            ? clientSideGotoPage(tableData, pageNumber)
+            : serverSideGotoPage(tableData, pageNumber),
       )
       .setIn(['tables', tableKey, 'error'], null),
   SORT_COLUMN: (state, { payload: { tableKey, column } }) =>
@@ -281,6 +333,7 @@ function* calculateRowsTask({ payload }) {
     const response = yield call(calculateRows, tableData);
 
     const { rows, data, nextPageToken, count, error } = response;
+    const onFetch = tableData.get('onFetch');
 
     if (error) {
       yield put({
@@ -299,6 +352,10 @@ function* calculateRowsTask({ payload }) {
         type: 'SET_ROWS',
         payload: { tableKey, rows, data, nextPageToken, count },
       });
+    }
+
+    if (typeof onFetch === 'function') {
+      yield call(onFetch, { tableKey, rows, count, error });
     }
   } catch (e) {
     console.error(e);
@@ -352,6 +409,7 @@ regSaga('CONFIGURE_TABLE', function*() {
 regSaga(takeEvery('UNMOUNT_TABLE', stopPollingTask));
 regSaga(takeEvery('NEXT_PAGE', calculateRowsTask));
 regSaga(takeEvery('PREV_PAGE', calculateRowsTask));
+regSaga(takeEvery('GOTO_PAGE', calculateRowsTask));
 regSaga(takeEvery('SORT_COLUMN', calculateRowsTask));
 regSaga(takeEvery('SORT_DIRECTION', calculateRowsTask));
 regSaga(takeEvery('APPLY_FILTERS', calculateRowsTask));
