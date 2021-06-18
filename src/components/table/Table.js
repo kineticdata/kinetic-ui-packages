@@ -641,6 +641,7 @@ export const generateTable = ({
       formOptions: ['tableKey', ...tableOptions],
       handleSubmit: ({ tableKey }) => values => {
         dispatch('APPLY_FILTER_FORM', { tableKey, appliedFilters: values });
+        return { values };
       },
     });
   }

@@ -415,6 +415,8 @@ export const createSubmission = options => {
     formSlug,
     values,
     completed = true,
+    coreState,
+    parent,
   } = options;
 
   if (!formSlug) {
@@ -431,7 +433,7 @@ export const createSubmission = options => {
     ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions`
     : `${bundle.apiLocation()}/datastore/forms/${formSlug}/submissions`;
 
-  const params = { ...paramBuilder(options), completed };
+  const params = { ...paramBuilder(options), completed, coreState, parent };
 
   return (
     axios
