@@ -315,6 +315,7 @@ const buildPaginationControl = props => {
       filterFormKey={filterFormKey}
       prevPage={prevPage}
       nextPage={nextPage}
+      gotoPage={onGotoPage(tableKey)}
       loading={loading}
       startIndex={startIndex}
       endIndex={endIndex}
@@ -573,6 +574,9 @@ export const buildTableFooterCells = props => {
 
 const onNextPage = tableKey => () => dispatch('NEXT_PAGE', { tableKey });
 const onPrevPage = tableKey => () => dispatch('PREV_PAGE', { tableKey });
+const onGotoPage = tableKey => pageNumber => () =>
+  dispatch('GOTO_PAGE', { tableKey, pageNumber });
+
 const onSortColumn = (tableKey, column) => () =>
   dispatch('SORT_COLUMN', { tableKey, column });
 
@@ -678,6 +682,7 @@ export const generateTable = ({
     filterForm: !!filters,
     initialFilterValues: props.initialFilterValues || {},
     onSearch: props.onSearch,
+    onFetch: props.onFetch,
   };
 
   return <Table {...setProps}>{props.children}</Table>;
