@@ -17,8 +17,8 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@kineticdata/bundle-common": "^5.0.16",
-    "@kineticdata/react": "^5.0.16",
+    "@kineticdata/bundle-common": "5.0.16",
+    "@kineticdata/react": "5.0.16",
     "@reach/router": "git://github.com/kineticdata/router.git",
     "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
