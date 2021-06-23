@@ -5,11 +5,7 @@ import { isImmutable, List, Map, OrderedMap } from 'immutable';
 import { actions as queueActions } from '../../redux/modules/queue';
 import { actions } from '../../redux/modules/filterMenu';
 import { actions as appActions } from '../../redux/modules/queueApp';
-import {
-  AttributeSelectors,
-  DateRangeSelector,
-} from '@kineticdata/bundle-common';
-import { validateDateRange } from './FilterMenuContainer';
+import { DateRangeSelector } from '@kineticdata/bundle-common';
 import moment from 'moment';
 import { I18n } from '@kineticdata/react';
 import { connect } from '../../redux/store';
@@ -26,7 +22,12 @@ const SORT_OPTIONS = OrderedMap([
   ['createdAt', { label: 'Created At', id: 'sorted-by-created-at' }],
   ['updatedAt', { label: 'Updated At', id: 'sorted-by-updated-at' }],
   ['closedAt', { label: 'Closed At', id: 'sorted-by-closed-at' }],
-  ['Due Date', { label: 'Due Date', id: 'sorted-by-due-date' }],
+  ['values[Due Date]', { label: 'Due Date', id: 'sorted-by-due-date' }],
+]);
+
+const SORT_DIRECTIONS = OrderedMap([
+  ['ASC', { label: 'Ascending', id: 'sorted-ascending' }],
+  ['DESC', { label: 'Descending', id: 'sorted-descending' }],
 ]);
 
 const convertDateRangeValue = dateRange =>
@@ -46,21 +47,38 @@ const formatPreset = preset => {
 
 const formatDate = date => moment(date).format('l');
 
-const summarizeDateRange = range =>
-  range.preset !== '' ? (
-    <I18n>
-      {formatTimeline(range.timeline) +
-        ' in last ' +
-        formatPreset(range.preset)}
-    </I18n>
-  ) : range.custom ? (
-    formatDate(range.start) + ' - ' + formatDate(range.end)
-  ) : null;
+const summarizeDateRange = range => (
+  <I18n
+    key="summarizeDateRange"
+    render={translate =>
+      range.preset !== ''
+        ? translate(
+            `${formatTimeline(range.timeline)} in last ${formatPreset(
+              range.preset,
+            )}`,
+          )
+        : range.custom
+          ? `${translate(formatTimeline(range.timeline))} ${formatDate(
+              range.start,
+            )} - ${formatDate(range.end)}`
+          : null
+    }
+  />
+);
 
-const restrictDateRange = filter =>
-  filter.status.includes('Cancelled') || filter.status.includes('Complete')
-    ? 'A date range is required if status includes Complete or Cancelled'
-    : null;
+export const validateDateRange = filter => {
+  if (filter.dateRange.custom) {
+    if (filter.dateRange.start === '' && filter.dateRange.end === '') {
+      return 'Select a start and end date';
+    } else if (filter.dateRange.start === '' && filter.dateRange.end !== '') {
+      return 'Select a start date';
+    } else if (filter.dateRange.start !== '' && filter.dateRange.end === '') {
+      return 'Select an end date';
+    } else if (filter.dateRange.end < filter.dateRange.start) {
+      return 'Select an end date after the start date';
+    }
+  }
+};
 
 const validateFilterName = (filter, showing) => {
   if (showing === 'save-filter' && (!filter.name || !filter.name.trim())) {
@@ -143,73 +161,140 @@ const FilterMenuAbstractComponent = props => (
             />
           </Fragment>
         ),
-        sortedByOptions: SORT_OPTIONS.map(({ label, id }, value) => (
+        sortedByOptions: SORT_OPTIONS.filter(
+          (data, value) =>
+            (!props.currentFilter.dateRange.preset &&
+              !props.currentFilter.dateRange.current) ||
+            value === props.currentFilter.sortBy,
+        )
+          .map(({ label, id }, value) => (
+            <Fragment key={id}>
+              <label htmlFor={id}>
+                <input
+                  type="radio"
+                  id={id}
+                  value={value}
+                  name="sorted-by"
+                  checked={value === props.currentFilter.sortBy}
+                  onChange={props.changeSortedBy}
+                  disabled={
+                    props.currentFilter.dateRange.preset ||
+                    props.currentFilter.dateRange.current
+                  }
+                />
+                <I18n>{label}</I18n>
+              </label>
+              {value === props.currentFilter.sortBy &&
+                props.currentFilter.sortBy.startsWith('values') && (
+                  <small className="text-muted">
+                    {translate(
+                      "Sorting by %s will exclude items for which the %s field doesn't exist.",
+                    ).replace(/%s/g, translate(label))}
+                  </small>
+                )}
+            </Fragment>
+          ))
+          .toList()
+          .push(
+            props.currentFilter.dateRange.preset ||
+            props.currentFilter.dateRange.current ? (
+              <small key="info-msg" className="text-muted">
+                {translate(
+                  'Options restricted due to the selected date range.',
+                )}
+              </small>
+            ) : null,
+          ),
+        sortDirectionOptions: SORT_DIRECTIONS.map(({ label, id }, value) => (
           <label key={id} htmlFor={id}>
             <input
               type="radio"
               id={id}
               value={value}
-              name="sorted-by"
-              checked={value === props.currentFilter.sortBy}
-              onChange={props.changeSortedBy}
+              name="sort-direction"
+              checked={value === props.currentFilter.sortDirection}
+              onChange={props.changeDirection}
             />
-            <I18n>{label}</I18n>
+            {translate(label)}
           </label>
         )).toList(),
-        groupedByOptions: (
-          <AttributeSelectors.FieldSelect
-            forms={props.forms}
-            value={props.currentFilter.groupBy}
-            onChange={props.changeGroupedBy}
-          />
-        ),
         saveFilterOptions: (
           <div>
-            <label htmlFor="save-filter-name">
-              <I18n>Filter Name</I18n>
-            </label>
+            <label htmlFor="save-filter-name">{translate('Filter Name')}</label>
             <input
               type="text"
+              className="form-control"
               id="save-filter-name"
               value={props.currentFilter.name}
               onChange={props.changeFilterName}
+              placeholder={translate('New Filter Name')}
             />
           </div>
         ),
+
+        // Current Filter Summaries and Errors
+        currentTeamSummary: props.currentFilter.teams.map(translate).join(', '),
+        currentAssignmentSummary: translate(
+          ASSIGNMENT_LABELS.get(props.currentFilter.assignments),
+        ),
+        currentStatusSummary: props.currentFilter.status
+          .map(translate)
+          .join(', '),
+        currentDateRangeSummary: summarizeDateRange(
+          props.currentFilter.dateRange,
+        ),
+        currentSortedBySummary: [
+          translate(SORT_OPTIONS.getIn([props.currentFilter.sortBy, 'label'])),
+          translate(
+            SORT_DIRECTIONS.getIn([props.currentFilter.sortDirection, 'label']),
+          ),
+        ]
+          .filter(Boolean)
+          .join(' - '),
+        currentCreatedByMeChecked: props.currentFilter.createdByMe,
+        currentFilterName: props.currentFilter.name,
+
+        dateRangeError: validateDateRange(props.currentFilter),
+        filterNameError: validateFilterName(props.currentFilter, props.showing),
+        validations: [validateDateRange, validateFilterName]
+          .map(fn => fn(props.currentFilter, props.showing))
+          .filter(v => v),
+        messages: [validateDateRange, validateFilterName]
+          .map(fn => fn(props.currentFilter, props.showing))
+          .filter(v => v),
+        saveMessages: [props.checkFilterName]
+          .map(fn => fn(props.currentFilter))
+          .filter(v => v),
+
+        // Saved Filter Summaries
         teamSummary: props.filter.teams.map(translate).join(', '),
         assignmentSummary: translate(
           ASSIGNMENT_LABELS.get(props.filter.assignments),
         ),
         statusSummary: props.filter.status.map(translate).join(', '),
         dateRangeSummary: summarizeDateRange(props.filter.dateRange),
-        dateRangeError: validateDateRange(props.currentFilter),
         sortedBySummary: translate(
-          SORT_OPTIONS.getIn([props.filter.sortBy, 'label']),
+          SORT_OPTIONS.getIn([props.filter.sortBy, 'label']) ||
+            translate('Created At'),
         ),
-        sortDirection: props.sortDirection,
-        groupDirection: props.groupDirection,
+
+        // Functions and Other Props
+        toggleDirection: props.toggleDirection,
         showing: props.showing,
         toggleShowing: props.toggleShowing,
         dirty: !props.currentFilter.equals(props.filter),
         apply: props.applyFilter,
         reset: props.resetFilter,
-        validations: [validateDateRange, validateFilterName]
-          .map(fn => fn(props.currentFilter, props.showing))
-          .filter(v => v),
         hasTeams: props.hasTeams,
         clearTeams: props.clearTeams,
         clearAssignments: props.clearAssignments,
         clearStatus: props.clearStatus,
-        clearDateRange: restrictDateRange(props.filter) || props.clearDateRange,
-        clearGroupedBy: props.clearGroupedBy,
+        clearDateRange: props.clearDateRange,
         toggleCreatedByMe: props.toggleCreatedByMe,
-        toggleSortDirection: props.toggleSortDirection,
-        toggleGroupDirection: props.toggleGroupDirection,
-        saveMessages: [props.checkFilterName]
-          .map(fn => fn(props.currentFilter))
-          .filter(v => v),
         saveFilter: props.saveFilter,
         removeFilter: props.removeFilter,
+        isOpen: props.isOpen,
+        openFilterMenu: props.openFilterMenu,
       })
     }
   />
@@ -219,10 +304,9 @@ export const mapStateToProps = (state, props) => ({
   myFilters: state.queueApp.myFilters,
   currentFilter: state.filterMenu.get('currentFilter'),
   showing: state.filterMenu.get('activeSection'),
+  isOpen: state.filterMenu.get('isOpen'),
   teams: state.queueApp.myTeams,
   hasTeams: state.queueApp.myTeams.size > 0,
-  sortDirection: state.queue.sortDirection,
-  groupDirection: state.queue.groupDirection,
   forms: state.queueApp.forms,
   location: state.app.location,
 });
@@ -239,11 +323,8 @@ export const mapDispatchToProps = {
   setDateRangeTimeline: actions.setDateRangeTimeline,
   setDateRange: actions.setDateRange,
   setSortedBy: actions.setSortedBy,
-  setGroupedBy: actions.setGroupedBy,
+  setDirection: actions.setDirection,
   setFilterName: actions.setFilterName,
-  setSortDirection: queueActions.setSortDirection,
-  setGroupDirection: queueActions.setGroupDirection,
-  setOffset: queueActions.setOffset,
   push,
   setAdhocFilter: queueActions.setAdhocFilter,
   addPersonalFilter: appActions.addPersonalFilter,
@@ -258,11 +339,13 @@ const toggleCreatedByMe = props => e =>
 const toggleStatus = props => e => props.toggleStatus(e.target.name);
 const changeTimeline = props => e => props.setDateRangeTimeline(e.target.value);
 const changeSortedBy = props => e => props.setSortedBy(e.target.value);
-const changeGroupedBy = props => e => props.setGroupedBy(e.target.value);
+const changeDirection = props => e => props.setDirection(e.target.value);
 const changeFilterName = props => e => props.setFilterName(e.target.value);
 
-const toggleShowing = props => name => () => {
-  props.resetFilter();
+const toggleShowing = props => (name, persistChanges = false) => () => {
+  if (!persistChanges) {
+    props.resetFilter();
+  }
   props.show(props.showing === name ? null : name);
 };
 
@@ -279,22 +362,17 @@ const clearStatus = props => () =>
   props.applyFilter(props.filter.set('status', List()));
 const clearDateRange = props => () =>
   props.applyFilter(props.filter.delete('dateRange'));
-const clearGroupedBy = props => () =>
-  props.applyFilter(props.filter.delete('groupBy'));
-// const toggleCreatedByMe = props => () =>
-//   props.applyFilter(props.filter.update('createdByMe', b => !b));
-const toggleSortDirection = props => () => {
-  props.setSortDirection(props.sortDirection === 'ASC' ? 'DESC' : 'ASC');
-  props.setOffset(0);
-};
-const toggleGroupDirection = props => () => {
-  props.setGroupDirection(props.groupDirection === 'ASC' ? 'DESC' : 'ASC');
-  props.setOffset(0);
-};
+const toggleDirection = props => () =>
+  props.applyFilter(
+    props.filter.update(
+      'sortDirection',
+      dir => (dir === 'ASC' ? 'DESC' : 'ASC'),
+    ),
+  );
 
 const checkFilterName = props => filter => {
   if (props.myFilters.find(f => f.name === filter.name)) {
-    return 'Filter exists and will be updated';
+    return 'A filter with that name already exists and will be updated';
   }
 };
 const saveFilter = props => filter => {
@@ -330,15 +408,13 @@ export const FilterMenuAbstract = compose(
     toggleCreatedByMe,
     changeTimeline,
     changeSortedBy,
-    changeGroupedBy,
+    changeDirection,
     changeFilterName,
-    toggleSortDirection,
-    toggleGroupDirection,
+    toggleDirection,
     clearTeams,
     clearAssignments,
     clearStatus,
     clearDateRange,
-    clearGroupedBy,
     checkFilterName,
     saveFilter,
     removeFilter,

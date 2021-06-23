@@ -14,7 +14,6 @@ import {
 import { actions } from '../../redux/modules/queue';
 import { NewItemMenu } from './NewItemMenu';
 import { connect } from '../../redux/store';
-import { refreshFilter } from '../../utils';
 
 const mapStateToProps = state => {
   const filter = getFilterByPath(state, state.router.location.pathname);
@@ -39,7 +38,6 @@ const mapDispatchToProps = {
   closeNewItemMenu: actions.closeNewItemMenu,
   fetchCurrentItem: actions.fetchCurrentItem,
   push,
-  fetchList: actions.fetchList,
 };
 
 const handleFormClick = ({ setCurrentForm }) => form => () =>
@@ -86,15 +84,12 @@ const onCreated = ({
   username,
   location,
   push,
-  refreshFilter,
 }) => (submission, actions) => {
   // Prevent loading the next page of the embedded form since we are just going
   // to close the dialog anyways.
   actions.stop();
   // Close the new item menu
   closeNewItemMenu();
-  // Refresh the current filter
-  refreshFilter && refreshFilter();
 
   // Check if this is assigned to me if so, go to submission
   if (
@@ -130,9 +125,6 @@ export const NewItemMenuContainer = compose(
         !assignmentType || assignmentType.toLowerCase() !== 'none',
       assignments: selectAssignments(props.allTeams, props.currentForm).toJS(),
     };
-  }),
-  withHandlers({
-    refreshFilter,
   }),
   withHandlers({
     handleFormClick,

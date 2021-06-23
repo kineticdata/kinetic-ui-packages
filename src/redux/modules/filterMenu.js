@@ -13,7 +13,7 @@ export const types = {
   SET_DATE_RANGE_TIMELINE: '@kd/queue/filterMenu/SET_DATE_RANGE_TIMELINE',
   SET_DATE_RANGE: '@kd/queue/filterMenu/SET_DATE_RANGE',
   SET_SORTED_BY: '@kd/queue/filterMenu/SET_SORTED_BY',
-  SET_GROUPED_BY: '@kd/queue/filterMenu/SET_GROUPED_BY',
+  SET_DIRECTION: '@kd/queue/filterMenu/SET_DIRECTION',
 };
 
 export const actions = {
@@ -36,7 +36,7 @@ export const actions = {
   }),
   setDateRange: payload => ({ type: types.SET_DATE_RANGE, payload }),
   setSortedBy: payload => ({ type: types.SET_SORTED_BY, payload }),
-  setGroupedBy: payload => ({ type: types.SET_GROUPED_BY, payload }),
+  setDirection: payload => ({ type: types.SET_DIRECTION, payload }),
 };
 
 export const defaultState = Map({
@@ -77,44 +77,51 @@ export const reducer = (state = defaultState, { type, payload }) => {
         return i > -1 ? teams.delete(i) : teams.push(payload);
       });
     case types.TOGGLE_STATUS:
-      const currentStatuses = state.getIn(['currentFilter', 'status']);
-      return (
-        state
-          .updateIn(
-            ['currentFilter', 'status'],
-            statuses =>
-              statuses.includes(payload)
-                ? statuses.delete(statuses.indexOf(payload))
-                : statuses.push(payload),
-          )
-          // If we are adding 'Complete' or 'Cancelled' to statuses and there is
-          // no date range selected we default the date range preset to 30 days.
-          .updateIn(
-            ['currentFilter', 'dateRange', 'preset'],
-            preset =>
-              !currentStatuses.includes('Complete') &&
-              !currentStatuses.includes('Cancelled') &&
-              (payload === 'Complete' || payload === 'Cancelled') &&
-              preset === '' &&
-              !state.getIn(['currentFilter', 'dateRange', 'custom'])
-                ? '30days'
-                : preset,
-          )
+      return state.updateIn(
+        ['currentFilter', 'status'],
+        statuses =>
+          statuses.includes(payload)
+            ? statuses.delete(statuses.indexOf(payload))
+            : statuses.push(payload),
       );
     case types.SET_DATE_RANGE_TIMELINE:
-      return state.setIn(['currentFilter', 'dateRange', 'timeline'], payload);
+      return (
+        state
+          .setIn(['currentFilter', 'dateRange', 'timeline'], payload)
+          // If dateRange timeline is changed and dateRange filter has a value,
+          // set sortBy to the dateRange timeline
+          .updateIn(
+            ['currentFilter', 'sortBy'],
+            sortBy =>
+              !!state.getIn(['currentFilter', 'dateRange', 'preset']) ||
+              !!state.getIn(['currentFilter', 'dateRange', 'custom'])
+                ? payload
+                : sortBy,
+          )
+      );
     case types.SET_DATE_RANGE:
       const custom = typeof payload === 'object';
-      return state.mergeIn(['currentFilter', 'dateRange'], {
-        preset: !custom ? payload : '',
-        custom,
-        start: custom ? payload.start : '',
-        end: custom ? payload.end : '',
-      });
+      return (
+        state
+          .mergeIn(['currentFilter', 'dateRange'], {
+            preset: !custom ? payload : '',
+            custom,
+            start: custom ? payload.start : '',
+            end: custom ? payload.end : '',
+          })
+          // If dataRange filter has a value, set sortBy to dateRange timeline
+          .updateIn(
+            ['currentFilter', 'sortBy'],
+            sortBy =>
+              !!payload
+                ? state.getIn(['currentFilter', 'dateRange', 'timeline'])
+                : sortBy,
+          )
+      );
     case types.SET_SORTED_BY:
       return state.setIn(['currentFilter', 'sortBy'], payload);
-    case types.SET_GROUPED_BY:
-      return state.setIn(['currentFilter', 'groupBy'], payload);
+    case types.SET_DIRECTION:
+      return state.setIn(['currentFilter', 'sortDirection'], payload);
     default:
       return state;
   }
