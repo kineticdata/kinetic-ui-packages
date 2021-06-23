@@ -3,6 +3,7 @@ import { compose, lifecycle, withHandlers, withProps } from 'recompose';
 import { Link } from '@reach/router';
 import {
   DiscussionsPanel,
+  LoadingMessage,
   selectDiscussionsEnabled,
 } from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/queue';
@@ -11,6 +12,7 @@ import { getFilterByPath } from '../../redux/modules/queueApp';
 import { I18n, createRelatedItem } from '@kineticdata/react';
 import { connect } from '../../redux/store';
 import { PageTitle } from '../shared/PageTitle';
+import classNames from 'classnames';
 
 const CreationForm = ({ onChange, values, errors }) => (
   <React.Fragment>
@@ -58,6 +60,7 @@ const CreationForm = ({ onChange, values, errors }) => (
 );
 
 export const QueueItem = ({
+  loading,
   filter,
   queueItem,
   discussionsEnabled,
@@ -65,54 +68,65 @@ export const QueueItem = ({
   onDiscussionCreated,
   profile,
   isSmallLayout,
-}) =>
-  queueItem !== null && (
-    <div className="page-container page-container--panels">
-      <PageTitle
-        parts={[
-          queueItem ? queueItem.label : '',
-          filter ? filter.name || 'Adhoc' : '',
-        ]}
-      />
-      <div className="page-panel page-panel--three-fifths page-panel--white page-panel--no-padding page-panel--flex">
-        {filter && (
-          <div className="page-panel__header">
-            <div className="nav-return">
-              <Link to="../.." aria-label={`Return to Filter ${filter.name}`}>
-                <span className="icon" aria-hidden="true">
-                  <span className="fa fa-fw fa-chevron-left" />
-                </span>
-                <I18n>{filter.name || 'Adhoc'}</I18n>
-              </Link>
-            </div>
+  navigate,
+}) => (
+  <div className="page-container page-container--panels">
+    <PageTitle
+      parts={[
+        !loading ? queueItem.label : '',
+        filter ? filter.name || 'Adhoc' : '',
+      ]}
+    />
+    <div
+      className={classNames(
+        'page-panel page-panel--white page-panel--no-padding page-panel--flex',
+        { 'page-panel--three-fifths': !loading },
+      )}
+    >
+      {filter && (
+        <div className="page-panel__header">
+          <div className="nav-return">
+            <Link to="../.." aria-label={`Return to Filter ${filter.name}`}>
+              <span className="icon" aria-hidden="true">
+                <span className="fa fa-fw fa-chevron-left" />
+              </span>
+              <I18n>{filter.name || 'Adhoc'}</I18n>
+            </Link>
           </div>
-        )}
-        <div className="page-panel__body">
+        </div>
+      )}
+      <div className="page-panel__body">
+        {loading ? (
+          <LoadingMessage />
+        ) : (
           <QueueItemDetailsContainer
             filter={filter}
             creationFields={creationFields}
             onCreated={onDiscussionCreated}
             CreationForm={CreationForm}
-          />
-        </div>
-      </div>
-      {discussionsEnabled &&
-        !isSmallLayout && (
-          <DiscussionsPanel
-            itemType="Submission"
-            itemKey={queueItem.id}
-            creationFields={creationFields}
-            onCreated={onDiscussionCreated}
-            CreationForm={CreationForm}
-            me={profile}
+            navigate={navigate}
           />
         )}
+      </div>
     </div>
-  );
+    {!loading &&
+      discussionsEnabled &&
+      !isSmallLayout && (
+        <DiscussionsPanel
+          itemType="Submission"
+          itemKey={queueItem.id}
+          creationFields={creationFields}
+          onCreated={onDiscussionCreated}
+          CreationForm={CreationForm}
+          me={profile}
+        />
+      )}
+  </div>
+);
 
 export const mapStateToProps = (state, props) => ({
-  id: props.id,
   filter: getFilterByPath(state, props.location.pathname),
+  loading: !state.queue.currentItem || state.queue.currentItem.id !== props.id,
   queueItem: state.queue.currentItem,
   discussionsEnabled: selectDiscussionsEnabled(state),
   profile: state.app.profile,

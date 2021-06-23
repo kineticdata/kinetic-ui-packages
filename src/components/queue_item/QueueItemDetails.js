@@ -16,6 +16,7 @@ import { StatusContent } from '../shared/StatusContent';
 import { WallyButtonContainer } from '../shared/WallyButton';
 import { I18n } from '@kineticdata/react';
 import { connect } from '../../redux/store';
+import { List } from 'immutable';
 
 const nonQueueLink = (queueItem, kappSlug) =>
   queueItem.parent &&
@@ -50,6 +51,8 @@ export const QueueItemDetails = ({
   creationFields,
   onCreated,
   CreationForm,
+  goToPreviousItem,
+  goToNextItem,
 }) => (
   <div className="queue-item-details">
     {viewDiscussionsModal &&
@@ -81,7 +84,11 @@ export const QueueItemDetails = ({
             </button>
           )}
         <div className="submission__meta">
-          <StatusContent queueItem={queueItem} prevAndNext={prevAndNext} />
+          <StatusContent
+            queueItem={queueItem}
+            prev={goToPreviousItem}
+            next={goToNextItem}
+          />
         </div>
         <h1 className="section--general__title">{queueItem.values.Summary}</h1>
         <ul className="list-group timestamps">
@@ -222,11 +229,15 @@ export const mapStateToProps = (state, props) => {
       queueItem.form,
       queueItem,
     ).toJS(),
+    defaultFilters: state.queueApp.filters,
     prevAndNext: selectPrevAndNext(state, props.filter),
     kappSlug: state.app.kappSlug,
     discussionsEnabled: selectDiscussionsEnabled(state),
     profile: state.app.profile,
     isSmallLayout: state.app.layoutSize === 'small',
+    currentPageData: state.queue.data,
+    hasPreviousPage: state.queue.hasPreviousPage,
+    hasNextPage: state.queue.hasNextPage,
   };
 };
 
@@ -236,7 +247,10 @@ export const mapDispatchToProps = {
   openNewItemMenu: actions.openNewItemMenu,
   fetchCurrentItem: actions.fetchCurrentItem,
   setOffset: actions.setOffset,
-  fetchList: actions.fetchList,
+  fetchList: actions.fetchListRequest,
+  fetchListCount: actions.fetchListCountRequest,
+  fetchNextPage: actions.fetchListNext,
+  fetchPreviousPage: actions.fetchListPrevious,
 };
 
 export const QueueItemDetailsContainer = compose(
@@ -255,12 +269,21 @@ export const QueueItemDetailsContainer = compose(
   withState('isAssigning', 'setIsAssigning', false),
   withState('viewDiscussionsModal', 'setViewDiscussionsModal', false),
   withHandlers({
+    refetchCounts: ({ defaultFilters, fetchListCount }) => () => {
+      defaultFilters
+        .filter(filter => ['Mine', 'Unassigned'].includes(filter.name))
+        .forEach(fetchListCount);
+    },
+  }),
+  withHandlers({
     toggleAssigning: ({ setIsAssigning, isAssigning }) => () =>
       setIsAssigning(!isAssigning),
-    setAssignment: ({ queueItem, updateQueueItem, setCurrentItem }) => (
-      _v,
-      assignment,
-    ) => {
+    setAssignment: ({
+      queueItem,
+      updateQueueItem,
+      setCurrentItem,
+      refetchCounts,
+    }) => (_v, assignment) => {
       const teamParts = assignment.team.split('::');
       const values = {
         'Assigned Individual': assignment.username,
@@ -272,7 +295,10 @@ export const QueueItemDetailsContainer = compose(
       updateQueueItem({
         id: queueItem.id,
         values,
-        onSuccess: setCurrentItem,
+        onSuccess: submission => {
+          setCurrentItem(submission);
+          refetchCounts();
+        },
       });
     },
     openNewItemMenu: ({
@@ -289,17 +315,69 @@ export const QueueItemDetailsContainer = compose(
     refreshQueueItem: ({
       filter,
       fetchList,
-      setOffset,
       fetchCurrentItem,
       queueItem,
+      refetchCounts,
     }) => () => {
-      if (filter && filter !== null) {
-        fetchList(filter);
-        setOffset(0);
-      }
       fetchCurrentItem(queueItem.id);
+      refetchCounts();
     },
     openDiscussions: props => () => props.setViewDiscussionsModal(true),
     closeDiscussions: props => () => props.setViewDiscussionsModal(false),
   }),
+  withProps(
+    ({
+      currentPageData,
+      queueItem,
+      hasPreviousPage,
+      fetchPreviousPage,
+      hasNextPage,
+      fetchNextPage,
+      navigate,
+    }) => {
+      const currentIndex =
+        queueItem && List.isList(currentPageData)
+          ? currentPageData.findIndex(item => item.id === queueItem.id)
+          : -1;
+      return currentIndex >= 0
+        ? {
+            goToPreviousItem:
+              currentIndex === 0
+                ? hasPreviousPage
+                  ? // If on first item of page but previous page exists, fetch
+                    // previous page and then navigate to last item
+                    () =>
+                      fetchPreviousPage(
+                        submissions =>
+                          submissions &&
+                          navigate(
+                            `../${submissions[submissions.length - 1].id}`,
+                          ),
+                      )
+                  : undefined
+                : // If not on first item of page, navigate to previous item
+                  () =>
+                    navigate(
+                      `../${currentPageData.getIn([currentIndex - 1, 'id'])}`,
+                    ),
+            goToNextItem:
+              currentIndex === currentPageData.size - 1
+                ? hasNextPage
+                  ? // If on last item of page but next page exists, fetch
+                    // next page and then navigate to first item
+                    () =>
+                      fetchNextPage(
+                        submissions =>
+                          submissions && navigate(`../${submissions[0].id}`),
+                      )
+                  : undefined
+                : // If not on last item of page, navigate to next item
+                  () =>
+                    navigate(
+                      `../${currentPageData.getIn([currentIndex + 1, 'id'])}`,
+                    ),
+          }
+        : {};
+    },
+  ),
 )(QueueItemDetails);

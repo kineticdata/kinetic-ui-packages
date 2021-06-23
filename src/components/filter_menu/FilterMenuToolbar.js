@@ -5,7 +5,7 @@ import {
   DropdownToggle,
   DropdownMenu,
 } from 'reactstrap';
-import { FilterMenuAbstract } from '../filter_menu/FilterMenuAbstract';
+import { FilterMenuAbstract } from './FilterMenuAbstract';
 import isarray from 'isarray';
 import { I18n } from '@kineticdata/react';
 
@@ -74,7 +74,7 @@ export const Menu = props => {
 
 // Define some simple button components just to cleanup the toolbar component.
 const MenuButton = props => (
-  <DropdownToggle tag="button" className="btn btn-subtle" {...props} />
+  <DropdownToggle tag="button" className="btn btn-white" {...props} />
 );
 const ClearButton = props => {
   const disabled = typeof props.action === 'string';
@@ -83,7 +83,7 @@ const ClearButton = props => {
       <button
         type="button"
         id={props.id}
-        className={`btn btn-subtle ${disabled ? 'disabled' : ''}`}
+        className={`btn btn-white ${disabled ? 'disabled' : ''}`}
         onClick={!disabled ? props.action : undefined}
         aria-label="Clear Filter"
       >
@@ -98,22 +98,19 @@ const ClearButton = props => {
   );
 };
 
-const SortButton = props => {
+const DirectionButton = props => {
   const icon = props.direction === 'ASC' ? 'asc' : 'desc';
   return (
-    <button
-      type="button"
-      className="btn btn-icon"
-      onClick={props.toggle}
-      aria-label={`Sort by ${icon}`}
-    >
-      <span className="icon" aria-hidden="true">
-        <span
-          className={`fa fa-fw fa-sort-amount-${icon}`}
-          style={{ fontSize: '16px', color: '#7e8083' }}
-        />
-      </span>
-    </button>
+    <Fragment>
+      <button
+        type="button"
+        className={`btn btn-white`}
+        onClick={props.action}
+        aria-label={`Sort by ${icon}`}
+      >
+        <i className={`fa fa-sort-amount-${icon}`} aria-hidden="true" />
+      </button>
+    </Fragment>
   );
 };
 
@@ -139,12 +136,88 @@ export const FilterMenuToolbar = ({ filter, refresh }) => (
       };
       return (
         <div className="queue-controls">
-          <div className="queue-controls__filter">
+          <div className="queue-controls__heading">
             <h2
               className={filter.type === 'adhoc' && filter.name ? 'edited' : ''}
             >
               <I18n>{filter.name || 'Adhoc'}</I18n>
             </h2>
+            <div className="buttons ml-3">
+              {filter.type === 'adhoc' && (
+                <Menu
+                  name="save-filter"
+                  {...popoverProps}
+                  dirty={true}
+                  apply={props.saveFilter}
+                  applyLabel="Save"
+                  reset={toggleShowing('save-filter')}
+                  resetLabel="Cancel"
+                  messages={props.saveMessages}
+                  renderButton={btnProps => (
+                    <MenuButton
+                      {...btnProps}
+                      className="btn btn-link text-primary"
+                    >
+                      <span className="icon">
+                        <span className="fa fa-fw fa-bookmark-o text-primary" />
+                      </span>
+                      <span>
+                        <I18n>Save Filter</I18n>
+                      </span>
+                    </MenuButton>
+                  )}
+                  renderContent={() => props.saveFilterOptions}
+                />
+              )}
+              {filter.type === 'custom' && (
+                <Menu
+                  name="delete-filter"
+                  {...popoverProps}
+                  dirty={true}
+                  apply={props.removeFilter}
+                  applyLabel="Delete"
+                  reset={toggleShowing('delete-filter')}
+                  resetLabel="Cancel"
+                  renderButton={btnProps => (
+                    <MenuButton
+                      {...btnProps}
+                      className="btn btn-link text-danger"
+                    >
+                      <span className="icon">
+                        <span className="fa fa-fw fa-trash-o text-danger" />
+                      </span>
+                      <span>
+                        <I18n>Delete Filter</I18n>
+                      </span>
+                    </MenuButton>
+                  )}
+                  renderContent={() => (
+                    <div>
+                      <label>
+                        <I18n>Are you sure?</I18n>
+                      </label>
+                    </div>
+                  )}
+                />
+              )}
+            </div>
+            <div className="buttons">
+              <button
+                type="button"
+                className="btn btn-icon"
+                onClick={refresh}
+                aria-label="Refresh"
+              >
+                <span className="icon">
+                  <span className="fa fa-fw fa-refresh" />
+                </span>
+                <span>
+                  <I18n>Refresh</I18n>
+                </span>
+              </button>
+            </div>
+          </div>
+          <div className="queue-controls__filter">
             <div className="queue-filter-list">
               {props.hasTeams && (
                 <Menu
@@ -237,118 +310,24 @@ export const FilterMenuToolbar = ({ filter, refresh }) => (
                 }
                 renderContent={() => props.dateRangeFilters}
               />
-            </div>
-            <div className="queue-filter-save">
-              {filter.type === 'adhoc' && (
-                <Menu
-                  name="save-filter"
-                  {...popoverProps}
-                  dirty={true}
-                  apply={props.saveFilter}
-                  applyLabel="Save"
-                  reset={toggleShowing('save-filter')}
-                  resetLabel="Cancel"
-                  messages={props.saveMessages}
-                  renderButton={btnProps => (
-                    <MenuButton {...btnProps} className="btn btn-primary">
-                      <I18n>Save Filter?</I18n>
-                    </MenuButton>
-                  )}
-                  renderContent={() => props.saveFilterOptions}
-                />
-              )}
-              {filter.type === 'custom' && (
-                <Menu
-                  name="delete-filter"
-                  {...popoverProps}
-                  dirty={true}
-                  apply={props.removeFilter}
-                  applyLabel="Delete"
-                  reset={toggleShowing('delete-filter')}
-                  resetLabel="Cancel"
-                  renderButton={btnProps => (
-                    <MenuButton {...btnProps} className="btn btn-danger">
-                      <I18n>Delete Filter</I18n>
-                    </MenuButton>
-                  )}
-                  renderContent={() => (
-                    <div>
-                      <label>
-                        <I18n>Are you sure?</I18n>
-                      </label>
-                    </div>
-                  )}
-                />
-              )}
-              <button
-                type="button"
-                className="btn btn-icon"
-                onClick={refresh}
-                aria-label="Refresh"
-              >
-                <span className="icon">
-                  <span
-                    className="fa fa-fw fa-refresh"
-                    style={{ fontSize: '16px', color: '#7e8083' }}
-                  />
-                </span>
-              </button>
-            </div>
-          </div>
-          <div className="queue-controls__sorting">
-            <div className="queue-controls__item--left">
               <Menu
-                name="grouped-by"
-                {...popoverProps}
-                renderButton={btnProps =>
-                  filter.groupBy ? (
-                    <div className="btn-group">
-                      <MenuButton {...btnProps} caret>
-                        <span
-                          className="fa fa-fw fa-folder-open"
-                          style={{ fontSize: '14px', color: '#1094C4' }}
-                        />{' '}
-                        <I18n>Grouped by</I18n> <I18n>{filter.groupBy}</I18n>
-                      </MenuButton>
-                      <ClearButton action={props.clearGroupedBy} />
-                    </div>
-                  ) : (
-                    <div className="btn-group">
-                      <MenuButton {...btnProps} caret>
-                        <span
-                          className="fa fa-fw fa-folder-open"
-                          style={{ fontSize: '14px', color: '#7e8083' }}
-                        />{' '}
-                        <I18n>Ungrouped</I18n>
-                      </MenuButton>
-                    </div>
-                  )
-                }
-                renderContent={() => props.groupedByOptions}
-              />
-              <SortButton
-                toggle={props.toggleGroupDirection}
-                direction={props.groupDirection}
-              />
-            </div>
-            <div className="queue-controls__item--right">
-              <Menu
-                name="sorted-by"
+                name="order-by"
                 {...popoverProps}
                 renderButton={btnProps => (
-                  <MenuButton {...btnProps} caret>
-                    <span
-                      className="fa fa-fw fa-sort"
-                      style={{ fontSize: '14px', color: '#1094C4' }}
-                    />{' '}
-                    <I18n>Sorted by</I18n> {props.sortedBySummary}
-                  </MenuButton>
+                  <div className="btn-group">
+                    <MenuButton {...btnProps} caret>
+                      <I18n>Sort by</I18n> {props.sortedBySummary}
+                    </MenuButton>
+                    <DirectionButton
+                      action={props.toggleDirection}
+                      direction={filter.sortDirection}
+                    />
+                  </div>
                 )}
-                renderContent={() => props.sortedByOptions}
-              />
-              <SortButton
-                toggle={props.toggleSortDirection}
-                direction={props.sortDirection}
+                renderContent={[
+                  () => props.sortedByOptions,
+                  () => props.sortDirectionOptions,
+                ]}
               />
             </div>
           </div>

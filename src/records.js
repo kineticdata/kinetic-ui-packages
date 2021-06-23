@@ -22,6 +22,8 @@ export const VALID_SORT_OPTIONS = List([
   'Due Date',
 ]);
 
+export const VALID_SORT_DIRECTION_OPTIONS = List(['ASC', 'DESC']);
+
 export const isActiveStatus = status =>
   status !== 'Complete' && status !== 'Cancelled';
 
@@ -67,11 +69,9 @@ export const Filter = Record({
   // Valid types are: default, team, custom, and adhoc.
   type: 'default',
 
-  // Filter sort order: createdAt, updatedAt, closedAt, Due Date.
+  // Filter sort order: createdAt, updatedAt, closedAt, values[Due Date]
   sortBy: 'createdAt',
-
-  // Filter Group By: free text input
-  groupBy: '',
+  sortDirection: 'ASC',
 
   // Search Criteria.
   status: VALID_STATUSES.filter(isActiveStatus),
@@ -93,6 +93,11 @@ export const filterReviver = filterJSON => {
     const sortBy = VALID_SORT_OPTIONS.includes(filter.sortBy)
       ? filter.sortBy
       : undefined;
+    const sortDirection = VALID_SORT_DIRECTION_OPTIONS.includes(
+      filter.sortDirection,
+    )
+      ? filter.sortDirection
+      : VALID_SORT_DIRECTION_OPTIONS.get(0);
     const status = isarray(filter.status) ? List(filter.status) : undefined;
     const teams = isarray(filter.teams) ? List(filter.teams) : undefined;
     const assignments = isobject(filter.assignments)
@@ -109,8 +114,8 @@ export const filterReviver = filterJSON => {
       slug: filter.slug,
       icon: filter.icon,
       type: filter.type,
-      groupBy: filter.groupBy,
       sortBy,
+      sortDirection,
       status,
       teams,
       assignments,

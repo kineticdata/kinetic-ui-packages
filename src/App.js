@@ -3,12 +3,11 @@ import { Redirect, Router } from '@reach/router';
 import { compose, lifecycle, withHandlers } from 'recompose';
 import { connect } from './redux/store';
 import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
-import { List } from 'immutable';
+import { is } from 'immutable';
 import { I18n } from '@kineticdata/react';
 
 import { actions, selectMyTeamForms } from './redux/modules/queueApp';
 import { actions as queueActions } from './redux/modules/queue';
-import { actions as filterMenuActions } from './redux/modules/filterMenu';
 import { actions as formsActions } from './redux/modules/forms';
 
 import { PageTitle } from './components/shared/PageTitle';
@@ -97,10 +96,7 @@ const mapStateToProps = (state, props) => ({
   myFilters: state.queueApp.myFilters,
   counts: state.queueApp.filters
     .toMap()
-    .mapEntries(([_, filter]) => [
-      filter.name,
-      state.queue.getIn(['lists', filter], List()).size,
-    ]),
+    .mapEntries(([_, filter]) => [filter.name, state.queue.counts.get(filter)]),
   hasTeams: state.queueApp.myTeams.size > 0,
   hasForms:
     selectMyTeamForms(state).filter(form => form.type === 'Task').length > 0,
@@ -108,10 +104,11 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = {
+  setFilter: actions.setFilter,
   fetchAppDataRequest: actions.fetchAppDataRequest,
-  fetchList: queueActions.fetchList,
+  resetList: queueActions.fetchListReset,
   openNewItemMenu: queueActions.openNewItemMenu,
-  openFilterMenu: filterMenuActions.open,
+  fetchListCountRequest: queueActions.fetchListCountRequest,
   fetchFormsRequest: formsActions.fetchFormsRequest,
 };
 
@@ -130,14 +127,16 @@ const enhance = compose(
     },
     componentDidUpdate(prevProps) {
       if (!this.props.loading && prevProps.loading) {
+        // Fetch counts for default lists
         this.props.defaultFilters
           .filter(
-            filter =>
-              !this.props.currentFilter ||
-              !filter.equals(this.props.currentFilter),
+            filter => !this.props.filter || !is(filter, this.props.filter),
           )
-          .forEach(this.props.fetchList);
+          .forEach(this.props.fetchListCountRequest);
       }
+    },
+    componentWillUnmount() {
+      this.props.resetList();
     },
   }),
 );
