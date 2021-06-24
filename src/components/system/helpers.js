@@ -169,6 +169,18 @@ export const MSSQL_FIELDS = (
       'password',
     ),
     {
+      name: 'mssql_windowsauthenabled',
+      label: 'Use Windows Authentication (Kerberos)',
+      type: 'select',
+      required: false,
+      visible: trueIfAdapter,
+      options: [
+        { label: 'True', value: 'true' },
+        { label: 'False', value: 'false' },
+      ],
+      initialValue: initialValues('windowsauthenabled', 'false'),
+    },
+    {
       name: 'mssql_sslEnabled',
       label: 'Enable SSL',
       type: 'select',
