@@ -275,6 +275,7 @@ const buildPaginationControl = props => {
     count,
     components,
     loading,
+    renderOptions,
   } = props;
   const PaginationControl = components.PaginationControl;
   const prevPage = hasPrevPage(
@@ -320,6 +321,7 @@ const buildPaginationControl = props => {
       startIndex={startIndex}
       endIndex={endIndex}
       count={count}
+      renderOptions={renderOptions}
     />
   );
 };
