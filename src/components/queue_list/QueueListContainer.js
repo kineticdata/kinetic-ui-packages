@@ -35,6 +35,7 @@ const mapDispatchToProps = {
   resetList: queueActions.fetchListReset,
   previousPage: queueActions.fetchListPrevious,
   nextPage: queueActions.fetchListNext,
+  updateListLimit: queueActions.updateListLimit,
 };
 
 export const QueueListContainer = compose(
@@ -54,6 +55,15 @@ export const QueueListContainer = compose(
     handlePrevious: props => () => props.previousPage(),
     handleNext: props => () => props.nextPage(),
   }),
+  withHandlers(() => {
+    let queueListRef = null;
+    return {
+      setQueueListRef: () => ref => (queueListRef = ref),
+      scrollToTop: () => () => {
+        queueListRef.scrollTop = 0;
+      },
+    };
+  }),
   lifecycle({
     componentWillMount() {
       this.loadFilter(this.props.filter, this.props.filterValidations);
@@ -61,6 +71,9 @@ export const QueueListContainer = compose(
     componentDidUpdate(prevProps) {
       if (!is(this.props.filter, prevProps.filter)) {
         this.loadFilter(this.props.filter, this.props.filterValidations);
+      }
+      if (!this.props.paging && prevProps.paging) {
+        this.props.scrollToTop();
       }
     },
     loadFilter(filter, filterValidations) {

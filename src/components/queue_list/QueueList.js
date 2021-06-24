@@ -6,9 +6,6 @@ import { FilterMenuModal } from '../filter_menu/FilterMenuModal';
 import { QueueListPagination } from './QueueListPagination';
 import { PageTitle } from '../shared/PageTitle';
 
-import moment from 'moment';
-import { Moment } from '@kineticdata/react';
-
 const QueueEmptyMessage = ({ filter }) => {
   if (filter.type === 'adhoc') {
     return (
@@ -54,10 +51,13 @@ export const QueueList = ({
   handlePrevious,
   handleNext,
   count,
+  limit,
+  updateListLimit,
   isMobile,
   filterValidations,
   hasTeams,
   hasForms,
+  setQueueListRef,
 }) => {
   const paginationProps =
     !error && !loading && data && (data.size > 0 || hasPreviousPage)
@@ -70,6 +70,8 @@ export const QueueList = ({
           handlePrevious,
           handleNext,
           count,
+          limit,
+          updateListLimit,
         }
       : null;
 
@@ -90,12 +92,9 @@ export const QueueList = ({
               <FilterMenuToolbar filter={filter} refresh={handleRefresh} />
             )}
           </div>
-          <div className="page-panel__body">
+          <div className="page-panel__body" ref={setQueueListRef}>
             {filterValidations.length <= 0 ? (
-              <div
-                className="queue-list-content submissions"
-                // ref={setQueueListRef}
-              >
+              <div className="queue-list-content submissions">
                 {error ? (
                   <QueueErrorMessage message={error.message} />
                 ) : loading ? (
@@ -121,7 +120,7 @@ export const QueueList = ({
             )}
           </div>
           {paginationProps && (
-            <div className="">
+            <div className="page-panel__footer">
               <QueueListPagination filter={filter} {...paginationProps} />
             </div>
           )}

@@ -11,6 +11,7 @@ export const types = {
   FETCH_LIST_PREVIOUS: ns('FETCH_LIST_PREVIOUS'),
   FETCH_LIST_NEXT: ns('FETCH_LIST_NEXT'),
   FETCH_LIST_RESET: ns('FETCH_LIST_RESET'),
+  UPDATE_LIST_LIMIT: ns('UPDATE_LIST_LIMIT'),
 
   FETCH_LIST_COUNT_REQUEST: ns('FETCH_LIST_COUNT_REQUEST'),
   FETCH_LIST_COUNT_SUCCESS: ns('FETCH_LIST_COUNT_SUCCESS'),
@@ -32,6 +33,7 @@ export const actions = {
   fetchListPrevious: withPayload(types.FETCH_LIST_PREVIOUS),
   fetchListNext: withPayload(types.FETCH_LIST_NEXT),
   fetchListReset: withPayload(types.FETCH_LIST_RESET),
+  updateListLimit: withPayload(types.UPDATE_LIST_LIMIT),
 
   fetchListCountRequest: withPayload(types.FETCH_LIST_COUNT_REQUEST),
   fetchListCountSuccess: withPayload(types.FETCH_LIST_COUNT_SUCCESS),
@@ -44,21 +46,6 @@ export const actions = {
 
   openNewItemMenu: withPayload(types.OPEN_NEW_MENU),
   closeNewItemMenu: noPayload(types.CLOSE_NEW_MENU),
-};
-
-export const selectPrevAndNext = (state, filter) => {
-  // TODO
-  const queueItems = state.queue.data || List();
-  const currentItemIndex = queueItems.findIndex(
-    item => item.id === state.queue.currentItem.id,
-  );
-  const prev =
-    currentItemIndex > 0 ? queueItems.get(currentItemIndex - 1).id : null;
-  const next =
-    currentItemIndex < queueItems.size - 1
-      ? queueItems.get(currentItemIndex + 1).id
-      : null;
-  return { prev, next };
 };
 
 export const State = Record({
@@ -158,6 +145,19 @@ export const reducer = (state = State(), { type, payload }) => {
         .set('nextPageToken', null)
         .set('previousPageTokens', List())
         .update(updatePageMetadata);
+    case types.UPDATE_LIST_LIMIT:
+      return typeof payload === 'number'
+        ? state
+            .set('limit', payload)
+            .set('loading', true)
+            .set('paging', false)
+            .set('data', null)
+            .set('error', null)
+            .set('pageToken', null)
+            .set('nextPageToken', null)
+            .set('previousPageTokens', List())
+            .update(updatePageMetadata)
+        : state;
 
     case types.FETCH_LIST_COUNT_SUCCESS:
       return payload.filter

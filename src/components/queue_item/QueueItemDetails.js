@@ -7,7 +7,7 @@ import {
   selectDiscussionsEnabled,
 } from '@kineticdata/bundle-common';
 import { selectAssignments } from '../../redux/modules/queueApp';
-import { actions, selectPrevAndNext } from '../../redux/modules/queue';
+import { actions } from '../../redux/modules/queue';
 import { ViewOriginalRequest } from './ViewOriginalRequest';
 import { AssignmentBadge } from './AssignmentBadge';
 import { QueueListItemSmall } from '../queue_list/QueueListItem';
@@ -43,7 +43,6 @@ export const QueueItemDetails = ({
   refreshQueueItem,
   openDiscussions,
   closeDiscussions,
-  prevAndNext,
   kappSlug,
   discussionsEnabled,
   profile,
@@ -230,7 +229,6 @@ export const mapStateToProps = (state, props) => {
       queueItem,
     ).toJS(),
     defaultFilters: state.queueApp.filters,
-    prevAndNext: selectPrevAndNext(state, props.filter),
     kappSlug: state.app.kappSlug,
     discussionsEnabled: selectDiscussionsEnabled(state),
     profile: state.app.profile,

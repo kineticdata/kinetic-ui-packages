@@ -44,6 +44,25 @@
     padding: 0.25rem 1.5rem;
     background-color: $gray3;
     line-height: 1.75rem;
+    .paging {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1 0 auto;
+    }
+    .page-size {
+      display: flex;
+      align-items: center;
+      flex: 0 0 auto;
+      select {
+        flex: 0 0 auto;
+        border: none;
+        background-color: transparent;
+        font-size: 0.8125rem;
+        color: $body-color;
+        text-align-last: right;
+      }
+    }
   }
   &__item {
     &--right,
@@ -192,14 +211,9 @@
   input[type='radio'] {
     position: relative;
     box-sizing: border-box;
-    width: 13px;
-    height: 13px;
     padding: 0;
     margin-right: 0.5rem;
     margin-left: 0;
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
   }
   input[type='radio'] {
     border: 1px solid green;
@@ -211,6 +225,8 @@
     padding: 0.25rem;
   }
   label {
+    display: flex;
+    align-items: center;
     margin-bottom: 0.5rem;
     font-weight: 400;
     color: $body-color;
