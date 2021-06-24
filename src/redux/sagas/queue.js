@@ -269,6 +269,7 @@ export function* watchQueue() {
       types.FETCH_LIST_PREVIOUS,
       types.FETCH_LIST_NEXT,
       types.FETCH_LIST_RESET,
+      types.UPDATE_LIST_LIMIT,
     ],
     fetchListTask,
   );
