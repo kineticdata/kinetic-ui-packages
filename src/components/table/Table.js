@@ -322,6 +322,7 @@ const buildPaginationControl = props => {
       endIndex={endIndex}
       count={count}
       renderOptions={renderOptions}
+      tableOptions={tableOptions}
     />
   );
 };
