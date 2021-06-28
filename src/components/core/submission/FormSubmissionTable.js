@@ -14,7 +14,7 @@ const dataSource = ({ kappSlug, formSlug, include, count }) => ({
       form: formSlug,
       kapp: kappSlug,
       search: {
-        direction: paramData.filters.get('orderDirection', 'ASC'),
+        direction: paramData.filters.get('orderDirection', 'DESC'),
         include: Set([
           ...(typeof include === 'string'
             ? include.split(',')
@@ -26,7 +26,11 @@ const dataSource = ({ kappSlug, formSlug, include, count }) => ({
         // need to pass undefined instead of null so the `q` parameter is not
         // added to the query string with empty value
         q: paramData.filters.getIn(['query', 'q']) || undefined,
-        orderBy: paramData.filters.getIn(['query', 'orderBy']) || undefined,
+        orderBy:
+          paramData.filters.getIn(['query', 'orderBy']) ||
+          paramData.filters.getIn(['query', 'q'])
+            ? undefined
+            : 'updatedAt',
         ...generatePaginationParams(paramData),
       },
       count: count ? true : undefined,
