@@ -9,7 +9,7 @@ import {
 } from 'reactstrap';
 import moment from 'moment';
 import { Constants } from '@kineticdata/bundle-common';
-import { I18n } from '@kineticdata/react';
+import { bundle, I18n } from '@kineticdata/react';
 
 const DiscussionIcon = () => (
   <span className="icon">
@@ -181,10 +181,38 @@ const showDiscussionIcon = (submission, column) =>
     : false;
 
 const getSubmissionData = (submission, column) =>
+  // Check if column is a field value (and not a property like createdBy)
   column.type === 'value'
-    ? submission.values[column.name]
-    : column.name.includes('At')
-      ? moment(submission[column.name]).format(Constants.TIME_FORMAT)
+    ? Array.isArray(submission.values[column.name])
+      ? submission.values[column.name].map((val, i) => (
+          // Render each value in an array as a separate div
+          <div key={`col-val-${i}`}>
+            {!val || typeof val === 'string' ? (
+              // If value is a string, just render it
+              val
+            ) : val.link && val.name ? (
+              // If value is a list of objects with link and name properties,
+              // render as a link to download the file.
+              <a
+                href={`${bundle.spaceLocation()}${val.link.replace(
+                  `/${bundle.spaceSlug()}`,
+                  '',
+                )}`}
+                download
+              >
+                {val.name}
+              </a>
+            ) : (
+              // Otherwise stringify the value
+              JSON.stringify(val)
+            )}
+          </div>
+        ))
+      : submission.values[column.name]
+    : // If column is not a value then it must be a property (like createdBy)
+      column.name.includes('At')
+      ? // If property name includes 'At' render as a date
+        moment(submission[column.name]).format(Constants.TIME_FORMAT)
       : submission[column.name];
 
 const handleClone = ({ cloneSubmission, fetchSubmissions }) => id => () =>
