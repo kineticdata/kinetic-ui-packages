@@ -841,6 +841,8 @@ export const fetchTaskRuns = (options = {}) =>
         count: options.count || undefined,
         start: options.start || undefined,
         end: options.end || undefined,
+        afterId: options.afterId || undefined,
+        beforeId: options.beforeId || undefined,
       },
     })
     .then(response => ({
