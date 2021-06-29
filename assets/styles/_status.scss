@@ -1,0 +1,55 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Status ~ Queue
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.status-content {
+  flex: 0 0 auto;
+  &--is-active {
+  }
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+.submission__meta {
+  display: flex;
+  align-items: center;
+}
+
+.submission-status {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.0625rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 1rem;
+  color: $gray80;
+  // display: block;
+  &--cancelled {
+    color: darken($red, 18);
+    background-color: rgba($red, 0.1);
+  }
+  &--complete {
+    color: darken($blue, 12);
+    background-color: rgba($blue, 0.2);
+  }
+  &--open {
+    color: darken($green-grass, 18);
+    background-color: rgba($green-grass, 0.2);
+  }
+  &--pending {
+    color: darken($orange, 24);
+    background-color: rgba($orange, 0.2);
+  }
+  &--reason {
+    color: darken($blue-sky, 12);
+    font-size: 0.875rem;
+    margin-left: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: none;
+    white-space: nowrap;
+    flex: 1;
+  }
+}
