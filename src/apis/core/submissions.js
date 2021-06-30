@@ -465,6 +465,25 @@ export const updateSubmission = options => {
   );
 };
 
+export const submitSubmission = options => {
+  const { id, values, page, staged, defer } = options;
+
+  const path = options.datastore
+    ? `${bundle.apiLocation()}/datastore/submissions/${id}`
+    : `${bundle.apiLocation()}/submissions/${id}`;
+  const params = { ...paramBuilder(options), page, staged, defer };
+
+  return (
+    axios
+      .post(path, { values }, { params, headers: headerBuilder(options) })
+      // Remove the response envelop and leave us with the submission one.
+      .then(response => ({ submission: response.data.submission }))
+      // Clean up any errors we receive. Make sure this the last thing so that it
+      // cleans up any errors.
+      .catch(handleErrors)
+  );
+};
+
 export const deleteSubmission = options => {
   const { id } = options;
 
