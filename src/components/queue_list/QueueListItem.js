@@ -1,8 +1,18 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { TimeAgo } from '@kineticdata/bundle-common';
+import { TimeAgo, addToast } from '@kineticdata/bundle-common';
 import { StatusContent } from '../shared/StatusContent';
 import { I18n } from '@kineticdata/react';
+import classNames from 'classnames';
+
+const SelectionToggle = ({ active, checked }) =>
+  active && (
+    <span
+      className={classNames('selection-toggle fa fa-fw', {
+        checked: checked,
+      })}
+    />
+  );
 
 const AssignmentParagraph = ({ values }) => (
   <span className="submission__assignment">
@@ -44,51 +54,92 @@ const DueOrCloseDate = ({ queueItem }) => {
   }
 };
 
-export const QueueListItemSmall = ({ queueItem, filter, path }) => {
+export const QueueListItemSmall = ({
+  queueItem,
+  filter,
+  path,
+  selectionMode,
+  selected,
+  selectionDisabled,
+  toggleSelection,
+}) => {
   const { createdAt, createdBy, updatedAt, updatedBy, id, values } = queueItem;
-  return (
-    <li className="submission list-group-item">
-      <Link to={path || `item/${id}`} className="submission-summary">
-        <div className="submission__meta">
-          <StatusContent queueItem={queueItem} />
-          <div className="submission__handler">
-            <I18n
-              context={`kapps.${queueItem.form.kapp.slug}.forms.${
-                queueItem.form.slug
-              }`}
-            >
-              {queueItem.form.name}
-            </I18n>{' '}
-            ({queueItem.handle})
-          </div>
-          <AssignmentParagraph values={values} />
-          {queueItem.values['Discussion Id'] && (
-            <span className="btn icon icon--discussion">
-              <span
-                className="fa fa-fw fa-comments"
-                style={{ color: 'rgb(9, 84, 130)', fontSize: '16px' }}
-              />
-            </span>
-          )}
+  const content = (
+    <>
+      <div className="submission__meta">
+        <SelectionToggle
+          active={selectionMode && !selectionDisabled}
+          checked={selected}
+        />
+        <StatusContent queueItem={queueItem} />
+        <div className="submission__handler">
+          <I18n
+            context={`kapps.${queueItem.form.kapp.slug}.forms.${
+              queueItem.form.slug
+            }`}
+          >
+            {queueItem.form.name}
+          </I18n>{' '}
+          ({queueItem.handle})
         </div>
+        <AssignmentParagraph values={values} />
+        {queueItem.values['Discussion Id'] && (
+          <span className="btn icon icon--discussion">
+            <span
+              className="fa fa-fw fa-comments"
+              style={{ color: 'rgb(9, 84, 130)', fontSize: '16px' }}
+            />
+          </span>
+        )}
+      </div>
 
-        <div className="submission__title">{queueItem.label}</div>
-        <ul className="submission__timestamps list-group">
-          <DueOrCloseDate queueItem={queueItem} />
-          <Timestamp
-            label="Updated"
-            value={updatedAt}
-            id={id}
-            username={updatedBy}
-          />
-          <Timestamp
-            label="Created"
-            value={createdAt}
-            id={id}
-            username={createdBy}
-          />
-        </ul>
-      </Link>
+      <div className="submission__title">{queueItem.label}</div>
+      <ul className="submission__timestamps list-group">
+        <DueOrCloseDate queueItem={queueItem} />
+        <Timestamp
+          label="Updated"
+          value={updatedAt}
+          id={id}
+          username={updatedBy}
+        />
+        <Timestamp
+          label="Created"
+          value={createdAt}
+          id={id}
+          username={createdBy}
+        />
+      </ul>
+    </>
+  );
+
+  return (
+    <li
+      className={classNames('submission list-group-item', {
+        selection: selectionMode,
+        'selection-disabled': selectionMode && selectionDisabled,
+        selected: selected,
+      })}
+    >
+      {selectionMode ? (
+        <div
+          role="button"
+          className="submission-summary"
+          onClick={e =>
+            selectionDisabled
+              ? addToast({
+                  severity: 'warning',
+                  message: 'You cannot select closed items.',
+                })
+              : toggleSelection(queueItem, e.shiftKey)
+          }
+        >
+          {content}
+        </div>
+      ) : (
+        <Link to={path || `item/${id}`} className="submission-summary">
+          {content}
+        </Link>
+      )}
     </li>
   );
 };

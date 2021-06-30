@@ -1,9 +1,13 @@
 import React from 'react';
+import { compose, withHandlers } from 'recompose';
+import { connect } from '../../redux/store';
+import { actions } from '../../redux/modules/queue';
 import { I18n } from '@kineticdata/react';
+import classNames from 'classnames';
 
 const PAGE_SIZES = [10, 25, 50, 100];
 
-export const QueueListPagination = ({
+export const QueueListPaginationComponent = ({
   paging,
   pageIndexStart,
   pageIndexEnd,
@@ -14,10 +18,31 @@ export const QueueListPagination = ({
   count,
   limit,
   updateListLimit,
+  selectionMode,
+  changeSelectionMode,
+  isMobile,
 }) => {
   return (
     <div className="queue-controls">
       <div className="queue-controls__pagination">
+        <div className="selection-mode">
+          <button
+            type="button"
+            className="btn btn-icon"
+            onClick={changeSelectionMode}
+            aria-label="Next Page"
+          >
+            <span className="icon" aria-hidden="true">
+              <span
+                className={classNames('fa fa-fw', {
+                  'fa-toggle-off': !selectionMode,
+                  'fa-toggle-on': selectionMode,
+                })}
+              />
+            </span>
+            {!isMobile && <span>Selection Mode</span>}
+          </button>
+        </div>
         <div className="paging">
           <button
             type="button"
@@ -79,3 +104,36 @@ export const QueueListPagination = ({
     </div>
   );
 };
+
+const mapStateToProps = (state, props) => {
+  return {
+    paging: state.queue.paging,
+    pageIndexStart: state.queue.pageIndexStart,
+    pageIndexEnd: state.queue.pageIndexEnd,
+    hasPreviousPage: state.queue.hasPreviousPage,
+    hasNextPage: state.queue.hasNextPage,
+    limit: state.queue.limit,
+    count: state.queue.counts.get(props.filter),
+    selectionMode: state.queue.selectedList !== null,
+    isMobile: state.app.layoutSize === 'small',
+  };
+};
+
+const mapDispatchToProps = {
+  previousPage: actions.fetchListPrevious,
+  nextPage: actions.fetchListNext,
+  updateListLimit: actions.updateListLimit,
+  toggleSelectionMode: actions.toggleSelectionMode,
+};
+
+export const QueueListPagination = compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+  withHandlers({
+    handlePrevious: props => () => props.previousPage(),
+    handleNext: props => () => props.nextPage(),
+    changeSelectionMode: props => () => props.toggleSelectionMode(),
+  }),
+)(QueueListPaginationComponent);

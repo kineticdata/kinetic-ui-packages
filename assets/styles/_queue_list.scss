@@ -44,6 +44,37 @@
     padding: 0.25rem 1.5rem;
     background-color: $gray3;
     line-height: 1.75rem;
+    .selection-mode {
+      button.btn.btn-icon {
+        display: flex;
+        padding: 0.25rem;
+        .icon {
+          display: flex;
+          align-items: center;
+          position: relative;
+          .fa-toggle-on,
+          .fa-toggle-off {
+            font-size: 1.375rem;
+            &:after {
+              content: '\f00c';
+              font-size: 0.625rem;
+              position: absolute;
+              top: calc((100% - 0.625rem) / 2);
+              left: 15%;
+            }
+          }
+          .fa-toggle-on {
+            color: $primary;
+            &:after {
+              left: 49%;
+            }
+          }
+          + span {
+            margin-left: 0.25rem;
+          }
+        }
+      }
+    }
     .paging {
       display: flex;
       align-items: center;
@@ -62,6 +93,17 @@
         color: $body-color;
         text-align-last: right;
       }
+    }
+  }
+  &__selection {
+    display: flex;
+    align-items: center;
+    background-color: rgba($info, 0.08);
+    border-bottom: 2px solid #ececec;
+    padding: 0.625rem 1.5rem;
+    .details {
+      font-size: 0.875rem;
+      font-weight: 600;
     }
   }
   &__item {
@@ -98,12 +140,10 @@
     margin-bottom: 0.625rem;
     button {
       padding: 0.25rem;
-      &:not(:last-child) {
-        margin-right: 0.25rem;
-      }
       span.icon {
+        vertical-align: middle;
         > .fa {
-          font-size: 1rem;
+          font-size: 1.125rem;
           color: $gray-600;
         }
         &.active > .fa {
@@ -113,7 +153,22 @@
           margin-left: 0.125rem;
         }
       }
+      &.text-danger span.icon > .fa {
+        color: inherit;
+      }
+      &.unavailable {
+        cursor: not-allowed;
+      }
     }
+    > button,
+    > span {
+      &:not(:last-child) {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+  &__selection .buttons {
+    margin-bottom: 0;
   }
   .nav-buttons {
     font-size: 0.5rem;

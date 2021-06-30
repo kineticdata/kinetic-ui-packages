@@ -65,7 +65,7 @@ export const selectMyTeamForms = state =>
       : true;
   });
 
-export const selectAssignments = (allTeams, form, queueItem) => {
+export const selectAssignmentTeams = (allTeams, form, queueItem) => {
   // Filter out any teams without members
   const filteredTeams = allTeams.filter(t => t.memberships.length > 0);
   const disallowReassignment =
@@ -91,7 +91,11 @@ export const selectAssignments = (allTeams, form, queueItem) => {
         : // Otherwise allow reassignment to any team
           filteredTeams;
 
-  return availableTeams.flatMap(t =>
+  return availableTeams;
+};
+
+export const mapTeamsToAssignments = teams => {
+  return teams.flatMap(t =>
     t.memberships
       .map(m => {
         const user = m.user;
@@ -106,6 +110,10 @@ export const selectAssignments = (allTeams, form, queueItem) => {
         },
       ]),
   );
+};
+
+export const selectAssignments = (...args) => {
+  return mapTeamsToAssignments(selectAssignmentTeams(...args));
 };
 
 /*
@@ -134,6 +142,7 @@ export const State = Record({
   teamFilters: List(),
   myFilters: List(),
   forms: List(),
+  bulkWorkEnabled: false,
   loading: true,
   error: null,
 });
@@ -180,6 +189,12 @@ export const reducer = (state = State(), { type, payload }) => {
           payload.forms.filter(
             f => f.status === 'Active' || f.status === 'New',
           ),
+        )
+        .set(
+          'bulkWorkEnabled',
+          payload.forms
+            .filter(f => f.status === 'Active' || f.status === 'New')
+            .some(f => f.fields.some(field => field.name === 'Bulk Action')),
         )
         .set('loading', false);
     case types.FETCH_APP_DATA_FAILURE:

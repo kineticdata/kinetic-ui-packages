@@ -4,6 +4,7 @@ import { LoadingMessage, EmptyMessage } from '@kineticdata/bundle-common';
 import { FilterMenuToolbar } from '../filter_menu/FilterMenuToolbar';
 import { FilterMenuModal } from '../filter_menu/FilterMenuModal';
 import { QueueListPagination } from './QueueListPagination';
+import { QueueListSelection } from './QueueListSelection';
 import { PageTitle } from '../shared/PageTitle';
 
 const QueueEmptyMessage = ({ filter }) => {
@@ -40,40 +41,21 @@ const QueueBadFilterMessage = ({ message }) => (
 export const QueueList = ({
   filter,
   loading,
-  paging,
   data,
   error,
-  pageIndexStart,
-  pageIndexEnd,
   hasPreviousPage,
-  hasNextPage,
   handleRefresh,
-  handlePrevious,
-  handleNext,
-  count,
-  limit,
-  updateListLimit,
   isMobile,
   filterValidations,
   hasTeams,
   hasForms,
   setQueueListRef,
+  selectionMode,
+  selectedList,
+  toggleSelectedItem,
 }) => {
-  const paginationProps =
-    !error && !loading && data && (data.size > 0 || hasPreviousPage)
-      ? {
-          paging,
-          pageIndexStart,
-          pageIndexEnd,
-          hasPreviousPage,
-          hasNextPage,
-          handlePrevious,
-          handleNext,
-          count,
-          limit,
-          updateListLimit,
-        }
-      : null;
+  const showPagination =
+    !error && !loading && data && (data.size > 0 || hasPreviousPage);
 
   return (
     <div className="page-container">
@@ -106,6 +88,12 @@ export const QueueList = ({
                         queueItem={queueItem}
                         key={queueItem.id}
                         filter={filter}
+                        selectionMode={selectionMode}
+                        selected={
+                          selectionMode && selectedList.has(queueItem.id)
+                        }
+                        selectionDisabled={queueItem.coreState !== 'Draft'}
+                        toggleSelection={toggleSelectedItem}
                       />
                     ))}
                   </ul>
@@ -119,9 +107,14 @@ export const QueueList = ({
               />
             )}
           </div>
-          {paginationProps && (
+          {selectionMode && (
             <div className="page-panel__footer">
-              <QueueListPagination filter={filter} {...paginationProps} />
+              <QueueListSelection refresh={handleRefresh} />
+            </div>
+          )}
+          {showPagination && (
+            <div className="page-panel__footer">
+              <QueueListPagination filter={filter} />
             </div>
           )}
         </div>

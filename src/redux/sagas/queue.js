@@ -1,20 +1,34 @@
-import { select, call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+import {
+  all,
+  select,
+  call,
+  put,
+  takeEvery,
+  takeLatest,
+} from 'redux-saga/effects';
 import moment from 'moment';
 import {
   defineKqlQuery,
   searchSubmissions,
   fetchSubmission,
   updateSubmission,
+  submitSubmission,
 } from '@kineticdata/react';
 import isFunction from 'is-function';
 import { addToastAlert } from '@kineticdata/bundle-common';
 import { types, actions } from '../modules/queue';
-import { Set } from 'immutable';
 
 export const ERROR_STATUS_STRING = 'There was a problem retrieving items.';
 
 export const SUBMISSION_INCLUDES =
   'details,values,attributes,form,form.kapp,children,children.details,children.form,children.form.kapp,children.values,form.attributes,parent,parent.details,parent.values,parent.form,parent.form.kapp';
+export const SUBMISSION_LIST_INCLUDES = [
+  'details',
+  'form',
+  'form.kapp',
+  'values',
+];
 
 const calculateTeams = (myTeams, teams) =>
   teams.isEmpty()
@@ -109,7 +123,7 @@ export const buildSearch = (filter, appSettings, profile) => {
       q: searcher.end()(searcherParams),
       orderBy: filter.sortBy,
       direction: filter.sortDirection,
-      include: Set(['details', 'form', 'form.kapp', 'values']).toJS(),
+      include: SUBMISSION_LIST_INCLUDES,
     },
     invalidAssignment,
   };
@@ -262,6 +276,100 @@ export function* updateQueueItemTask(action) {
   }
 }
 
+export function* bulkAssignTask(action) {
+  const submissions = yield select(state => state.queue.selectedList);
+  const assignment = action.payload.assignment;
+
+  if (!submissions || !assignment) {
+    return;
+  }
+
+  yield all(
+    submissions
+      .toList()
+      .map((submission, i) =>
+        call(updateBulkSubmission, {
+          id: submission.id,
+          values: { ...submission.values, ...assignment },
+          include: SUBMISSION_LIST_INCLUDES.join(','),
+        }),
+      )
+      .toJS(),
+  );
+
+  // Delay to make the UI less jumpy
+  yield delay(500);
+  yield put(actions.bulkAssignComplete());
+}
+
+function* updateBulkSubmission(params) {
+  const { submission, error } = yield call(updateSubmission, params);
+
+  if (error) {
+    yield put(
+      actions.bulkStatusUpdate({
+        status: 'error',
+        data: { ...error, submissionId: params.id },
+      }),
+    );
+  } else {
+    yield put(
+      actions.bulkStatusUpdate({ status: 'success', data: submission }),
+    );
+  }
+}
+
+export function* bulkWorkTask(action) {
+  const submissions = yield select(state => state.queue.selectedList);
+  const profile = yield select(state => state.app.profile);
+  // Override the assigned individual to be the current user in case someone
+  // grabbed this ticket while the bulk action was being taken
+  const assignment = {
+    'Assigned Individual': profile.username,
+    'Assigned Individual Display Name': profile.displayName || profile.username,
+  };
+  const values = action.payload.values;
+
+  if (!submissions || !values) {
+    return;
+  }
+
+  yield all(
+    submissions
+      .toList()
+      .map((submission, i) =>
+        call(submitBulkSubmission, {
+          id: submission.id,
+          page: submission.currentPage,
+          values: { ...submission.values, ...assignment, ...values },
+          include: SUBMISSION_LIST_INCLUDES.join(','),
+        }),
+      )
+      .toJS(),
+  );
+
+  // Delay to make the UI less jumpy
+  yield delay(500);
+  yield put(actions.bulkWorkComplete());
+}
+
+function* submitBulkSubmission(params) {
+  const { submission, error } = yield call(submitSubmission, params);
+
+  if (error) {
+    yield put(
+      actions.bulkStatusUpdate({
+        status: 'error',
+        data: { ...error, submissionId: params.id },
+      }),
+    );
+  } else {
+    yield put(
+      actions.bulkStatusUpdate({ status: 'success', data: submission }),
+    );
+  }
+}
+
 export function* watchQueue() {
   yield takeLatest(
     [
@@ -276,4 +384,6 @@ export function* watchQueue() {
   yield takeEvery(types.FETCH_LIST_COUNT_REQUEST, fetchListCountTask);
   yield takeEvery(types.FETCH_CURRENT_ITEM, fetchCurrentItemTask);
   yield takeEvery(types.UPDATE_QUEUE_ITEM, updateQueueItemTask);
+  yield takeEvery(types.BULK_ASSIGN_REQUEST, bulkAssignTask);
+  yield takeEvery(types.BULK_WORK_REQUEST, bulkWorkTask);
 }

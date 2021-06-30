@@ -14,28 +14,22 @@ const mapStateToProps = (state, props) => {
   return {
     filter,
     loading: state.queue.loading,
-    paging: state.queue.paging,
     data: state.queue.data,
     error: state.queue.error,
     hasPreviousPage: state.queue.hasPreviousPage,
-    hasNextPage: state.queue.hasNextPage,
-    pageIndexStart: state.queue.pageIndexStart,
-    pageIndexEnd: state.queue.pageIndexEnd,
-    limit: state.queue.limit,
-    count: state.queue.counts.get(filter),
     isMobile: state.app.layoutSize === 'small',
     hasTeams: state.queueApp.myTeams.size > 0,
     hasForms:
       selectMyTeamForms(state).filter(form => form.type === 'Task').length > 0,
+    selectionMode: state.queue.selectedList !== null,
+    selectedList: state.queue.selectedList,
   };
 };
 
 const mapDispatchToProps = {
   fetchList: queueActions.fetchListRequest,
   resetList: queueActions.fetchListReset,
-  previousPage: queueActions.fetchListPrevious,
-  nextPage: queueActions.fetchListNext,
-  updateListLimit: queueActions.updateListLimit,
+  toggleSelectedItem: queueActions.toggleSelectedItem,
 };
 
 export const QueueListContainer = compose(
@@ -52,8 +46,6 @@ export const QueueListContainer = compose(
   }),
   withHandlers({
     handleRefresh: props => () => props.resetList(props.filter),
-    handlePrevious: props => () => props.previousPage(),
-    handleNext: props => () => props.nextPage(),
   }),
   withHandlers(() => {
     let queueListRef = null;
@@ -65,7 +57,7 @@ export const QueueListContainer = compose(
     };
   }),
   lifecycle({
-    componentWillMount() {
+    componentDidMount() {
       this.loadFilter(this.props.filter, this.props.filterValidations);
     },
     componentDidUpdate(prevProps) {

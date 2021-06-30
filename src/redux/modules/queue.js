@@ -1,4 +1,4 @@
-import { Record, Map, List, is } from 'immutable';
+import { Record, Map, List, OrderedMap, is } from 'immutable';
 import { Utils } from '@kineticdata/bundle-common';
 import { Filter } from '../../records';
 const { withPayload, noPayload } = Utils;
@@ -24,6 +24,15 @@ export const types = {
 
   OPEN_NEW_MENU: ns('OPEN_NEW_MENU'),
   CLOSE_NEW_MENU: ns('CLOSE_NEW_MENU'),
+
+  TOGGLE_SELECTION_MODE: ns('TOGGLE_SELECTION_MODE'),
+  TOGGLE_SELECTED_ITEM: ns('TOGGLE_SELECTED_ITEM'),
+  BULK_ASSIGN_REQUEST: ns('BULK_ASSIGN_REQUEST'),
+  BULK_ASSIGN_COMPLETE: ns('BULK_ASSIGN_COMPLETE'),
+  BULK_WORK_REQUEST: ns('BULK_WORK_REQUEST'),
+  BULK_WORK_COMPLETE: ns('BULK_WORK_COMPLETE'),
+  BULK_STATUS_UPDATE: ns('BULK_STATUS_UPDATE'),
+  BULK_STATUS_RESET: ns('BULK_STATUS_RESET'),
 };
 
 export const actions = {
@@ -46,6 +55,19 @@ export const actions = {
 
   openNewItemMenu: withPayload(types.OPEN_NEW_MENU),
   closeNewItemMenu: noPayload(types.CLOSE_NEW_MENU),
+
+  toggleSelectionMode: withPayload(
+    types.TOGGLE_SELECTION_MODE,
+    'open',
+    'items',
+  ),
+  toggleSelectedItem: withPayload(types.TOGGLE_SELECTED_ITEM, 'item', 'shift'),
+  bulkAssignRequest: withPayload(types.BULK_ASSIGN_REQUEST),
+  bulkAssignComplete: noPayload(types.BULK_ASSIGN_COMPLETE),
+  bulkWorkRequest: withPayload(types.BULK_WORK_REQUEST),
+  bulkWorkComplete: noPayload(types.BULK_WORK_COMPLETE),
+  bulkStatusUpdate: withPayload(types.BULK_STATUS_UPDATE),
+  bulkStatusReset: noPayload(types.BULK_STATUS_RESET),
 };
 
 export const State = Record({
@@ -74,6 +96,9 @@ export const State = Record({
 
   newItemMenuOpen: false,
   newItemMenuOptions: Map(),
+
+  selectedList: null,
+  bulkStatus: {},
 });
 
 const updatePageMetadata = state =>
@@ -109,7 +134,9 @@ export const reducer = (state = State(), { type, payload }) => {
             .set('pageToken', null)
             .set('nextPageToken', null)
             .set('previousPageTokens', List())
-            .update(updatePageMetadata);
+            .update(updatePageMetadata)
+            // Clear selection mode when filter changes
+            .set('selectedList', null);
     case types.FETCH_LIST_SUCCESS:
       return state
         .set('loading', false)
@@ -135,16 +162,26 @@ export const reducer = (state = State(), { type, payload }) => {
         .set('nextPageToken', null)
         .set('paging', true);
     case types.FETCH_LIST_RESET:
-      return state
-        .set('currentFilter', payload || null)
-        .set('loading', true)
-        .set('paging', false)
-        .set('data', null)
-        .set('error', null)
-        .set('pageToken', null)
-        .set('nextPageToken', null)
-        .set('previousPageTokens', List())
-        .update(updatePageMetadata);
+      return (
+        state
+          .set('currentFilter', payload || null)
+          .set('loading', true)
+          .set('paging', false)
+          .set('data', null)
+          .set('error', null)
+          .set('pageToken', null)
+          .set('nextPageToken', null)
+          .set('previousPageTokens', List())
+          .update(updatePageMetadata)
+          // Clear selection mode when filter changes
+          .update(
+            'selectedList',
+            selectedList =>
+              !payload || !is(payload, state.currentFilter)
+                ? null
+                : selectedList,
+          )
+      );
     case types.UPDATE_LIST_LIMIT:
       return typeof payload === 'number'
         ? state
@@ -194,7 +231,105 @@ export const reducer = (state = State(), { type, payload }) => {
     case types.CLOSE_NEW_MENU:
       return state.set('newItemMenuOpen', false).remove('newItemMenuOptions');
 
+    case types.TOGGLE_SELECTION_MODE:
+      return state.update(
+        'selectedList',
+        selectedList =>
+          typeof payload.open === 'boolean'
+            ? payload.open
+              ? Array.isArray(payload.items)
+                ? payload.items.reduce(
+                    (map, item) => map.set(item.id, item),
+                    OrderedMap(),
+                  )
+                : OrderedMap()
+              : null
+            : selectedList === null
+              ? OrderedMap()
+              : null,
+      );
+    case types.TOGGLE_SELECTED_ITEM:
+      return (
+        state
+          .update('selectedList', updateSelectedItems(payload, state.data))
+          // Set the last item clicked as an extra property on the OrderedMap
+          // for use when an item is shift clicked
+          .update('selectedList', selectedList => {
+            selectedList._lastSelectedItem = payload.item;
+            return selectedList;
+          })
+      );
+    case types.BULK_ASSIGN_REQUEST:
+    case types.BULK_WORK_REQUEST:
+      return state.set('bulkStatus', {
+        type: type === types.BULK_ASSIGN_REQUEST ? 'assign' : 'work',
+        open: true,
+        completed: false,
+        count: state.selectedList.size,
+        items: state.selectedList.toList().toJS(),
+        success: [],
+        error: [],
+      });
+    case types.BULK_ASSIGN_COMPLETE:
+    case types.BULK_WORK_COMPLETE:
+      return state.setIn(['bulkStatus', 'completed'], true);
+    case types.BULK_STATUS_UPDATE:
+      return state.updateIn(['bulkStatus', payload.status], list => [
+        ...list,
+        payload.data,
+      ]);
+    case types.BULK_STATUS_RESET:
+      return state.set('bulkStatus', {});
+
     default:
       return state;
   }
+};
+
+const updateSelectedItems = ({ item, shift }, data) => selectedList => {
+  if (selectedList) {
+    // If shift key is pressed when an item is clicked, select or deselect all
+    // items between the current one and the last one clicked
+    if (shift) {
+      // Get last item and index of last item in current data set
+      const lastItem = selectedList._lastSelectedItem;
+      const lastIndex = lastItem
+        ? data.findIndex(d => d.id === lastItem.id)
+        : -1;
+      // Get index of the current clicked item
+      const currentIndex = data.findIndex(d => d.id === item.id);
+      // Check is the currently clicked item is being added or removed, and
+      // replicate the same action for all items in the range
+      const isAdd = !selectedList.has(item.id);
+
+      if (currentIndex >= 0 && lastIndex >= 0 && currentIndex !== lastIndex) {
+        // Create a range between the two items and fill it with the indexes of
+        // all the items in that range
+        return Array(Math.abs(currentIndex - lastIndex) + 1)
+          .fill()
+          .map((v, i) => i + Math.min(currentIndex, lastIndex))
+          .reduce((list, index) => {
+            // Reduce the list of indexes and update the selected list by adding
+            //or removing the relevant items
+            const dataItem = data.get(index);
+            if (isAdd && !list.has(dataItem.id)) {
+              return list.set(dataItem.id, dataItem);
+            } else if (!isAdd && list.has(dataItem.id)) {
+              return list.delete(dataItem.id);
+            }
+            return list;
+          }, selectedList);
+      }
+    }
+
+    // If only a single item was clicked (without shift), add or remove it
+    if (selectedList.has(item.id)) {
+      return selectedList.delete(item.id);
+    } else {
+      return selectedList.set(item.id, item);
+    }
+  }
+
+  // Return the initial list if none of the above cases apply
+  return selectedList;
 };
