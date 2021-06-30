@@ -3,9 +3,9 @@ import { ButtonGroup } from 'reactstrap';
 import { I18n } from '@kineticdata/react';
 
 const getStatusClass = status =>
-  `submission-status submission-status--${status
-    .toLowerCase()
-    .replace(/\s+/g, '-')}`;
+  `submission-status submission-status--${
+    status ? status.toLowerCase().replace(/\s+/g, '-') : 'missing'
+  }`;
 
 const getStatusReason = queueItem => {
   switch (queueItem.values.Status) {
