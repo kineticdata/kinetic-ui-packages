@@ -69,8 +69,8 @@ export default class extends Component {
     );
   }
 
-  static shouldSuppressSidebar = ({ appLocation, location }) =>
-    matchPath(location.pathname, { path: `${appLocation}`, exact: true });
+  // static shouldSuppressSidebar = ({ appLocation, location }) =>
+  //   matchPath(location.pathname, { path: `${appLocation}`, exact: true });
 
   // Set to true if package allows public (unauthenticated) routes
   static hasPublicRoutes = true;
