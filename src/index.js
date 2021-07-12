@@ -62,9 +62,9 @@ export default class extends Component {
     );
   }
 
-  static shouldSuppressSidebar = ({ appLocation, location }) =>
-    matchPath(location.pathname, { path: appLocation }) &&
-    !matchPath(location.pathname, { path: `${appLocation}/settings` });
+  // static shouldSuppressSidebar = ({ appLocation, location }) =>
+  //   matchPath(location.pathname, { path: appLocation }) &&
+  //   !matchPath(location.pathname, { path: `${appLocation}/settings` });
 
   static shouldHideHeader = ({ appLocation, location }) =>
     matchPath(location.pathname, { path: `${appLocation}/display` });
