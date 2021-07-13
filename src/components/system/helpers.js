@@ -169,6 +169,18 @@ export const MSSQL_FIELDS = (
       'password',
     ),
     {
+      name: 'mssql_windowsauthenabled',
+      label: 'Use Windows Authentication (Kerberos)',
+      type: 'select',
+      required: false,
+      visible: trueIfAdapter,
+      options: [
+        { label: 'True', value: 'true' },
+        { label: 'False', value: 'false' },
+      ],
+      initialValue: initialValues('windowsauthenabled', 'false'),
+    },
+    {
       name: 'mssql_sslEnabled',
       label: 'Enable SSL',
       type: 'select',
@@ -211,7 +223,7 @@ export const MSSQL_FIELDS = (
       adapter,
       defaultAdapter,
       'Truststore Password',
-      'ssltruststorepw',
+      'trustStorePassword',
       values => values.get('mssql_sslrootcert', '') !== '',
     ),
     ...generatePasswordFields(
@@ -220,7 +232,7 @@ export const MSSQL_FIELDS = (
       adapter,
       defaultAdapter,
       'Keystore Password',
-      'sslkeystorepw',
+      'keyStoreSecret',
       values => values.get('mssql_sslcert', '') !== '',
     ),
   ];
@@ -340,7 +352,7 @@ export const ORACLE_FIELDS = (
       adapter,
       defaultAdapter,
       'Truststore Password',
-      'truststorePassword',
+      'trustStorePassword',
       values => values.get('oracle_serverCert', '') !== '',
     ),
     ...generatePasswordFields(
@@ -349,7 +361,7 @@ export const ORACLE_FIELDS = (
       adapter,
       defaultAdapter,
       'Keystore Password',
-      'keystorePassword',
+      'keyStorePassword',
       values => values.get('oracle_clientCert', '') !== '',
     ),
   ];
