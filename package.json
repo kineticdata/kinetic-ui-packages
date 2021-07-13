@@ -1,6 +1,6 @@
 {
   "name": "@kineticdata/bundle-queue",
-  "version": "5.0.16",
+  "version": "5.0.17",
   "main": "./lib/index.js",
   "main:src": "./src/index.js",
   "files": [
@@ -17,8 +17,8 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@kineticdata/bundle-common": "^5.0.16",
-    "@kineticdata/react": "^5.0.16",
+    "@kineticdata/bundle-common": "5.0.17",
+    "@kineticdata/react": "5.0.17",
     "@reach/router": "git://github.com/kineticdata/router.git",
     "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
