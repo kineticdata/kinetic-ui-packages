@@ -6,13 +6,13 @@ import { I18n } from '@kineticdata/react';
 import classNames from 'classnames';
 
 const SelectionToggle = ({ active, checked }) =>
-  active && (
+  active ? (
     <span
       className={classNames('selection-toggle fa fa-fw', {
         checked: checked,
       })}
     />
-  );
+  ) : null;
 
 const AssignmentParagraph = ({ values }) => (
   <span className="submission__assignment">
