@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
-import { connect } from '../../../redux/store';
-import { actions } from '../../../redux/modules/surveys';
-import { actions as appActions } from '../../../redux/modules/surveyApp';
+import { connect } from '../../redux/store';
+import { actions } from '../../redux/modules/surveys';
+import { actions as appActions } from '../../redux/modules/surveyApp';
 import { compose, withState, withHandlers, lifecycle } from 'recompose';
-import { PageTitle } from '../../shared/PageTitle';
+import { PageTitle } from '../shared/PageTitle';
 import {
   UncontrolledDropdown,
   DropdownToggle,
@@ -147,7 +147,7 @@ const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   noItemsMessage: 'There are no surveys to display.',
 });
 
-const SurveyListComponent = ({
+const SurveyAdminListComponent = ({
   kapp,
   loading,
   filterOpen,
@@ -233,7 +233,7 @@ const SurveyListComponent = ({
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
           return (
             <div className="page-container">
-              <PageTitle />
+              <PageTitle parts={['Survey Admin']} />
               <div className="page-panel page-panel--white">
                 <div className="page-title">
                   <div
@@ -242,10 +242,13 @@ const SurveyListComponent = ({
                     className="page-title__breadcrumbs"
                   >
                     <span className="breadcrumb-item">
-                      <I18n>{kapp.name} / </I18n>
-                    </span>
+                      <Link to="../">
+                        <I18n>survey</I18n>
+                      </Link>
+                    </span>{' '}
+                    /
                     <h1>
-                      <I18n>Surveys</I18n>
+                      <I18n>Survey Admin</I18n>
                     </h1>
                   </div>
                   <div className="page-title__actions">
@@ -370,7 +373,7 @@ const mapDispatchToProps = {
   fetchAppDataRequest: appActions.fetchAppDataRequest,
 };
 
-export const SurveyList = compose(
+export const SurveyAdminList = compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
@@ -404,4 +407,4 @@ export const SurveyList = compose(
       unmountTable(tableKey);
     },
   }),
-)(SurveyListComponent);
+)(SurveyAdminListComponent);

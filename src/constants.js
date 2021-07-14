@@ -18,6 +18,7 @@ export const ATTRIBUTE_SERVICE_OWNING_TEAM = 'Service Owning Team';
 
 // Field names
 export const STATUS_FIELD = 'Status';
+export const ASSIGNED_INDIVIDUAL = 'Assigned Individual';
 export const REQUESTED_BY_FIELD = 'Requested By';
 export const REQUESTED_FOR_FIELD = 'Requested For';
 export const REQUESTED_BY_DISPLAY_NAME_FIELD = 'Requested By Display Name';
@@ -39,8 +40,8 @@ export const CORE_STATE_CLOSED = 'Closed';
 // Misc config
 export const DEFAULT_LIST_MODE_THRESHOLD = 4;
 export const SUBMISSION_COUNT_LIMIT = 1000;
-export const SUBMISSION_FORM_TYPE = 'Service';
-export const SUBMISSION_FORM_TYPES = ['Service'];
+export const SUBMISSION_FORM_TYPE = 'Survey';
+export const SUBMISSION_FORM_TYPES = ['Survey'];
 export const SUBMISSION_FORM_STATUS = 'Active';
 export const SUBMISSION_FORM_STATUSES = ['New', 'Active'];
 export const PAGE_SIZE = 10;
@@ -67,8 +68,8 @@ export const DEFAULT_SURVEY_CONFIGURATION = {
     Interval: 1440,
   },
   'Survey Period': {
-    Start: '2020-07-20',
-    Stop: '2021-07-20',
+    Start: '2021-07-20',
+    Stop: '2022-07-20',
   },
   Expiration: 365,
   'Allow Opt-out': 'false',

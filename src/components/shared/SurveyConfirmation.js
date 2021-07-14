@@ -4,7 +4,7 @@ import { actions } from '../../redux/modules/surveys';
 import { compose, withProps } from 'recompose';
 import { I18n } from '@kineticdata/react';
 import { InfoMessage } from '@kineticdata/bundle-common';
-import { PageTitle } from '../shared/PageTitle';
+import { PageTitle } from './PageTitle';
 
 const SurveyConfirmationComponent = props => {
   const customFormText = props.form.attributes.filter(
