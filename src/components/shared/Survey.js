@@ -10,7 +10,7 @@ import {
   LoadingMessage,
   InfoMessage,
 } from '@kineticdata/bundle-common';
-import { PageTitle } from '../shared/PageTitle';
+import { PageTitle } from './PageTitle';
 import { parse } from 'query-string';
 
 export const SurveyComponent = ({

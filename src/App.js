@@ -5,14 +5,15 @@ import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import { connect } from './redux/store';
 import { PageTitle } from './components/shared/PageTitle';
-import { Survey } from './components/survey/Survey';
-import { SurveyConfirmation } from './components/survey/SurveyConfirmation';
-import { SurveyPreview } from './components/survey/SurveyPreview';
-import { SurveyList } from './components/survey/home/SurveyList';
-import { SurveySubmissions } from './components/survey/submissions/SurveySubmissions';
-import { SubmissionDetails } from './components/survey/submissions/SubmissionDetails';
-import { SurveySettings } from './components/survey/settings/SurveySettings';
-import { CreateSurvey } from './components/survey/CreateSurvey';
+import { Survey } from './components/shared/Survey';
+import { SurveyConfirmation } from './components/shared/SurveyConfirmation';
+import { SurveyPreview } from './components/shared/SurveyPreview';
+import { SurveyAdminList } from './components/admin/SurveyAdminList';
+import { SurveySubmissions } from './components/admin/submissions/SurveySubmissions';
+import { SubmissionDetails } from './components/admin/submissions/SubmissionDetails';
+import { SurveySettings } from './components/admin/settings/SurveySettings';
+import { CreateSurvey } from './components/admin/CreateSurvey';
+import { MySurveys } from './components/home/MySurveys';
 import { actions as appActions } from './redux/modules/surveyApp';
 
 const SurveyError = () => (
@@ -37,24 +38,28 @@ const AppComponent = props => {
           <main className={`package-layout package-layout--survey`}>
             <PageTitle parts={['Loading...']} />
             <Router>
-              <SurveyList path="/" />
-              <CreateSurvey path="new" />
+              {/* home */}
+              <MySurveys path="/" />
+              {/* admin */}
+              <SurveyAdminList path="admin" />
+              <CreateSurvey path="admin/new" />
+              <SurveySubmissions path="admin/:slug/submissions" />
+              <SubmissionDetails path="admin/:slug/submissions/:submissionId/details" />
+              <SurveySettings path="admin/:slug/settings" />
+              {/* survey */}
               <Survey path=":slug/submissions/:submissionId" />
               <Redirect
                 from="forms/:slug/submissions/:submissionId"
                 to="../../../../:slug/submissions/:submissionId"
                 noThrow
               />
-              <Survey path="survey-opt-out" />
-              <SurveyPreview path="forms/:slug" />
-              <Redirect from=":slug" to="../forms/:slug" noThrow />
-              <SurveyError path="error" />
-              <SurveySubmissions path=":slug/submissions" />
-              <SurveySettings path=":slug/settings" />
-              <SubmissionDetails path=":slug/submissions/:submissionId/details" />
               <SurveyConfirmation path="forms/:slug/confirmation" />
               <SurveyConfirmation path="survey-opt-out/confirmation" />
               <SurveyConfirmation path=":slug/submissions/:submissionId/confirmation" />
+              <SurveyPreview path="forms/:slug" />
+              <Redirect from=":slug" to="../forms/:slug" noThrow />
+              <Survey path="survey-opt-out" />
+              <SurveyError path="error" />
             </Router>
           </main>
         </I18n>
@@ -104,6 +109,7 @@ export const PublicAppComponent = props => {
           <main className="package-layout package-layout--services">
             <PageTitle parts={['Loading...']} />
             <Router>
+              <MySurveys path="/" />
               <Survey path=":slug/submissions/:submissionId" />
               <Redirect
                 from="forms/:slug/submissions/:submissionId"
@@ -112,8 +118,6 @@ export const PublicAppComponent = props => {
               />
               <Survey path="survey-opt-out" />
               <SurveyError path="error" />
-              {/* <SurveyPreview path="forms/:slug" />
-              <SurveyConfirmation path="forms/:slug/confirmation" /> */}
               <SurveyConfirmation path="survey-opt-out/confirmation" />
               <SurveyConfirmation path=":slug/submissions/:submissionId/confirmation" />
               <Redirect from="*" to={props.authRoute} noThrow />

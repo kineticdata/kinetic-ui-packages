@@ -181,8 +181,13 @@ export const SurveySubmissionsComponent = ({
                     className="page-title__breadcrumbs"
                   >
                     <span className="breadcrumb-item">
+                      <Link to="../../../">
+                        <I18n>survey</I18n>
+                      </Link>
+                    </span>
+                    <span className="breadcrumb-item">
                       <Link to="../../">
-                        <I18n>{kapp.name}</I18n>
+                        <I18n>survey admin</I18n>
                       </Link>{' '}
                       /
                     </span>

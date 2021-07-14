@@ -1,15 +1,11 @@
-import moment from 'moment';
 import { Utils } from '@kineticdata/bundle-common';
 import * as constants from './constants';
 
-export const isBlank = string => !string || string.trim().length === 0;
-
-export const isActiveClass = defaultClass => props => ({
-  className: props.isCurrent ? `${defaultClass} active` : defaultClass,
-});
-
-export const getDurationInDays = (start, end) =>
-  Math.round(moment(end).diff(start, 'days', true) * 10) / 10;
+export const getSubmissionPath = (appLocation, submission, mode) => {
+  return [appLocation, submission.form.slug, 'submissions', submission.id]
+    .filter(s => !!s)
+    .join('/');
+};
 
 export const getStatus = submission => {
   if (!submission.values) {
@@ -19,18 +15,6 @@ export const getStatus = submission => {
     );
   }
   return submission.values[constants.STATUS_FIELD] || submission.coreState;
-};
-
-export const getRequester = submission => {
-  if (!submission.values) {
-    throw new Error(
-      'getRequester failed because values were not included on ' +
-        'the submission.',
-    );
-  }
-  return (
-    submission.values[constants.REQUESTED_BY_FIELD] || submission.submittedBy
-  );
 };
 
 export const getStatusClass = ({ values, form, coreState }) => {
@@ -84,29 +68,15 @@ export const getStatusClass = ({ values, form, coreState }) => {
   }
 };
 
-export const getSubmissionPath = (appLocation, submission, mode, listType) => {
-  return [
-    appLocation,
-    'requests',
-    listType,
-    'request',
-    submission.id,
-    mode ||
-      (submission.coreState === constants.CORE_STATE_DRAFT ? '' : 'activity'),
-  ]
-    .filter(s => !!s)
-    .join('/');
+export const getStatusColor = props => {
+  switch (getStatusClass(props)) {
+    case constants.SUCCESS_LABEL_CLASS:
+      return 'success';
+    case constants.WARNING_LABEL_CLASS:
+      return 'warning';
+    case constants.DANGER_LABEL_CLASS:
+      return 'danger';
+    default:
+      return 'dark';
+  }
 };
-
-/**
- *  Take a large List and return a Sequence of List.  Will spilt List into equal chuncks.
- * Last chunk may be smaller if split can't be done evenly.
- *
- * @param {List} list - List of elements
- * @param {number} [chunkSize=1] - Desired size of chunks
- * @returns {List} - List of List elements
- */
-export const chunkList = (list, chunkSize = 1) =>
-  Range(0, list.count(), chunkSize)
-    .map(chunkStart => list.slice(chunkStart, chunkStart + chunkSize))
-    .toList();
