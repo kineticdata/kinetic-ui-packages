@@ -76,7 +76,7 @@ export const SubmissionDetailsContainer = ({
             <span aria-hidden="true">/ </span>
             <span className="breadcrumb-item">
               <Link to="../../../../">
-                <I18n>survey admin</I18n>
+                <I18n>admin</I18n>
               </Link>
             </span>{' '}
             <span aria-hidden="true">/ </span>

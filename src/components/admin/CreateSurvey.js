@@ -29,8 +29,14 @@ const CreateSurveyComponent = ({
           className="page-title__breadcrumbs"
         >
           <span className="breadcrumb-item">
+            <Link to="../../">
+              <I18n>survey</I18n>
+            </Link>
+          </span>{' '}
+          <span aria-hidden="true">/ </span>
+          <span className="breadcrumb-item">
             <Link to="../">
-              <I18n>{kapp.name}</I18n>
+              <I18n>admin</I18n>
             </Link>
           </span>{' '}
           <span aria-hidden="true">/ </span>

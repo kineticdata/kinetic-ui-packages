@@ -187,7 +187,7 @@ export const SurveySubmissionsComponent = ({
                     </span>
                     <span className="breadcrumb-item">
                       <Link to="../../">
-                        <I18n>survey admin</I18n>
+                        <I18n>admin</I18n>
                       </Link>{' '}
                       /
                     </span>
