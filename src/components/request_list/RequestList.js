@@ -16,30 +16,26 @@ export const RequestListComponent = ({
   <Fragment>
     <div className="page-container">
       <div className="page-panel">
-        <div className="page-panel__header">
-          <PageTitle
-            parts={['My Requests']}
-            breadcrumbs={[
-              { label: 'services', to: appLocation },
-              type && { label: 'requests', to: `${appLocation}/requests` },
-            ].filter(Boolean)}
-            title={type || 'All Requests'}
-            actions={[
-              {
-                icon: 'refresh',
-                onClick: () => {
-                  refetchActivityFeed(feedKey);
-                  fetchSubmissionCountsRequest();
-                },
-                aria: 'Refresh Requests',
+        <PageTitle
+          parts={['My Requests']}
+          breadcrumbs={[
+            { label: 'services', to: appLocation },
+            type && { label: 'requests', to: `${appLocation}/requests` },
+          ].filter(Boolean)}
+          title={type || 'All Requests'}
+          actions={[
+            {
+              icon: 'refresh',
+              onClick: () => {
+                refetchActivityFeed(feedKey);
+                fetchSubmissionCountsRequest();
               },
-            ]}
-          />
-        </div>
-        <div className="page-panel__body">
-          <div className="cards">
-            <RequestActivity type={type} feedKey={feedKey} />
-          </div>
+              aria: 'Refresh Requests',
+            },
+          ]}
+        />
+        <div className="cards">
+          <RequestActivity type={type} feedKey={feedKey} />
         </div>
       </div>
     </div>

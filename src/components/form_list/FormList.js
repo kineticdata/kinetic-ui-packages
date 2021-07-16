@@ -14,29 +14,25 @@ const FormListComponent = props => (
   <Fragment>
     <div className="page-container">
       <div className="page-panel">
-        <div className="page-panel__header">
-          <PageTitle
-            parts={['Forms']}
-            breadcrumbs={[{ label: 'services', to: '..' }]}
-            title="All Forms"
+        <PageTitle
+          parts={['Forms']}
+          breadcrumbs={[{ label: 'services', to: '..' }]}
+          title="All Forms"
+        />
+        <div className="cards">
+          <ActivityFeed
+            pageSize={10}
+            joinByDirection="ASC"
+            joinBy="name"
+            options={{ query: props.query }}
+            dataSources={{
+              ...props.formsDataSource,
+            }}
+            contentProps={{
+              emptyMessage: { title: 'No forms to display.' },
+            }}
+            showCount={true}
           />
-        </div>
-        <div className="page-panel__body">
-          <div className="cards">
-            <ActivityFeed
-              pageSize={10}
-              joinByDirection="ASC"
-              joinBy="name"
-              options={{ query: props.query }}
-              dataSources={{
-                ...props.formsDataSource,
-              }}
-              contentProps={{
-                emptyMessage: { title: 'No forms to display.' },
-              }}
-              showCount={true}
-            />
-          </div>
         </div>
       </div>
     </div>

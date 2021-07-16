@@ -121,131 +121,125 @@ export const RequestShow = ({
   <div className="page-container page-container--panels">
     <div className="page-panel page-panel--three-fifths">
       {sendMessageModalOpen && <SendMessageModal submission={submission} />}
-      <div className="page-panel__header">
-        <PageTitle
-          parts={[submission && submission.label, 'Requests']}
-          breadcrumbs={[
-            { label: 'services', to: appLocation },
-            {
-              label: 'requests',
-              to: `${appLocation}/requests`,
+      <PageTitle
+        parts={[submission && submission.label, 'Requests']}
+        breadcrumbs={[
+          { label: 'services', to: appLocation },
+          {
+            label: 'requests',
+            to: `${appLocation}/requests`,
+          },
+          listType && {
+            label: listType,
+            to: `${appLocation}/requests/${listType}`,
+          },
+        ]}
+        title={!error && submission && submission.form.name}
+        actions={
+          !error &&
+          submission && [
+            !disableProvideFeedback && {
+              label: 'Provide Feedback',
+              onClick: provideFeedback,
             },
-            listType && {
-              label: listType,
-              to: `${appLocation}/requests/${listType}`,
+            !disableHandleClone && {
+              label: 'Clone as Draft',
+              onClick: handleClone,
             },
-          ]}
-          title={!error && submission && submission.form.name}
-          actions={
-            !error &&
-            submission && [
-              !disableProvideFeedback && {
-                label: 'Provide Feedback',
-                onClick: provideFeedback,
+            !disableHandleCancel && {
+              label: 'Cancel Request',
+              onClick: handleCancel,
+            },
+            isSmallLayout &&
+              discussion && {
+                icon: 'comments-o',
+                aria: 'View Discussion',
+                onClick: openDiscussion,
               },
-              !disableHandleClone && {
-                label: 'Clone as Draft',
-                onClick: handleClone,
+            !discussion &&
+              !disableStartDiscussion && {
+                icon: 'comment-o',
+                aria: 'Start Discussion',
+                onClick: startDiscussion,
               },
-              !disableHandleCancel && {
-                label: 'Cancel Request',
-                onClick: handleCancel,
-              },
-              isSmallLayout &&
-                discussion && {
-                  icon: 'comments-o',
-                  aria: 'View Discussion',
-                  onClick: openDiscussion,
-                },
-              !discussion &&
-                !disableStartDiscussion && {
-                  icon: 'comment-o',
-                  aria: 'Start Discussion',
-                  onClick: startDiscussion,
-                },
-            ]
-          }
-          meta={
-            !error &&
-            submission && [
-              { label: 'Status', value: getStatus(submission) },
-              { label: 'Confirmation #', value: submission.handle },
-              displayDateMeta(submission),
-              serviceOwnerMeta(submission),
-              estCompletionMeta(submission),
-              completedInMeta(submission),
-            ]
-          }
+          ]
+        }
+        meta={
+          !error &&
+          submission && [
+            { label: 'Status', value: getStatus(submission) },
+            { label: 'Confirmation #', value: submission.handle },
+            displayDateMeta(submission),
+            serviceOwnerMeta(submission),
+            estCompletionMeta(submission),
+            completedInMeta(submission),
+          ]
+        }
+      />
+      {error && (
+        <ErrorMessage
+          title="Failed to load submission"
+          message={error.message}
         />
-      </div>
-      <div className="page-panel__body">
-        {error && (
-          <ErrorMessage
-            title="Failed to load submission"
-            message={error.message}
-          />
-        )}
-        {!error && !submission && <LoadingMessage />}
-        {!error &&
-          submission && (
-            <>
-              {submission.form.name !== submission.label && (
-                <p className="h6 text-muted">{submission.label}</p>
-              )}
+      )}
+      {!error && !submission && <LoadingMessage />}
+      {!error &&
+        submission && (
+          <>
+            {submission.form.name !== submission.label && (
+              <p className="h6 text-muted">{submission.label}</p>
+            )}
 
-              {mode === 'confirmation' && (
-                <div className="alert alert-primary alert-bar">
-                  <RequestShowConfirmationContainer submission={submission} />
-                </div>
-              )}
-
-              <div className="submission-tabs">
-                <ul className="nav nav-tabs" role="tablist">
-                  <li role="tab" className="nav-item">
-                    <Link
-                      to={getSubmissionPath(
-                        appLocation,
-                        submission,
-                        null,
-                        listType,
-                      )}
-                      getProps={isActiveClass('nav-link')}
-                    >
-                      <I18n>Timeline</I18n>
-                    </Link>
-                  </li>
-
-                  <li role="tab" className="nav-item">
-                    <Link
-                      to={`${getSubmissionPath(
-                        appLocation,
-                        submission,
-                        'review',
-                        listType,
-                      )}`}
-                      getProps={isActiveClass('nav-link')}
-                    >
-                      <I18n>Review Request</I18n>
-                    </Link>
-                  </li>
-                </ul>
-                <div className="submission-tabs__content">
-                  {mode === 'review' ? (
-                    <I18n
-                      context={`kapps.${kappSlug}.forms.${
-                        submission.form.slug
-                      }`}
-                    >
-                      <CoreForm submission={submission.id} review />
-                    </I18n>
-                  ) : (
-                    <RequestActivityList submission={submission} />
-                  )}
-                </div>
+            {mode === 'confirmation' && (
+              <div className="alert alert-primary alert-bar">
+                <RequestShowConfirmationContainer submission={submission} />
               </div>
-            </>
-          )}
-      </div>
+            )}
+
+            <div className="submission-tabs">
+              <ul className="nav nav-tabs" role="tablist">
+                <li role="tab" className="nav-item">
+                  <Link
+                    to={getSubmissionPath(
+                      appLocation,
+                      submission,
+                      null,
+                      listType,
+                    )}
+                    getProps={isActiveClass('nav-link')}
+                  >
+                    <I18n>Timeline</I18n>
+                  </Link>
+                </li>
+
+                <li role="tab" className="nav-item">
+                  <Link
+                    to={`${getSubmissionPath(
+                      appLocation,
+                      submission,
+                      'review',
+                      listType,
+                    )}`}
+                    getProps={isActiveClass('nav-link')}
+                  >
+                    <I18n>Review Request</I18n>
+                  </Link>
+                </li>
+              </ul>
+              <div className="submission-tabs__content">
+                {mode === 'review' ? (
+                  <I18n
+                    context={`kapps.${kappSlug}.forms.${submission.form.slug}`}
+                  >
+                    <CoreForm submission={submission.id} review />
+                  </I18n>
+                ) : (
+                  <RequestActivityList submission={submission} />
+                )}
+              </div>
+            </div>
+          </>
+        )}
     </div>
     {submission &&
       discussion && (
