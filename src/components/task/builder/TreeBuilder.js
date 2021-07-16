@@ -218,12 +218,12 @@ export class TreeBuilderComponent extends Component {
           zoomOut: () => this.canvasRef.current.zoomOut(),
         },
         dirty: this.isDirty(treeBuilderState),
-        name: tree.name,
+        name: tree ? tree.name : null,
         saving,
         sidebarRef: this.sidebarRef,
         tasks,
         tree,
-        treeBuilder: (
+        treeBuilder: tree && (
           <Fragment>
             <SvgCanvas ref={this.canvasRef}>
               {tree.connectors

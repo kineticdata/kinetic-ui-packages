@@ -64,7 +64,7 @@ export const TreeBuilderState = Record({
   redoStack: List(),
   saving: false,
   tasks: OrderedMap(),
-  tree: Tree(),
+  tree: null,
   undoStack: List(),
 });
 
