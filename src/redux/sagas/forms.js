@@ -1,5 +1,5 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
-import { fetchForms } from '@kineticdata/react';
+import { fetchForms, updateProfile } from '@kineticdata/react';
 import { actions, types } from '../modules/forms';
 import * as constants from '../../constants';
 
@@ -67,6 +67,80 @@ export function* fetchFormsRequestSaga({ payload }) {
   // TODO add recording of search history
 }
 
+export function* fetchFavoriteFormsSaga({ payload }) {
+  try {
+    const kappSlug = yield select(state => state.app.kappSlug);
+    const { limit, pageToken } = yield select(state => state.forms);
+
+    let q = '';
+    payload.map(fs => {
+      q += `slug = "${fs}"`;
+      if (payload.indexOf(fs) !== payload.length - 1) {
+        q += ` OR `;
+      }
+      return q;
+    });
+
+    const { forms, nextPageToken, error } = yield call(fetchForms, {
+      kappSlug,
+      include: 'details,categorizations,attributes,kapp',
+      q,
+      limit,
+      pageToken,
+    });
+
+    if (error) {
+      yield put(actions.fetchFavoriteFormsFailure(error));
+    } else {
+      yield put(actions.fetchFavoriteFormsSuccess({ forms, nextPageToken }));
+    }
+  } catch (e) {
+    console.log('Error fetching favorite forms:', e);
+  }
+}
+
+export function* addFavoriteFormSaga({ payload }) {
+  try {
+    const me = yield select(state => state.app.profile);
+    const { profile, error } = yield call(updateProfile, {
+      profileAttributesMap: {
+        ...me.profileAttributesMap,
+        'Service Favorites': me.profileAttributesMap.concat(payload),
+      },
+    });
+
+    if (error) {
+      console.log(error);
+    } else {
+      yield console.log('Successfully added favorite form');
+    }
+  } catch (e) {
+    console.log('Error adding favorite form:', e);
+  }
+}
+
+export function* removeFavoriteFormSaga({ payload }) {
+  try {
+    const me = yield select(state => state.app.profile);
+    const { profile, error } = yield call(updateProfile, {
+      profileAttributesMap: {
+        ...me.profileAttributesMap,
+        'Service Favorites': me.profileAttributesMap[
+          'Service Favorites'
+        ].filter(sf => sf !== payload),
+      },
+    });
+
+    if (error) {
+      console.log(error);
+    } else {
+      yield console.log('Successfully removed favorite form');
+    }
+  } catch (e) {
+    console.log('Error removing favorite form:', e);
+  }
+}
+
 export function* watchForms() {
   yield takeEvery(
     [
@@ -76,4 +150,7 @@ export function* watchForms() {
     ],
     fetchFormsRequestSaga,
   );
+  yield takeEvery(types.FETCH_FAVORITE_FORMS_REQUEST, fetchFavoriteFormsSaga);
+  // yield takeEvery([types.ADD_FAVORITE_FORM], addFavoriteFormSaga);
+  // yield takeEvery([types.REMOVE_FAVORITE_FORM], removeFavoriteFormSaga);
 }

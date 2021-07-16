@@ -25,6 +25,7 @@ import { Category } from './components/category/Category';
 import { CatalogSearchResults } from './components/search_results/CatalogSearchResults';
 // import { Sidebar } from './components/Sidebar';
 // import { Sidebar as SettingsSidebar } from './components/settings/Sidebar';
+import { Favorites } from './components/favorites/Favorites';
 import { FormContainer } from './components/form/FormContainer';
 import { FormList } from './components/form_list/FormList';
 import { RequestList } from './components/request_list/RequestList';
@@ -100,6 +101,7 @@ const AppComponent = props => {
             <FormContainer path="forms/:formSlug/:submissionId" />
             <CatalogSearchResults path="search" />
             <CatalogSearchResults path="search/:query" />
+            <Favorites path="favorites" />
             <ActivityFeed.MountWrapper feedKey={requestFeedKey} path="requests">
               <RequestList feedKey={requestFeedKey} default />
               <RequestList feedKey={requestFeedKey} path=":type" />
