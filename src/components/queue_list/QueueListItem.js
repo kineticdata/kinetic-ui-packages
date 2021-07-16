@@ -1,6 +1,12 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { TimeAgo, addToast } from '@kineticdata/bundle-common';
+import {
+  Card,
+  CardCol,
+  CardRow,
+  TimeAgo,
+  addToast,
+} from '@kineticdata/bundle-common';
 import { StatusContent } from '../shared/StatusContent';
 import { I18n } from '@kineticdata/react';
 import classNames from 'classnames';
@@ -36,14 +42,15 @@ const Timestamp = ({ id, label, value, username }) =>
     </li>
   );
 
-const DueOrCloseDate = ({ queueItem }) => {
+const DueOrCloseDate = ({ queueItem, components = {} }) => {
+  const Component = components.Timestamp || Timestamp;
   if (queueItem.closedAt) {
     return (
-      <Timestamp label="Closed" value={queueItem.closedAt} id={queueItem.id} />
+      <Component label="Closed" value={queueItem.closedAt} id={queueItem.id} />
     );
   } else if (queueItem.values['Due Date']) {
     return (
-      <Timestamp
+      <Component
         label="Due"
         value={queueItem.values['Due Date']}
         id={queueItem.id}
@@ -141,5 +148,69 @@ export const QueueListItemSmall = ({
         </Link>
       )}
     </li>
+  );
+};
+
+const QueueCardTimestamp = ({ id, label, value, username }) =>
+  value && (
+    <div>
+      <dt>
+        <I18n>{label}</I18n>
+      </dt>
+      <dd>
+        <TimeAgo timestamp={value} id={`${id}-${label}`} />
+      </dd>
+    </div>
+  );
+
+export const QueueCard = props => {
+  const { submission, path, components = {} } = props;
+  const status = submission.values['Status'];
+  const color =
+    status === 'Open'
+      ? 'info'
+      : status === 'Pending'
+        ? 'warning'
+        : status === 'Complete'
+          ? 'danger'
+          : 'subtle';
+
+  return (
+    <Card to={path} components={{ Link, ...components }}>
+      <CardCol>
+        <CardRow type="multi">
+          <span className={`badge badge-pill badge-${color} badge-stylized`}>
+            <I18n>{status}</I18n>
+          </span>
+          <span>
+            <I18n>{submission.form.name}</I18n> ({submission.handle})
+          </span>
+          <AssignmentParagraph values={submission.values} />
+        </CardRow>
+        <CardRow type="title">
+          <I18n>{submission.label}</I18n>
+        </CardRow>
+        <CardRow type="meta">
+          <dl className="flat text-muted">
+            <DueOrCloseDate
+              queueItem={submission}
+              components={{ Timestamp: QueueCardTimestamp }}
+            />
+            <QueueCardTimestamp
+              label="Updated"
+              value={submission.updatedAt}
+              id={submission.id}
+              username={submission.updatedBy}
+            />
+            <QueueCardTimestamp
+              label="Created"
+              value={submission.createdAt}
+              id={submission.id}
+              username={submission.createdBy}
+            />
+          </dl>
+        </CardRow>
+      </CardCol>
+    </Card>
   );
 };
