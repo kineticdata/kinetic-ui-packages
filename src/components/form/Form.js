@@ -25,80 +25,74 @@ export const Form = ({
   <Fragment>
     <div className="page-container">
       <div className="page-panel">
-        <div className="page-panel__header">
-          <PageTitle
-            parts={[form ? form.name : '']}
-            breadcrumbs={[
-              { label: 'services', to: appLocation },
-              path.includes('request/') && {
-                label: 'requests',
-                to: `${appLocation}/requests`,
+        <PageTitle
+          parts={[form ? form.name : '']}
+          breadcrumbs={[
+            { label: 'services', to: appLocation },
+            path.includes('request/') && {
+              label: 'requests',
+              to: `${appLocation}/requests`,
+            },
+            path.includes('request/') &&
+              type && {
+                label: type,
+                to: `${appLocation}/requests/${type || ''}`,
               },
-              path.includes('request/') &&
-                type && {
-                  label: type,
-                  to: `${appLocation}/requests/${type || ''}`,
-                },
-              category && {
-                label: 'categories',
-                to: `${appLocation}/categories`,
-              },
-              ...(category ? category.getTrail() : []).map(
-                ancestorCategory => ({
-                  label: ancestorCategory.name,
-                  to: `${appLocation}/categories/${ancestorCategory.slug}`,
-                }),
-              ),
-            ].filter(Boolean)}
-            title={form ? form.name : ''}
-            actions={
-              authenticated && submissionId && form
-                ? [{ label: 'Cancel Request', onClick: handleDelete }]
-                : undefined
-            }
-          />
+            category && {
+              label: 'categories',
+              to: `${appLocation}/categories`,
+            },
+            ...(category ? category.getTrail() : []).map(ancestorCategory => ({
+              label: ancestorCategory.name,
+              to: `${appLocation}/categories/${ancestorCategory.slug}`,
+            })),
+          ].filter(Boolean)}
+          title={form ? form.name : ''}
+          actions={
+            authenticated && submissionId && form
+              ? [{ label: 'Cancel Request', onClick: handleDelete }]
+              : undefined
+          }
+        />
+        <div className="form-description text-muted">
+          {form && (
+            <p>
+              <I18n context={`kapps.${kappSlug}.forms.${form.slug}`}>
+                {form.description}
+              </I18n>
+            </p>
+          )}
         </div>
-        <div className="page-panel__body">
-          <div className="form-description text-muted">
-            {form && (
-              <p>
-                <I18n context={`kapps.${kappSlug}.forms.${form.slug}`}>
-                  {form.description}
-                </I18n>
-              </p>
-            )}
-          </div>
-          <div className="embedded-core-form--wrapper">
-            {submissionId ? (
-              <I18n submissionId={submissionId} public={!authenticated}>
-                <CoreForm
-                  submission={submissionId}
-                  loaded={handleLoaded}
-                  updated={handleUpdated}
-                  completed={handleCompleted}
-                  unauthorized={handleUnauthorized}
-                  public={!authenticated}
-                />
-              </I18n>
-            ) : (
-              <I18n
-                context={`kapps.${kappSlug}.forms.${formSlug}`}
+        <div className="embedded-core-form--wrapper">
+          {submissionId ? (
+            <I18n submissionId={submissionId} public={!authenticated}>
+              <CoreForm
+                submission={submissionId}
+                loaded={handleLoaded}
+                updated={handleUpdated}
+                completed={handleCompleted}
+                unauthorized={handleUnauthorized}
                 public={!authenticated}
-              >
-                <CoreForm
-                  kapp={kappSlug}
-                  form={formSlug}
-                  loaded={handleLoaded}
-                  created={handleCreated}
-                  updated={handleUpdated}
-                  completed={handleCompleted}
-                  unauthorized={handleUnauthorized}
-                  values={values}
-                  public={!authenticated}
-                />
-              </I18n>
-            )}
-          </div>
+              />
+            </I18n>
+          ) : (
+            <I18n
+              context={`kapps.${kappSlug}.forms.${formSlug}`}
+              public={!authenticated}
+            >
+              <CoreForm
+                kapp={kappSlug}
+                form={formSlug}
+                loaded={handleLoaded}
+                created={handleCreated}
+                updated={handleUpdated}
+                completed={handleCompleted}
+                unauthorized={handleUnauthorized}
+                values={values}
+                public={!authenticated}
+              />
+            </I18n>
+          )}
         </div>
       </div>
     </div>

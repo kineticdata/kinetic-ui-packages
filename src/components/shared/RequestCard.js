@@ -61,7 +61,7 @@ const ClosedDateListItem = ({ submission }) =>
   );
 
 export const RequestCard = get(services, 'RequestCard', props => {
-  const { submission, path } = props;
+  const { submission, path, components = {} } = props;
   const form = submission.form;
   const color = helpers.getStatusColor(submission);
   return (
@@ -70,7 +70,7 @@ export const RequestCard = get(services, 'RequestCard', props => {
       bar="left"
       barColor={color}
       barSize="xs"
-      components={{ Link }}
+      components={{ Link, ...components }}
     >
       <CardCol>
         <CardRow type="title">
@@ -78,16 +78,16 @@ export const RequestCard = get(services, 'RequestCard', props => {
             className={`fa fa-${(Form(form).icon || 'circle').replace(
               /^fa-/i,
               '',
-            )} fa-fw fa-rounded`}
+            )} fa-fw`}
           />
           <span>
             <I18n>{form.name}</I18n>
           </span>
-          <span className={`badge badge-pill badge-muted badge-${color}`}>
+          <span className={`badge badge-pill badge-${color} badge-stylized`}>
             <I18n>{helpers.getStatus(submission)}</I18n>
           </span>
         </CardRow>
-        <CardRow className="text-muted">
+        <CardRow>
           {submission.label === submission.id ? (
             <I18n>{form.description}</I18n>
           ) : (
@@ -95,7 +95,7 @@ export const RequestCard = get(services, 'RequestCard', props => {
           )}
         </CardRow>
         <CardRow type="meta">
-          <dl>
+          <dl className="flat text-muted">
             <div>
               <dt>
                 <I18n>Confirmation</I18n>
