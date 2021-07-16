@@ -11,6 +11,10 @@ import { connectedHistory, context, store } from './redux/store';
 import { syncAppState } from './redux/modules/app';
 import { App } from './App';
 
+import { QueueCard } from './components/queue_list/QueueListItem';
+
+export { QueueCard };
+
 export default class extends Component {
   constructor(props) {
     super(props);
