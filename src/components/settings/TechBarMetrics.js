@@ -438,7 +438,7 @@ export const TechBarMetrics = compose(
   withProps(({ schedulerId, metrics }) => {
     return {
       eventTypes:
-        schedulerId && metrics.size > 0
+        schedulerId && metrics && metrics.size > 0
           ? metrics.getIn([0, 'data', 'eventTypes']).map(event => event.type)
           : [],
     };
