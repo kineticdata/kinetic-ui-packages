@@ -76,21 +76,17 @@ module.exports = (
       proxyRequest.setHeader('origin', target);
     }
 
-    console.log(proxyRequest);
     if (
       process.env.REACT_APP_PROXY_SUBDOMAIN &&
       (!proxyRequest.path.endsWith('pack') ||
         !proxyRequest.path.endsWith('favicon.ico'))
     ) {
-      console.log('proxyRequest', proxyRequest.path);
       proxyRequest.setHeader(
         'X-Kinetic-Subdomain',
         process.env.REACT_APP_PROXY_SUBDOMAIN,
       );
-      console.log('before');
       proxyRequest.path =
         '/' + process.env.REACT_APP_PROXY_SUBDOMAIN + proxyRequest.path;
-      console.log(proxyRequest.path);
     }
 
     if (process.env.PROXY_DEBUGGING)
