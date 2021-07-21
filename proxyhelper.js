@@ -69,18 +69,35 @@ module.exports = (
   ws: true,
   xfwd: true,
   onProxyReq: (proxyRequest, originalRequest) => {
-    if (process.env.PROXY_DEBUGGING)
-      (proxyLogger || defaultProxyLogger)({
-        proxyRequest,
-        originalRequest,
-      });
-
     // Browsers may send Origin headers even with same-origin
     // requests. To prevent CORS issues, we have to change
     // the Origin to match the target URL.
     if (proxyRequest.getHeader('origin')) {
       proxyRequest.setHeader('origin', target);
     }
+
+    console.log(proxyRequest);
+    if (
+      process.env.REACT_APP_PROXY_SUBDOMAIN &&
+      (!proxyRequest.path.endsWith('pack') ||
+        !proxyRequest.path.endsWith('favicon.ico'))
+    ) {
+      console.log('proxyRequest', proxyRequest.path);
+      proxyRequest.setHeader(
+        'X-Kinetic-Subdomain',
+        process.env.REACT_APP_PROXY_SUBDOMAIN,
+      );
+      console.log('before');
+      proxyRequest.path =
+        '/' + process.env.REACT_APP_PROXY_SUBDOMAIN + proxyRequest.path;
+      console.log(proxyRequest.path);
+    }
+
+    if (process.env.PROXY_DEBUGGING)
+      (proxyLogger || defaultProxyLogger)({
+        proxyRequest,
+        originalRequest,
+      });
   },
   onProxyRes: (proxyResponse, originalRequest) => {
     if (process.env.PROXY_DEBUGGING)
