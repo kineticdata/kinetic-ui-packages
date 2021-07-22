@@ -1,11 +1,28 @@
 import React from 'react';
 import { connect } from '../../redux/store';
-import { compose, lifecycle, withHandlers } from 'recompose';
-import { ServiceCard } from '../shared/ServiceCard';
+import { compose, lifecycle, withHandlers, withProps } from 'recompose';
+// import { ServiceCard } from '../shared/ServiceCard';
+import { FavoriteCard } from './FavoritesCard';
 import { PageTitle } from '../shared/PageTitle';
-import { I18n } from '@kineticdata/react';
-import { ActivityFeed, EmptyMessage } from '@kineticdata/bundle-common';
-import { actions } from '../../redux/modules/forms';
+import { I18n, fetchForms } from '@kineticdata/react';
+import {
+  ActivityFeed,
+  mountActivityFeed,
+  EmptyMessage,
+} from '@kineticdata/bundle-common';
+
+const feedKey = 'favorites-feed';
+
+const buildQuery = formList => {
+  let q = '';
+  formList.map(fs => {
+    q += `slug = "${fs}"`;
+    if (formList.indexOf(fs) !== formList.length - 1) {
+      q += ` OR `;
+    }
+  });
+  return q;
+};
 
 const FavoritesComponent = props => {
   return (
@@ -21,18 +38,13 @@ const FavoritesComponent = props => {
           </div>
           <div className="page-panel__body">
             <div className="cards">
-              {!!props.favorites ? (
+              {props.favorites && props.favorites.length ? (
                 <ActivityFeed
+                  feedKey={feedKey}
                   pageSize={10}
                   joinByDirection="ASC"
                   joinBy="name"
-                  dataSources={{
-                    forms: {
-                      data: props.favorites.toJS(),
-                      component: props.buildFormCard,
-                      joinBy: 'name',
-                    },
-                  }}
+                  dataSources={props.dataSources}
                   showCount={true}
                 />
               ) : (
@@ -49,13 +61,10 @@ const FavoritesComponent = props => {
 const mapStateToProps = (state, props) => ({
   kappSlug: state.app.kapp.slug,
   appLocation: state.app.location,
-  profileAttributesMap: state.app.profile.profileAttributesMap,
-  favorites: state.forms.favorites,
+  favorites: state.app.profile.profileAttributesMap['Services Favorites'],
 });
 
-const mapDispatchToProps = {
-  fetchFavoriteForms: actions.fetchFavoriteFormsRequest,
-};
+const mapDispatchToProps = {};
 
 export const Favorites = compose(
   connect(
@@ -64,18 +73,40 @@ export const Favorites = compose(
   ),
   withHandlers({
     buildFormCard: props => record => (
-      <ServiceCard
+      <FavoriteCard
         key={record.slug}
         form={record}
         path={`${props.appLocation}/forms/${record.slug}`}
       />
     ),
   }),
+  withProps(props => ({
+    // The sources for the favorites data shown in the activity feed
+    dataSources: {
+      forms: {
+        fn: fetchForms,
+        params: (prevParams, prevResult) =>
+          prevParams && prevResult
+            ? prevResult.nextPageToken
+              ? { ...prevParams, pageToken: prevResult.nextPageToken }
+              : null
+            : {
+                kappSlug: props.kappSlug,
+                include: 'details,categorizations,attributes,kapp',
+                limit: props.chunkSize || 25,
+                q: buildQuery(props.favorites),
+              },
+        transform: result => ({
+          data: result.forms,
+          nextPageToken: result.nextPageToken,
+        }),
+        component: props.buildFormCard,
+      },
+    },
+  })),
   lifecycle({
     componentDidMount() {
-      this.props.fetchFavoriteForms(
-        this.props.profileAttributesMap['Services Favorites'],
-      );
+      mountActivityFeed(feedKey);
     },
   }),
 )(FavoritesComponent);

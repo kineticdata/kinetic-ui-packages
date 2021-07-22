@@ -10,11 +10,6 @@ export const types = {
   FETCH_FORMS_PREVIOUS: ns('FETCH_FORMS_PREVIOUS'),
   FETCH_FORMS_SUCCESS: ns('FETCH_FORMS_SUCCESS'),
   FETCH_FORMS_FAILURE: ns('FETCH_FORMS_FAILURE'),
-  FETCH_FAVORITE_FORMS_REQUEST: ns('FETCH_FAVORITE_FORMS_REQUEST'),
-  FETCH_FAVORITE_FORMS_NEXT: ns('FETCH_FAVORITE_FORMS_NEXT'),
-  FETCH_FAVORITE_FORMS_PREVIOUS: ns('FETCH_FAVORITE_FORMS_PREVIOUS'),
-  FETCH_FAVORITE_FORMS_SUCCESS: ns('FETCH_FAVORITE_FORMS_SUCCESS'),
-  FETCH_FAVORITE_FORMS_FAILURE: ns('FETCH_FAVORITE_FORMS_FAILURE'),
   ADD_FAVORITE_FORM: ns('ADD_FAVORITE_FORM'),
   REMOVE_FAVORITE_FORM: ns('REMOVE_FAVORITE_FORM'),
 };
@@ -25,11 +20,6 @@ export const actions = {
   fetchFormsPrevious: noPayload(types.FETCH_FORMS_PREVIOUS),
   fetchFormsSuccess: withPayload(types.FETCH_FORMS_SUCCESS),
   fetchFormsFailure: withPayload(types.FETCH_FORMS_FAILURE),
-  fetchFavoriteFormsRequest: withPayload(types.FETCH_FAVORITE_FORMS_REQUEST),
-  fetchFavoriteFormsNext: noPayload(types.FETCH_FAVORITE_FORMS_NEXT),
-  fetchFavoriteFormsPrevious: noPayload(types.FETCH_FAVORITE_FORMS_PREVIOUS),
-  fetchFavoriteFormsSuccess: withPayload(types.FETCH_FAVORITE_FORMS_SUCCESS),
-  fetchFavoriteFormsFailure: withPayload(types.FETCH_FAVORITE_FORMS_FAILURE),
   addFavoriteForm: withPayload(types.ADD_FAVORITE_FORM),
   removeFavoriteForm: withPayload(types.REMOVE_FAVORITE_FORM),
 };
@@ -42,7 +32,6 @@ export const State = Record({
   pageToken: null,
   nextPageToken: null,
   previousPageTokens: List(),
-  favorites: null,
 });
 
 const reducer = (state = State(), { type, payload = {} }) => {
@@ -74,33 +63,8 @@ const reducer = (state = State(), { type, payload = {} }) => {
         .set('paging', false);
     case types.FETCH_FORMS_FAILURE:
       return state.set('error', payload).set('paging', false);
-    case types.FETCH_FAVORITE_FORMS_REQUEST:
-      return state
-        .set('favorites', null)
-        .set('error', null)
-        .set('limit', (payload && payload.limit) || 10)
-        .set('pageToken', null)
-        .set('nextPageToken', null)
-        .set('previousPageTokens', List());
-    case types.FETCH_FAVORITE_FORMS_NEXT:
-      return state
-        .update('previousPageTokens', t => t.push(state.pageToken))
-        .set('pageToken', state.nextPageToken)
-        .set('nextPageToken', null)
-        .set('paging', true);
-    case types.FETCH_FAVORITE_FORMS_PREVIOUS:
-      return state
-        .set('nextPageToken', null)
-        .set('pageToken', state.previousPageTokens.last())
-        .update('previousPageTokens', t => t.pop())
-        .set('paging', true);
-    case types.FETCH_FAVORITE_FORMS_SUCCESS:
-      return state
-        .set('favorites', List(payload.forms).map(Form))
-        .set('nextPageToken', payload.nextPageToken)
-        .set('paging', false);
-    case types.FETCH_FAVORITE_FORMS_FAILURE:
-      return state.set('error', payload).set('paging', false);
+    case types.REMOVE_FAVORITE_FORM:
+      return state.set('limit', 14);
     default:
       return state;
   }
