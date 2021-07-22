@@ -8,7 +8,7 @@ import { Card, CardCol, CardRow, services } from '@kineticdata/bundle-common';
 import { Form } from '../../models';
 import { actions } from '../../redux/modules/forms';
 
-export const FavoriteCardComponent = get(services, 'ServiceCard', props => {
+export const FavoritesCardComponent = get(services, 'ServiceCard', props => {
   const { path, form, components = {} } = props;
   return (
     <Card
@@ -28,8 +28,11 @@ export const FavoriteCardComponent = get(services, 'ServiceCard', props => {
           />
           <span>
             <I18n>{form.name}</I18n>
-          </span>{' '}
-          <span className="fa fa-trash" onClick={props.handleRemoveFavorite} />
+          </span>
+          <span
+            onClick={props.handleRemoveFavorite}
+            className="toggle fa fa-fw fa-trash"
+          />
         </CardRow>
         <CardRow className="text-muted">
           <I18n
@@ -43,14 +46,17 @@ export const FavoriteCardComponent = get(services, 'ServiceCard', props => {
   );
 });
 
+const mapStateToProps = state => ({
+  favorites: state.app.profile.profileAttributesMap['Services Favorites'],
+});
+
 const mapDispatchToProps = {
   removeFavoriteForm: actions.removeFavoriteForm,
-  fetchFormsRequest: actions.fetchFormsRequest,
 };
 
-export const FavoriteCard = compose(
+export const FavoritesCard = compose(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps,
   ),
   withHandlers({
@@ -59,4 +65,4 @@ export const FavoriteCard = compose(
       props.removeFavoriteForm(props.form.slug);
     },
   }),
-)(FavoriteCardComponent);
+)(FavoritesCardComponent);
