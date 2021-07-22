@@ -69,6 +69,7 @@ export function* fetchFormsRequestSaga({ payload }) {
 
 export function* addFavoriteFormSaga({ payload }) {
   try {
+    const appActions = yield select(state => state.app.actions);
     const me = yield select(state => state.app.profile);
     const newFavorites = me.profileAttributesMap['Services Favorites'].concat(
       payload,
@@ -85,6 +86,7 @@ export function* addFavoriteFormSaga({ payload }) {
       console.log(error);
     } else {
       yield console.log('Successfully added favorite form');
+      yield put(appActions.refreshApp());
     }
   } catch (e) {
     console.log('Error adding favorite form:', e);
@@ -93,6 +95,7 @@ export function* addFavoriteFormSaga({ payload }) {
 
 export function* removeFavoriteFormSaga({ payload }) {
   try {
+    const appActions = yield select(state => state.app.actions);
     const me = yield select(state => state.app.profile);
     const newFavorites = me.profileAttributesMap['Services Favorites'].filter(
       sf => sf !== payload,
@@ -109,6 +112,7 @@ export function* removeFavoriteFormSaga({ payload }) {
       console.log(error);
     } else {
       yield console.log('Successfully removed favorite form');
+      yield put(appActions.refreshApp());
     }
   } catch (e) {
     console.log('Error removing favorite form:', e);
