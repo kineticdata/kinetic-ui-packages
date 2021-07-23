@@ -63,19 +63,27 @@
   margin: 0 0 0.75rem 0;
 }
 
-.survey-tabs {
-  .nav-tabs {
-    margin-bottom: 1.5rem;
-    .nav-link.active {
-      border-color: transparent;
-      border-bottom: 2px solid #ff991c;
-    }
-    .nav-link {
-      padding-top: 0;
-      &:hover {
+.survey-settings-nav {
+  &--tabs {
+    .nav-tabs {
+      margin-bottom: 1.5rem;
+      .nav-link.active {
         border-color: transparent;
         border-bottom: 2px solid $orange-kinops;
       }
+      .nav-link {
+        padding-top: 0;
+        &:hover {
+          border-color: transparent;
+          border-bottom: 2px solid $orange-kinops;
+        }
+      }
+    }
+  }
+  &--select {
+    margin-bottom: 1.5rem;
+    select {
+      font-weight: bold;
     }
   }
 }

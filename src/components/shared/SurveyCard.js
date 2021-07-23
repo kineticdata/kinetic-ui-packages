@@ -46,7 +46,7 @@ export const SurveyCard = props => {
     >
       <CardCol>
         <CardRow type="title">
-          <span className={`fa fa-circle fa-fw fa-rounded`} />
+          <span className={`fa fa-pencil-square fa-fw fa-rounded`} />
           <span>
             <I18n>{form.name}</I18n>
           </span>

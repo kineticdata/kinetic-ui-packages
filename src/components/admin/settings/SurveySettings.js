@@ -89,78 +89,109 @@ const SurveySettingsComponent = ({
   associatedTree,
   activeTab,
   toggleTab,
+  createTestSubmission,
+  layoutSize,
 }) => {
   const FormLayout = ({ fields, error, buttons, dirty, formOptions }) => (
     <Fragment>
-      <div className="survey-tabs">
-        <Nav tabs>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === '1' })}
-              onClick={() => {
-                toggleTab('1');
-              }}
+      <div className="survey-settings-nav--tabs">
+        {layoutSize === 'xlarge' ? (
+          <Nav tabs>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: activeTab === '1' })}
+                onClick={() => {
+                  toggleTab('1');
+                }}
+                disabled={dirty}
+              >
+                <I18n>General</I18n>
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: activeTab === '2' })}
+                onClick={() => {
+                  toggleTab('2');
+                }}
+                disabled={dirty}
+              >
+                <I18n>Workflow</I18n>
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: activeTab === '6' })}
+                onClick={() => {
+                  toggleTab('6');
+                }}
+                disabled={dirty}
+              >
+                <I18n>Notifications</I18n>
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: activeTab === '3' })}
+                onClick={() => {
+                  toggleTab('3');
+                }}
+                disabled={dirty}
+              >
+                <I18n>Triggers</I18n>
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: activeTab === '4' })}
+                onClick={() => {
+                  toggleTab('4');
+                }}
+                disabled={dirty}
+              >
+                <I18n>Delivery Rules</I18n>
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                className={classnames({ active: activeTab === '5' })}
+                onClick={() => {
+                  toggleTab('5');
+                }}
+                disabled={dirty}
+              >
+                <I18n>Security</I18n>
+              </NavLink>
+            </NavItem>
+          </Nav>
+        ) : (
+          <div className="survey-settings-nav--select">
+            <select
+              id="nav-select"
               disabled={dirty}
+              onChange={e => toggleTab(e.target.value)}
             >
-              <I18n>General Settings</I18n>
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === '2' })}
-              onClick={() => {
-                toggleTab('2');
-              }}
-              disabled={dirty}
-            >
-              <I18n>Workflow Process</I18n>
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === '6' })}
-              onClick={() => {
-                toggleTab('6');
-              }}
-              disabled={dirty}
-            >
-              <I18n>Notifications</I18n>
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === '3' })}
-              onClick={() => {
-                toggleTab('3');
-              }}
-              disabled={dirty}
-            >
-              <I18n>Triggers</I18n>
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === '4' })}
-              onClick={() => {
-                toggleTab('4');
-              }}
-              disabled={dirty}
-            >
-              <I18n>Delivery Rules</I18n>
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === '5' })}
-              onClick={() => {
-                toggleTab('5');
-              }}
-              disabled={dirty}
-            >
-              <I18n>Security</I18n>
-            </NavLink>
-          </NavItem>
-        </Nav>
+              <option value="1" selected={activeTab === '1'}>
+                General
+              </option>
+              <option value="2" selected={activeTab === '2'}>
+                Workflow
+              </option>
+              <option value="6" selected={activeTab === '6'}>
+                Notifications
+              </option>
+              <option value="3" selected={activeTab === '3'}>
+                Triggers
+              </option>
+              <option value="4" selected={activeTab === '4'}>
+                Delivery Rules
+              </option>
+              <option value="5" selected={activeTab === '5'}>
+                Security
+              </option>
+            </select>
+          </div>
+        )}
 
         <TabContent activeTab={activeTab}>
           {/* General Settings */}
@@ -342,17 +373,27 @@ const SurveySettingsComponent = ({
                   <I18n>Settings</I18n>
                 </h1>
               </div>
-              <a
-                href={`${bundle.spaceLocation()}/app/builder/#/${kappSlug}/forms/${
-                  origForm.slug
-                }/builder`}
-                className="btn btn-primary"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <I18n>Form Builder</I18n>{' '}
-                <i className="fa fa-fw fa-external-link" />
-              </a>
+              <div className="page-title__actions">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() =>
+                    createTestSubmission({ formSlug: origForm.slug })
+                  }
+                >
+                  <i className="fa fa-fw fa-flask" /> Test
+                </button>
+                <a
+                  href={`${bundle.spaceLocation()}/app/builder/#/${kappSlug}/forms/${
+                    origForm.slug
+                  }/builder`}
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i className="fa fa-fw fa-external-link" />{' '}
+                  <I18n>Form Builder</I18n>
+                </a>
+              </div>
             </div>
             {true ? ( //canManage
               <div className="datastore-settings">
@@ -798,6 +839,7 @@ export const mapStateToProps = (state, { slug }) => ({
   associatedTree: state.surveys.associatedTree,
   users: state.users.users,
   teams: state.users.teams,
+  layoutSize: state.app.layoutSize,
 });
 
 export const mapDispatchToProps = {
@@ -807,6 +849,7 @@ export const mapDispatchToProps = {
   fetchTeams: userActions.fetchTeams,
   fetchFormRequest: surveyActions.fetchFormRequest,
   clearSurveyState: surveyActions.clearSurveyState,
+  createTestSubmission: surveyActions.createTestSubmission,
 };
 
 export const SurveySettings = compose(
