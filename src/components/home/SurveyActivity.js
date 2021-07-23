@@ -35,6 +35,7 @@ const buildSearch = (coreState, username) => {
 const SurveyActivityComponent = props => (
   <ActivityFeed
     feedKey={props.feedKey}
+    uncontrolled
     pageSize={props.pageSize || 10}
     joinByDirection="DESC"
     joinBy="createdAt"

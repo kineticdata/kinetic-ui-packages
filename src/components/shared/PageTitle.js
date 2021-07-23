@@ -1,3 +1,5 @@
+import React from 'react';
+import { Link } from '@reach/router';
 import { connect } from '../../redux/store';
 import { compose, withProps } from 'recompose';
 import {
@@ -5,8 +7,7 @@ import {
   selectCurrentKapp,
 } from '@kineticdata/bundle-common';
 
-export const mapStateToProps = state => ({
-  space: state.app.space,
+const mapStateToProps = state => ({
   kapp: selectCurrentKapp(state),
 });
 
@@ -17,7 +18,6 @@ export const PageTitle = compose(
       [props.kapp && props.kapp.name, props.settings && 'Settings']
         .filter(Boolean)
         .join(' '),
-      props.space && props.space.name,
     ]),
   })),
-)(CommonPageTitle);
+)(props => <CommonPageTitle {...props} components={{ Link }} />);

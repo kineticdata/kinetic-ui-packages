@@ -33,7 +33,10 @@ import {
 
 const tableKey = 'survey-list';
 
-const ActionsCell = ({ deleteForm, toggleModal }) => ({ row, tableKey }) => (
+const ActionsCell = ({ deleteForm, toggleModal, createTestSubmission }) => ({
+  row,
+  tableKey,
+}) => (
   <td className="text-right" style={{ width: '1%' }}>
     <UncontrolledDropdown className="more-actions">
       <DropdownToggle tag="button" className="btn btn-sm btn-link">
@@ -44,6 +47,11 @@ const ActionsCell = ({ deleteForm, toggleModal }) => ({ row, tableKey }) => (
         <Link to={`${row.get('slug')}/submissions`} className="dropdown-item">
           View
         </Link>
+        <DropdownItem
+          onClick={() => createTestSubmission({ formSlug: row.get('slug') })}
+        >
+          Test
+        </DropdownItem>
         <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
           Settings
         </Link>
@@ -155,6 +163,7 @@ const SurveyAdminListComponent = ({
   modalOpen,
   toggleModal,
   deleteForm,
+  createTestSubmission,
   cloneFormRequest,
   fetchAppDataRequest,
   navigate,
@@ -184,6 +193,7 @@ const SurveyAdminListComponent = ({
               BodyCell: ActionsCell({
                 deleteForm,
                 toggleModal,
+                createTestSubmission,
               }),
             },
             className: 'text-right',
@@ -371,6 +381,7 @@ const mapDispatchToProps = {
   deleteFormRequest: actions.deleteFormRequest,
   cloneFormRequest: actions.cloneFormRequest,
   fetchAppDataRequest: appActions.fetchAppDataRequest,
+  createTestSubmission: actions.createTestSubmission,
 };
 
 export const SurveyAdminList = compose(

@@ -299,6 +299,40 @@ export function* fetchAllSubmissionsSaga(action) {
   }
 }
 
+export function* createTestSubmissionSaga({ payload: { formSlug } }) {
+  const kappSlug = yield select(state => state.app.kappSlug);
+  const me = yield select(state => state.app.profile);
+
+  // set due date one day from now
+  const dueDate = new Date(Date.now() + 3600 * 1000 * 24).toISOString();
+
+  const { submission, error } = yield call(createSubmission, {
+    completed: false,
+    kappSlug,
+    formSlug,
+    values: {
+      Status: 'Draft',
+      recipientEmail: me.email,
+      'Assigned Individual': me.username,
+      'Due Date': dueDate,
+    },
+    include: 'form',
+  });
+  if (error) {
+    yield addToastAlert({
+      title: 'Survey Test Failed',
+      message: error.message,
+    });
+  } else {
+    addToast({
+      message: `Draft submission created for ${me.username} in ${
+        submission.form.name
+      }`,
+    });
+    return submission;
+  }
+}
+
 export function* deleteFormSaga({ payload }) {
   const { form, error } = yield call(deleteForm, {
     kappSlug: payload.kappSlug,
@@ -370,6 +404,7 @@ export function* watchSurveys() {
   yield takeEvery(types.FETCH_SUBMISSION_REQUEST, fetchSubmissionSaga);
   yield takeEvery(types.FETCH_FORM_SUBMISSIONS, fetchFormSubmissionsSaga);
   yield takeEvery(types.FETCH_ALL_SUBMISSIONS, fetchAllSubmissionsSaga);
+  yield takeEvery(types.CREATE_TEST_SUBMISSION, createTestSubmissionSaga);
   yield takeEvery(types.CREATE_FORM_REQUEST, createFormSaga);
   yield takeEvery(types.FETCH_SURVEY_POLLERS, fetchSurveyPollersSaga);
   yield takeEvery(types.CALL_FORM_ACTION, callFormActionSaga);
