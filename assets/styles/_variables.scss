@@ -4,9 +4,3 @@
  * These variables are meant to be used only within the services package, and
  * are thus prefixed with 'services-'.
  ******************************************************************************/
-
-/** Hero **********************************************************************/
-$services-hero-bg: $hero-bg !default;
-$services-hero-color: color-yiq($services-hero-bg) !default;
-$services-hero-overlay: rgba($services-hero-bg, 0.9) !default;
-$services-hero-meta-color: rgba($services-hero-color, 0.75) !default;

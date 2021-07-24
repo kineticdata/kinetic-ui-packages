@@ -3,6 +3,8 @@ import { compose } from 'recompose';
 import { ViewDiscussionsModal, Discussion } from '@kineticdata/bundle-common';
 import { connect } from '../../redux/store';
 
+// TODO delete
+
 export const RequestDiscussionComponent = ({
   discussion,
   viewDiscussionModal,

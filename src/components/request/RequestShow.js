@@ -1,14 +1,18 @@
 import React from 'react';
 import { Link } from '@reach/router';
 import {
+  Aside,
+  Discussion,
+  DiscussionCard,
+  DiscussionsList,
+  DiscussionsPanel,
   TimeAgo,
   Utils,
   ErrorMessage,
   LoadingMessage,
 } from '@kineticdata/bundle-common';
-import { bundle } from '@kineticdata/react';
+import { bundle, createDiscussionList } from '@kineticdata/react';
 import { RequestShowConfirmationContainer } from './RequestShowConfirmation';
-import { RequestDiscussion } from './RequestDiscussion';
 import { RequestActivityList } from './RequestActivityList';
 import { SendMessageModal } from './SendMessageModal';
 import * as constants from '../../constants';
@@ -103,9 +107,8 @@ export const RequestShow = ({
   mode,
   discussion,
   sendMessageModalOpen,
-  viewDiscussionModal,
-  openDiscussion,
-  closeDiscussion,
+  viewDiscussion,
+  toggleDiscussion,
   disableStartDiscussion,
   startDiscussion,
   disableProvideFeedback,
@@ -115,6 +118,7 @@ export const RequestShow = ({
   disableHandleCancel,
   handleCancel,
   kappSlug,
+  me,
   appLocation,
   isSmallLayout,
 }) => (
@@ -124,9 +128,9 @@ export const RequestShow = ({
       <PageTitle
         parts={[submission && submission.label, 'Requests']}
         breadcrumbs={[
-          { label: 'services', to: appLocation },
+          { label: 'Home', to: '/' },
           {
-            label: 'requests',
+            label: 'My Requests',
             to: `${appLocation}/requests`,
           },
           listType && {
@@ -138,29 +142,26 @@ export const RequestShow = ({
         actions={
           !error &&
           submission && [
-            !disableProvideFeedback && {
-              label: 'Provide Feedback',
-              onClick: provideFeedback,
+            !disableHandleCancel && {
+              label: 'Cancel Request',
+              onClick: handleCancel,
+              menu: true,
             },
             !disableHandleClone && {
               label: 'Clone as Draft',
               onClick: handleClone,
+              menu: true,
             },
-            !disableHandleCancel && {
-              label: 'Cancel Request',
-              onClick: handleCancel,
+            !disableProvideFeedback && {
+              label: 'Provide Feedback',
+              onClick: provideFeedback,
+              menu: true,
             },
-            isSmallLayout &&
-              discussion && {
-                icon: 'comments-o',
-                aria: 'View Discussion',
-                onClick: openDiscussion,
-              },
             !discussion &&
               !disableStartDiscussion && {
-                icon: 'comment-o',
-                aria: 'Start Discussion',
+                label: 'Start Discussion',
                 onClick: startDiscussion,
+                menu: true,
               },
           ]
         }
@@ -176,6 +177,23 @@ export const RequestShow = ({
           ]
         }
       />
+
+      {submission &&
+        discussion && (
+          <DiscussionsPanel
+            withAside={true}
+            discussions={[discussion]}
+            overrideClassName="discussions-container mb-5"
+            me={me}
+            renderHeader={() => (
+              <div className="section__title section__title--sm mb-2">
+                <div className="title">Discussion</div>
+              </div>
+            )}
+            renderDiscussionHeader={false}
+          />
+        )}
+
       {error && (
         <ErrorMessage
           title="Failed to load submission"
@@ -196,7 +214,7 @@ export const RequestShow = ({
               </div>
             )}
 
-            <div className="submission-tabs">
+            <div className="submission-tabs p-0">
               <ul className="nav nav-tabs" role="tablist">
                 <li role="tab" className="nav-item">
                   <Link
@@ -241,13 +259,5 @@ export const RequestShow = ({
           </>
         )}
     </div>
-    {submission &&
-      discussion && (
-        <RequestDiscussion
-          discussion={discussion}
-          viewDiscussionModal={viewDiscussionModal}
-          closeDiscussion={closeDiscussion}
-        />
-      )}
   </div>
 );
