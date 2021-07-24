@@ -87,11 +87,13 @@ const AppComponent = props => {
               appLocation={props.appLocation}
             />
 
-            <Catalog
+            {/*<Catalog
               path="/"
               homePageMode={props.homePageMode}
               homePageItems={props.homePageItems}
-            />
+            />*/}
+            <Redirect from="/" to="categories" noThrow />
+
             <CategoryList path="categories" />
             <Category path="categories/:categorySlug" />
             <FormContainer path="categories/:categorySlug/:formSlug" />
@@ -99,8 +101,8 @@ const AppComponent = props => {
             <FormList path="forms" />
             <FormContainer path="forms/:formSlug" />
             <FormContainer path="forms/:formSlug/:submissionId" />
-            <CatalogSearchResults path="search" />
-            <CatalogSearchResults path="search/:query" />
+            {/*<CatalogSearchResults path="search" />
+            <CatalogSearchResults path="search/:query" />*/}
             <Favorites path="favorites" />
             <ActivityFeed.MountWrapper feedKey={requestFeedKey} path="requests">
               <RequestList feedKey={requestFeedKey} default />

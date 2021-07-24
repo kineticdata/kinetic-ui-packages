@@ -6,22 +6,24 @@ import { I18n } from '@kineticdata/react';
 import { PageTitle } from '../shared/PageTitle';
 import { EmptyMessage } from '@kineticdata/bundle-common';
 
-
-const CategoryComponent = ({ category }) => (
+const CategoryComponent = ({ category, appLocation }) => (
   <Fragment>
     <div className="page-container">
       <div className="page-panel">
         <PageTitle
           parts={[category.name, 'Categories']}
           breadcrumbs={[
-            { label: 'services', to: '../..' },
-            { label: 'categories', to: '..' },
+            { label: 'Home', to: '/' },
+            {
+              label: 'Service Catalog',
+              to: `${appLocation}/categories`,
+            },
             ...category
               .getTrail()
               .skipLast(1)
               .map(ancestorCategory => ({
                 label: ancestorCategory.name,
-                to: `../${ancestorCategory.slug}`,
+                to: `${appLocation}/categories/${ancestorCategory.slug}`,
               })),
           ]}
           title={category.name}
@@ -73,6 +75,7 @@ const CategoryComponent = ({ category }) => (
 
 const mapStateToProps = (state, props) => ({
   category: state.servicesApp.categoryGetter(props.categorySlug),
+  appLocation: state.app.location,
 });
 
 export const Category = connect(mapStateToProps)(CategoryComponent);

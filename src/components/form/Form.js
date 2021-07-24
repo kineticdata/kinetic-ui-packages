@@ -28,9 +28,9 @@ export const Form = ({
         <PageTitle
           parts={[form ? form.name : '']}
           breadcrumbs={[
-            { label: 'services', to: appLocation },
+            { label: 'Home', to: '/' },
             path.includes('request/') && {
-              label: 'requests',
+              label: 'My Requests',
               to: `${appLocation}/requests`,
             },
             path.includes('request/') &&
@@ -39,7 +39,7 @@ export const Form = ({
                 to: `${appLocation}/requests/${type || ''}`,
               },
             category && {
-              label: 'categories',
+              label: 'Service Catalog',
               to: `${appLocation}/categories`,
             },
             ...(category ? category.getTrail() : []).map(ancestorCategory => ({
