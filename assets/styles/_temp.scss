@@ -4,6 +4,14 @@
  *     -Move css into appropriate sass files when ready
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+.table-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin: 0;
+}
+
 .status-pill {
   color: $white;
   text-align: center;
@@ -45,6 +53,10 @@
   font-weight: 600;
   font-size: 0.875rem;
   line-height: 0.75rem;
+}
+
+.survey-settings-sidebar {
+  font-size: 0.8em;
 }
 
 .survey-settings-sidebar-link {
@@ -99,4 +111,10 @@
 
 .card-black-text {
   color: $black;
+}
+
+.form-top-buttons {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
 }

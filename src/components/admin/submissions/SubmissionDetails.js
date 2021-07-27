@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Link } from '@reach/router';
 import {
   compose,
   lifecycle,
@@ -8,12 +7,6 @@ import {
   withHandlers,
 } from 'recompose';
 import {
-  UncontrolledButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
-import {
   ErrorMessage,
   LoadingMessage,
   TimeAgo,
@@ -21,6 +14,7 @@ import {
   ViewDiscussionsModal,
   TableComponents,
   selectDiscussionsEnabled,
+  Aside,
 } from '@kineticdata/bundle-common';
 import { actions } from '../../../redux/modules/surveys';
 import { connect } from '../../../redux/store';
@@ -57,74 +51,49 @@ export const SubmissionDetailsContainer = ({
   closeDiscussions,
   profile,
   creationFields,
+  asideOpen,
+  toggleAsideOpen,
 }) =>
   form && (
-    <div className="page-container page-container--panels">
-      <PageTitle parts={[submission && submission.handle, form && form.name]} />
-      <div className="page-panel page-panel--three-fifths page-panel--white">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to="../../../../../">
-                <I18n>survey</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to="../../../../">
-                <I18n>admin</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to="../../">
-                <I18n>{form.name}</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <h1>{submission ? submission.label : 'New Submission'}</h1>
-          </div>
-          <div className="page-title__actions">
-            {form.status === 'Active' && (
-              <UncontrolledButtonDropdown>
-                <DropdownToggle caret className="btn btn-primary">
-                  Actions
-                </DropdownToggle>
-                <DropdownMenu>
-                  {formActions.map(el => (
-                    <DropdownItem
-                      key={el.slug}
-                      onClick={() =>
-                        callFormAction({
-                          formSlug: el.slug,
-                          surveySubmissionId: submission.id,
-                        })
-                      }
-                    >
-                      <I18n>{el.name}</I18n>
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </UncontrolledButtonDropdown>
-            )}
-            {/* {discussionsEnabled && (
-              <button
-                onClick={openDiscussions}
-                className="btn btn-primary "
-              >
-                <span
-                  className="fa fa-fw fa-comments"
-                  style={{ fontSize: '16px' }}
-                />
-                <I18n>View Discussions</I18n>
-              </button>
-            )} */}
-          </div>
-        </div>
+    <div className="page-container">
+      <div className="page-panel">
+        <PageTitle
+          parts={[submission && submission.handle, form && form.name]}
+          breadcrumbs={[
+            { label: 'survey', to: '../../../../../' },
+            {
+              label: 'admin',
+              to: `../../../../`,
+            },
+            {
+              label: `${form.name}`,
+              to: `../../`,
+            },
+          ]}
+          title={submission ? submission.label : 'New Submission'}
+          actions={
+            form.status === 'Active' &&
+            formActions
+              .map(el => ({
+                key: el.slug,
+                label: el.name,
+                onClick: () =>
+                  callFormAction({
+                    formSlug: el.slug,
+                    surveySubmissionId: submission.id,
+                  }),
+                menu: true,
+              }))
+              .concat({
+                label: `${
+                  asideOpen ? 'Close Discussions' : 'View Discussions'
+                }`,
+                onClick: () => toggleAsideOpen(!asideOpen),
+                menu: true,
+              })
+          }
+        />
+
         {submissionError ? (
           <ErrorMessage message={submissionError.message} />
         ) : !submission ? (
@@ -171,9 +140,9 @@ export const SubmissionDetailsContainer = ({
                 </dd>
               </dl>
             </div>
-            <h3 className="section__title">
+            <h4 className="table-title mb-2">
               <I18n>Submission Activity</I18n>
-            </h3>
+            </h4>
             <div className="section__content scroll-wrapper-h">
               {submission.activities.filter(
                 activity => activity.type !== 'Task',
@@ -229,9 +198,9 @@ export const SubmissionDetailsContainer = ({
                 <I18n>There is no submission activity</I18n>
               )}
             </div>
-            <h3 className="section__title">
+            <h4 className="table-title mb-2 mt-4">
               <I18n>Values</I18n>
-            </h3>
+            </h4>
             <div className="section__content scroll-wrapper-h">
               <table className="table table-sm table-striped table--settings">
                 <thead className="header">
@@ -260,14 +229,17 @@ export const SubmissionDetailsContainer = ({
         )}
       </div>
       {discussionsEnabled &&
-        submission && (
-          <DiscussionsPanel
-            creationFields={creationFields}
-            CreationForm={CreationForm}
-            itemType="Submission"
-            itemKey={submission.id}
-            me={profile}
-          />
+        submission &&
+        asideOpen && (
+          <Aside title="Discussion">
+            <DiscussionsPanel
+              creationFields={creationFields}
+              CreationForm={CreationForm}
+              itemType="Submission"
+              itemKey={submission.id}
+              me={profile}
+            />
+          </Aside>
         )}
       {viewDiscussionsModal &&
         isSmallLayout && (
@@ -317,6 +289,7 @@ export const SubmissionDetails = compose(
     },
   })),
   withState('viewDiscussionsModal', 'setViewDiscussionsModal', false),
+  withState('asideOpen', 'toggleAsideOpen', false),
   withHandlers({
     openDiscussions,
     closeDiscussions,

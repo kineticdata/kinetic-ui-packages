@@ -45,12 +45,12 @@ const ActionsCell = ({ deleteForm, toggleModal, createTestSubmission }) => ({
       </DropdownToggle>
       <DropdownMenu right positionFixed>
         <Link to={`${row.get('slug')}/submissions`} className="dropdown-item">
-          View
+          View Records
         </Link>
         <DropdownItem
           onClick={() => createTestSubmission({ formSlug: row.get('slug') })}
         >
-          Test
+          Create Draft
         </DropdownItem>
         <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
           Settings
@@ -243,41 +243,23 @@ const SurveyAdminListComponent = ({
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
           return (
             <div className="page-container">
-              <PageTitle parts={['Survey Admin']} />
-              <div className="page-panel page-panel--white">
-                <div className="page-title">
-                  <div
-                    role="navigation"
-                    aria-label="breadcrumbs"
-                    className="page-title__breadcrumbs"
-                  >
-                    <span className="breadcrumb-item">
-                      <Link to="../">
-                        <I18n>survey</I18n>
-                      </Link>
-                    </span>{' '}
-                    /
-                    <h1>
-                      <I18n>Survey Admin</I18n>
-                    </h1>
-                  </div>
-                  <div className="page-title__actions">
-                    <Link to="new">
-                      <I18n
-                        render={translate => (
-                          <button
-                            type="button"
-                            className="btn btn-secondary"
-                            title={translate('New Survey')}
-                          >
-                            <span className="fa fa-plus fa-fw" />{' '}
-                            {translate('New Survey')}
-                          </button>
-                        )}
-                      />
-                    </Link>
-                  </div>
-                </div>
+              <div className="page-panel">
+                <PageTitle
+                  parts={['Survey Admin']}
+                  breadcrumbs={[{ label: 'survey', to: '../' }]}
+                  title="Survey Admin"
+                  actions={[
+                    {
+                      label: (
+                        <span>
+                          <i className="fa fa-fw fa-plus" /> New Survey
+                        </span>
+                      ),
+                      onClick: () => navigate('new'),
+                      menu: false,
+                    },
+                  ]}
+                />
                 <div>
                   <div className="text-right mb-2">{filter}</div>
                   <TableComponents.FilterPills

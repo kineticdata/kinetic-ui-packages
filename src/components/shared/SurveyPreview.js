@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from '../../redux/store';
 import { actions } from '../../redux/modules/surveys';
 import { compose, withHandlers, withProps } from 'recompose';
@@ -10,7 +10,6 @@ import {
   LoadingMessage,
 } from '@kineticdata/bundle-common';
 import { handleCompleted } from './Survey';
-import { Link } from '@reach/router';
 import { PageTitle } from './PageTitle';
 import { parse } from 'query-string';
 
@@ -24,66 +23,40 @@ export const SurveyPreviewComponent = ({
   values,
   handleCompleted,
 }) => (
-  <Fragment>
-    <PageTitle parts={['Preview', form && form.name]} />
-    {!loading && form ? (
-      <div className="page-container page-container--color-bar">
-        <div className="page-panel">
-          <div className="page-title">
-            <div
-              role="navigation"
-              aria-label="breadcrumbs"
-              className="page-title__breadcrumbs"
-            >
-              <span className="breadcrumb-item">
-                <Link to="../../">
-                  <I18n>{kapp.name}</I18n>
-                </Link>{' '}
-                / <I18n>Preview</I18n> /{' '}
-              </span>
-              <h1>
-                <I18n
-                  context={`kapps.${kappSlug}.forms.${slug}`}
-                  public={!authenticated}
-                >
-                  {form.name}
-                </I18n>
-              </h1>
-            </div>
+  <div className="page-container page-container--color-bar">
+    <div className="page-panel">
+      <PageTitle
+        parts={['Preview', form && form.name]}
+        title={form && form.name}
+        breadcrumbs={[
+          { label: 'survey', to: '../../' },
+          { label: 'admin', to: '../../admin' },
+        ]}
+      />
+
+      {!loading && form ? (
+        <I18n
+          context={`kapps.${kappSlug}.forms.${slug}`}
+          public={!authenticated}
+        >
+          <div className="embedded-core-form--wrapper">
+            <CoreForm
+              kapp={kappSlug}
+              form={slug}
+              values={values}
+              completed={handleCompleted}
+              notFoundComponent={ErrorNotFound}
+              unauthorizedComponent={ErrorUnauthorized}
+              unexpectedErrorComponent={ErrorUnexpected}
+              public={!authenticated}
+            />
           </div>
-          <div className="form-description">
-            <p>
-              <I18n
-                context={`kapps.${kappSlug}.forms.${slug}`}
-                public={!authenticated}
-              >
-                {form.description}
-              </I18n>
-            </p>
-          </div>
-          <I18n
-            context={`kapps.${kappSlug}.forms.${slug}`}
-            public={!authenticated}
-          >
-            <div className="embedded-core-form--wrapper">
-              <CoreForm
-                kapp={kappSlug}
-                form={slug}
-                values={values}
-                completed={handleCompleted}
-                notFoundComponent={ErrorNotFound}
-                unauthorizedComponent={ErrorUnauthorized}
-                unexpectedErrorComponent={ErrorUnexpected}
-                public={!authenticated}
-              />
-            </div>
-          </I18n>
-        </div>
-      </div>
-    ) : (
-      <LoadingMessage />
-    )}
-  </Fragment>
+        </I18n>
+      ) : (
+        <LoadingMessage />
+      )}
+    </div>
+  </div>
 );
 
 const valuesFromQueryParams = queryParams => {
