@@ -323,12 +323,14 @@ export function* createTestSubmissionSaga({ payload: { formSlug } }) {
       title: 'Survey Test Failed',
       message: error.message,
     });
+    yield put(actions.testSubmissionComplete(error));
   } else {
     addToast({
       message: `Draft submission created for ${me.username} in ${
         submission.form.name
       }`,
     });
+    yield put(actions.testSubmissionComplete(submission));
     return submission;
   }
 }

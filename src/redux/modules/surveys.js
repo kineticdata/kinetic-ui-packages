@@ -136,6 +136,7 @@ export const types = {
   FETCH_SUBMISSION_SUCCESS: ns('FETCH_SUBMISSION_SUCCESS'),
   FETCH_SUBMISSION_FAILURE: ns('FETCH_SUBMISSION_FAILURE'),
   CREATE_TEST_SUBMISSION: ns('CREATE_TEST_SUBMISSION'),
+  TEST_SUBMISSION_COMPLETE: ns('TEST_SUBMISSION_COMPLETE'),
   DELETE_FORM_REQUEST: ns('DELETE_FORM_REQUEST'),
   DELETE_FORM_COMPLETE: ns('DELETE_FORM_COMPLETE'),
   CLONE_FORM_REQUEST: ns('CLONE_FORM_REQUEST'),
@@ -167,6 +168,7 @@ export const actions = {
   fetchSubmissionSuccess: withPayload(types.FETCH_SUBMISSION_SUCCESS),
   fetchSubmissionFailure: withPayload(types.FETCH_SUBMISSION_FAILURE),
   createTestSubmission: withPayload(types.CREATE_TEST_SUBMISSION),
+  testSubmissionComplete: withPayload(types.TEST_SUBMISSION_COMPLETE),
   deleteFormRequest: withPayload(types.DELETE_FORM_REQUEST),
   deleteFormComplete: withPayload(types.DELETE_FORM_COMPLETE),
   cloneFormRequest: withPayload(types.CLONE_FORM_REQUEST),
@@ -219,6 +221,7 @@ export const State = Record({
   submissionError: null,
   associatedTree: [],
   surveyPollers: null,
+  creatingTest: false,
 });
 
 export const reducer = (state = State(), { type, payload }) => {
@@ -281,6 +284,10 @@ export const reducer = (state = State(), { type, payload }) => {
       return state.set('submission', payload);
     case types.FETCH_SUBMISSION_FAILURE:
       return state.set('submissionError', payload);
+    case types.CREATE_TEST_SUBMISSION:
+      return state.set('creatingTest', true);
+    case types.TEST_SUBMISSION_COMPLETE:
+      return state.set('creatingTest', false);
     case types.DELETE_FORM_REQUEST:
       return state.setIn(['processing', payload.formSlug], true);
     case types.DELETE_FORM_COMPLETE:
