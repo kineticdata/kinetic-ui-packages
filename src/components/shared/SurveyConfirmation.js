@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from '../../redux/store';
 import { actions } from '../../redux/modules/surveys';
 import { compose, withProps } from 'recompose';
@@ -20,10 +20,10 @@ const SurveyConfirmationComponent = props => {
       : null;
 
   return (
-    <Fragment>
-      <PageTitle parts={['Survey Confirmation']} />
-      <div className="page-container page-container--color-bar">
-        <div className="page-panel text-center">
+    <div className="page-container page-container--color-bar">
+      <div className="page-panel">
+        <PageTitle parts={['Survey Confirmation']} title="Submitted" />
+        <div className="text-center">
           <I18n
             context={`kapps.${props.kappSlug}.forms.${props.slug}`}
             public={!props.authenticated}
@@ -38,7 +38,7 @@ const SurveyConfirmationComponent = props => {
           </I18n>
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 };
 

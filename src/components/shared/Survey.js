@@ -23,13 +23,16 @@ export const SurveyComponent = ({
   optOutFormSlug,
   handleCompleted,
 }) => (
-  <Fragment>
-    <PageTitle parts={[submission && submission.form.name]} />
-    {loading ? (
-      <LoadingMessage />
-    ) : (
-      <div className="page-container page-container--color-bar">
-        <div className="page-panel">
+  <div className="page-container page-container--color-bar">
+    <div className="page-panel">
+      <PageTitle
+        parts={[submission && submission.form.name]}
+        title={submission ? submission.form.name : 'New Submission'}
+      />
+      {loading ? (
+        <LoadingMessage />
+      ) : (
+        <Fragment>
           <I18n
             context={`kapps.${kappSlug}.forms.${slug}`}
             public={!authenticated}
@@ -65,10 +68,10 @@ export const SurveyComponent = ({
               )}
             </div>
           </I18n>
-        </div>
-      </div>
-    )}
-  </Fragment>
+        </Fragment>
+      )}
+    </div>
+  </div>
 );
 
 const valuesFromQueryParams = queryParams => {

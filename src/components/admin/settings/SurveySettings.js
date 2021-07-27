@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Link } from '@reach/router';
 import { connect } from '../../../redux/store';
 import {
   lifecycle,
@@ -15,6 +14,7 @@ import {
   FormComponents,
   LoadingMessage,
   addToast,
+  Aside,
 } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
 import { bundle, I18n, FormForm } from '@kineticdata/react';
@@ -91,6 +91,8 @@ const SurveySettingsComponent = ({
   toggleTab,
   createTestSubmission,
   layoutSize,
+  asideOpen,
+  toggleAsideOpen,
 }) => {
   const FormLayout = ({ fields, error, buttons, dirty, formOptions }) => (
     <Fragment>
@@ -196,6 +198,16 @@ const SurveySettingsComponent = ({
         <TabContent activeTab={activeTab}>
           {/* General Settings */}
           <TabPane tabId="1">
+            <div className="form-top-buttons">
+              <button
+                className="btn btn-outline-dark"
+                onClick={() => toggleAsideOpen(!asideOpen)}
+              >
+                <span>
+                  <i className="fa fa-fw fa-info-circle" />
+                </span>
+              </button>
+            </div>
             <div className="survey-settings survey-settings--general active">
               <div className="form-group__columns">
                 {fields.get('name')}
@@ -214,6 +226,16 @@ const SurveySettingsComponent = ({
 
           {/* Workflow Process */}
           <TabPane tabId="2">
+            <div className="form-top-buttons">
+              <button
+                className="btn btn-outline-dark"
+                onClick={() => toggleAsideOpen(!asideOpen)}
+              >
+                <span>
+                  <i className="fa fa-fw fa-info-circle" />
+                </span>
+              </button>
+            </div>
             <div className="survey-settings survey-settings--workflow">
               <div className="workflow-group">
                 {fields.get('workflowProcess')}
@@ -232,6 +254,16 @@ const SurveySettingsComponent = ({
 
           {/* Notifications */}
           <TabPane tabId="6">
+            <div className="form-top-buttons">
+              <button
+                className="btn btn-outline-dark"
+                onClick={() => toggleAsideOpen(!asideOpen)}
+              >
+                <span>
+                  <i className="fa fa-fw fa-info-circle" />
+                </span>
+              </button>
+            </div>
             <div className="survey-settings survey-settings--workflow">
               {fields.get('invitationTemplate')}
               {fields.get('reminderTemplate')}
@@ -244,6 +276,16 @@ const SurveySettingsComponent = ({
 
           {/* Triggers */}
           <TabPane tabId="3">
+            <div className="form-top-buttons">
+              <button
+                className="btn btn-outline-dark"
+                onClick={() => toggleAsideOpen(!asideOpen)}
+              >
+                <span>
+                  <i className="fa fa-fw fa-info-circle" />
+                </span>
+              </button>
+            </div>
             <div className="survey-settings survey-settings--polling">
               {fields.get('polling')}
               {fields.get('pollingSource')}
@@ -270,6 +312,16 @@ const SurveySettingsComponent = ({
 
           {/* Delivery Rules */}
           <TabPane tabId="4">
+            <div className="form-top-buttons">
+              <button
+                className="btn btn-outline-dark"
+                onClick={() => toggleAsideOpen(!asideOpen)}
+              >
+                <span>
+                  <i className="fa fa-fw fa-info-circle" />
+                </span>
+              </button>
+            </div>
             <div className="survey-settings survey-settings--delivery">
               {fields.get('expiration')}
               {fields.get('allowOptOut')}
@@ -295,6 +347,16 @@ const SurveySettingsComponent = ({
 
           {/* Security Rules */}
           <TabPane tabId="5">
+            <div className="form-top-buttons">
+              <button
+                className="btn btn-outline-dark"
+                onClick={() => toggleAsideOpen(!asideOpen)}
+              >
+                <span>
+                  <i className="fa fa-fw fa-info-circle" />
+                </span>
+              </button>
+            </div>
             <div className="survey-settings survey-settings--security">
               <div className="form-group__columns">
                 {fields.get('owningTeam')}
@@ -342,59 +404,51 @@ const SurveySettingsComponent = ({
     !loading &&
     origForm && (
       <I18n context={`forms.${origForm.slug}`}>
-        <div className="page-container page-container--panels">
-          <PageTitle parts={['Settings', origForm.name]} />
-          <div className="page-panel page-panel--two-thirds page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="../../../">
-                    <I18n>survey</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../../">
-                    <I18n>admin</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../submissions">
-                    <I18n>{origForm.name}</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <h1>
-                  <I18n>Settings</I18n>
-                </h1>
-              </div>
-              <div className="page-title__actions">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() =>
-                    createTestSubmission({ formSlug: origForm.slug })
-                  }
-                >
-                  <i className="fa fa-fw fa-flask" /> Test
-                </button>
-                <a
-                  href={`${bundle.spaceLocation()}/app/builder/#/${kappSlug}/forms/${
-                    origForm.slug
-                  }/builder`}
-                  className="btn btn-primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fa fa-fw fa-external-link" />{' '}
-                  <I18n>Form Builder</I18n>
-                </a>
-              </div>
-            </div>
+        <div className="page-container">
+          <div className="page-panel">
+            <PageTitle
+              parts={['Settings', origForm.name]}
+              breadcrumbs={[
+                { label: 'survey', to: '../../../' },
+                {
+                  label: 'admin',
+                  to: `../../`,
+                },
+                {
+                  label: `${origForm.name}`,
+                  to: `../submissions`,
+                },
+              ]}
+              title="Settings"
+              actions={[
+                {
+                  label: `${asideOpen ? 'Close Help' : 'Help'}`,
+                  onClick: () => toggleAsideOpen(!asideOpen),
+                  menu: true,
+                },
+                {
+                  label: 'Create Draft',
+                  onClick: () =>
+                    createTestSubmission({ formSlug: origForm.slug }),
+                  menu: true,
+                },
+                {
+                  label: (
+                    <span>
+                      <i className="fa fa-fw fa-external-link" /> Form Builder
+                    </span>
+                  ),
+                  onClick: () =>
+                    window.open(
+                      `${bundle.spaceLocation()}/app/builder/#/${kappSlug}/forms/${
+                        origForm.slug
+                      }/builder`,
+                      '_blank',
+                    ),
+                  menu: false,
+                },
+              ]}
+            />
             {true ? ( //canManage
               <div className="datastore-settings">
                 <FormForm
@@ -801,25 +855,29 @@ const SurveySettingsComponent = ({
                 <I18n>You do not have access to configure this survey.</I18n>
               </p>
             )}
-          </div>
-          <div className="page-panel page-panel--one-thirds page-panel--transparent page-panel--sidebar py-4">
-            <h3>
-              <I18n>Survey Settings</I18n>
-            </h3>
-            <p>
-              <I18n>
-                To update the survey form fields, click the Form Builder button,
-                which will open the form builder in a new window. You will need
-                to reload this page after making changes in the form builder.
-              </I18n>
-            </p>
-            <p>
-              <I18n>
-                <b>Note:</b> Updating a field will temporarily disable
-                navigating between tabs. Reset or save your changes to continue.
-              </I18n>
-            </p>
-            <SettingsSidebar tab={activeTab} />
+            {asideOpen && (
+              <Aside
+                title={<I18n>Survey Settings</I18n>}
+                className="aside--collapsed survey-settings-sidebar"
+              >
+                <p>
+                  <I18n>
+                    To update the survey form fields, click the Form Builder
+                    button, which will open the form builder in a new window.
+                    You will need to reload this page after making changes in
+                    the form builder.
+                  </I18n>
+                </p>
+                <p>
+                  <I18n>
+                    <b>Note:</b> Updating a field will temporarily disable
+                    navigating between tabs. Reset or save your changes to
+                    continue.
+                  </I18n>
+                </p>
+                <SettingsSidebar tab={activeTab} />
+              </Aside>
+            )}
           </div>
         </div>
       </I18n>
@@ -858,6 +916,7 @@ export const SurveySettings = compose(
     mapDispatchToProps,
   ),
   withState('activeTab', 'setActiveTab', '1'),
+  withState('asideOpen', 'toggleAsideOpen', false),
   withProps(props => ({
     surveyConfig:
       props.origForm &&

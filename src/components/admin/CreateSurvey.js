@@ -8,6 +8,7 @@ import { actions } from '../../redux/modules/surveys';
 import { actions as appActions } from '../../redux/modules/surveyApp';
 import { PageTitle } from '../shared/PageTitle';
 import { I18n } from '@kineticdata/react';
+import { Aside } from '@kineticdata/bundle-common';
 
 const CreateSurveyComponent = ({
   setNewForm,
@@ -18,37 +19,31 @@ const CreateSurveyComponent = ({
   handleSave,
   handleNameChange,
   templates,
+  asideOpen,
+  toggleAsideOpen,
 }) => (
   <div className="page-container page-container--panels">
-    <PageTitle parts={['New Survey']} />
-    <div className="page-panel page-panel--two-thirds page-panel--white">
-      <div className="page-title">
-        <div
-          role="navigation"
-          aria-label="breadcrumbs"
-          className="page-title__breadcrumbs"
-        >
-          <span className="breadcrumb-item">
-            <Link to="../../">
-              <I18n>survey</I18n>
-            </Link>
-          </span>{' '}
-          <span aria-hidden="true">/ </span>
-          <span className="breadcrumb-item">
-            <Link to="../">
-              <I18n>admin</I18n>
-            </Link>
-          </span>{' '}
-          <span aria-hidden="true">/ </span>
-          <h1>
-            <I18n>New Survey</I18n>
-          </h1>
-        </div>
-      </div>
+    <div className="page-panel">
+      <PageTitle
+        parts={['New Survey']}
+        breadcrumbs={[
+          { label: 'survey', to: '../../' },
+          { label: 'admin', to: '../' },
+        ]}
+        title="New Survey"
+        actions={[
+          {
+            label: (
+              <span>
+                <i className="fa fa-fw fa-info-circle" /> Help
+              </span>
+            ),
+            onClick: () => toggleAsideOpen(!asideOpen),
+            menu: false,
+          },
+        ]}
+      />
       <div className="datastore-settings">
-        <h3 className="section__title">
-          <I18n>General Settings</I18n>
-        </h3>
         <div className="settings form">
           <div className="form-group">
             <label htmlFor="template">
@@ -148,17 +143,45 @@ const CreateSurveyComponent = ({
         </div>
       </div>
     </div>
-    <div className="page-panel page-panel--one-thirds page-panel--transparent page-panel--sidebar py-4">
-      <h3>
-        <I18n>New Survey</I18n>
-      </h3>
-      <p>
-        <I18n>
-          Creating a new Survey will create a Kapp form with the same survey
-          configuration as the selected template.
-        </I18n>
-      </p>
-    </div>
+    {asideOpen && (
+      <Aside
+        title={<I18n>New Survey</I18n>}
+        className="aside--collapsed survey-settings-sidebar"
+      >
+        <p>
+          <I18n>
+            Creating a new Survey will create a Kapp form with the same survey
+            configuration as the selected template.
+          </I18n>
+        </p>
+        <p>
+          <I18n>
+            Once the new survey is created, you will be able to access and edit
+            its advanced settings, including workflow process, notifications,
+            triggers, delivery rules, and security.
+          </I18n>
+        </p>
+        <p>
+          <I18n>
+            <b>Survey Name</b> will be visible to the owning team and individual
+            (see Permissions tab), but not the individuals who take the survey.
+          </I18n>
+        </p>
+        <p>
+          <I18n>
+            <b>Survey Slug</b> will be visible in the URL to the individuals who
+            take the survey. While this defaults to a url friendly copy of the
+            Survey Name, they do not have to match.
+          </I18n>
+        </p>
+        <p>
+          <I18n>
+            <b>Description</b> is for the owning team and individual. The
+            individuals taking the survey do not see this value.
+          </I18n>
+        </p>
+      </Aside>
+    )}
   </div>
 );
 
@@ -219,6 +242,7 @@ export const CreateSurvey = compose(
   ),
   withState('newForm', 'setNewForm', Survey()),
   withState('creating', 'setCreating', false),
+  withState('asideOpen', 'toggleAsideOpen', false),
   withHandlers({
     handleSave,
     handleNameChange,

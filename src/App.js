@@ -39,7 +39,8 @@ const AppComponent = props => {
             <PageTitle parts={['Loading...']} />
             <Router>
               {/* home */}
-              <MySurveys path="/" />
+              <Redirect from="/" to="my-surveys" noThrow />
+              <MySurveys path="my-surveys" />
               {/* admin */}
               <SurveyAdminList path="admin" />
               <CreateSurvey path="admin/new" />

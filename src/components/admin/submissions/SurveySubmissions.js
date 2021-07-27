@@ -86,6 +86,7 @@ export const SurveySubmissionsComponent = ({
   toggleDropdown,
   filterOpen,
   setFilterOpen,
+  navigate,
 }) => {
   const FilterFormLayout = TableComponents.generateFilterFormLayout({
     isOpen: filterOpen,
@@ -172,44 +173,38 @@ export const SurveySubmissionsComponent = ({
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
           return (
             <div className="page-container">
-              <PageTitle parts={[form.name]} />
-              <div className="page-panel page-panel--white">
-                <div className="page-title">
-                  <div
-                    role="navigation"
-                    aria-label="breadcrumbs"
-                    className="page-title__breadcrumbs"
-                  >
-                    <span className="breadcrumb-item">
-                      <Link to="../../../">
-                        <I18n>survey</I18n>
-                      </Link>
-                    </span>
-                    <span className="breadcrumb-item">
-                      <Link to="../../">
-                        <I18n>admin</I18n>
-                      </Link>{' '}
-                      /
-                    </span>
-                    <h1>
-                      <I18n>{form.name}</I18n>
-                    </h1>
-                  </div>
-                  <div className="page-title__actions">
-                    <button
-                      onClick={() => openModal('export')}
-                      value="export"
-                      className="btn btn-secondary pull-left"
-                    >
-                      <span className="fa fa-fw fa-download" />
-                      <I18n> Export Records</I18n>
-                    </button>
-                    <Link to="../settings" className="btn btn-primary">
-                      <span className="fa fa-fw fa-cog" />
-                      <I18n> Survey Settings</I18n>
-                    </Link>
-                  </div>
-                </div>
+              <div className="page-panel">
+                <PageTitle
+                  parts={[form.name]}
+                  breadcrumbs={[
+                    { label: 'survey', to: '../../../' },
+                    {
+                      label: 'admin',
+                      to: `../../`,
+                    },
+                  ]}
+                  title={form.name}
+                  actions={[
+                    {
+                      label: (
+                        <span>
+                          <i className="fa fa-fw fa-download" /> Export Records
+                        </span>
+                      ),
+                      onClick: () => openModal('export'),
+                      menu: false,
+                    },
+                    {
+                      label: (
+                        <span>
+                          <i className="fa fa-fw fa-cog" /> Survey Settings
+                        </span>
+                      ),
+                      onClick: () => navigate('../settings'),
+                      menu: false,
+                    },
+                  ]}
+                />
                 <div>
                   <div className="data-list data-list--fourths">
                     <dl>
@@ -247,10 +242,10 @@ export const SurveySubmissionsComponent = ({
                       </dd>
                     </dl>
                   </div>
-                  <h3 className="section__title pr-0 mb-2">
+                  <h4 className="table-title mb-2">
                     <I18n>Submissions</I18n>
                     {filter}
-                  </h3>
+                  </h4>
                   <div className="section__content">
                     <TableComponents.FilterPills
                       filterFormKey={filterFormKey}
