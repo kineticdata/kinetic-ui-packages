@@ -186,22 +186,14 @@ export const SurveySubmissionsComponent = ({
                   title={form.name}
                   actions={[
                     {
-                      label: (
-                        <span>
-                          <i className="fa fa-fw fa-download" /> Export Records
-                        </span>
-                      ),
+                      label: 'Export Records',
                       onClick: () => openModal('export'),
-                      menu: false,
+                      menu: true,
                     },
                     {
-                      label: (
-                        <span>
-                          <i className="fa fa-fw fa-cog" /> Survey Settings
-                        </span>
-                      ),
+                      label: 'Survey Settings',
                       onClick: () => navigate('../settings'),
-                      menu: false,
+                      menu: true,
                     },
                   ]}
                 />

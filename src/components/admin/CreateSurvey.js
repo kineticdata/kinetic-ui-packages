@@ -33,11 +33,7 @@ const CreateSurveyComponent = ({
         title="New Survey"
         actions={[
           {
-            label: (
-              <span>
-                <i className="fa fa-fw fa-info-circle" /> Help
-              </span>
-            ),
+            label: 'Help',
             onClick: () => toggleAsideOpen(!asideOpen),
             menu: false,
           },

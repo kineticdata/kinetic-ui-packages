@@ -250,11 +250,7 @@ const SurveyAdminListComponent = ({
                   title="Survey Admin"
                   actions={[
                     {
-                      label: (
-                        <span>
-                          <i className="fa fa-fw fa-plus" /> New Survey
-                        </span>
-                      ),
+                      label: 'New Survey',
                       onClick: () => navigate('new'),
                       menu: false,
                     },
