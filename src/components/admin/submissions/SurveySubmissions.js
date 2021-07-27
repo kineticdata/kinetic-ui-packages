@@ -7,6 +7,7 @@ import {
   I18n,
   SubmissionTable,
   mountTable,
+  refetchTable,
   unmountTable,
 } from '@kineticdata/react';
 import {
@@ -87,6 +88,7 @@ export const SurveySubmissionsComponent = ({
   filterOpen,
   setFilterOpen,
   navigate,
+  createTestSubmission,
 }) => {
   const FilterFormLayout = TableComponents.generateFilterFormLayout({
     isOpen: filterOpen,
@@ -191,6 +193,12 @@ export const SurveySubmissionsComponent = ({
                       menu: true,
                     },
                     {
+                      label: 'Create Draft',
+                      onClick: () =>
+                        createTestSubmission({ formSlug: form.slug }),
+                      menu: true,
+                    },
+                    {
                       label: 'Survey Settings',
                       onClick: () => navigate('../settings'),
                       menu: true,
@@ -262,12 +270,14 @@ const mapStateToProps = state => ({
   form: state.surveys.form,
   error: state.surveys.error,
   formActions: state.surveyApp.formActions,
+  loading: state.surveys.creatingTest,
 });
 
 const mapDispatchToProps = {
   fetchFormRequest: actions.fetchFormRequest,
   callFormAction: actions.callFormAction,
   openModal: actions.openModal,
+  createTestSubmission: actions.createTestSubmission,
 };
 
 const toggleDropdown = ({
@@ -293,6 +303,11 @@ export const SurveySubmissions = compose(
         formSlug: this.props.slug,
       });
       mountTable(tableKey);
+    },
+    componentDidUpdate(prevProps) {
+      if (this.props.loading !== prevProps.loading) {
+        refetchTable(tableKey);
+      }
     },
     componentWillUnmount() {
       unmountTable(tableKey);
