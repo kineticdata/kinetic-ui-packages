@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from '../../../redux/store';
 import { compose, withHandlers } from 'recompose';
 import {
@@ -8,61 +8,40 @@ import {
   selectHasRoleSchedulerAdmin,
 } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
-import { Link } from '@reach/router';
 import { CoreForm } from '@kineticdata/react';
 import { actions } from '../../../redux/modules/techBarApp';
 import { TECH_BAR_SETTINGS_FORM_SLUG } from '../../../constants';
 import { I18n } from '@kineticdata/react';
 
 export const TechBarSettingsFormComponent = ({
+  kapp,
   techBar,
   handleSaved,
   hasManagerAccess,
 }) => {
-  return techBar ? (
-    hasManagerAccess ? (
-      <Fragment>
-        <PageTitle parts={['Settings', techBar.values['Name']]} settings />
-        <div className="page-container">
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="../../../../">
-                    <I18n>tech bar</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../../../">
-                    <I18n>settings</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../../">
-                    <I18n>tech bars</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../">
-                    <I18n>{techBar.values['Name']}</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <h1>
-                  <I18n>Edit Settings</I18n>
-                </h1>
-              </div>
-              <Link to={`../`} className="btn btn-secondary">
-                <I18n>Cancel Edit</I18n>
-              </Link>
-            </div>
+  return (
+    <div className="page-container">
+      <div className="page-panel">
+        <PageTitle
+          parts={[techBar && `${techBar.values['Name']} Settings`]}
+          settings
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: `${kapp.name} Settings`, to: '../../..' },
+            { label: 'Tech Bars', to: '../..' },
+            techBar && { label: techBar.values['Name'], to: '..' },
+          ]}
+          title={techBar && techBar.values['Name']}
+          actions={[
+            techBar && {
+              label: 'Cancel Edit',
+              to: '..',
+              className: 'btn-outline-danger',
+            },
+          ]}
+        />
+        {techBar ? (
+          hasManagerAccess ? (
             <div className="content-wrapper form-unstyled">
               <I18n context={`datastore.forms.${TECH_BAR_SETTINGS_FORM_SLUG}`}>
                 {techBar.settings.submissionId ? (
@@ -83,14 +62,14 @@ export const TechBarSettingsFormComponent = ({
                 )}
               </I18n>
             </div>
-          </div>
-        </div>
-      </Fragment>
-    ) : (
-      <ErrorUnauthorized />
-    )
-  ) : (
-    <ErrorNotFound />
+          ) : (
+            <ErrorUnauthorized />
+          )
+        ) : (
+          <ErrorNotFound />
+        )}
+      </div>
+    </div>
   );
 };
 

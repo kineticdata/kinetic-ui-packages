@@ -16,26 +16,16 @@ import { DATE_FORMAT, TIME_FORMAT } from '../constants';
 
 export const PastComponent = ({ techBars, error, pastAppointments }) => (
   <Fragment>
-    <PageTitle parts={['Past Appointments']} />
-    <div className="page-container page-container--tech-bar container">
+    <div className="page-container page-container--tech-bar page-container--lg">
       <div className="page-panel">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to="../">
-                <I18n>tech bar</I18n>
-              </Link>{' '}
-              /{' '}
-            </span>
-            <h1>
-              <I18n>Past Appointments</I18n>
-            </h1>
-          </div>
-        </div>
+        <PageTitle
+          parts={['Past Appointments']}
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: 'Tech Bar', to: '..' },
+          ]}
+          title="Past Appointments"
+        />
         <section className="mb-4">
           <StateListWrapper
             data={pastAppointments}
@@ -106,7 +96,7 @@ export const PastComponent = ({ techBars, error, pastAppointments }) => (
                         </CardCol>
                         <CardRow type="append">
                           <span
-                            className={`badge badge-pill badge-${
+                            className={`badge badge-stylized badge-${
                               appt.coreState === 'Closed' ? 'dark' : 'success'
                             }`}
                           >

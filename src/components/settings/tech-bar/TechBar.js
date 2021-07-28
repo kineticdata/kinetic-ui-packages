@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from '../../../redux/store';
 import { compose, lifecycle, withHandlers, withProps } from 'recompose';
 import {
@@ -25,50 +25,36 @@ export const TechBarComponent = ({
   handleNextDay,
   handleToday,
   isToday,
+  kapp,
 }) => {
-  return techBar ? (
-    <Fragment>
-      <PageTitle parts={[techBar.values['Name']]} settings />
-      <div className="page-container">
-        <div className="page-panel page-panel--white">
-          <div className="page-title">
-            <div
-              role="navigation"
-              aria-label="breadcrumbs"
-              className="page-title__breadcrumbs"
-            >
-              <span className="breadcrumb-item">
-                <Link to="../../../">
-                  <I18n>tech bar</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                <Link to="../../">
-                  <I18n>settings</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                <Link to="../">
-                  <I18n>tech bars</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <h1>
-                <I18n>{techBar.values['Name']}</I18n>
-              </h1>
-            </div>
-            {hasManagerAccess && (
-              <Link to="edit" className="btn btn-primary">
-                <I18n>Edit Settings</I18n>
-              </Link>
-            )}
-          </div>
+  return (
+    <div className="page-container">
+      <div className="page-panel">
+        <PageTitle
+          parts={[techBar && techBar.values['Name']]}
+          settings
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: `${kapp.name} Settings`, to: '../..' },
+            { label: 'Tech Bars', to: '..' },
+          ]}
+          title={techBar && techBar.values['Name']}
+          actions={[
+            techBar &&
+              hasManagerAccess && {
+                label: 'Edit Settings',
+                icon: 'pencil',
+                to: 'edit',
+              },
+          ]}
+        />
+        {techBar ? (
           <div className="content-wrapper">
-            <div className="form">
+            <div className="form form-unstyled mb-5">
               <h2 className="section__title">
-                <I18n>General Settings</I18n>
+                <span className="title">
+                  <I18n>General Settings</I18n>
+                </span>
               </h2>
               <div className="form-group">
                 <label>
@@ -89,7 +75,9 @@ export const TechBarComponent = ({
             </div>
             <div className="mb-5">
               <h2 className="section__title">
-                <I18n>Front Desk Users</I18n>
+                <span className="title">
+                  <I18n>Front Desk Users</I18n>
+                </span>
               </h2>
               <TechBarDisplayMembers
                 techBar={techBar}
@@ -98,7 +86,9 @@ export const TechBarComponent = ({
             </div>
             <div>
               <h2 className="section__title">
-                <I18n>Appointments</I18n>
+                <span className="title">
+                  <I18n>Appointments</I18n>
+                </span>
               </h2>
               <div className="appointments-control mb-3">
                 <div className="btn-group">
@@ -217,11 +207,11 @@ export const TechBarComponent = ({
               )}
             </div>
           </div>
-        </div>
+        ) : (
+          <ErrorNotFound />
+        )}
       </div>
-    </Fragment>
-  ) : (
-    <ErrorNotFound />
+    </div>
   );
 };
 
@@ -300,9 +290,11 @@ export const TechBar = compose(
   }),
   lifecycle({
     componentDidMount() {
-      this.props.fetchAppointmentsListRequest({
-        schedulerId: this.props.techBar.values['Id'],
-      });
+      if (this.props.techBar) {
+        this.props.fetchAppointmentsListRequest({
+          schedulerId: this.props.techBar.values['Id'],
+        });
+      }
     },
   }),
 )(TechBarComponent);
