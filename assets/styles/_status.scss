@@ -2,8 +2,14 @@
  *   Status ~ Queue
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+.status-reason {
+  font-weight: 400;
+  font-style: italic;
+}
 .status-content {
+  display: flex;
   flex: 0 0 auto;
+  font-size: 1rem;
   &--is-active {
   }
   p {
@@ -25,23 +31,6 @@
   padding: 0.125rem 0.625rem;
   border-radius: 1rem;
   color: $gray80;
-  // display: block;
-  &--cancelled {
-    color: darken($red, 18);
-    background-color: rgba($red, 0.1);
-  }
-  &--complete {
-    color: darken($blue, 12);
-    background-color: rgba($blue, 0.2);
-  }
-  &--open {
-    color: darken($green-grass, 18);
-    background-color: rgba($green-grass, 0.2);
-  }
-  &--pending {
-    color: darken($orange, 24);
-    background-color: rgba($orange, 0.2);
-  }
   &--reason {
     color: darken($blue-sky, 12);
     font-size: 0.875rem;

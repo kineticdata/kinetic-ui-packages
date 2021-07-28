@@ -6,7 +6,7 @@
   &__heading {
     padding: 0.625rem 1.5rem 0;
     background-color: $white;
-    border-bottom: 2px solid $gray8;
+    border-bottom: 1px solid $border-color;
     display: flex;
     flex: 1 0 auto;
     justify-content: flex-start;
@@ -17,17 +17,24 @@
         content: '*';
       }
     }
+    .filters-dropdown .dropdown-toggle.edited .name {
+      font-style: italic;
+      &:after {
+        content: '*';
+      }
+    }
   }
   &__filter {
     position: relative;
     display: flex;
-    background-color: $gray3;
+    background-color: $gray-100;
+    border-bottom: 1px solid $border-color;
     padding: 0.625rem 1.5rem;
   }
   &__summary {
     position: relative;
     display: flex;
-    background-color: $gray3;
+    background-color: $gray-100;
     padding: 0.625rem 1.5rem;
     font-size: 0.8125rem;
     font-style: italic;
@@ -42,11 +49,13 @@
     flex: 0 0 auto;
     justify-content: center;
     padding: 0.25rem 1.5rem;
-    background-color: $gray3;
+    background-color: $gray-100;
+    border-top: 1px solid $border-color;
     line-height: 1.75rem;
     .selection-mode {
       button.btn.btn-icon {
         display: flex;
+        align-items: center;
         padding: 0.25rem;
         .icon {
           display: flex;
@@ -99,7 +108,7 @@
     display: flex;
     align-items: center;
     background-color: rgba($info, 0.08);
-    border-bottom: 2px solid #ececec;
+    border-top: 1px solid $border-color;
     padding: 0.625rem 1.5rem;
     .details {
       font-size: 0.875rem;
@@ -116,13 +125,36 @@
 
   h2 {
     color: #333333;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 600;
-    line-height: 24px;
+    line-height: 1.5rem;
     margin: 0 0 0.625rem;
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     .btn {
       color: #333333;
+    }
+  }
+  .filters-dropdown {
+    flex: 0 1 auto;
+    margin: 0 0 0.625rem;
+    .dropdown-toggle {
+      white-space: normal;
+      border-radius: $border-radius;
+      border: 1px solid $subtle;
+      background-color: $white;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      .group {
+        color: $gray-600;
+      }
+      &:hover {
+        background-color: $gray-100;
+      }
+    }
+    .dropdown-menu {
+      max-height: 75vh;
+      overflow: auto;
     }
   }
   h6 {
@@ -136,12 +168,13 @@
   }
 
   .buttons {
+    flex: 0 0 auto;
     margin-left: auto;
     margin-bottom: 0.625rem;
     button {
       padding: 0.25rem;
       span.icon {
-        vertical-align: middle;
+        // vertical-align: middle;
         > .fa {
           font-size: 1.125rem;
           color: $gray-600;
@@ -226,11 +259,11 @@
     justify-content: center;
     flex-wrap: nowrap;
     // margin-top: 1rem;
-    border-top: 1rem solid rgba($gray16, 0.5);
+    border-top: 1rem solid rgba($border-color, 0.5);
     span {
       font-size: 0.75rem;
       font-weight: 600;
-      color: $gray80;
+      color: $gray-800;
       text-align: center;
       line-height: 24px;
       white-space: nowrap;
@@ -252,12 +285,12 @@
   font-size: 0.875rem;
   &:focus {
     outline: none;
-    border-color: $gray50;
+    border-color: $gray-500;
     box-shadow: 0 0 1px 4px rgba($orange-kinops, 0.25);
   }
   input[type='text'] {
     background: $white;
-    border: 1px solid $gray16;
+    border: 1px solid $border-color;
     border-radius: 3px;
     width: 100%;
   }
@@ -275,7 +308,7 @@
   }
   select {
     margin-bottom: 0.5rem;
-    border: 1px solid $gray16;
+    border: 1px solid $border-color;
     border-radius: 3px;
     padding: 0.25rem;
   }
@@ -308,7 +341,7 @@
   }
   &__content + .filter-menu-dropdown__content,
   &__validations {
-    border-top: 1px solid $gray16;
+    border-top: 1px solid $border-color;
     margin: 0 -0.75rem;
     padding: 0.5rem 0.75rem 0;
   }
@@ -316,7 +349,7 @@
     margin-bottom: -0.5rem;
   }
   &__footer {
-    border-top: 1px solid $gray16;
+    border-top: 1px solid $border-color;
     margin: 0 -0.75rem;
     padding: 0.5rem 0.75rem 0;
     justify-content: space-between;
@@ -325,6 +358,22 @@
       padding: 0.25rem 1.5rem;
       font-size: 0.75rem;
       flex: 1 0 auto;
+    }
+  }
+}
+
+.queue-sidebar {
+  width: 16rem;
+
+  .nav-tabs--vertical {
+    .nav-item {
+      &--header {
+        padding: 0.25rem 1.5rem;
+      }
+      .nav-link {
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+      }
     }
   }
 }

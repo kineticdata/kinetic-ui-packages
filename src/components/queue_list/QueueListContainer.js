@@ -18,6 +18,7 @@ const mapStateToProps = (state, props) => {
     error: state.queue.error,
     hasPreviousPage: state.queue.hasPreviousPage,
     isMobile: state.app.layoutSize === 'small',
+    isDesktop: state.app.layoutSize === 'xlarge',
     hasTeams: state.queueApp.myTeams.size > 0,
     hasForms:
       selectMyTeamForms(state).filter(form => form.type === 'Task').length > 0,

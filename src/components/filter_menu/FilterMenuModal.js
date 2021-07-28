@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import {
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  Modal,
+  ModalBody,
+  ModalFooter,
+} from 'reactstrap';
 import { FilterMenuAbstract } from './FilterMenuAbstract';
-import { Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { QueueListSidebar } from '../queue_list/QueueListSidebar';
 import { I18n } from '@kineticdata/react';
 import { openConfirm } from '@kineticdata/bundle-common';
+import classNames from 'classnames';
 
 export const FilterMenuModal = ({ filter, refresh }) => {
   const [visible, setVisible] = useState(false);
+  const [filtersDropdownOpen, setFiltersDropdownOpen] = useState(false);
+  const toggleFiltersDropdown = useCallback(
+    () => setFiltersDropdownOpen(open => !open),
+    [setFiltersDropdownOpen],
+  );
 
   return (
     <I18n
@@ -27,13 +41,41 @@ export const FilterMenuModal = ({ filter, refresh }) => {
             return (
               <div className="queue-controls">
                 <div className="queue-controls__heading">
-                  <h2
-                    className={
-                      filter.type === 'adhoc' && filter.name ? 'edited' : ''
-                    }
+                  <Dropdown
+                    className="filters-dropdown"
+                    isOpen={filtersDropdownOpen}
+                    toggle={toggleFiltersDropdown}
                   >
-                    <I18n>{filter.name || 'Adhoc'}</I18n>
-                  </h2>
+                    <DropdownToggle
+                      caret
+                      tag="button"
+                      className={classNames({
+                        edited: filter.type === 'adhoc' && filter.name,
+                      })}
+                    >
+                      <I18n>
+                        <span className="group">
+                          <I18n>
+                            {filter.type === 'default'
+                              ? 'Default Filter'
+                              : filter.type === 'team'
+                                ? 'Team Filter'
+                                : filter.type === 'custom'
+                                  ? 'My Filter'
+                                  : 'Adhoc Filter'}
+                          </I18n>
+                          {filter.name ? ': ' : ''}
+                        </span>
+                        <span className="name">{filter.name}</span>{' '}
+                      </I18n>
+                    </DropdownToggle>
+                    <DropdownMenu className="">
+                      <QueueListSidebar
+                        showCreateNew={false}
+                        onSidebarAction={toggleFiltersDropdown}
+                      />
+                    </DropdownMenu>
+                  </Dropdown>
                   <div className="buttons ml-2">
                     {filter.type === 'adhoc' && (
                       <button
@@ -93,6 +135,14 @@ export const FilterMenuModal = ({ filter, refresh }) => {
                       <span className="icon" aria-hidden="true">
                         <span className="fa fa-fw fa-refresh" />
                       </span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={props.openNewItemMenu}
+                      aria-label="New Task"
+                    >
+                      <span className="fa fa-fw fa-plus" />
                     </button>
                   </div>
                 </div>

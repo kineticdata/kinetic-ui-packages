@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Link } from '@reach/router';
 import {
   I18n,
   FormForm,
@@ -126,7 +125,9 @@ const fieldSet = [
 const FormLayout = ({ fields, error, buttons }) => (
   <Fragment>
     <h2 className="section__title">
-      <I18n>General</I18n>
+      <span className="title">
+        <I18n>General</I18n>
+      </span>
     </h2>
     <div className="form-group__columns">
       {fields.get('name')}
@@ -140,7 +141,9 @@ const FormLayout = ({ fields, error, buttons }) => (
     {fields.get('description')}
     <br />
     <h2 className="section__title">
-      <I18n>Attributes</I18n>
+      <span className="title">
+        <I18n>Attributes</I18n>
+      </span>
     </h2>
     {fields.get('prohibitSubtasks')}
     {fields.get('permittedSubtasks')}
@@ -151,7 +154,9 @@ const FormLayout = ({ fields, error, buttons }) => (
     {fields.get('notificationComplete')}
     <br />
     <h2 className="section__title">
-      <I18n>Submission Table - Default Columns</I18n>
+      <span className="title">
+        <I18n>Submission Table - Default Columns</I18n>
+      </span>
     </h2>
     {fields.get('submissionTableFields')}
     {error}
@@ -340,58 +345,31 @@ export const FormSettingsComponent = ({ form, kapp, onSave }) => {
     >
       {({ form: formContent, initialized }) => (
         <div className="page-container">
-          <PageTitle parts={[`${form.name} Settings`, 'Forms']} settings />
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="../../../../">
-                    <I18n>queue</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../../../">
-                    <I18n>settings</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../../">
-                    <I18n>forms</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="../">
-                    <I18n>{form.name}</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <h1>
-                  <I18n>Settings</I18n>
-                </h1>
-              </div>
-              <div className="page-title__actions">
-                <a
-                  href={`/app/builder/#/${kapp.slug}/forms/${
+          <div className="page-panel">
+            <PageTitle
+              parts={[`${form.name} Settings`, 'Forms']}
+              settings
+              breadcrumbs={[
+                { label: 'Home', to: '/' },
+                { label: `${kapp.name} Settings`, to: '../../..' },
+                { label: 'Forms', to: '../..' },
+                { label: form.name, to: '..' },
+              ]}
+              title="Settings"
+              actions={[
+                {
+                  label: 'Form Builder',
+                  icon: 'mouse-pointer',
+                  href: `/app/builder/#/${kapp.slug}/forms/${
                     form.slug
-                  }/builder`}
-                  className="btn btn-primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="fa fa-fw fa-mouse-pointer" />
-                  <I18n>Form Builder</I18n>
-                </a>
-              </div>
-            </div>
+                  }/builder`,
+                },
+              ]}
+            />
             {initialized ? (
-              <section className="form">{formContent}</section>
+              <section className="form form-unstyled mb-5">
+                {formContent}
+              </section>
             ) : (
               <LoadingMessage />
             )}

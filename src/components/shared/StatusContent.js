@@ -3,11 +3,17 @@ import { ButtonGroup } from 'reactstrap';
 import { I18n } from '@kineticdata/react';
 
 const getStatusClass = status =>
-  `submission-status submission-status--${
-    status ? status.toLowerCase().replace(/\s+/g, '-') : 'missing'
-  }`;
+  `badge badge-${
+    status === 'Open'
+      ? 'info'
+      : status === 'Pending'
+        ? 'warning'
+        : status === 'Complete'
+          ? 'danger'
+          : 'subtle'
+  } badge-stylized`;
 
-const getStatusReason = queueItem => {
+export const getStatusReason = queueItem => {
   switch (queueItem.values.Status) {
     case 'Pending':
       return queueItem.values['Pending Reason'];
@@ -20,6 +26,18 @@ const getStatusReason = queueItem => {
   }
 };
 
+export const StatusBadge = ({ queueItem, withReason }) => (
+  <>
+    <span className={getStatusClass(queueItem.values.Status)}>
+      <I18n>{queueItem.values.Status}</I18n>
+    </span>
+    {withReason &&
+      getStatusReason(queueItem) && (
+        <span className="status-reason ml-2">{getStatusReason(queueItem)}</span>
+      )}
+  </>
+);
+
 export const StatusContent = ({ queueItem, prev, next }) => (
   <Fragment>
     <div
@@ -29,9 +47,7 @@ export const StatusContent = ({ queueItem, prev, next }) => (
           : 'status-content'
       }
     >
-      <span className={getStatusClass(queueItem.values.Status)}>
-        <I18n>{queueItem.values.Status}</I18n>
-      </span>
+      <StatusBadge queueItem={queueItem} />
     </div>
     {(prev || next) && (
       <span className="submission-status--reason">
