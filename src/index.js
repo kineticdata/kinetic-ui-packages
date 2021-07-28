@@ -84,4 +84,7 @@ export default class extends Component {
 
   // Class that will be added to the body when this package is rendered
   static bodyClassName = 'package--services';
+
+  // Relative route to package settings page
+  static settingsRoute = '/settings';
 }

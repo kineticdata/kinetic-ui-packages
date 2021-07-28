@@ -1,5 +1,6 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import { fetchForms, updateProfile } from '@kineticdata/react';
+import { addToast } from '@kineticdata/bundle-common';
 import { actions, types } from '../modules/forms';
 import * as constants from '../../constants';
 
@@ -84,9 +85,10 @@ export function* addFavoriteFormSaga({ payload }) {
 
     if (error) {
       console.log(error);
+      addToast({ severity: 'danger', message: 'Failed to save favorite' });
     } else {
-      yield console.log('Successfully added favorite form');
-      yield put(appActions.refreshApp());
+      addToast('Favorite successfully saved');
+      yield put(appActions.refreshProfile());
     }
   } catch (e) {
     console.log('Error adding favorite form:', e);
@@ -110,9 +112,10 @@ export function* removeFavoriteFormSaga({ payload }) {
 
     if (error) {
       console.log(error);
+      addToast({ severity: 'danger', message: 'Failed to remove favorite' });
     } else {
-      yield console.log('Successfully removed favorite form');
-      yield put(appActions.refreshApp());
+      addToast('Favorite successfully removed');
+      yield put(appActions.refreshProfile());
     }
   } catch (e) {
     console.log('Error removing favorite form:', e);

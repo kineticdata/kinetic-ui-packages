@@ -134,7 +134,9 @@ const fieldSet = [
 const FormLayout = ({ fields, error, buttons }) => (
   <Fragment>
     <h2 className="section__title">
-      <I18n>General</I18n>
+      <span className="title">
+        <I18n>General</I18n>
+      </span>
     </h2>
     <div className="form-group__columns">
       {fields.get('name')}
@@ -149,7 +151,9 @@ const FormLayout = ({ fields, error, buttons }) => (
     {fields.get('categorizations')}
     <br />
     <h2 className="section__title">
-      <I18n>Attributes</I18n>
+      <span className="title">
+        <I18n>Attributes</I18n>
+      </span>
     </h2>
     {fields.get('featuredColor')}
     {fields.get('icon')}
@@ -163,14 +167,18 @@ const FormLayout = ({ fields, error, buttons }) => (
     {fields.get('taskForm')}
     <br />
     <h2 className="section__title">
-      <I18n>Workflow</I18n>
+      <span className="title">
+        <I18n>Workflow</I18n>
+      </span>
     </h2>
     {fields.get('createdWorkflow')}
     {fields.get('submittedWorkflow')}
     {fields.get('updatedWorkflow')}
     <br />
     <h2 className="section__title">
-      <I18n>Submission Table - Default Columns</I18n>
+      <span className="title">
+        <I18n>Submission Table - Default Columns</I18n>
+      </span>
     </h2>
     {fields.get('submissionTableFields')}
     {error}
@@ -450,15 +458,14 @@ export const FormSettingsComponent = ({
     >
       {({ form: formContent, initialized }) => (
         <div className="page-container">
-          <div className="page-panel page-panel--white">
+          <div className="page-panel">
             <PageTitle
-              parts={['Settings', form.name, 'Forms']}
+              parts={[`${form.name} Settings`, 'Forms']}
               settings
-              hero={false}
               breadcrumbs={[
-                { label: 'services', to: '../../../..' },
-                { label: 'settings', to: '../../..' },
-                { label: 'forms', to: '../..' },
+                { label: 'Home', to: '/' },
+                { label: `${kapp.name} Settings`, to: '../../..' },
+                { label: 'Forms', to: '../..' },
                 { label: form.name, to: '..' },
               ]}
               title="Settings"
@@ -473,7 +480,9 @@ export const FormSettingsComponent = ({
               ]}
             />
             {initialized ? (
-              <section className="form">{formContent}</section>
+              <section className="form form-unstyled mb-5">
+                {formContent}
+              </section>
             ) : (
               <LoadingMessage />
             )}

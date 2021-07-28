@@ -237,14 +237,13 @@ export const FormsListComponent = ({
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
         return (
           <div className="page-container">
-            <div className="page-panel page-panel--white">
+            <div className="page-panel">
               <PageTitle
                 parts={[`Forms`]}
                 settings
-                hero={false}
                 breadcrumbs={[
-                  { label: 'services', to: '../..' },
-                  { label: 'settings', to: '..' },
+                  { label: 'Home', to: '/' },
+                  { label: `${kapp.name} Settings`, to: '..' },
                 ]}
                 title="Forms"
                 actions={[
@@ -255,6 +254,7 @@ export const FormsListComponent = ({
                   },
                 ]}
               />
+
               <div>
                 <div className="text-right mb-2">{filter}</div>
                 <TableComponents.FilterPills

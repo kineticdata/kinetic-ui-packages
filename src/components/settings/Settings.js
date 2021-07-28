@@ -38,18 +38,17 @@ export const FormSettingsWrapper = compose(
     },
   }),
 )(
-  ({ form, error }) =>
+  ({ form, error, kapp }) =>
     error || !form ? (
       <div className="page-container">
-        <div className="page-panel page-panel--white">
+        <div className="page-panel">
           <PageTitle
             parts={[form && form.name, `Forms`]}
             settings
-            hero={false}
             breadcrumbs={[
-              { label: 'services', to: '../../..' },
-              { label: 'settings', to: '../..' },
-              { label: 'forms', to: '..' },
+              { label: 'Home', to: '/' },
+              { label: `${kapp.name} Settings`, to: '../..' },
+              { label: 'Forms', to: '..' },
             ]}
           />
           {error ? (
@@ -86,7 +85,7 @@ const SettingsCard = ({ path, icon, name, description }) => (
     components={{ Link }}
     bar={true}
     barColor="dark"
-    barSize="sm"
+    barSize="xs"
   >
     <CardCol>
       <CardRow type="title">
@@ -107,12 +106,11 @@ const SettingsCard = ({ path, icon, name, description }) => (
 
 const SettingsNavigationComponent = ({ kapp, isSpaceAdmin }) => (
   <div className="page-container">
-    <div className="page-panel page-panel--white">
+    <div className="page-panel">
       <PageTitle
         settings
-        hero={false}
-        breadcrumbs={[{ label: 'services', to: '..' }]}
-        title="Settings"
+        breadcrumbs={[{ label: 'Home', to: '/' }]}
+        title={`${kapp.name} Settings`}
       />
 
       <div className="cards cards--seconds">
