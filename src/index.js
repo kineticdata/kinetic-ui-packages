@@ -62,11 +62,10 @@ export default class extends Component {
     );
   }
 
-  // static shouldSuppressSidebar = ({ appLocation, location }) =>
-  //   matchPath(location.pathname, { path: appLocation }) &&
-  //   !matchPath(location.pathname, { path: `${appLocation}/settings` });
-
   static shouldHideHeader = ({ appLocation, location }) =>
+    matchPath(location.pathname, { path: `${appLocation}/display` });
+
+  static shouldHideSidebar = ({ appLocation, location }) =>
     matchPath(location.pathname, { path: `${appLocation}/display` });
 
   // Set to true if package allows public (unauthenticated) routes
@@ -74,4 +73,7 @@ export default class extends Component {
 
   // Class that will be added to the body when this package is rendered
   static bodyClassName = 'package--tech-bar';
+
+  // Relative route to package settings page
+  static settingsRoute = '/settings';
 }

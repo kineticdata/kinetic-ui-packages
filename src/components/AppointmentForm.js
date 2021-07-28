@@ -1,8 +1,7 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from '../redux/store';
 import { compose, withHandlers } from 'recompose';
 import { CoreForm, I18n } from '@kineticdata/react';
-import { Link } from '@reach/router';
 import {
   ErrorNotFound,
   ErrorUnauthorized,
@@ -23,71 +22,56 @@ export const AppointmentFormComponent = ({
   handleDelete,
   kappSlug,
 }) => (
-  <Fragment>
-    <PageTitle parts={['Appointment']} />
-    <div className="page-container page-container--tech-bar container">
-      <div className="page-panel">
-        {techBar ? (
-          <Fragment>
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to={relativeHomePath}>
-                    <I18n>tech bar</I18n>
-                  </Link>{' '}
-                  /{' '}
-                  {past && (
-                    <Fragment>
-                      <Link to={`${relativeHomePath}past`}>
-                        <I18n>past appointments</I18n>
-                      </Link>{' '}
-                      /{' '}
-                    </Fragment>
-                  )}
-                </span>
-                <h1>
-                  <I18n>{techBar.values['Name']}</I18n>{' '}
-                  <small>
-                    <I18n>Appointment</I18n>
-                  </small>
-                </h1>
-              </div>
-            </div>
-            <I18n context={`kapps.${kappSlug}.forms.${APPOINTMENT_FORM_SLUG}`}>
-              <div className="embedded-core-form--wrapper">
-                {id ? (
-                  <CoreForm
-                    submission={id}
-                    review={true}
-                    loaded={handleLoaded}
-                    completed={handleCompleted}
-                  />
-                ) : (
-                  <CoreForm
-                    kapp={kappSlug}
-                    form={APPOINTMENT_FORM_SLUG}
-                    loaded={handleLoaded}
-                    created={handleCreated}
-                    completed={handleCompleted}
-                    values={{ 'Scheduler Id': techBar.values['Id'] }}
-                    notFoundComponent={ErrorNotFound}
-                    unauthorizedComponent={ErrorUnauthorized}
-                    unexpectedErrorComponent={ErrorUnexpected}
-                  />
-                )}
-              </div>
-            </I18n>
-          </Fragment>
-        ) : (
-          <ErrorNotFound />
-        )}
-      </div>
+  <div className="page-container page-container--tech-bar page-container-lg">
+    <div className="page-panel">
+      <PageTitle
+        parts={['Appointment']}
+        breadcrumbs={[
+          { label: 'Home', to: '/' },
+          { label: 'Tech Bar', to: relativeHomePath },
+          past && { label: 'Past Appointments', to: `${relativeHomePath}past` },
+        ]}
+        title={
+          techBar && (
+            <>
+              <I18n>{techBar.values['Name']}</I18n>{' '}
+              <small>
+                <I18n>Appointment</I18n>
+              </small>
+            </>
+          )
+        }
+      />
+      {techBar ? (
+        <I18n context={`kapps.${kappSlug}.forms.${APPOINTMENT_FORM_SLUG}`}>
+          <div className="embedded-core-form--wrapper">
+            {id ? (
+              <CoreForm
+                submission={id}
+                review={true}
+                loaded={handleLoaded}
+                completed={handleCompleted}
+              />
+            ) : (
+              <CoreForm
+                kapp={kappSlug}
+                form={APPOINTMENT_FORM_SLUG}
+                loaded={handleLoaded}
+                created={handleCreated}
+                completed={handleCompleted}
+                values={{ 'Scheduler Id': techBar.values['Id'] }}
+                notFoundComponent={ErrorNotFound}
+                unauthorizedComponent={ErrorUnauthorized}
+                unexpectedErrorComponent={ErrorUnexpected}
+              />
+            )}
+          </div>
+        </I18n>
+      ) : (
+        <ErrorNotFound />
+      )}
     </div>
-  </Fragment>
+  </div>
 );
 
 export const handleCompleted = props => response => {

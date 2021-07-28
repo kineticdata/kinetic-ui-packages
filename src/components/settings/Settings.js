@@ -11,6 +11,7 @@ import {
   selectHasRoleSchedulerManager,
   selectHasRoleSchedulerAgent,
 } from '@kineticdata/bundle-common';
+import { PageTitle } from '../shared/PageTitle';
 import { SchedulerSettings } from './SchedulerSettings';
 import { TechBarMetrics } from './TechBarMetrics';
 import { TechBarSettings } from './TechBarSettings';
@@ -61,7 +62,7 @@ const SettingsCard = ({ path, icon, name, description }) => (
     components={{ Link }}
     bar={true}
     barColor="dark"
-    barSize="sm"
+    barSize="xs"
   >
     <CardCol>
       <CardRow type="title">
@@ -80,26 +81,14 @@ const SettingsCard = ({ path, icon, name, description }) => (
   </Card>
 );
 
-const SettingsNavigationComponent = ({ hasManagerAccess }) => (
+const SettingsNavigationComponent = ({ kapp, hasManagerAccess }) => (
   <div className="page-container">
-    <div className="page-panel page-panel--white">
-      <div className="page-title">
-        <div
-          role="navigation"
-          aria-label="breadcrumbs"
-          className="page-title__breadcrumbs"
-        >
-          <span className="breadcrumb-item">
-            <Link to="../">
-              <I18n>tech bar</I18n>
-            </Link>
-          </span>{' '}
-          <span aria-hidden="true">/ </span>
-          <h1>
-            <I18n>Settings</I18n>
-          </h1>
-        </div>
-      </div>
+    <div className="page-panel">
+      <PageTitle
+        settings
+        breadcrumbs={[{ label: 'Home', to: '/' }]}
+        title={`${kapp.name} Settings`}
+      />
 
       <div className="cards cards--seconds">
         <SettingsCard
@@ -129,6 +118,7 @@ const SettingsNavigationComponent = ({ hasManagerAccess }) => (
 
 const mapStateToPropsNav = state => {
   return {
+    kapp: state.app.kapp,
     hasManagerAccess:
       selectHasRoleSchedulerManager(state.app.profile) ||
       selectHasRoleSchedulerAdmin(state.app.profile),
