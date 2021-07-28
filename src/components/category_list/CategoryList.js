@@ -10,7 +10,7 @@ const CategoryListComponent = ({ categories }) => (
         <PageTitle
           parts={['Categories']}
           breadcrumbs={[{ label: 'Home', to: '/' }]}
-          title="All Categories"
+          title="Service Catalog"
         />
         <div className="cards cards--thirds">
           {categories

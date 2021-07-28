@@ -1,12 +1,11 @@
 import React, { Fragment } from 'react';
 import { connect } from '../../redux/store';
-import { compose, lifecycle, withHandlers, withProps } from 'recompose';
-import { FavoritesCard } from './FavoritesCard';
+import { compose, withHandlers, withProps } from 'recompose';
+import { ServiceCard } from '../shared/ServiceCard';
 import { PageTitle } from '../shared/PageTitle';
-import { I18n, fetchForms } from '@kineticdata/react';
+import { fetchForms } from '@kineticdata/react';
 import {
   ActivityFeed,
-  mountActivityFeed,
   refetchActivityFeed,
   EmptyMessage,
 } from '@kineticdata/bundle-common';
@@ -20,8 +19,8 @@ const FavoritesComponent = props => {
         <div className="page-panel">
           <PageTitle
             parts={['Favorites']}
-            breadcrumbs={[{ label: 'services', to: '..' }]}
-            title={<I18n>Favorites</I18n>}
+            breadcrumbs={[{ label: 'Home', to: '/' }]}
+            title="My Favorites"
             actions={[
               {
                 icon: 'refresh',
@@ -36,6 +35,7 @@ const FavoritesComponent = props => {
             {props.favorites && props.favorites.length ? (
               <ActivityFeed
                 feedKey={feedKey}
+                uncontrolled={true}
                 pageSize={10}
                 joinByDirection="ASC"
                 joinBy="name"
@@ -59,15 +59,11 @@ const mapStateToProps = (state, props) => ({
 });
 
 export const Favorites = compose(
-  connect(
-    mapStateToProps,
-    null,
-  ),
+  connect(mapStateToProps),
   withHandlers({
     buildFormCard: props => record => (
-      <FavoritesCard
+      <ServiceCard
         key={record.slug}
-        feedKey={feedKey}
         form={record}
         path={`${props.appLocation}/forms/${record.slug}`}
       />
@@ -108,14 +104,4 @@ export const Favorites = compose(
       },
     },
   })),
-  lifecycle({
-    componentDidMount() {
-      mountActivityFeed(feedKey);
-    },
-    componentDidUpdate(prevProps) {
-      if (this.props.favorites !== prevProps.favorites) {
-        refetchActivityFeed(feedKey);
-      }
-    },
-  }),
 )(FavoritesComponent);

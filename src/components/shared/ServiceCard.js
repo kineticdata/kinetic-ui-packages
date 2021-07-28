@@ -4,30 +4,35 @@ import { connect } from '../../redux/store';
 import { Link } from '@reach/router';
 import { I18n } from '@kineticdata/react';
 import { get } from 'immutable';
-import { Card, CardCol, CardRow, services } from '@kineticdata/bundle-common';
+import {
+  Card,
+  CardCol,
+  CardRow,
+  CardCorner,
+  services,
+  Utils,
+} from '@kineticdata/bundle-common';
 import { Form } from '../../models';
 import { actions } from '../../redux/modules/forms';
 
-export const Star = ({ filled }) => (
-  <svg height="24" viewBox="0 0 24 24" width="24">
-    <path
-      fill={filled ? '#095482' : 'none'}
-      stroke={filled ? '#095482' : 'black'}
-      strokeWidth="1.5"
-      d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-    />
-  </svg>
-);
-
 export const ServiceCardComponent = get(services, 'ServiceCard', props => {
-  const { path, form, favorites, components = {} } = props;
+  const { path, form, favoritesEnabled, favorites, components = {} } = props;
   return (
-    <Card
-      to={path}
-      bar="left"
-      barSize="xs"
-      components={{ Link, ...components }}
-    >
+    <Card to={path} components={{ Link, ...components }}>
+      {favoritesEnabled && (
+        <CardCorner
+          tag="button"
+          icon="fa fa-star"
+          active={favorites.includes(form.slug)}
+          hover
+          onClick={
+            favorites.includes(form.slug)
+              ? props.handleRemoveFavorite
+              : props.handleAddFavorite
+          }
+          title="Toggle Favorite"
+        />
+      )}
       <CardCol>
         <CardRow type="title">
           <span
@@ -35,20 +40,10 @@ export const ServiceCardComponent = get(services, 'ServiceCard', props => {
               form.icon ||
               Form(form).icon ||
               'circle'
-            ).replace(/^fa-/i, '')} fa-fw fa-rounded`}
+            ).replace(/^fa-/i, '')} fa-fw`}
           />
           <span>
             <I18n>{form.name}</I18n>
-          </span>
-          <span
-            onClick={
-              favorites.includes(form.slug)
-                ? props.handleRemoveFavorite
-                : props.handleAddFavorite
-            }
-            className="toggle"
-          >
-            <Star filled={favorites.includes(form.slug)} />
           </span>
         </CardRow>
         <CardRow className="text-muted">
@@ -64,6 +59,10 @@ export const ServiceCardComponent = get(services, 'ServiceCard', props => {
 });
 
 const mapStateToProps = state => ({
+  favoritesEnabled: Utils.hasProfileAttributeDefinition(
+    state.app.space,
+    'Services Favorites',
+  ),
   favorites: state.app.profile.profileAttributesMap['Services Favorites'],
 });
 

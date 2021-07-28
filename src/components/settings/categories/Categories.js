@@ -32,18 +32,18 @@ export const CategoriesComponent = ({
   openDropdown,
   toggleDropdown,
   handleDelete,
+  kapp,
 }) => (
   <Fragment>
     <div className="page-container">
-      <div className="page-panel page-panel--white page-panel--flex page-panel--no-padding">
-        <div className="page-panel__header px-4">
+      <div className="page-panel page-panel--flex page-panel--no-padding">
+        <div className="page-panel__header page-panel__header--padding-x">
           <PageTitle
             parts={[`Categories`]}
             settings
-            hero={false}
             breadcrumbs={[
-              { label: 'services', to: '../..' },
-              { label: 'settings', to: '..' },
+              { label: 'Home', to: '/' },
+              { label: `${kapp.name} Settings`, to: '..' },
             ]}
             title="Categories"
             actions={[
@@ -55,7 +55,7 @@ export const CategoriesComponent = ({
             ]}
           />
         </div>
-        <div className="page-panel__body">
+        <div className="page-panel__body pl-3">
           {categoryTree && (
             <SortableTree
               treeData={categoryTree}
@@ -101,7 +101,7 @@ export const CategoriesComponent = ({
             />
           )}
         </div>
-        <div className="page-panel__footer p-4 d-flex justify-content-between">
+        <div className="page-panel__footer page-panel__footer--padding-x page-panel__footer--padding-y d-flex justify-content-between">
           <div className="ml-auto">
             <button
               type="button"
@@ -142,6 +142,7 @@ const buildCategoryTree = categories => {
 };
 
 const mapStateToProps = state => ({
+  kapp: state.app.kapp,
   categoryHelper: state.settingsCategories.categoryHelper,
 });
 
