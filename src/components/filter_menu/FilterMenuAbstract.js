@@ -295,6 +295,7 @@ const FilterMenuAbstractComponent = props => (
         removeFilter: props.removeFilter,
         isOpen: props.isOpen,
         openFilterMenu: props.openFilterMenu,
+        openNewItemMenu: props.openNewItemMenu,
       })
     }
   />
@@ -330,6 +331,7 @@ export const mapDispatchToProps = {
   addPersonalFilter: appActions.addPersonalFilter,
   updatePersonalFilter: appActions.updatePersonalFilter,
   removePersonalFilter: appActions.removePersonalFilter,
+  openNewItemMenu: queueActions.openNewItemMenu,
 };
 
 const toggleTeam = props => e => props.toggleTeam(e.target.name);

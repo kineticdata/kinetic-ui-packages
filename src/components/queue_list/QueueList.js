@@ -3,6 +3,7 @@ import { QueueListItemSmall } from './QueueListItem';
 import { LoadingMessage, EmptyMessage } from '@kineticdata/bundle-common';
 import { FilterMenuToolbar } from '../filter_menu/FilterMenuToolbar';
 import { FilterMenuModal } from '../filter_menu/FilterMenuModal';
+import { QueueListSidebar } from './QueueListSidebar';
 import { QueueListPagination } from './QueueListPagination';
 import { QueueListSelection } from './QueueListSelection';
 import { PageTitle } from '../shared/PageTitle';
@@ -46,9 +47,8 @@ export const QueueList = ({
   hasPreviousPage,
   handleRefresh,
   isMobile,
+  isDesktop,
   filterValidations,
-  hasTeams,
-  hasForms,
   setQueueListRef,
   selectionMode,
   selectedList,
@@ -58,20 +58,29 @@ export const QueueList = ({
     !error && !loading && data && (data.size > 0 || hasPreviousPage);
 
   return (
-    <div className="page-container">
+    <div className="page-container page-container--panels">
+      {(isDesktop || !filter) && (
+        <div className="page-panel page-panel--no-padding page-panel--exact border-right">
+          <QueueListSidebar showCreateNew={!!filter} />
+        </div>
+      )}
       {!filter ? (
-        <div className="page-panel page-panel--no-padding">
+        <div className="page-panel">
           <PageTitle parts={['Invalid List']} />
           <QueueBadFilterMessage />
         </div>
       ) : (
-        <div className="page-panel page-panel--no-padding page-panel--white page-panel--flex">
+        <div className="page-panel page-panel--no-padding page-panel--flex">
           <PageTitle parts={[filter.name || 'Adhoc']} />
           <div className="page-panel__header">
             {isMobile ? (
               <FilterMenuModal filter={filter} refresh={handleRefresh} />
             ) : (
-              <FilterMenuToolbar filter={filter} refresh={handleRefresh} />
+              <FilterMenuToolbar
+                filter={filter}
+                refresh={handleRefresh}
+                showFilterMenu={!isDesktop}
+              />
             )}
           </div>
           <div className="page-panel__body" ref={setQueueListRef}>

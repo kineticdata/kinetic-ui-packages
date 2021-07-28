@@ -2,7 +2,7 @@ import React from 'react';
 import { compose, lifecycle, withHandlers, withProps } from 'recompose';
 import { Link } from '@reach/router';
 import {
-  DiscussionsPanel,
+  TimeAgo,
   LoadingMessage,
   selectDiscussionsEnabled,
 } from '@kineticdata/bundle-common';
@@ -12,7 +12,9 @@ import { getFilterByPath } from '../../redux/modules/queueApp';
 import { I18n, createRelatedItem } from '@kineticdata/react';
 import { connect } from '../../redux/store';
 import { PageTitle } from '../shared/PageTitle';
+import { StatusBadge, getStatusReason } from '../shared/StatusContent';
 import classNames from 'classnames';
+import { List } from 'immutable';
 
 const CreationForm = ({ onChange, values, errors }) => (
   <React.Fragment>
@@ -69,58 +71,102 @@ export const QueueItem = ({
   profile,
   isSmallLayout,
   navigate,
+  appLocation,
+  goToPreviousItem,
+  goToNextItem,
 }) => (
-  <div className="page-container page-container--panels">
-    <PageTitle
-      parts={[
-        !loading ? queueItem.label : '',
-        filter ? filter.name || 'Adhoc' : '',
-      ]}
-    />
-    <div
-      className={classNames(
-        'page-panel page-panel--white page-panel--no-padding page-panel--flex',
-        { 'page-panel--three-fifths': !loading },
-      )}
-    >
-      {filter && (
-        <div className="page-panel__header">
-          <div className="nav-return">
-            <Link to="../.." aria-label={`Return to Filter ${filter.name}`}>
-              <span className="icon" aria-hidden="true">
-                <span className="fa fa-fw fa-chevron-left" />
-              </span>
-              <I18n>{filter.name || 'Adhoc'}</I18n>
-            </Link>
-          </div>
-        </div>
-      )}
-      <div className="page-panel__body">
-        {loading ? (
-          <LoadingMessage />
-        ) : (
-          <QueueItemDetailsContainer
-            filter={filter}
-            creationFields={creationFields}
-            onCreated={onDiscussionCreated}
-            CreationForm={CreationForm}
-            navigate={navigate}
-          />
-        )}
-      </div>
-    </div>
-    {!loading &&
-      discussionsEnabled &&
-      !isSmallLayout && (
-        <DiscussionsPanel
-          itemType="Submission"
-          itemKey={queueItem.id}
+  <div className="page-container">
+    <div className={classNames('page-panel')}>
+      <PageTitle
+        parts={[
+          !loading ? queueItem.label : '',
+          filter ? filter.name || 'Adhoc' : '',
+        ]}
+        breadcrumbs={[
+          { label: 'Home', to: '/' },
+          { label: 'Queue', to: appLocation },
+          filter && {
+            label: filter.name || 'Adhoc',
+            to: `../..`,
+          },
+        ].filter(Boolean)}
+        title={queueItem ? queueItem.values.Summary : ''}
+        actions={[
+          ...(goToPreviousItem || goToNextItem
+            ? [
+                {
+                  icon: 'caret-left',
+                  aria: 'Previous Queue Item',
+                  onClick: goToPreviousItem,
+                  disabled: !goToPreviousItem,
+                  className: 'btn-outline-dark',
+                },
+                {
+                  icon: 'caret-right',
+                  aria: 'Next Queue Item',
+                  onClick: goToNextItem,
+                  disabled: !goToNextItem,
+                  className: 'btn-outline-dark',
+                },
+              ]
+            : []),
+        ]}
+        meta={
+          queueItem && [
+            {
+              value: <StatusBadge queueItem={queueItem} withReason={true} />,
+            },
+            {
+              value: (
+                <span>
+                  <I18n
+                    context={`kapps.${queueItem.form.kapp.slug}.forms.${
+                      queueItem.form.slug
+                    }`}
+                  >
+                    {queueItem.form.name}
+                  </I18n>{' '}
+                  ({queueItem.handle})
+                </span>
+              ),
+            },
+            {
+              label: 'Due',
+              value: (
+                <TimeAgo
+                  timestamp={queueItem.values['Due Date']}
+                  id="due-date"
+                />
+              ),
+            },
+            {
+              label: 'Created',
+              value: (
+                <TimeAgo timestamp={queueItem.createdAt} id="created-at" />
+              ),
+            },
+            {
+              label: 'Updated',
+              value: (
+                <TimeAgo timestamp={queueItem.updatedAt} id="updated-at" />
+              ),
+            },
+          ]
+        }
+      />
+
+      {loading ? (
+        <LoadingMessage />
+      ) : (
+        <QueueItemDetailsContainer
+          filter={filter}
           creationFields={creationFields}
-          onCreated={onDiscussionCreated}
+          onDiscussionCreated={onDiscussionCreated}
           CreationForm={CreationForm}
-          me={profile}
+          navigate={navigate}
         />
       )}
+    </div>
   </div>
 );
 
@@ -131,11 +177,17 @@ export const mapStateToProps = (state, props) => ({
   discussionsEnabled: selectDiscussionsEnabled(state),
   profile: state.app.profile,
   isSmallLayout: state.app.layoutSize === 'small',
+  appLocation: state.app.location,
+  currentPageData: state.queue.data,
+  hasPreviousPage: state.queue.hasPreviousPage,
+  hasNextPage: state.queue.hasNextPage,
 });
 
 export const mapDispatchToProps = {
   fetchCurrentItem: actions.fetchCurrentItem,
   setCurrentItem: actions.setCurrentItem,
+  fetchNextPage: actions.fetchListNext,
+  fetchPreviousPage: actions.fetchListPrevious,
 };
 
 export const QueueItemContainer = compose(
@@ -160,6 +212,61 @@ export const QueueItemContainer = compose(
           relateOriginatingRequest: true,
         },
       },
+  ),
+  withProps(
+    ({
+      currentPageData,
+      queueItem,
+      hasPreviousPage,
+      fetchPreviousPage,
+      hasNextPage,
+      fetchNextPage,
+      navigate,
+    }) => {
+      const currentIndex =
+        queueItem && List.isList(currentPageData)
+          ? currentPageData.findIndex(item => item.id === queueItem.id)
+          : -1;
+      return currentIndex >= 0
+        ? {
+            goToPreviousItem:
+              currentIndex === 0
+                ? hasPreviousPage
+                  ? // If on first item of page but previous page exists, fetch
+                    // previous page and then navigate to last item
+                    () =>
+                      fetchPreviousPage(
+                        submissions =>
+                          submissions &&
+                          navigate(
+                            `../${submissions[submissions.length - 1].id}`,
+                          ),
+                      )
+                  : undefined
+                : // If not on first item of page, navigate to previous item
+                  () =>
+                    navigate(
+                      `../${currentPageData.getIn([currentIndex - 1, 'id'])}`,
+                    ),
+            goToNextItem:
+              currentIndex === currentPageData.size - 1
+                ? hasNextPage
+                  ? // If on last item of page but next page exists, fetch
+                    // next page and then navigate to first item
+                    () =>
+                      fetchNextPage(
+                        submissions =>
+                          submissions && navigate(`../${submissions[0].id}`),
+                      )
+                  : undefined
+                : // If not on last item of page, navigate to next item
+                  () =>
+                    navigate(
+                      `../${currentPageData.getIn([currentIndex + 1, 'id'])}`,
+                    ),
+          }
+        : {};
+    },
   ),
   withHandlers({
     onDiscussionCreated: props => (discussion, values) => {
