@@ -17,6 +17,7 @@ import {
   DropdownItem,
 } from 'reactstrap';
 import { TableComponents, TimeAgo } from '@kineticdata/bundle-common';
+import { FormStatusBadge, CoreStateBadgeCell } from '../../shared/StatusBadge';
 import { ExportModal } from '../export/ExportModal';
 import { PageTitle } from '../../shared/PageTitle';
 
@@ -44,7 +45,7 @@ const ActionsCell = ({
       isOpen={openDropdown === row.get('id')}
     >
       <DropdownToggle color="link" className="btn-sm">
-        <span className="fa fa-ellipsis-h fa-2x" />
+        <span className="fa fa-chevron-down fa-fw" />
       </DropdownToggle>
       <DropdownMenu right positionFixed>
         <DropdownItem tag={Link} to={`${row.get('id')}/details`}>
@@ -159,7 +160,7 @@ export const SurveySubmissionsComponent = ({
             title: 'Status',
             sortable: true,
             components: {
-              BodyCell: TableComponents.CoreStateBadgeCell,
+              BodyCell: CoreStateBadgeCell,
             },
           },
         }}
@@ -218,7 +219,7 @@ export const SurveySubmissionsComponent = ({
                     <dl>
                       <dt>Status</dt>
                       <dd>
-                        <TableComponents.StatusBadge status={form.status} />
+                        <FormStatusBadge value={form.status} />
                       </dd>
                     </dl>
                     <dl>
