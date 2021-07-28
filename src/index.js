@@ -80,4 +80,7 @@ export default class extends Component {
 
   // Class that will be added to the body when this package is rendered
   static bodyClassName = 'package--survey';
+
+  // Relative route to package settings page
+  static settingsRoute = '/admin';
 }
