@@ -50,7 +50,7 @@ export const SurveyCard = props => {
           <span>
             <I18n>{form.name}</I18n>
           </span>
-          <span className={`badge badge-pill badge-muted badge-${color}`}>
+          <span className={`badge badge-pill badge-${color} badge-stylized`}>
             <I18n>{helpers.getStatus(submission)}</I18n>
           </span>
         </CardRow>

@@ -30,12 +30,12 @@ import {
   addToast,
   openConfirm,
 } from '@kineticdata/bundle-common';
+import { FormStatusBadgeCell } from '../shared/StatusBadge';
 
 const tableKey = 'survey-list';
 
 const ActionsCell = ({ deleteForm, toggleModal, createTestSubmission }) => ({
   row,
-  tableKey,
 }) => (
   <td className="text-right" style={{ width: '1%' }}>
     <UncontrolledDropdown className="more-actions">
@@ -217,7 +217,7 @@ const SurveyAdminListComponent = ({
           },
           status: {
             components: {
-              BodyCell: TableComponents.StatusBadgeCell,
+              BodyCell: FormStatusBadgeCell,
             },
           },
         }}
