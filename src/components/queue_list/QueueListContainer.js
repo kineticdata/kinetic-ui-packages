@@ -14,6 +14,7 @@ const mapStateToProps = (state, props) => {
   return {
     filter,
     loading: state.queue.loading,
+    paging: state.queue.paging,
     data: state.queue.data,
     error: state.queue.error,
     hasPreviousPage: state.queue.hasPreviousPage,

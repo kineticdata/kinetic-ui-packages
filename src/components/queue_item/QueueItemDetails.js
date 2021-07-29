@@ -40,8 +40,6 @@ export const QueueItemDetails = ({
   openNewItemMenu,
   prohibitSubtasks,
   refreshQueueItem,
-  openDiscussions,
-  closeDiscussions,
   kappSlug,
   discussionsEnabled,
   profile,
@@ -278,7 +276,6 @@ export const QueueItemDetailsContainer = compose(
     props => (!props.prohibitSubtasks ? 'subtasks' : 'discussions'),
   ),
   withState('isAssigning', 'setIsAssigning', false),
-  withState('viewDiscussionsModal', 'setViewDiscussionsModal', false),
   withHandlers({
     refetchCounts: ({ defaultFilters, fetchListCount }) => () => {
       defaultFilters
@@ -334,8 +331,6 @@ export const QueueItemDetailsContainer = compose(
       fetchCurrentItem(queueItem.id);
       refetchCounts();
     },
-    openDiscussions: props => () => props.setViewDiscussionsModal(true),
-    closeDiscussions: props => () => props.setViewDiscussionsModal(false),
   }),
   withProps(
     ({

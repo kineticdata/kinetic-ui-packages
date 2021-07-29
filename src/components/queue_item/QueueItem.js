@@ -1,6 +1,5 @@
 import React from 'react';
 import { compose, lifecycle, withHandlers, withProps } from 'recompose';
-import { Link } from '@reach/router';
 import {
   TimeAgo,
   LoadingMessage,
@@ -12,7 +11,7 @@ import { getFilterByPath } from '../../redux/modules/queueApp';
 import { I18n, createRelatedItem } from '@kineticdata/react';
 import { connect } from '../../redux/store';
 import { PageTitle } from '../shared/PageTitle';
-import { StatusBadge, getStatusReason } from '../shared/StatusContent';
+import { StatusBadge } from '../shared/StatusContent';
 import classNames from 'classnames';
 import { List } from 'immutable';
 
@@ -270,7 +269,7 @@ export const QueueItemContainer = compose(
   ),
   withHandlers({
     onDiscussionCreated: props => (discussion, values) => {
-      if (values.relateOriginatingRequest) {
+      if (values.relateOriginatingRequest && props.queueItem.origin) {
         createRelatedItem(discussion.id, {
           type: 'Submission',
           key: props.queueItem.origin.id,

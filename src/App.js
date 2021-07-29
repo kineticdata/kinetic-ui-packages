@@ -117,7 +117,6 @@ const enhance = compose(
       this.props.fetchFormsRequest();
     },
     componentDidUpdate(prevProps) {
-      console.log('queue did update', !this.props.loading && prevProps.loading);
       if (!this.props.loading && prevProps.loading) {
         // Fetch counts for default lists
         this.props.defaultFilters
