@@ -83,41 +83,23 @@ export const TeamsListComponent = ({
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (
         <div className="page-container">
-          <PageTitle parts={['Teams']} />
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="..">
-                    <I18n>settings</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <h1>
-                  <I18n>Teams</I18n>
-                </h1>
-              </div>
-              <div className="page-title__actions">
-                <I18n
-                  render={translate => (
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      title={translate('New Team')}
-                      onClick={() => toggleModal(true)}
-                    >
-                      <span className="fa fa-plus fa-fw" />{' '}
-                      {translate('New Team')}
-                    </button>
-                  )}
-                />
-              </div>
-            </div>
-            <div>
+          <div className="page-panel">
+            <PageTitle
+              parts={['Teams']}
+              breadcrumbs={[
+                { label: 'Home', to: '/' },
+                { label: 'Settings', to: '..' },
+              ]}
+              title="Teams"
+              actions={[
+                {
+                  label: 'Create Team',
+                  icon: 'plus',
+                  onClick: () => toggleModal(true),
+                },
+              ]}
+            />
+            <div className="mb-5">
               <div className="text-right mb-2">{filter}</div>
               <TableComponents.FilterPills
                 filterFormKey={filterFormKey}

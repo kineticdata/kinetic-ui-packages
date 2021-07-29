@@ -1,12 +1,11 @@
 import React from 'react';
-import { Link } from '@reach/router';
 import { connect } from '../../redux/store';
 import { compose, withHandlers, withProps, withState } from 'recompose';
 import moment from 'moment';
 import { CoreForm, refetchTable } from '@kineticdata/react';
 import {
+  Aside,
   DiscussionsPanel,
-  ViewDiscussionsModal,
   addToast,
   selectDiscussionsEnabled,
 } from '@kineticdata/bundle-common';
@@ -38,10 +37,9 @@ const RobotComponent = ({
   creationFields,
   profile,
   discussionsEnabled,
-  viewDiscussionsModal,
-  openDiscussions,
-  closeDiscussions,
   isSmallLayout,
+  asideOpen,
+  toggleAsideOpen,
 }) => {
   const isInactive =
     robot && robot.values['Status'].toLowerCase() === 'inactive';
@@ -50,44 +48,29 @@ const RobotComponent = ({
     robot.values['End Date'] &&
     moment(robot.values['End Date']).isBefore(moment());
   return (
-    <div className="page-container page-container--panels">
-      <PageTitle parts={[robot && robot.values['Robot Name'], 'Robots']} />
-      <div className="page-panel page-panel--white page-panel--three-fifths">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to="../..">
-                <I18n>settings</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to="..">
-                <I18n>robots</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <h1>{robot && robot.values['Robot Name']}</h1>
-          </div>
-          {robot && (
-            <div className="page-title__actions">
-              {discussionsEnabled &&
-                isSmallLayout && (
-                  <button onClick={openDiscussions} className="btn btn-info">
-                    <span className="fa fa-fw fa-comments" />{' '}
-                    <I18n>Open Discussions</I18n>
-                  </button>
-                )}
-              <Link to="executions" className="btn btn-info">
-                <I18n>View Executions</I18n>
-              </Link>
-            </div>
-          )}
-        </div>
+    <div className="page-container">
+      <div className="page-panel">
+        <PageTitle
+          parts={[robot && robot.values['Robot Name'], 'Robots']}
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: 'Settings', to: '../..' },
+            { label: 'Robots', to: '..' },
+          ]}
+          title={robot && robot.values['Robot Name']}
+          actions={[
+            discussionsEnabled && {
+              label: 'Discussions',
+              icon: 'comments-o',
+              onClick: () => toggleAsideOpen(!asideOpen),
+            },
+            {
+              label: 'Executions',
+              icon: 'arrow-right',
+              to: 'executions',
+            },
+          ]}
+        />
         {(isInactive || isExpired) && (
           <div className="alert alert-warning">
             <I18n>This robot is</I18n>{' '}
@@ -108,33 +91,28 @@ const RobotComponent = ({
             {'.'}
           </div>
         )}
-        <div className="form-unstyled mb-4">
-          <I18n context={`datastore.forms.${ROBOT_FORM_SLUG}`}>
-            <CoreForm datastore submission={robotId} updated={handleUpdated} />
+        <div className="form-unstyled mb-5">
+          <I18n context={`kapps.datastore.forms.${ROBOT_FORM_SLUG}`}>
+            <CoreForm submission={robotId} updated={handleUpdated} />
           </I18n>
         </div>
-        {discussionsEnabled &&
-          isSmallLayout &&
-          viewDiscussionsModal && (
-            <ViewDiscussionsModal
-              itemType="Datastore Submission"
-              itemKey={robotId}
-              close={closeDiscussions}
-              creationFields={creationFields}
-              CreationForm={DiscussionCreationForm}
-              me={profile}
-            />
-          )}
       </div>
       {discussionsEnabled &&
-        !isSmallLayout && (
-          <DiscussionsPanel
-            itemType="Datastore Submission"
-            itemKey={robotId}
-            creationFields={creationFields}
-            CreationForm={DiscussionCreationForm}
-            me={profile}
-          />
+        asideOpen && (
+          <Aside
+            title="Discussions"
+            toggle={() => toggleAsideOpen(false)}
+            className="p-0"
+          >
+            <DiscussionsPanel
+              creationFields={creationFields}
+              CreationForm={DiscussionCreationForm}
+              itemType="Submission"
+              itemKey={robotId}
+              me={profile}
+              overrideClassName="page-panel--discussions"
+            />
+          </Aside>
         )}
     </div>
   );
@@ -167,10 +145,8 @@ export const Robot = compose(
       },
   ),
   withState('confirmDelete', 'setConfirmDelete', false),
-  withState('viewDiscussionsModal', 'setViewDiscussionsModal', false),
+  withState('asideOpen', 'toggleAsideOpen', false),
   withHandlers({
-    openDiscussions: props => () => props.setViewDiscussionsModal(true),
-    closeDiscussions: props => () => props.setViewDiscussionsModal(false),
     handleUpdated,
   }),
 )(RobotComponent);

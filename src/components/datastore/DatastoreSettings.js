@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 import { Modal } from 'reactstrap';
-import { Link } from '@reach/router';
 import { connect } from 'react-redux';
 import { push } from 'redux-first-history';
 import { lifecycle, compose, withHandlers, withState } from 'recompose';
@@ -52,55 +51,36 @@ const SettingsComponent = ({
   isSpaceAdmin,
 }) =>
   !loading && (
-    <I18n context={`datastore.forms.${origForm.slug}`}>
-      <div className="page-container page-container--panels">
-        <PageTitle parts={['Settings', origForm.name, 'Datastore']} />
-        <div className="page-panel page-panel--white">
-          <div className="page-title">
-            <div
-              role="navigation"
-              aria-label="breadcrumbs"
-              className="page-title__breadcrumbs"
-            >
-              <span className="breadcrumb-item">
-                <Link to="/settings">
-                  <I18n>settings</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                <Link to={`/settings/datastore/`}>
-                  <I18n>datastore</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                <Link to={`/settings/datastore/${origForm.slug}/`}>
-                  <I18n>{origForm.name}</I18n>
-                </Link>
-              </span>{' '}
-              <span aria-hidden="true">/ </span>
-              <h1>
-                <I18n>Configuration</I18n>
-              </h1>
-            </div>
-
-            <a
-              href={`${bundle.spaceLocation()}/app/builder/#/forms/${
-                origForm.slug
-              }/builder`}
-              className="btn btn-primary"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <I18n>Form Builder</I18n>{' '}
-              <i className="fa fa-fw fa-external-link" />
-            </a>
-          </div>
+    <I18n context={`kapps.datastore.forms.${origForm.slug}`}>
+      <div className="page-container">
+        <div className="page-panel">
+          <PageTitle
+            parts={['Settings', origForm.name, 'Datastore']}
+            breadcrumbs={[
+              { label: 'Home', to: '/' },
+              { label: 'Settings', to: '../../..' },
+              { label: 'Datastore Forms', to: '../..' },
+              { label: origForm.name, to: '..' },
+            ]}
+            title="Configuration"
+            actions={[
+              {
+                label: 'Form Builder',
+                icon: 'external-link',
+                href: `${bundle.spaceLocation()}/app/builder/#/datastore/forms/${
+                  origForm.slug
+                }/builder`,
+              },
+            ]}
+          />
           {canManage ? (
-            <div className="datastore-settings">
-              <h3 className="section__title">General Settings</h3>
-              <div className="form settings">
+            <div className="datastore-settings mb-5">
+              <h3 className="section__title">
+                <span className="title">
+                  <I18n>General Settings</I18n>
+                </span>
+              </h3>
+              <div className="form form-unstyled settings">
                 <div className="form-row">
                   <div className="col">
                     <div className="form-group required">
@@ -155,9 +135,11 @@ const SettingsComponent = ({
               </div>
               <div className="table-settings">
                 <h3 className="section__title">
-                  <I18n>Table Display Settings</I18n>
+                  <span className="title">
+                    <I18n>Table Display Settings</I18n>
+                  </span>
                 </h3>
-                <div className="form settings">
+                <div className="form form-unstyled settings">
                   <div className="form-group">
                     <label htmlFor="default-search-index">
                       <I18n>Default Search Index</I18n>
@@ -325,9 +307,11 @@ const SettingsComponent = ({
               {isSpaceAdmin && (
                 <div className="table-settings">
                   <h3 className="section__title">
-                    <I18n>Bridge Configuration</I18n>
+                    <span className="title">
+                      <I18n>Bridge Configuration</I18n>
+                    </span>
                   </h3>
-                  <div className="form settings">
+                  <div className="form form-unstyled settings">
                     <div className="form-group">
                       <label htmlFor="name">
                         <I18n>Bridge</I18n>

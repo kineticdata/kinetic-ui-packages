@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from '@reach/router';
 import { compose, withHandlers } from 'recompose';
 import { ROBOT_FORM_SLUG } from '../../redux/modules/settingsRobots';
 import { CoreForm, refetchTable } from '@kineticdata/react';
@@ -10,35 +9,23 @@ import { I18n } from '@kineticdata/react';
 
 const CreateRobotComponent = ({ handleCreated }) => (
   <div className="page-container">
-    <PageTitle parts={['New Robot', 'Robots']} />
-    <div className="page-panel page-panel--white">
-      <div className="page-title">
-        <div
-          role="navigation"
-          aria-label="breadcrumbs"
-          className="page-title__breadcrumbs"
-        >
-          <span className="breadcrumb-item">
-            <Link to="../..">
-              <I18n>settings</I18n>
-            </Link>
-          </span>{' '}
-          <span aria-hidden="true">/ </span>
-          <span className="breadcrumb-item">
-            <Link to="..">
-              <I18n>robots</I18n>
-            </Link>
-          </span>{' '}
-          <span aria-hidden="true">/ </span>
-          <h1>
-            <I18n>New Robot</I18n>
-          </h1>
-        </div>
-      </div>
-
-      <div className="form-unstyled mb-4">
-        <I18n context={`datastore.forms.${ROBOT_FORM_SLUG}`}>
-          <CoreForm datastore form={ROBOT_FORM_SLUG} created={handleCreated} />
+    <div className="page-panel">
+      <PageTitle
+        parts={['New Robot', 'Robots']}
+        breadcrumbs={[
+          { label: 'Home', to: '/' },
+          { label: 'Settings', to: '../..' },
+          { label: 'Robots', to: '..' },
+        ]}
+        title="New Robot"
+      />
+      <div className="form-unstyled mb-5">
+        <I18n context={`kapps.datastore.forms.${ROBOT_FORM_SLUG}`}>
+          <CoreForm
+            kapp="datastore"
+            form={ROBOT_FORM_SLUG}
+            created={handleCreated}
+          />
         </I18n>
       </div>
     </div>

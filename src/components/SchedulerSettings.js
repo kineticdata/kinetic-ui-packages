@@ -15,6 +15,7 @@ export const SchedulerSettingsComponent = ({
   isSchedulerAdmin,
   isSchedulerManager,
   profile,
+  appLocation
 }) =>
   isSchedulerAdmin || isSchedulerManager ? (
     <Router>
@@ -24,13 +25,14 @@ export const SchedulerSettingsComponent = ({
         type="TechBar"
         pathPrefix={`/settings/schedulers`}
         breadcrumbs={[
+          { label: 'Home', to: '/' },
           {
-            label: 'settings',
-            path: '/settings',
+            label: 'Settings',
+            to: appLocation,
           },
           {
-            label: 'schedulers',
-            path: '/settings/schedulers',
+            label: 'Schedulers',
+            to: `${appLocation}/schedulers`,
           },
         ]}
       />
@@ -39,13 +41,14 @@ export const SchedulerSettingsComponent = ({
         profile={profile}
         pathPrefix={`/settings/schedulers`}
         breadcrumbs={[
+          { label: 'Home', to: '/' },
           {
-            label: 'settings',
-            path: '/settings',
+            label: 'Settings',
+            to: appLocation,
           },
           {
-            label: 'schedulers',
-            path: '/settings/schedulers',
+            label: 'Schedulers',
+            to: `${appLocation}/schedulers`,
           },
         ]}
       />
@@ -54,9 +57,10 @@ export const SchedulerSettingsComponent = ({
         profile={profile}
         pathPrefix={`/settings/schedulers`}
         breadcrumbs={[
+          { label: 'Home', to: '/' },
           {
-            label: 'settings',
-            path: '/settings',
+            label: 'Settings',
+            to: appLocation,
           },
         ]}
       />
@@ -69,6 +73,7 @@ export const mapStateToProps = (state, props) => ({
   isSchedulerAdmin: selectHasRoleSchedulerAdmin(state.app.profile),
   isSchedulerManager: selectHasRoleSchedulerManager(state.app.profile),
   profile: state.app.profile,
+  appLocation: state.app.location,
 });
 
 export const SchedulerSettings = compose(

@@ -10,7 +10,9 @@ const asArray = value => (value ? [value] : []);
 const FormLayout = ({ fields, error, buttons }) => (
   <form>
     <div className="section__title">
-      <I18n>General</I18n>
+      <span className="title">
+        <I18n>General</I18n>
+      </span>
     </div>
     {fields.get('spaceAdmin')}
     {fields.get('enabled')}
@@ -18,14 +20,18 @@ const FormLayout = ({ fields, error, buttons }) => (
     {fields.get('email')}
     <br />
     <div className="section__title">
-      <I18n>Profile Attributes</I18n>
+      <span className="title">
+        <I18n>Profile Attributes</I18n>
+      </span>
     </div>
     {fields.get('firstName')}
     {fields.get('lastName')}
     {fields.get('phoneNumber')}
     <br />
     <div className="section__title">
-      <I18n>User Attributes</I18n>
+      <span className="title">
+        <I18n>User Attributes</I18n>
+      </span>
     </div>
     {fields.get('department')}
     {fields.get('manager')}
@@ -33,7 +39,9 @@ const FormLayout = ({ fields, error, buttons }) => (
     {fields.get('site')}
     <br />
     <div className="section__title">
-      <I18n>Memberships</I18n>
+      <span className="title">
+        <I18n>Memberships</I18n>
+      </span>
     </div>
     {fields.get('memberships')}
     <br />
@@ -49,7 +57,6 @@ export const UserEditComponent = ({
   handleDelete,
 }) => (
   <div className="page-container">
-    <PageTitle parts={['Edit User', 'Users']} />{' '}
     <UserForm
       key={username}
       formkey={`user-edit`}
@@ -134,27 +141,17 @@ export const UserEditComponent = ({
     >
       {({ form, bindings: { user }, initialized }) =>
         initialized && (
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="../..">
-                    <I18n>settings</I18n>
-                  </Link>{' '}
-                  /{' '}
-                  <Link to="..">
-                    <I18n>users</I18n>
-                  </Link>{' '}
-                  /
-                </span>
-                <h1>{user && user.get('username')}</h1>
-              </div>
-            </div>
-            {form}
+          <div className="page-panel">
+            <PageTitle
+              parts={['Edit User', 'Users']}
+              breadcrumbs={[
+                { label: 'Home', to: '/' },
+                { label: 'Settings', to: '../..' },
+                { label: 'Users', to: '..' },
+              ]}
+              title={user && user.get('username')}
+            />
+            <div className="form-unstyled mb-5">{form}</div>
           </div>
         )
       }

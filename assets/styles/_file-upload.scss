@@ -40,6 +40,7 @@
   opacity: 0;
   position: absolute;
   top: 0;
+  cursor: pointer;
 }
 
 .file-up__output {
@@ -67,19 +68,10 @@
  */
 
 .file-up__label {
-  &:hover .file-up__label__text,
-  &.focus-within .file-up__label__text {
-    border: 1px solid #111;
-    outline: 2px solid #333;
-    outline-offset: 2px;
-  }
   // Specific for User list
-  &:hover .file-up__label__text.btn-info,
-  &:focus-within .file-up__label__text.btn-info {
-    background-color: #138496;
-    border-color: #117a8b;
+  &:focus-within {
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(58, 176, 195, 0.5);
+    box-shadow: 0 0 1px 4px $focus-color;
   }
 }
 
