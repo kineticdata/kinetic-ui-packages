@@ -63,7 +63,7 @@ export const Form = ({
             </p>
           )}
         </div>
-        <div className="embedded-core-form--wrapper">
+        <div className="embedded-core-form--wrapper mb-5">
           {submissionId ? (
             <I18n submissionId={submissionId} public={!authenticated}>
               <CoreForm

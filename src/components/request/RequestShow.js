@@ -1,17 +1,13 @@
 import React from 'react';
 import { Link } from '@reach/router';
 import {
-  Aside,
-  Discussion,
-  DiscussionCard,
-  DiscussionsList,
   DiscussionsPanel,
   TimeAgo,
   Utils,
   ErrorMessage,
   LoadingMessage,
 } from '@kineticdata/bundle-common';
-import { bundle, createDiscussionList } from '@kineticdata/react';
+import { bundle } from '@kineticdata/react';
 import { RequestShowConfirmationContainer } from './RequestShowConfirmation';
 import { RequestActivityList } from './RequestActivityList';
 import { SendMessageModal } from './SendMessageModal';
@@ -110,6 +106,7 @@ export const RequestShow = ({
   viewDiscussion,
   toggleDiscussion,
   disableStartDiscussion,
+  discussionsEnabled,
   startDiscussion,
   disableProvideFeedback,
   provideFeedback,
@@ -122,8 +119,8 @@ export const RequestShow = ({
   appLocation,
   isSmallLayout,
 }) => (
-  <div className="page-container page-container--panels">
-    <div className="page-panel page-panel--three-fifths">
+  <div className="page-container">
+    <div className="page-panel">
       {sendMessageModalOpen && <SendMessageModal submission={submission} />}
       <PageTitle
         parts={[submission && submission.label, 'Requests']}
@@ -139,6 +136,11 @@ export const RequestShow = ({
           },
         ]}
         title={!error && submission && submission.form.name}
+        subtitle={
+          !error && submission && submission.form.name !== submission.label
+            ? submission.label
+            : null
+        }
         actions={
           !error &&
           submission && [
@@ -179,6 +181,7 @@ export const RequestShow = ({
       />
 
       {submission &&
+        discussionsEnabled &&
         discussion && (
           <DiscussionsPanel
             withAside={true}
@@ -204,10 +207,6 @@ export const RequestShow = ({
       {!error &&
         submission && (
           <>
-            {submission.form.name !== submission.label && (
-              <p className="h6 text-muted">{submission.label}</p>
-            )}
-
             {mode === 'confirmation' && (
               <div className="alert alert-primary alert-bar">
                 <RequestShowConfirmationContainer submission={submission} />
