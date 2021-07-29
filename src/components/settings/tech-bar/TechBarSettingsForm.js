@@ -43,17 +43,16 @@ export const TechBarSettingsFormComponent = ({
         {techBar ? (
           hasManagerAccess ? (
             <div className="content-wrapper form-unstyled">
-              <I18n context={`datastore.forms.${TECH_BAR_SETTINGS_FORM_SLUG}`}>
+              <I18n context={`kapps.datastore.forms.${TECH_BAR_SETTINGS_FORM_SLUG}`}>
                 {techBar.settings.submissionId ? (
                   <CoreForm
-                    datastore
                     submission={techBar.settings.submissionId}
                     created={handleSaved}
                     updated={handleSaved}
                   />
                 ) : (
                   <CoreForm
-                    datastore
+                    kapp="datastore"
                     form={TECH_BAR_SETTINGS_FORM_SLUG}
                     created={handleSaved}
                     updated={handleSaved}
