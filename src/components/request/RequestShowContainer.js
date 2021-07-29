@@ -63,6 +63,7 @@ const enhance = compose(
   withProps(props => {
     return {
       disableStartDiscussion:
+        !props.discussionsEnabled ||
         !props.submission ||
         props.submission.coreState !== constants.CORE_STATE_SUBMITTED ||
         Utils.hasAttributeValue(

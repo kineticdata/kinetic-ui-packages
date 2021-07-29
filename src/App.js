@@ -19,10 +19,10 @@ import { actions as categoriesActions } from './redux/modules/servicesApp';
 import { actions as submissionCountActions } from './redux/modules/submissionCounts';
 
 import { PageTitle } from './components/shared/PageTitle';
-import { Catalog } from './components/home/Catalog';
+// import { Catalog } from './components/home/Catalog';
 import { CategoryList } from './components/category_list/CategoryList';
 import { Category } from './components/category/Category';
-import { CatalogSearchResults } from './components/search_results/CatalogSearchResults';
+// import { CatalogSearchResults } from './components/search_results/CatalogSearchResults';
 // import { Sidebar } from './components/Sidebar';
 // import { Sidebar as SettingsSidebar } from './components/settings/Sidebar';
 import { Favorites } from './components/favorites/Favorites';
