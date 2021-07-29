@@ -12,7 +12,7 @@ const SettingsCard = ({ path, icon, name, description }) => (
     components={{ Link }}
     bar={true}
     barColor="dark"
-    barSize="sm"
+    barSize="xs"
   >
     <CardCol>
       <CardRow type="title">
@@ -41,13 +41,11 @@ const SettingsComponent = ({
   hasUserAccess,
 }) => (
   <div className="page-container">
-    <PageTitle />
-    <div className="page-panel page-panel--white">
-      <div className="page-title">
-        <h1>
-          <I18n>Settings</I18n>
-        </h1>
-      </div>
+    <div className="page-panel">
+      <PageTitle
+        breadcrumbs={[{ label: 'Home', to: '/' }]}
+        title="Settings"
+      />
 
       <I18n
         render={translate => (

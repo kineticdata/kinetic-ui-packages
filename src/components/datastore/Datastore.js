@@ -5,7 +5,6 @@ import { DatastoreSubmission } from './Submission';
 import { FormList } from './FormList';
 import { SubmissionSearch } from './SubmissionSearch/SubmissionSearch';
 import { DatastoreSettings } from './DatastoreSettings';
-// import { DatastoreEdit } from './DatastoreEdit';
 import { TableComponents } from '@kineticdata/bundle-common';
 
 const tableKey = 'datastore-list';
@@ -16,7 +15,6 @@ export const DatastoreRouter = ({ loading }) =>
       <TableComponents.MountWrapper tableKey={tableKey} default>
         <SubmissionSearch path=":slug" />
         <DatastoreSettings tableKey={tableKey} path=":slug/settings" />
-        {/* <DatastoreEdit tableKey={tableKey} path=":slug/settings" /> */}
         <DatastoreSubmission path=":slug/new" />
         <DatastoreSubmission path=":slug/:id" />
         <FormList tableKey={tableKey} default />

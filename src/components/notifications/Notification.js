@@ -15,6 +15,8 @@ import { PageTitle } from '../shared/PageTitle';
 import { actions } from '../../redux/modules/settingsNotifications';
 import { NotificationMenu } from './NotificationMenu';
 
+const capitalize = word => word.charAt(0).toUpperCase() + word.slice(1);
+
 const fields = {
   Name: {
     required: true,
@@ -68,38 +70,27 @@ const NotificationComponent = ({
   handleVariableSelection,
 }) => (
   <div className="page-container page-container--panels">
-    <PageTitle
-      parts={[`${submissionId ? 'Edit' : 'New'} ${title}`, 'Notifications']}
-    />
-    <div className="page-panel page-panel--white">
-      <div className="page-title">
-        <div
-          role="navigation"
-          aria-label="breadcrumbs"
-          className="page-title__breadcrumbs"
-        >
-          <span className="breadcrumb-item">
-            <Link to="../../..">
-              <I18n>settings</I18n>
-            </Link>
-          </span>{' '}
-          <span aria-hidden="true">/ </span>
-          <span className="breadcrumb-item">
-            <Link to={`..`}>
-              <I18n>notification {type}</I18n>
-            </Link>
-          </span>{' '}
-          <span aria-hidden="true">/ </span>
-          {!loading && (
-            <h1>
-              {submission ? submission.label : <I18n>{`New ${title}`}</I18n>}
-            </h1>
-          )}
-        </div>
-      </div>
+    <div className="page-panel">
+      <PageTitle
+        parts={[`${submissionId ? 'Edit' : 'New'} ${title}`, 'Notifications']}
+        breadcrumbs={[
+          { label: 'Home', to: '/' },
+          { label: 'Settings', to: '../..' },
+          { label: `Notification ${capitalize(type)}`, to: '..' },
+        ]}
+        title={
+          !loading ? (
+            submission ? (
+              submission.label
+            ) : (
+              <I18n>{`New ${title}`}</I18n>
+            )
+          ) : null
+        }
+      />
       {!loading &&
         values && (
-          <form onSubmit={handleSubmit} className="form-unstyled">
+          <form onSubmit={handleSubmit} className="form-unstyled mb-5">
             <Fragment>
               <NotificationMenu
                 selection={selection}

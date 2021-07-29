@@ -128,42 +128,22 @@ export const FormListComponent = ({
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (
         <div className="page-container">
-          <PageTitle parts={['Datastore']} />
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="../">
-                    <I18n>settings</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <h1>
-                  <I18n>Datastore Forms</I18n>
-                </h1>
-              </div>
-              {profile.spaceAdmin && (
-                <div className="page-title__actions">
-                  <I18n
-                    render={translate => (
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        title={translate('New Datastore')}
-                        onClick={() => toggleModal(true)}
-                      >
-                        <span className="fa fa-plus fa-fw" />{' '}
-                        {translate('New Datastore')}
-                      </button>
-                    )}
-                  />
-                </div>
-              )}
-            </div>
+          <div className="page-panel">
+            <PageTitle
+              parts={['Datastore']}
+              breadcrumbs={[
+                { label: 'Home', to: '/' },
+                { label: 'Settings', to: '..' },
+              ]}
+              title="Datastore Forms"
+              actions={[
+                profile.spaceAdmin && {
+                  label: 'Create Datastore',
+                  icon: 'plus',
+                  onClick: () => toggleModal(true),
+                },
+              ]}
+            />
             <div>
               <div className="text-right mb-2">{filter}</div>
               <TableComponents.FilterPills
@@ -192,7 +172,7 @@ export const FormListComponent = ({
               </h4>
             </div>
             <FormForm
-              datastore={true}
+              kappSlug="datastore"
               fieldSet={['name', 'slug', 'description', 'status']}
               onSave={() => form => {
                 addToast(`${form.name} created successfully.`);

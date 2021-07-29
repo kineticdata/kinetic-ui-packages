@@ -207,62 +207,51 @@ export const UsersListComponent = ({
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (
         <div className="page-container">
-          <PageTitle parts={['Users']} />
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="..">
-                    <I18n>settings</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <h1 aria-current="page">
-                  <I18n>Users</I18n>
-                </h1>
-              </div>
-              <div className="page-title__actions">
-                <div className="file-up" data-file-input>
-                  <label htmlFor="file_upload" className="file-up__label">
-                    <span className="file-up__label__text btn btn-info">
-                      <I18n>Import Users</I18n>
-                    </span>
-                    <input
-                      type="file"
-                      accept=".csv"
-                      autoComplete="off"
-                      id="file_upload"
-                      onChange={handleImport}
-                    />
-                  </label>
-                </div>
-
-                <button
-                  className="btn btn-info"
-                  onClick={() => openExportModal('export')}
-                >
-                  <I18n>Export Users</I18n>
-                </button>
-                <I18n
-                  render={translate => (
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      title={translate('New User')}
-                      onClick={() => toggleModal(true)}
-                    >
-                      <span className="fa fa-plus fa-fw" />{' '}
-                      {translate('New User')}
-                    </button>
-                  )}
-                />
-              </div>
-            </div>
-            <div>
+          <div className="page-panel">
+            <PageTitle
+              parts={['Users']}
+              breadcrumbs={[
+                { label: 'Home', to: '/' },
+                { label: 'Settings', to: '..' },
+              ]}
+              title="Users"
+              actions={[
+                {
+                  label: 'Create User',
+                  icon: 'plus',
+                  onClick: () => toggleModal(true),
+                },
+                {
+                  label: 'Export Users',
+                  onClick: () => openExportModal('export'),
+                  menu: true,
+                },
+                {
+                  label: 'Import Users',
+                  menu: true,
+                  render: ({ className }) => (
+                    <div className="file-up" data-file-input>
+                      <label
+                        htmlFor="file_upload"
+                        className={`file-up__label ${className}`}
+                      >
+                        <span className="file-up__label__text">
+                          <I18n>Import Users</I18n>
+                        </span>
+                        <input
+                          type="file"
+                          accept=".csv"
+                          autoComplete="off"
+                          id="file_upload"
+                          onChange={handleImport}
+                        />
+                      </label>
+                    </div>
+                  ),
+                },
+              ]}
+            />
+            <div className="mb-5">
               <div className="text-right mb-2">{filter}</div>
               <TableComponents.FilterPills
                 filterFormKey={filterFormKey}

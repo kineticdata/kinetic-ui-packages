@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from '@reach/router';
 import { connect } from '../../redux/store';
 import { compose } from 'recompose';
 import { CoreForm } from '@kineticdata/react';
@@ -15,57 +14,32 @@ const RobotExecutionComponent = ({
 }) => {
   return (
     <div className="page-container">
-      <PageTitle
-        parts={[
-          executionId && executionId.slice(-6).toUpperCase(),
-          'Executions',
-          robot && robot.values['Robot Name'],
-          `Robots`,
-        ]}
-      />
-      <div className="page-panel page-panel--white">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to="../../../..">
-                <I18n>settings</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to="../../..">
-                <I18n>robots</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            {(robot || robotError) && (
-              <>
-                <span className="breadcrumb-item">
-                  <Link to={`../..`}>
-                    <I18n>{robot ? robot.values['Robot Name'] : 'robot'}</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <span className="breadcrumb-item">
-                  <Link to="..">
-                    <I18n>executions</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-              </>
-            )}
-            <h1>
-              <I18n>Execution Details</I18n>
-            </h1>
-          </div>
-        </div>
-        <div className="form-unstyled mb-4">
-          <I18n context={`datastore.forms.${ROBOT_EXECUTIONS_FORM_SLUG}`}>
-            <CoreForm datastore review submission={executionId} />
+      <div className="page-panel">
+        <PageTitle
+          parts={[
+            executionId && executionId.slice(-6).toUpperCase(),
+            'Executions',
+            robot && robot.values['Robot Name'],
+            `Robots`,
+          ]}
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: 'Settings', to: '../../../..' },
+            { label: 'Robots', to: '../../..' },
+            (robot || robotError) && {
+              label: robot ? robot.values['Robot Name'] : 'Robot',
+              to: '../..',
+            },
+            (robot || robotError) && {
+              label: 'Executions',
+              to: '..',
+            },
+          ]}
+          title="Execution Details"
+        />
+        <div className="form-unstyled mb-5">
+          <I18n context={`kapps.datastore.forms.${ROBOT_EXECUTIONS_FORM_SLUG}`}>
+            <CoreForm review submission={executionId} />
           </I18n>
         </div>
       </div>

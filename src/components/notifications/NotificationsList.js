@@ -182,32 +182,23 @@ export const NotificationsListComponent = ({
     >
       {({ pagination, table }) => (
         <div className="page-container">
-          <PageTitle parts={[`${type}s`, 'Notifications']} />
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <span className="breadcrumb-item">
-                    <Link to="../../">
-                      <I18n>settings</I18n>
-                    </Link>
-                  </span>{' '}
-                  <span aria-hidden="true">/ </span>
-                </span>
-                <h1>
-                  <I18n>Notifications</I18n>
-                </h1>
-              </div>
-              <div className="page-title__actions">
-                <Link to="new" className="btn btn-primary">
-                  <I18n>New {type}</I18n>
-                </Link>
-              </div>
-            </div>
+          <div className="page-panel">
+            <PageTitle
+              parts={[`${type}s`, 'Notifications']}
+              breadcrumbs={[
+                { label: 'Home', to: '/' },
+                { label: 'Settings', to: '../..' },
+              ]}
+              title="Notifications"
+              actions={[
+                {
+                  label: `Create ${type}`,
+                  icon: 'plus',
+                  to: 'new',
+                },
+              ]}
+            />
+
             <div className="notifications-tabs">
               <ul className="nav nav-tabs">
                 <li role="presentation" className="nav-item">
