@@ -13,7 +13,7 @@ export const MySurveysComponent = ({ appLocation }) => (
       <div className="page-panel">
         <PageTitle
           parts={['My Surveys']}
-          breadcrumbs={[{ label: 'survey', to: appLocation }].filter(Boolean)}
+          breadcrumbs={[{ label: 'Home', to: '/' }].filter(Boolean)}
           title={'My Surveys'}
           actions={[
             {
@@ -25,10 +25,8 @@ export const MySurveysComponent = ({ appLocation }) => (
             },
           ]}
         />
-        <div className="page-panel__body">
-          <div className="cards">
-            <SurveyActivity feedKey={feedKey} />
-          </div>
+        <div className="cards">
+          <SurveyActivity feedKey={feedKey} />
         </div>
       </div>
     </div>

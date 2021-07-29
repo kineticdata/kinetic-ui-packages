@@ -1,17 +1,10 @@
 import React, { Fragment } from 'react';
-import {
-  compose,
-  lifecycle,
-  withProps,
-  withState,
-  withHandlers,
-} from 'recompose';
+import { compose, lifecycle, withProps, withState } from 'recompose';
 import {
   ErrorMessage,
   LoadingMessage,
   TimeAgo,
   DiscussionsPanel,
-  ViewDiscussionsModal,
   selectDiscussionsEnabled,
   Aside,
 } from '@kineticdata/bundle-common';
@@ -45,10 +38,6 @@ export const SubmissionDetailsContainer = ({
   submission,
   submissionError,
   discussionsEnabled,
-  viewDiscussionsModal,
-  isSmallLayout,
-  openDiscussions,
-  closeDiscussions,
   profile,
   creationFields,
   asideOpen,
@@ -60,14 +49,11 @@ export const SubmissionDetailsContainer = ({
         <PageTitle
           parts={[submission && submission.handle, form && form.name]}
           breadcrumbs={[
-            { label: 'survey', to: '../../../../../' },
-            {
-              label: 'admin',
-              to: `../../../../`,
-            },
+            { label: 'Home', to: '/' },
+            { label: `${kapp.name} Admin`, to: '../../../..' },
             {
               label: `${form.name}`,
-              to: `../../`,
+              to: `../..`,
             },
           ]}
           title={submission ? submission.label : 'New Submission'}
@@ -84,13 +70,15 @@ export const SubmissionDetailsContainer = ({
                   }),
                 menu: true,
               }))
-              .concat({
-                label: `${
-                  asideOpen ? 'Close Discussions' : 'View Discussions'
-                }`,
-                onClick: () => toggleAsideOpen(!asideOpen),
-                menu: true,
-              })
+              .concat(
+                discussionsEnabled
+                  ? {
+                      icon: 'comments-o',
+                      label: 'Discussions',
+                      onClick: () => toggleAsideOpen(!asideOpen),
+                    }
+                  : null,
+              )
           }
         />
 
@@ -138,9 +126,11 @@ export const SubmissionDetailsContainer = ({
                 </dd>
               </dl>
             </div>
-            <h4 className="table-title mb-2">
-              <I18n>Submission Activity</I18n>
-            </h4>
+            <div className="section__title">
+              <span className="title">
+                <I18n>Submission Activity</I18n>
+              </span>
+            </div>
             <div className="section__content scroll-wrapper-h">
               {submission.activities.filter(
                 activity => activity.type !== 'Task',
@@ -196,9 +186,11 @@ export const SubmissionDetailsContainer = ({
                 <I18n>There is no submission activity</I18n>
               )}
             </div>
-            <h4 className="table-title mb-2 mt-4">
-              <I18n>Values</I18n>
-            </h4>
+            <div className="section__title">
+              <span className="title">
+                <I18n>Values</I18n>
+              </span>
+            </div>
             <div className="section__content scroll-wrapper-h">
               <table className="table table-sm table-striped table--settings">
                 <thead className="header">
@@ -229,34 +221,23 @@ export const SubmissionDetailsContainer = ({
       {discussionsEnabled &&
         submission &&
         asideOpen && (
-          <Aside title="Discussion">
+          <Aside
+            title="Discussions"
+            toggle={() => toggleAsideOpen(false)}
+            className="p-0"
+          >
             <DiscussionsPanel
               creationFields={creationFields}
               CreationForm={CreationForm}
               itemType="Submission"
               itemKey={submission.id}
               me={profile}
+              overrideClassName="page-panel--discussions"
             />
           </Aside>
         )}
-      {viewDiscussionsModal &&
-        isSmallLayout && (
-          <ViewDiscussionsModal
-            creationFields={creationFields}
-            CreationForm={CreationForm}
-            close={closeDiscussions}
-            itemType="Submission"
-            itemKey={submission.id}
-            me={profile}
-          />
-        )}
     </div>
   );
-
-export const openDiscussions = props => () =>
-  props.setViewDiscussionsModal(true);
-export const closeDiscussions = props => () =>
-  props.setViewDiscussionsModal(false);
 
 const mapStateToProps = state => ({
   kapp: state.app.kapp,
@@ -265,7 +246,6 @@ const mapStateToProps = state => ({
   submission: state.surveys.submission,
   submissionError: state.surveys.submissionError,
   discussionsEnabled: selectDiscussionsEnabled(state),
-  isSmallLayout: state.app.layoutSize === 'small',
   profile: state.app.profile,
 });
 
@@ -286,12 +266,7 @@ export const SubmissionDetails = compose(
       description: props.submission.form.name || '',
     },
   })),
-  withState('viewDiscussionsModal', 'setViewDiscussionsModal', false),
   withState('asideOpen', 'toggleAsideOpen', false),
-  withHandlers({
-    openDiscussions,
-    closeDiscussions,
-  }),
   lifecycle({
     componentWillMount() {
       this.props.fetchSubmissionRequest({

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Redirect } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
-import { ErrorUnexpected, Loading } from '@kineticdata/bundle-common';
+import { ErrorMessage, LoadingMessage } from '@kineticdata/bundle-common';
 import { I18n } from '@kineticdata/react';
 import { connect } from './redux/store';
 import { PageTitle } from './components/shared/PageTitle';
@@ -27,46 +27,47 @@ const SurveyError = () => (
  *****************************************************************************/
 
 const AppComponent = props => {
-  if (props.error) {
-    return <ErrorUnexpected />;
-  } else if (props.loading) {
-    return <Loading text="App is loading ..." />;
-  } else {
-    return props.render({
-      main: (
-        <I18n>
-          <main className={`package-layout package-layout--survey`}>
-            <PageTitle parts={['Loading...']} />
-            <Router>
-              {/* home */}
-              <Redirect from="/" to="my-surveys" noThrow />
-              <MySurveys path="my-surveys" />
-              {/* admin */}
-              <SurveyAdminList path="admin" />
-              <CreateSurvey path="admin/new" />
-              <SurveySubmissions path="admin/:slug/submissions" />
-              <SubmissionDetails path="admin/:slug/submissions/:submissionId/details" />
-              <SurveySettings path="admin/:slug/settings" />
-              {/* survey */}
-              <Survey path=":slug/submissions/:submissionId" />
-              <Redirect
-                from="forms/:slug/submissions/:submissionId"
-                to="../../../../:slug/submissions/:submissionId"
-                noThrow
-              />
-              <SurveyConfirmation path="forms/:slug/confirmation" />
-              <SurveyConfirmation path="survey-opt-out/confirmation" />
-              <SurveyConfirmation path=":slug/submissions/:submissionId/confirmation" />
-              <SurveyPreview path="forms/:slug" />
-              <Redirect from=":slug" to="../forms/:slug" noThrow />
-              <Survey path="survey-opt-out" />
-              <SurveyError path="error" />
-            </Router>
-          </main>
-        </I18n>
-      ),
-    });
-  }
+  return props.render({
+    main: props.error ? (
+      <ErrorMessage
+        title="Unexpected Error"
+        message="Sorry, an unexpected error has occurred!"
+      />
+    ) : props.loading ? (
+      <LoadingMessage />
+    ) : (
+      <I18n>
+        <main className={`package-layout package-layout--survey`}>
+          <PageTitle parts={['Loading...']} />
+          <Router>
+            {/* home */}
+            <Redirect from="/" to="my-surveys" noThrow />
+            <MySurveys path="my-surveys" />
+            {/* admin */}
+            <SurveyAdminList path="admin" />
+            <CreateSurvey path="admin/new" />
+            <SurveySubmissions path="admin/:slug/submissions" />
+            <SubmissionDetails path="admin/:slug/submissions/:submissionId/details" />
+            <SurveySettings path="admin/:slug/settings" />
+            {/* survey */}
+            <Survey path=":slug/submissions/:submissionId" />
+            <Redirect
+              from="forms/:slug/submissions/:submissionId"
+              to="../../../../:slug/submissions/:submissionId"
+              noThrow
+            />
+            <SurveyConfirmation path="forms/:slug/confirmation" />
+            <SurveyConfirmation path="survey-opt-out/confirmation" />
+            <SurveyConfirmation path=":slug/submissions/:submissionId/confirmation" />
+            <SurveyPreview path="forms/:slug" />
+            <Redirect from=":slug" to="../forms/:slug" noThrow />
+            <Survey path="survey-opt-out" />
+            <SurveyError path="error" />
+          </Router>
+        </main>
+      </I18n>
+    ),
+  });
 };
 
 const mapStateToProps = (state, props) => ({
@@ -99,35 +100,36 @@ export const App = enhance(AppComponent);
  *****************************************************************************/
 
 export const PublicAppComponent = props => {
-  if (props.error) {
-    return <ErrorUnexpected />;
-  } else if (props.loading) {
-    return <Loading text="App is loading ..." />;
-  } else {
-    return props.render({
-      main: (
-        <I18n>
-          <main className="package-layout package-layout--services">
-            <PageTitle parts={['Loading...']} />
-            <Router>
-              <MySurveys path="/" />
-              <Survey path=":slug/submissions/:submissionId" />
-              <Redirect
-                from="forms/:slug/submissions/:submissionId"
-                to="../../../../:slug/submissions/:submissionId"
-                noThrow
-              />
-              <Survey path="survey-opt-out" />
-              <SurveyError path="error" />
-              <SurveyConfirmation path="survey-opt-out/confirmation" />
-              <SurveyConfirmation path=":slug/submissions/:submissionId/confirmation" />
-              <Redirect from="*" to={props.authRoute} noThrow />
-            </Router>
-          </main>
-        </I18n>
-      ),
-    });
-  }
+  return props.render({
+    main: props.error ? (
+      <ErrorMessage
+        title="Unexpected Error"
+        message="Sorry, an unexpected error has occurred!"
+      />
+    ) : props.loading ? (
+      <LoadingMessage />
+    ) : (
+      <I18n>
+        <main className="package-layout package-layout--services">
+          <PageTitle parts={['Loading...']} />
+          <Router>
+            <MySurveys path="/" />
+            <Survey path=":slug/submissions/:submissionId" />
+            <Redirect
+              from="forms/:slug/submissions/:submissionId"
+              to="../../../../:slug/submissions/:submissionId"
+              noThrow
+            />
+            <Survey path="survey-opt-out" />
+            <SurveyError path="error" />
+            <SurveyConfirmation path="survey-opt-out/confirmation" />
+            <SurveyConfirmation path=":slug/submissions/:submissionId/confirmation" />
+            <Redirect from="*" to={props.authRoute} noThrow />
+          </Router>
+        </main>
+      </I18n>
+    ),
+  });
 };
 
 const mapStateToPropsPublic = state => ({

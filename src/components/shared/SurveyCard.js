@@ -46,11 +46,11 @@ export const SurveyCard = props => {
     >
       <CardCol>
         <CardRow type="title">
-          <span className={`fa fa-pencil-square fa-fw fa-rounded`} />
+          <span className={`fa fa-pencil-square fa-fw`} />
           <span>
             <I18n>{form.name}</I18n>
           </span>
-          <span className={`badge badge-pill badge-${color} badge-stylized`}>
+          <span className={`badge badge-${color} badge-stylized`}>
             <I18n>{helpers.getStatus(submission)}</I18n>
           </span>
         </CardRow>
@@ -62,7 +62,7 @@ export const SurveyCard = props => {
           )}
         </CardRow>
         <CardRow type="meta">
-          <dl>
+          <dl className="flat">
             <div>
               <dt>
                 <I18n>Confirmation</I18n>
