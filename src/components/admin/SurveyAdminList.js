@@ -246,15 +246,9 @@ const SurveyAdminListComponent = ({
               <div className="page-panel">
                 <PageTitle
                   parts={['Survey Admin']}
-                  breadcrumbs={[{ label: 'survey', to: '../' }]}
-                  title="Survey Admin"
-                  actions={[
-                    {
-                      label: 'New Survey',
-                      onClick: () => navigate('new'),
-                      menu: false,
-                    },
-                  ]}
+                  breadcrumbs={[{ label: 'Home', to: '/' }]}
+                  title={`${kapp.name} Admin`}
+                  actions={[{ label: 'New Survey', to: 'new' }]}
                 />
                 <div>
                   <div className="text-right mb-2">{filter}</div>

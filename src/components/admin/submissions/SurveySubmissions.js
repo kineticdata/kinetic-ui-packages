@@ -180,19 +180,11 @@ export const SurveySubmissionsComponent = ({
                 <PageTitle
                   parts={[form.name]}
                   breadcrumbs={[
-                    { label: 'survey', to: '../../../' },
-                    {
-                      label: 'admin',
-                      to: `../../`,
-                    },
+                    { label: 'Home', to: '/' },
+                    { label: `${kapp.name} Admin`, to: '../..' },
                   ]}
                   title={form.name}
                   actions={[
-                    {
-                      label: 'Export Records',
-                      onClick: () => openModal('export'),
-                      menu: true,
-                    },
                     {
                       label: 'Create Draft',
                       onClick: () =>
@@ -200,9 +192,13 @@ export const SurveySubmissionsComponent = ({
                       menu: true,
                     },
                     {
-                      label: 'Survey Settings',
-                      onClick: () => navigate('../settings'),
+                      label: 'Export Records',
+                      onClick: () => openModal('export'),
                       menu: true,
+                    },
+                    {
+                      label: 'Survey Settings',
+                      to: '../settings',
                     },
                   ]}
                 />
@@ -243,10 +239,12 @@ export const SurveySubmissionsComponent = ({
                       </dd>
                     </dl>
                   </div>
-                  <h4 className="table-title mb-2">
-                    <I18n>Submissions</I18n>
+                  <div className="section__title">
+                    <span className="title">
+                      <I18n>Submissions</I18n>
+                    </span>
                     {filter}
-                  </h4>
+                  </div>
                   <div className="section__content">
                     <TableComponents.FilterPills
                       filterFormKey={filterFormKey}

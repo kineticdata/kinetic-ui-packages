@@ -27,20 +27,21 @@ const CreateSurveyComponent = ({
       <PageTitle
         parts={['New Survey']}
         breadcrumbs={[
-          { label: 'survey', to: '../../' },
-          { label: 'admin', to: '../' },
+          { label: 'Home', to: '/' },
+          { label: `${kapp.name} Admin`, to: '..' },
         ]}
         title="New Survey"
         actions={[
           {
-            label: 'Help',
+            icon: 'info-circle',
+            aria: 'Help Info',
             onClick: () => toggleAsideOpen(!asideOpen),
-            menu: false,
+            className: 'btn-icon-subtle',
           },
         ]}
       />
       <div className="datastore-settings">
-        <div className="settings form">
+        <div className="settings form form-unstyled mb-5">
           <div className="form-group">
             <label htmlFor="template">
               <I18n>Survey Template</I18n>{' '}
@@ -142,7 +143,8 @@ const CreateSurveyComponent = ({
     {asideOpen && (
       <Aside
         title={<I18n>New Survey</I18n>}
-        className="aside--collapsed survey-settings-sidebar"
+        className="survey-settings-sidebar"
+        toggle={() => toggleAsideOpen(false)}
       >
         <p>
           <I18n>

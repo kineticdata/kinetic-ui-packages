@@ -198,9 +198,9 @@ const SurveySettingsComponent = ({
         <TabContent activeTab={activeTab}>
           {/* General Settings */}
           <TabPane tabId="1">
-            <div className="form-top-buttons">
+            <div className="form-top-buttons mt-n3">
               <button
-                className="btn btn-outline-dark"
+                className="btn btn-icon-subtle"
                 onClick={() => toggleAsideOpen(!asideOpen)}
               >
                 <span>
@@ -226,9 +226,9 @@ const SurveySettingsComponent = ({
 
           {/* Workflow Process */}
           <TabPane tabId="2">
-            <div className="form-top-buttons">
+            <div className="form-top-buttons mt-n3">
               <button
-                className="btn btn-outline-dark"
+                className="btn btn-icon-subtle"
                 onClick={() => toggleAsideOpen(!asideOpen)}
               >
                 <span>
@@ -254,9 +254,9 @@ const SurveySettingsComponent = ({
 
           {/* Notifications */}
           <TabPane tabId="6">
-            <div className="form-top-buttons">
+            <div className="form-top-buttons mt-n3">
               <button
-                className="btn btn-outline-dark"
+                className="btn btn-icon-subtle"
                 onClick={() => toggleAsideOpen(!asideOpen)}
               >
                 <span>
@@ -276,9 +276,9 @@ const SurveySettingsComponent = ({
 
           {/* Triggers */}
           <TabPane tabId="3">
-            <div className="form-top-buttons">
+            <div className="form-top-buttons mt-n3">
               <button
-                className="btn btn-outline-dark"
+                className="btn btn-icon-subtle"
                 onClick={() => toggleAsideOpen(!asideOpen)}
               >
                 <span>
@@ -312,9 +312,9 @@ const SurveySettingsComponent = ({
 
           {/* Delivery Rules */}
           <TabPane tabId="4">
-            <div className="form-top-buttons">
+            <div className="form-top-buttons mt-n3">
               <button
-                className="btn btn-outline-dark"
+                className="btn btn-icon-subtle"
                 onClick={() => toggleAsideOpen(!asideOpen)}
               >
                 <span>
@@ -347,9 +347,9 @@ const SurveySettingsComponent = ({
 
           {/* Security Rules */}
           <TabPane tabId="5">
-            <div className="form-top-buttons">
+            <div className="form-top-buttons mt-n3">
               <button
-                className="btn btn-outline-dark"
+                className="btn btn-icon-subtle"
                 onClick={() => toggleAsideOpen(!asideOpen)}
               >
                 <span>
@@ -422,17 +422,6 @@ const SurveySettingsComponent = ({
               title="Settings"
               actions={[
                 {
-                  label: `${asideOpen ? 'Close Help' : 'Help'}`,
-                  onClick: () => toggleAsideOpen(!asideOpen),
-                  menu: true,
-                },
-                {
-                  label: 'Create Draft',
-                  onClick: () =>
-                    createTestSubmission({ formSlug: origForm.slug }),
-                  menu: true,
-                },
-                {
                   label: (
                     <span>
                       <i className="fa fa-fw fa-external-link" /> Form Builder
@@ -446,6 +435,18 @@ const SurveySettingsComponent = ({
                       '_blank',
                     ),
                   menu: false,
+                },
+                {
+                  icon: 'info-circle',
+                  aria: 'Help Info',
+                  onClick: () => toggleAsideOpen(!asideOpen),
+                  className: 'btn-icon-subtle',
+                },
+                {
+                  label: 'Create Draft',
+                  onClick: () =>
+                    createTestSubmission({ formSlug: origForm.slug }),
+                  menu: true,
                 },
               ]}
             />
@@ -858,7 +859,8 @@ const SurveySettingsComponent = ({
             {asideOpen && (
               <Aside
                 title={<I18n>Survey Settings</I18n>}
-                className="aside--collapsed survey-settings-sidebar"
+                className="survey-settings-sidebar"
+                toggle={() => toggleAsideOpen(false)}
               >
                 <p>
                   <I18n>
