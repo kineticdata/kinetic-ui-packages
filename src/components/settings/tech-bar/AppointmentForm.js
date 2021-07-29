@@ -7,7 +7,6 @@ import {
   selectHasRoleSchedulerAdmin,
 } from '@kineticdata/bundle-common';
 import { PageTitle } from '../../shared/PageTitle';
-import { Link } from '@reach/router';
 import { CoreForm, I18n } from '@kineticdata/react';
 
 export const AppointmentFormComponent = ({ id, kapp, techBar }) => {
