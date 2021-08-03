@@ -57,7 +57,7 @@ const ActionsCell = ({
             onClick={() =>
               callFormAction({
                 formSlug: el.slug,
-                surveySubmissionId: row.get('id'),
+                surveySubmission: row.toJS(),
               })
             }
           >

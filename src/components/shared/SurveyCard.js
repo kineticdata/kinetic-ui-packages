@@ -3,8 +3,13 @@ import { Card, CardCol, CardRow, TimeAgo } from '@kineticdata/bundle-common';
 import { Link } from '@reach/router';
 import * as helpers from '../../utils';
 import { I18n } from '@kineticdata/react';
+import {
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from 'reactstrap';
 
-// card
 const InitiatedDateListItem = ({ submission }) => {
   return (
     <div>
@@ -33,9 +38,13 @@ const DueDateListItem = ({ submission }) => {
 };
 
 export const SurveyCard = props => {
-  const { submission, path } = props;
+  const { submission, username, appLocation, navigate, path } = props;
   const form = submission.form;
-  const color = helpers.getStatusColor(submission);
+  const color = helpers.getSurveyColor(submission);
+  const allowOptOut = JSON.parse(
+    submission.form['attributesMap']['Survey Configuration'],
+  )['Allow Opt-out'];
+
   return (
     <Card
       to={path}
@@ -50,9 +59,32 @@ export const SurveyCard = props => {
           <span>
             <I18n>{form.name}</I18n>
           </span>
-          <span className={`badge badge-${color} badge-stylized`}>
-            <I18n>{helpers.getStatus(submission)}</I18n>
-          </span>
+          {allowOptOut === 'true' && (
+            <UncontrolledDropdown className="badge">
+              <DropdownToggle
+                onClick={e => e.preventDefault()}
+                tag="button"
+                className="btn btn-icon-dark"
+                aria-label="Survey Card Actions"
+              >
+                <span className="fa fa-chevron-down fa-fw" />
+              </DropdownToggle>
+              <DropdownMenu right>
+                <DropdownItem
+                  onClick={e => {
+                    e.preventDefault();
+                    navigate(
+                      `${appLocation}/survey-opt-out?values[Survey Slug]=${
+                        submission.form.slug
+                      }&values[recipientEmail]=${username}`,
+                    );
+                  }}
+                >
+                  <I18n>Unsubscribe</I18n>
+                </DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          )}
         </CardRow>
         <CardRow className="text-muted">
           {submission.label === submission.id ? (

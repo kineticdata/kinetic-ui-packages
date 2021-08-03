@@ -1,5 +1,6 @@
 import { Utils } from '@kineticdata/bundle-common';
 import * as constants from './constants';
+import moment from 'moment';
 
 export const getSubmissionPath = (appLocation, submission, mode) => {
   return [appLocation, submission.form.slug, 'submissions', submission.id]
@@ -78,5 +79,16 @@ export const getStatusColor = props => {
       return 'danger';
     default:
       return 'dark';
+  }
+};
+
+export const getSurveyColor = props => {
+  const due = new moment(props.values['Due Date']);
+  if (due.isAfter(moment().add(3, 'days'))) {
+    return 'success';
+  } else if (due.isBetween(moment(), moment().add(3, 'days'))) {
+    return 'warning';
+  } else {
+    return 'dark';
   }
 };

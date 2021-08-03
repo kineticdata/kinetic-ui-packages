@@ -25,6 +25,7 @@ import {
   DEFAULT_SURVEY_CONFIGURATION,
   DEFAULT_TEMPLATE_INCLUDES,
 } from '../../constants';
+import { history } from '@kineticdata/react';
 
 export function* fetchFormSaga({ payload }) {
   const space = yield select(state => state.app.space);
@@ -353,26 +354,39 @@ export function* deleteFormSaga({ payload }) {
 }
 
 export function* callFormActionSaga({
-  payload: { formSlug, surveySubmissionId },
+  payload: { formSlug, surveySubmission },
 }) {
+  const appLocation = yield select(state => state.app.location);
+  const username = yield select(state => state.app.profile.username);
   const kappSlug = yield select(state => state.app.kappSlug);
-  const { submission, error } = yield call(createSubmission, {
-    kappSlug,
-    formSlug,
-    values: {
-      'Survey Submission Id': surveySubmissionId,
-    },
-  });
-  if (error) {
-    yield addToastAlert({
-      title: 'Survey Action Failed',
-      message: error.message,
-    });
+
+  // survey opt out
+  if (formSlug === 'survey-opt-out') {
+    history.push(
+      `${appLocation}/survey-opt-out?values[Survey Slug]=${
+        surveySubmission.form.slug
+      }&values[recipientEmail]=${username}`,
+    );
   } else {
-    addToast({
-      message: 'Resending Invitation',
+    // resend invitation
+    const { submission, error } = yield call(createSubmission, {
+      kappSlug,
+      formSlug,
+      values: {
+        'Survey Submission Id': surveySubmission.id,
+      },
     });
-    return submission;
+    if (error) {
+      yield addToastAlert({
+        title: 'Survey Action Failed',
+        message: error.message,
+      });
+    } else {
+      addToast({
+        message: 'Resending Invitation',
+      });
+      return submission;
+    }
   }
 }
 
