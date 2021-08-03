@@ -195,7 +195,6 @@ export function* fetchListTask(action) {
 
           // Call the callback if provided
           if (typeof action.payload === 'function') {
-            console.log('fetch completed -  calling callback', submissions);
             action.payload(submissions);
           }
         }

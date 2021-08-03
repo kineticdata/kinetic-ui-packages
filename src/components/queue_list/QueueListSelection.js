@@ -298,7 +298,6 @@ export const QueueListSelection = compose(
     },
     handleWorkSubmit: props => values => {
       props.toggleWork();
-      console.log('handleWorkSubmit', values);
       props.bulkWork({ values });
     },
   }),
