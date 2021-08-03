@@ -66,7 +66,7 @@ export const SubmissionDetailsContainer = ({
                 onClick: () =>
                   callFormAction({
                     formSlug: el.slug,
-                    surveySubmissionId: submission.id,
+                    surveySubmission: submission,
                   }),
                 menu: true,
               }))

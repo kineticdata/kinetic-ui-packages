@@ -20,14 +20,13 @@ export const SurveyComponent = ({
   slug,
   kappSlug,
   values,
-  optOutFormSlug,
   handleCompleted,
 }) => (
   <div className="page-container page-container--color-bar">
     <div className="page-panel">
       <PageTitle
         parts={[submission && submission.form.name]}
-        title={submission ? submission.form.name : 'New Submission'}
+        title={submission && submission.form.name}
       />
       {loading ? (
         <LoadingMessage />
@@ -46,7 +45,7 @@ export const SurveyComponent = ({
                     submission={submission.id}
                     public={!authenticated}
                     review={submission.coreState !== 'Draft'}
-                    form={submission.form.slug}
+                    form={slug}
                     values={values}
                     completed={handleCompleted}
                     notFoundComponent={ErrorNotFound}
@@ -58,7 +57,7 @@ export const SurveyComponent = ({
                 <CoreForm
                   public={!authenticated}
                   kapp={kappSlug}
-                  form={optOutFormSlug}
+                  form={slug}
                   values={values}
                   completed={handleCompleted}
                   notFoundComponent={ErrorNotFound}
@@ -103,12 +102,12 @@ export const mapStateToProps = state => ({
   kappSlug: state.app.kappSlug,
   loading: state.surveyApp.loading,
   submission: state.surveys.submission,
-  optOutFormSlug: 'survey-opt-out',
   values: valuesFromQueryParams(state.router.location.search),
 });
 
 export const mapDispatchToProps = {
   fetchSubmission: actions.fetchSubmissionRequest,
+  clearSurveyState: actions.clearSurveyState,
 };
 
 const enhance = compose(
@@ -117,15 +116,19 @@ const enhance = compose(
     mapDispatchToProps,
   ),
   withProps(props => ({
-    slug: props.submission ? props.submission.form.slug : props.optOutFormSlug,
+    slug: props.submission ? props.submission.form.slug : 'survey-opt-out',
   })),
   withHandlers({ handleCompleted }),
   lifecycle({
-    componentWillMount() {
+    componentDidMount() {
+      this.props.clearSurveyState();
       this.props.submissionId &&
         this.props.fetchSubmission({
           id: this.props.submissionId,
         });
+    },
+    componentWillUnmount() {
+      this.props.clearSurveyState();
     },
   }),
 );

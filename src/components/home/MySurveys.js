@@ -7,7 +7,7 @@ import { SurveyActivity } from './SurveyActivity';
 
 const feedKey = 'my-surveys-feed';
 
-export const MySurveysComponent = ({ appLocation }) => (
+export const MySurveysComponent = ({ navigate }) => (
   <Fragment>
     <div className="page-container">
       <div className="page-panel">
@@ -26,7 +26,7 @@ export const MySurveysComponent = ({ appLocation }) => (
           ]}
         />
         <div className="cards">
-          <SurveyActivity feedKey={feedKey} />
+          <SurveyActivity feedKey={feedKey} navigate={navigate} />
         </div>
       </div>
     </div>

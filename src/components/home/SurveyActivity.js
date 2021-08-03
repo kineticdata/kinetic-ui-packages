@@ -23,6 +23,7 @@ const buildSearch = (coreState, username) => {
       'values',
       'form',
       'form.attributes',
+      'form.attributesMap',
       'form.kapp',
       'form.kapp.attributes',
     ])
@@ -59,6 +60,9 @@ export const SurveyActivity = compose(
       <SurveyCard
         key={record.id}
         submission={record}
+        username={props.username}
+        appLocation={props.appLocation}
+        navigate={props.navigate}
         path={getSubmissionPath(props.appLocation, record, null)}
       />
     ),
