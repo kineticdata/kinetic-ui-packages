@@ -136,7 +136,7 @@ export const SurveySubmissionsComponent = ({
             },
             className: 'text-right',
           },
-        ]}
+        ].filter(Boolean)}
         alterColumns={{
           label: {
             components: { BodyCell: LinkCell },
