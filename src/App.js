@@ -50,21 +50,6 @@ const SubmissionRedirect = props => (
 
 const AppComponent = props => {
   return props.render({
-    // sidebar: (
-    //   <Router>
-    //     <SettingsSidebar
-    //       path="settings/*"
-    //       settingsBackPath={props.settingsBackPath}
-    //     />
-    //     <Sidebar
-    //       path="*"
-    //       counts={props.submissionCounts}
-    //       homePageMode={props.homePageMode}
-    //       homePageItems={props.homePageItems}
-    //       openSettings={props.openSettings}
-    //     />
-    //   </Router>
-    // ),
     main: props.error ? (
       <ErrorMessage
         title="Unexpected Error"
