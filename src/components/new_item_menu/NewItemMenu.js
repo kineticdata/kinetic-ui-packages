@@ -54,7 +54,6 @@ const AssignmentBackButton = ({ handleAssignmentClick, currentAssignment }) => (
     className="btn btn-link btn-back d-flex"
     onClick={handleAssignmentClick(null)}
   >
-    {console.log('currentAssignment', currentAssignment)}
     <span className="icon">
       <span className="fa fa-fw fa-chevron-left" />
     </span>
