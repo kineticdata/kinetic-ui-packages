@@ -77,8 +77,8 @@ export const availableParts = (
       rangeRemaining.size === 0 &&
       values.get('orderby0-part') &&
       values.get('orderby0-part') !== rangePart
-        ? List()
-        : timelinesAvailable,
+        ? List([])
+        : timelinesAvailable || List([]),
     );
   } else if (partType === 'orderBy') {
     return (rangePart
@@ -88,7 +88,13 @@ export const availableParts = (
           .map(index => index.first())
     )
       .concat(
-        TIMELINES.includes(rangePart) ? List([rangePart]) : timelinesAvailable,
+        TIMELINES.includes(rangePart)
+          ? List([rangePart])
+          : anyAtLast
+            ? fromJS(TIMELINES)
+            : equalityFields.size === 0
+              ? fromJS(TIMELINES)
+              : List(),
       )
       .toSet()
       .toList();

@@ -156,7 +156,7 @@ const orderVisibleFn = partIndex => bindings => {
   );
 };
 
-const availableOptions = (partType, partIndex) => bindings => {
+export const availableOptions = (partType, partIndex) => bindings => {
   const { values, indexDefinitions } = bindings;
 
   const usedFields = getUsedFields(values, partIndex, partType);
@@ -371,7 +371,7 @@ export const filters = () => ({ form, indexDefinitions }) =>
         { label: 'ASC', value: 'ASC' },
         { label: 'DESC', value: 'DESC' },
       ],
-      initialValue: 'ASC',
+      initialValue: 'DESC',
       required: true,
     },
     ...Range(0, MAX_PART_LENGTH)
@@ -387,17 +387,5 @@ export const filters = () => ({ form, indexDefinitions }) =>
         },
       ])
       .toArray(),
-    // {
-    //   name: 'timeline',
-    //   transient: true,
-    //   type: 'select',
-    //   options: TIMELINES.map(t => Map({ label: t, value: t })),
-    //   visible: ({ values }) => values.get('timeline') !== '',
-    //   enabled: ({ values }) => !TIMELINES.includes(values.get('range-part')),
-    // },
-    {
-      name: 'query',
-      type: null,
-      serialize: serializeQuery,
-    },
+    { name: 'query', type: null, serialize: serializeQuery },
   ];
