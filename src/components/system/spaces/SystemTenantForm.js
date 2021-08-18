@@ -5,7 +5,7 @@ import {
   fetchSystemDefaultTaskDbAdapter,
   fetchTenant,
   updateTenant,
-} from '../../../apis/system';
+} from '../../../apis';
 import { slugify } from '../../../helpers';
 import {
   VALIDATE_DB_ADAPTERS,
@@ -32,7 +32,19 @@ const dataSources = ({ slug }) => ({
 });
 
 const handleSubmit = ({ slug }) => values => {
+  const authenticationSecret = values.get('authenticationSecret')
+    ? { authenticationSecret: values.get('authenticationSecret') }
+    : {};
+  const deployment = slug
+    ? {
+        deployment: {
+          image: values.get('image'),
+          replicas: parseInt(values.get('replicas')),
+        },
+      }
+    : {};
   const tenant = {
+    ...authenticationSecret,
     space: {
       slug: values.get('slug'),
       name: values.get('name'),
@@ -41,14 +53,7 @@ const handleSubmit = ({ slug }) => values => {
       autoCreateDatabase: values.get('task_autoCreateDatabase')
         ? 'true'
         : 'false',
-      ...(slug
-        ? {
-            deployment: {
-              image: values.get('image'),
-              replicas: parseInt(values.get('replicas')),
-            },
-          }
-        : {}),
+      ...deployment,
       databaseAdapter: {
         type: values.get('task_databaseAdapter_type'),
         properties: adapterProperties(
