@@ -11,7 +11,7 @@ import {
 import { handleFormErrors } from '../../form/Form.helpers';
 
 const USER_INCLUDES =
-  'attributesMap,authorization,memberships,profileAttributesMap';
+  'details,attributesMap,authorization,memberships,profileAttributesMap';
 const EMAIL_REGEX = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
 const dataSources = ({ username, spaceSlug }) => ({
