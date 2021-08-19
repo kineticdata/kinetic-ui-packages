@@ -478,14 +478,15 @@ export const POSTGRES_FIELDS = (
 
 export const adapterProperties = (values, adapter) => {
   const adapterPrefix = `${adapter}_`;
-  const properties = values
-    // Remove the other adapters properties.
-    .filter((_v, key) => key.startsWith(adapterPrefix))
-    // Remove the adapter prefix from the property names.
-    .mapKeys(key => key.replace(adapterPrefix, ''))
-    .toObject();
 
-  return properties;
+  return (
+    values
+      // Remove the other adapters properties.
+      .filter((_v, key) => key.startsWith(adapterPrefix))
+      // Remove the adapter prefix from the property names.
+      .mapKeys(key => key.replace(adapterPrefix, ''))
+      .toObject()
+  );
 };
 
 export const propertiesFromAdapters = (
@@ -557,6 +558,11 @@ export const adapterPropertiesFields = ({
         : property.has('options')
           ? 'select'
           : 'text',
+      placeholder:
+        property.get('sensitive') &&
+        defaultAdapter.get('adapterClass') === property.get('type')
+          ? '•••••••'
+          : undefined,
       helpText: property.get('description'),
       required: ({ values }) =>
         values.get(formPropertyName(prefix, adapterType)) ===
