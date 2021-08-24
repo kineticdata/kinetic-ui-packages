@@ -90,7 +90,7 @@ const deserializeNodeId = id => {
   return match ? parseInt(match[1]) : 0;
 };
 
-const serializeNodeId = node =>
+export const serializeNodeId = node =>
   node.id === 0 ? 'start' : `${node.definitionId}_${node.id}`;
 
 export const deserializeNode = ({

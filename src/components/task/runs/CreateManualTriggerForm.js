@@ -1,25 +1,19 @@
-import { createTaskTrigger, fetchTree } from '../../../apis';
+import { createTaskTrigger } from '../../../apis';
 import { generateForm } from '../../form/Form';
+import { serializeNodeId } from '../builder/models';
 
-const dataSources = ({ sourceName, sourceGroup, name, workflowType }) => ({
+const dataSources = ({ tree }) => ({
   nodes: {
-    fn: fetchTree,
-    params: name && [
-      {
-        type: workflowType || 'Tree',
-        sourceName,
-        sourceGroup,
-        name,
-        include: 'treeJson',
-      },
-    ],
-    transform: result =>
-      result.tree && result.tree.treeJson
-        ? result.tree.treeJson.nodes.map(node => ({
-            label: `${node.name} (${node.id})`,
-            value: node.id,
-          }))
-        : [],
+    fn: () => {
+      return tree.nodes
+        .map(node => ({
+          label: `${node.name} (${serializeNodeId(node)})`,
+          value: serializeNodeId(node),
+        }))
+        .valueSeq()
+        .toArray();
+    },
+    params: [],
   },
 });
 
@@ -38,8 +32,8 @@ const handleSubmit = formOptions => values => {
   });
 };
 
-const fields = ({ name }) => () =>
-  name && [
+const fields = () => ({ nodes }) =>
+  nodes && [
     {
       name: 'nodeId',
       label: 'Node Id',
@@ -74,7 +68,7 @@ const fields = ({ name }) => () =>
   ];
 
 export const CreateManualTriggerForm = generateForm({
-  formOptions: ['sourceName', 'sourceGroup', 'name', 'workflowType', 'runId'],
+  formOptions: ['runId', 'tree'],
   dataSources,
   fields,
   handleSubmit,
