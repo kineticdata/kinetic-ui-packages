@@ -106,6 +106,8 @@ export {
 export {
   FieldDefinitionForm,
 } from './core/field_definition/FieldDefinitionForm';
+export { FileResourceTable } from './core/file_resource/FileResourceTable';
+export { FileResourceForm } from './core/file_resource/FileResourceForm';
 export { FormForm } from './core/form/FormForm';
 export { FormTable } from './core/form/FormTable';
 export { FormTypeForm } from './core/form_type/FormTypeForm';
