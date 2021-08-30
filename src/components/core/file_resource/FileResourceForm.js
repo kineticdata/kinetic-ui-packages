@@ -30,7 +30,10 @@ const dataSources = ({ fileResourceSlug }) => ({
     ],
   },
   filestores: {
-    fn: fetchFilestores,
+    fn: options =>
+      options && options.agentSlug
+        ? fetchFilestores(options)
+        : Promise.resolve([]),
     params: ({ values }) => [{ agentSlug: get(values, 'agentSlug', 'system') }],
     transform: result =>
       get(result, 'filestores', []).map(agent => ({
