@@ -334,6 +334,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                         prevPage={null}
                         startIndex={1}
                         tableKey="mock-table-key"
+                        tableOptions={Object {}}
                       />
                     }
                     rows={
@@ -583,6 +584,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                       prevPage={null}
                       startIndex={1}
                       tableKey="mock-table-key"
+                      tableOptions={Object {}}
                     >
                       <div>
                         <button
@@ -1434,6 +1436,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                         prevPage={null}
                         startIndex={1}
                         tableKey="mock-table-key"
+                        tableOptions={Object {}}
                       />
                     }
                     rows={
@@ -2496,6 +2499,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                       prevPage={null}
                       startIndex={1}
                       tableKey="mock-table-key"
+                      tableOptions={Object {}}
                     >
                       <div>
                         <button
