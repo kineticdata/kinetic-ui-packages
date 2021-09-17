@@ -119,9 +119,7 @@ export const QueueItem = ({
               value: (
                 <span>
                   <I18n
-                    context={`kapps.${queueItem.form.kapp.slug}.forms.${
-                      queueItem.form.slug
-                    }`}
+                    context={`kapps.${queueItem.form.kapp.slug}.forms.${queueItem.form.slug}`}
                   >
                     {queueItem.form.name}
                   </I18n>{' '}
@@ -190,17 +188,16 @@ export const mapDispatchToProps = {
 };
 
 export const QueueItemContainer = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(
     props =>
       props.queueItem && {
         creationFields: {
           title: props.queueItem.label || 'Queue Discussion',
           description: props.queueItem.values['Details'] || '',
-          owningTeams: [{ name: props.queueItem.values['Assigned Team'] }],
+          owningTeams: props.queueItem.values['Assigned Team']
+            ? [{ name: props.queueItem.values['Assigned Team'] }]
+            : [],
           owningUsers: [
             {
               username:
