@@ -23,8 +23,8 @@ export const logoutDirect = () =>
 const checkedOrigin = process.env.REACT_APP_API_HOST
   ? process.env.REACT_APP_API_HOST
   : typeof window !== 'undefined'
-    ? window.location.origin
-    : null;
+  ? window.location.origin
+  : null;
 
 const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID
   ? process.env.REACT_APP_OAUTH_CLIENT_ID
@@ -64,6 +64,13 @@ export const singleSignOn = (spaceSlug, dimensions, target = '_blank') =>
       bundle.spaceLocation() + '/app/saml/login/alias/' + spaceSlug;
     const popup = window.open(endpoint, target, stringifyOptions(options));
 
+    if (!popup) {
+      resolve({
+        error: 'Enterprise Sign In popup was blocked by the browser.',
+      });
+      return;
+    }
+
     // Create an event handler that closes the popup window if we focus the
     // parent window
     const windowFocusHandler = () => {
@@ -82,7 +89,7 @@ export const singleSignOn = (spaceSlug, dimensions, target = '_blank') =>
     // authentication.
     const checkPopup = async () => {
       if (popup.closed) {
-        resolve({ error: 'Single Sign-on cancelled' });
+        resolve({ error: 'Enterprise Sign In was cancelled.' });
       } else if (await profileAvailable()) {
         popup.close();
         resolve({});
@@ -92,7 +99,7 @@ export const singleSignOn = (spaceSlug, dimensions, target = '_blank') =>
           setTimeout(checkPopup, popupPollingInterval);
         } else {
           popup.close();
-          resolve({ error: 'Single Sign-on timed out' });
+          resolve({ error: 'Enterprise Sign In timed out.' });
         }
       }
     };
