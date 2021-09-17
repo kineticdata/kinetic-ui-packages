@@ -284,7 +284,7 @@ export const UsersListComponent = ({
                 formkey={`user-${
                   typeof modalOpen === 'string' ? 'clone' : 'new'
                 }`}
-                onSave={() => ({ user }) => {
+                onSave={() => user => {
                   if (typeof modalOpen === 'string') {
                     cloneUser({
                       clonedUsername: modalOpen,
@@ -405,17 +405,14 @@ const handleImport = props => e => {
                 .map(user => {
                   return user
                     .update('allowedIps', val => (val ? val : ''))
-                    .update(
-                      'attributesMap',
-                      val => (IsJsonString(val) ? fromJS(JSON.parse(val)) : {}),
+                    .update('attributesMap', val =>
+                      IsJsonString(val) ? fromJS(JSON.parse(val)) : {},
                     )
-                    .update(
-                      'profileAttributesMap',
-                      val => (IsJsonString(val) ? fromJS(JSON.parse(val)) : {}),
+                    .update('profileAttributesMap', val =>
+                      IsJsonString(val) ? fromJS(JSON.parse(val)) : {},
                     )
-                    .update(
-                      'memberships',
-                      val => (IsJsonString(val) ? fromJS(JSON.parse(val)) : {}),
+                    .update('memberships', val =>
+                      IsJsonString(val) ? fromJS(JSON.parse(val)) : {},
                     );
                 })
                 .toSet()
@@ -439,10 +436,7 @@ const handleImport = props => e => {
 
 // Users Container
 export const UsersList = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('modalOpen', 'setModalOpen', false),
   withState('filterOpen', 'setFilterOpen', false),
   withHandlers({
