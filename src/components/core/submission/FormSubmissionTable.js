@@ -9,33 +9,34 @@ import { Set } from 'immutable';
 
 const dataSource = ({ kappSlug, formSlug, include, count }) => ({
   fn: options => searchSubmissions(options),
-  params: paramData => [
-    {
-      form: formSlug,
-      kapp: kappSlug,
-      search: {
-        direction: paramData.filters.get('orderDirection', 'DESC'),
-        include: Set([
-          ...(typeof include === 'string'
-            ? include.split(',')
-            : Array.isArray(include)
-              ? include
-              : []),
-          'details',
-        ]).toJS(),
-        // need to pass undefined instead of null so the `q` parameter is not
-        // added to the query string with empty value
-        q: paramData.filters.getIn(['query', 'q']) || undefined,
-        orderBy:
-          paramData.filters.getIn(['query', 'orderBy']) ||
-          paramData.filters.getIn(['query', 'q'])
-            ? undefined
-            : 'updatedAt',
-        ...generatePaginationParams(paramData),
+  params: paramData => {
+    const q = paramData.filters.getIn(['query', 'q']) || undefined;
+    const orderBy =
+      paramData.filters.getIn(['query', 'orderBy']) || 'createdAt';
+    return [
+      {
+        form: formSlug,
+        kapp: kappSlug,
+        search: {
+          direction: paramData.filters.get('orderDirection', 'DESC'),
+          include: Set([
+            ...(typeof include === 'string'
+              ? include.split(',')
+              : Array.isArray(include)
+                ? include
+                : []),
+            'details',
+          ]).toJS(),
+          // need to pass undefined instead of null so the `q` parameter is not
+          // added to the query string with empty value
+          q,
+          orderBy,
+          ...generatePaginationParams(paramData),
+        },
+        count: count ? true : undefined,
       },
-      count: count ? true : undefined,
-    },
-  ],
+    ];
+  },
   transform: transformCoreResult('submissions'),
 });
 

@@ -1,5 +1,5 @@
 import { generateTable } from '../../table/Table';
-import { fetchTenants } from '../../../apis/system';
+import { fetchTenants } from '../../../apis';
 import { defineFilter } from '../../../helpers';
 
 const clientSide = defineFilter(true)
@@ -17,7 +17,7 @@ const dataSource = () => ({
   }),
 });
 
-const filters = [
+const filters = () => () => [
   { name: 'slug', label: 'Slug', type: 'text' },
   { name: 'space.name', label: 'Name', type: 'text' },
 ];

@@ -65,6 +65,8 @@ export { BridgeTable } from './agent/bridge/BridgeTable';
 export { BridgeForm } from './agent/bridge/BridgeForm';
 export { AgentHandlerTable } from './agent/handler/AgentHandlerTable';
 export { AgentHandlerForm } from './agent/handler/AgentHandlerForm';
+export { FilestoreForm } from './agent/filestore/FilestoreForm';
+export { FilestoreTable } from './agent/filestore/FilestoreTable';
 
 // Core
 export {
@@ -106,6 +108,8 @@ export {
 export {
   FieldDefinitionForm,
 } from './core/field_definition/FieldDefinitionForm';
+export { FileResourceTable } from './core/file_resource/FileResourceTable';
+export { FileResourceForm } from './core/file_resource/FileResourceForm';
 export { FormForm } from './core/form/FormForm';
 export { FormTable } from './core/form/FormTable';
 export { FormTypeForm } from './core/form_type/FormTypeForm';

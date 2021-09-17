@@ -1,4 +1,4 @@
-import { fetchSources, fetchTaskRuns } from '../../../apis/task';
+import { fetchSources, fetchTaskRuns } from '../../../apis';
 import { generateTable } from '../../table/Table';
 import { get, getIn, Map } from 'immutable';
 
@@ -21,6 +21,7 @@ const dataSource = ({
   treeType,
   sourceId,
   id,
+  count,
 }) => ({
   fn: fetchTaskRuns,
   params: paramData => [
@@ -41,6 +42,7 @@ const dataSource = ({
       include: 'details',
       limit: paramData.pageSize,
       offset: paramData.nextPageToken,
+      count: count ? undefined : false,
       orderBy: ORDER_BY.get(paramData.sortColumn, paramData.sortColumn),
       direction: paramData.sortColumn ? paramData.sortDirection : undefined,
     },
@@ -56,12 +58,10 @@ const filterDataSources = () => ({
     fn: fetchSources,
     params: [],
     transform: result =>
-      result.sources
-        .filter(s => s.name !== '-')
-        .map(s => ({
-          label: s.name,
-          value: s.name,
-        })),
+      result.sources.filter(s => s.name !== '-').map(s => ({
+        label: s.name,
+        value: s.name,
+      })),
   },
 });
 
@@ -145,7 +145,7 @@ const columns = [
 ];
 
 export const RunTable = generateTable({
-  tableOptions: ['sourceName', 'sourceGroup', 'treeName', 'sourceId'],
+  tableOptions: ['sourceName', 'sourceGroup', 'treeName', 'sourceId', 'count'],
   columns,
   filters,
   dataSource,

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { get } from 'immutable';
 import { handleErrors, validateOptions } from '../http';
 import { bundle } from '../../helpers';
 
@@ -9,12 +10,18 @@ export const buildTreeId = options =>
       ? `${options.sourceName} :: ${options.sourceGroup} :: ${options.name}`
       : options.name;
 
-const generateNextPageToken = data =>
-  data.offset >= 0 && data.limit && data.count
-    ? data.offset + data.limit > data.count
-      ? null
-      : data.limit + data.offset
-    : null;
+const generateNextPageToken = data => {
+  const { offset, limit, count, more } = data;
+  const nextPageToken = data.limit + data.offset;
+
+  return typeof more !== 'undefined' && more
+    ? nextPageToken
+    : offset >= 0 && limit && count
+      ? offset + limit > count
+        ? null
+        : limit + offset
+      : null;
+};
 
 export const fetchTrees = (options = {}) =>
   axios
@@ -147,7 +154,7 @@ export const exportTree = (options = {}) => {
 export const importTree = (options = {}) => {
   const { content, contentUrl, force } = options;
 
-  let data = {};
+  let data;
   let headers = {};
 
   if (contentUrl) {
@@ -599,7 +606,7 @@ export const fetchHandler = (options = {}) => {
 export const createHandler = (options = {}) => {
   const { packageUrl, packageFile, force } = options;
 
-  let data = {};
+  let data;
   let headers = {};
 
   if (packageUrl) {
@@ -838,7 +845,7 @@ export const fetchTaskRuns = (options = {}) =>
         status: options.status || undefined,
         orderBy: options.orderBy,
         direction: options.direction,
-        count: options.count || undefined,
+        count: get(options, 'count'),
         start: options.start || undefined,
         end: options.end || undefined,
       },
@@ -1072,7 +1079,7 @@ export const resolveTaskErrors = (options = {}) => {
     .catch(handleErrors);
 };
 
-export const fetchTaskVersion = (options = {}) => {
+export const fetchTaskVersion = () => {
   return axios
     .get(`${bundle.spaceLocation()}/app/components/task/app/api/v2/version`)
     .then(response => ({

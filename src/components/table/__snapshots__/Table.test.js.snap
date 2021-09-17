@@ -1473,6 +1473,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                                 },
                                               }
                                             }
+                                            filters={
+                                              Immutable.Map {
+                                                "name": Immutable.Map {
+                                                  "value": "",
+                                                  "column": Immutable.Map {
+                                                    "value": "name",
+                                                    "title": "Name",
+                                                    "sortable": true,
+                                                    "filter": "startsWith",
+                                                    "type": "text",
+                                                  },
+                                                },
+                                                "status": Immutable.Map {
+                                                  "value": "",
+                                                  "column": Immutable.Map {
+                                                    "value": "status",
+                                                    "title": "Status",
+                                                    "sortable": true,
+                                                    "filter": "equals",
+                                                    "type": "text",
+                                                    "options": [Function],
+                                                  },
+                                                },
+                                              }
+                                            }
                                             index={0}
                                             row={
                                               Immutable.Map {
@@ -1502,6 +1527,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                                 "sortable": true,
                                                 "filter": "startsWith",
                                                 "type": "text",
+                                              }
+                                            }
+                                            filters={
+                                              Immutable.Map {
+                                                "name": Immutable.Map {
+                                                  "value": "",
+                                                  "column": Immutable.Map {
+                                                    "value": "name",
+                                                    "title": "Name",
+                                                    "sortable": true,
+                                                    "filter": "startsWith",
+                                                    "type": "text",
+                                                  },
+                                                },
+                                                "status": Immutable.Map {
+                                                  "value": "",
+                                                  "column": Immutable.Map {
+                                                    "value": "status",
+                                                    "title": "Status",
+                                                    "sortable": true,
+                                                    "filter": "equals",
+                                                    "type": "text",
+                                                    "options": [Function],
+                                                  },
+                                                },
                                               }
                                             }
                                             index={1}
@@ -1535,6 +1585,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                                 "filter": "equals",
                                                 "type": "text",
                                                 "options": [Function],
+                                              }
+                                            }
+                                            filters={
+                                              Immutable.Map {
+                                                "name": Immutable.Map {
+                                                  "value": "",
+                                                  "column": Immutable.Map {
+                                                    "value": "name",
+                                                    "title": "Name",
+                                                    "sortable": true,
+                                                    "filter": "startsWith",
+                                                    "type": "text",
+                                                  },
+                                                },
+                                                "status": Immutable.Map {
+                                                  "value": "",
+                                                  "column": Immutable.Map {
+                                                    "value": "status",
+                                                    "title": "Status",
+                                                    "sortable": true,
+                                                    "filter": "equals",
+                                                    "type": "text",
+                                                    "options": [Function],
+                                                  },
+                                                },
                                               }
                                             }
                                             index={2}
@@ -1612,6 +1687,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   Immutable.List [
                                     <KeyWrapper>
                                       <HeaderCell
+                                        filters={
+                                          Immutable.Map {
+                                            "name": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "name",
+                                                "title": "Name",
+                                                "sortable": true,
+                                                "filter": "startsWith",
+                                                "type": "text",
+                                              },
+                                            },
+                                            "status": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "status",
+                                                "title": "Status",
+                                                "sortable": true,
+                                                "filter": "equals",
+                                                "type": "text",
+                                                "options": [Function],
+                                              },
+                                            },
+                                          }
+                                        }
                                         onSortColumn={[Function]}
                                         sorting={false}
                                         tableOptions={Object {}}
@@ -1619,6 +1719,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                     </KeyWrapper>,
                                     <KeyWrapper>
                                       <HeaderCell
+                                        filters={
+                                          Immutable.Map {
+                                            "name": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "name",
+                                                "title": "Name",
+                                                "sortable": true,
+                                                "filter": "startsWith",
+                                                "type": "text",
+                                              },
+                                            },
+                                            "status": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "status",
+                                                "title": "Status",
+                                                "sortable": true,
+                                                "filter": "equals",
+                                                "type": "text",
+                                                "options": [Function],
+                                              },
+                                            },
+                                          }
+                                        }
                                         onSortColumn={[Function]}
                                         sortable={true}
                                         sorting={false}
@@ -1628,6 +1753,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                     </KeyWrapper>,
                                     <KeyWrapper>
                                       <HeaderCell
+                                        filters={
+                                          Immutable.Map {
+                                            "name": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "name",
+                                                "title": "Name",
+                                                "sortable": true,
+                                                "filter": "startsWith",
+                                                "type": "text",
+                                              },
+                                            },
+                                            "status": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "status",
+                                                "title": "Status",
+                                                "sortable": true,
+                                                "filter": "equals",
+                                                "type": "text",
+                                                "options": [Function],
+                                              },
+                                            },
+                                          }
+                                        }
                                         onSortColumn={[Function]}
                                         sortable={true}
                                         sorting={false}
@@ -1693,6 +1843,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               },
                                             }
                                           }
+                                          filters={
+                                            Immutable.Map {
+                                              "name": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "name",
+                                                  "title": "Name",
+                                                  "sortable": true,
+                                                  "filter": "startsWith",
+                                                  "type": "text",
+                                                },
+                                              },
+                                              "status": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "status",
+                                                  "title": "Status",
+                                                  "sortable": true,
+                                                  "filter": "equals",
+                                                  "type": "text",
+                                                  "options": [Function],
+                                                },
+                                              },
+                                            }
+                                          }
                                           index={0}
                                           row={
                                             Immutable.Map {
@@ -1722,6 +1897,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               "sortable": true,
                                               "filter": "startsWith",
                                               "type": "text",
+                                            }
+                                          }
+                                          filters={
+                                            Immutable.Map {
+                                              "name": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "name",
+                                                  "title": "Name",
+                                                  "sortable": true,
+                                                  "filter": "startsWith",
+                                                  "type": "text",
+                                                },
+                                              },
+                                              "status": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "status",
+                                                  "title": "Status",
+                                                  "sortable": true,
+                                                  "filter": "equals",
+                                                  "type": "text",
+                                                  "options": [Function],
+                                                },
+                                              },
                                             }
                                           }
                                           index={1}
@@ -1755,6 +1955,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               "filter": "equals",
                                               "type": "text",
                                               "options": [Function],
+                                            }
+                                          }
+                                          filters={
+                                            Immutable.Map {
+                                              "name": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "name",
+                                                  "title": "Name",
+                                                  "sortable": true,
+                                                  "filter": "startsWith",
+                                                  "type": "text",
+                                                },
+                                              },
+                                              "status": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "status",
+                                                  "title": "Status",
+                                                  "sortable": true,
+                                                  "filter": "equals",
+                                                  "type": "text",
+                                                  "options": [Function],
+                                                },
+                                              },
                                             }
                                           }
                                           index={2}
@@ -1832,6 +2057,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                 Immutable.List [
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sorting={false}
                                       tableOptions={Object {}}
@@ -1839,6 +2089,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sortable={true}
                                       sorting={false}
@@ -1848,6 +2123,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sortable={true}
                                       sorting={false}
@@ -1893,6 +2193,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                 Immutable.List [
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sorting={false}
                                       tableOptions={Object {}}
@@ -1900,6 +2225,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sortable={true}
                                       sorting={false}
@@ -1909,6 +2259,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sortable={true}
                                       sorting={false}
@@ -1946,6 +2321,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                 Immutable.List [
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sorting={false}
                                       tableOptions={Object {}}
@@ -1953,6 +2353,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sortable={true}
                                       sorting={false}
@@ -1962,6 +2387,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       onSortColumn={[Function]}
                                       sortable={true}
                                       sorting={false}
@@ -1986,6 +2436,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   key="column-0"
                                 >
                                   <HeaderCell
+                                    filters={
+                                      Immutable.Map {
+                                        "name": Immutable.Map {
+                                          "value": "",
+                                          "column": Immutable.Map {
+                                            "value": "name",
+                                            "title": "Name",
+                                            "sortable": true,
+                                            "filter": "startsWith",
+                                            "type": "text",
+                                          },
+                                        },
+                                        "status": Immutable.Map {
+                                          "value": "",
+                                          "column": Immutable.Map {
+                                            "value": "status",
+                                            "title": "Status",
+                                            "sortable": true,
+                                            "filter": "equals",
+                                            "type": "text",
+                                            "options": [Function],
+                                          },
+                                        },
+                                      }
+                                    }
                                     onSortColumn={[Function]}
                                     sorting={false}
                                     tableOptions={Object {}}
@@ -2009,6 +2484,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   key="column-1"
                                 >
                                   <HeaderCell
+                                    filters={
+                                      Immutable.Map {
+                                        "name": Immutable.Map {
+                                          "value": "",
+                                          "column": Immutable.Map {
+                                            "value": "name",
+                                            "title": "Name",
+                                            "sortable": true,
+                                            "filter": "startsWith",
+                                            "type": "text",
+                                          },
+                                        },
+                                        "status": Immutable.Map {
+                                          "value": "",
+                                          "column": Immutable.Map {
+                                            "value": "status",
+                                            "title": "Status",
+                                            "sortable": true,
+                                            "filter": "equals",
+                                            "type": "text",
+                                            "options": [Function],
+                                          },
+                                        },
+                                      }
+                                    }
                                     onSortColumn={[Function]}
                                     sortable={true}
                                     sorting={false}
@@ -2045,6 +2545,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   key="column-2"
                                 >
                                   <HeaderCell
+                                    filters={
+                                      Immutable.Map {
+                                        "name": Immutable.Map {
+                                          "value": "",
+                                          "column": Immutable.Map {
+                                            "value": "name",
+                                            "title": "Name",
+                                            "sortable": true,
+                                            "filter": "startsWith",
+                                            "type": "text",
+                                          },
+                                        },
+                                        "status": Immutable.Map {
+                                          "value": "",
+                                          "column": Immutable.Map {
+                                            "value": "status",
+                                            "title": "Status",
+                                            "sortable": true,
+                                            "filter": "equals",
+                                            "type": "text",
+                                            "options": [Function],
+                                          },
+                                        },
+                                      }
+                                    }
                                     onSortColumn={[Function]}
                                     sortable={true}
                                     sorting={false}
@@ -2104,6 +2629,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               },
                                             }
                                           }
+                                          filters={
+                                            Immutable.Map {
+                                              "name": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "name",
+                                                  "title": "Name",
+                                                  "sortable": true,
+                                                  "filter": "startsWith",
+                                                  "type": "text",
+                                                },
+                                              },
+                                              "status": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "status",
+                                                  "title": "Status",
+                                                  "sortable": true,
+                                                  "filter": "equals",
+                                                  "type": "text",
+                                                  "options": [Function],
+                                                },
+                                              },
+                                            }
+                                          }
                                           index={0}
                                           row={
                                             Immutable.Map {
@@ -2133,6 +2683,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               "sortable": true,
                                               "filter": "startsWith",
                                               "type": "text",
+                                            }
+                                          }
+                                          filters={
+                                            Immutable.Map {
+                                              "name": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "name",
+                                                  "title": "Name",
+                                                  "sortable": true,
+                                                  "filter": "startsWith",
+                                                  "type": "text",
+                                                },
+                                              },
+                                              "status": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "status",
+                                                  "title": "Status",
+                                                  "sortable": true,
+                                                  "filter": "equals",
+                                                  "type": "text",
+                                                  "options": [Function],
+                                                },
+                                              },
                                             }
                                           }
                                           index={1}
@@ -2166,6 +2741,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               "filter": "equals",
                                               "type": "text",
                                               "options": [Function],
+                                            }
+                                          }
+                                          filters={
+                                            Immutable.Map {
+                                              "name": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "name",
+                                                  "title": "Name",
+                                                  "sortable": true,
+                                                  "filter": "startsWith",
+                                                  "type": "text",
+                                                },
+                                              },
+                                              "status": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "status",
+                                                  "title": "Status",
+                                                  "sortable": true,
+                                                  "filter": "equals",
+                                                  "type": "text",
+                                                  "options": [Function],
+                                                },
+                                              },
                                             }
                                           }
                                           index={2}
@@ -2248,6 +2848,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             },
                                           }
                                         }
+                                        filters={
+                                          Immutable.Map {
+                                            "name": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "name",
+                                                "title": "Name",
+                                                "sortable": true,
+                                                "filter": "startsWith",
+                                                "type": "text",
+                                              },
+                                            },
+                                            "status": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "status",
+                                                "title": "Status",
+                                                "sortable": true,
+                                                "filter": "equals",
+                                                "type": "text",
+                                                "options": [Function],
+                                              },
+                                            },
+                                          }
+                                        }
                                         index={0}
                                         row={
                                           Immutable.Map {
@@ -2277,6 +2902,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             "sortable": true,
                                             "filter": "startsWith",
                                             "type": "text",
+                                          }
+                                        }
+                                        filters={
+                                          Immutable.Map {
+                                            "name": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "name",
+                                                "title": "Name",
+                                                "sortable": true,
+                                                "filter": "startsWith",
+                                                "type": "text",
+                                              },
+                                            },
+                                            "status": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "status",
+                                                "title": "Status",
+                                                "sortable": true,
+                                                "filter": "equals",
+                                                "type": "text",
+                                                "options": [Function],
+                                              },
+                                            },
                                           }
                                         }
                                         index={1}
@@ -2310,6 +2960,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             "filter": "equals",
                                             "type": "text",
                                             "options": [Function],
+                                          }
+                                        }
+                                        filters={
+                                          Immutable.Map {
+                                            "name": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "name",
+                                                "title": "Name",
+                                                "sortable": true,
+                                                "filter": "startsWith",
+                                                "type": "text",
+                                              },
+                                            },
+                                            "status": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "status",
+                                                "title": "Status",
+                                                "sortable": true,
+                                                "filter": "equals",
+                                                "type": "text",
+                                                "options": [Function],
+                                              },
+                                            },
                                           }
                                         }
                                         index={2}
@@ -2384,6 +3059,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           },
                                         }
                                       }
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
                                       index={0}
                                       row={
                                         Immutable.Map {
@@ -2417,6 +3117,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           "sortable": true,
                                           "filter": "startsWith",
                                           "type": "text",
+                                        }
+                                      }
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
                                         }
                                       }
                                       index={1}
@@ -2456,6 +3181,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           "filter": "equals",
                                           "type": "text",
                                           "options": [Function],
+                                        }
+                                      }
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
                                         }
                                       }
                                       index={2}
