@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from '../../redux/store';
 import {
   compose,
@@ -34,233 +34,190 @@ export const TechBarMetricsComponent = ({
   setSelectedRange,
   selectedDate,
   setSelectedDate,
+  kapp,
 }) => (
-  <Fragment>
-    <PageTitle parts={['Metrics']} settings />
-    <div className="page-container">
-      <div className="page-panel page-panel--white page-panel--tech-bar-metrics">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to={`../../${mode ? '../' : ''}`}>
-                <I18n>tech bar</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to={`../${mode ? '../' : ''}`}>
-                <I18n>settings</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <h1>
-              <I18n>Metrics</I18n>
-            </h1>
+  <div className="page-container">
+    <div className="page-panel page-panel--tech-bar-metrics">
+      <PageTitle
+        parts={['Metrics']}
+        settings
+        breadcrumbs={[
+          { label: 'Home', to: '/' },
+          { label: `${kapp.name} Settings`, to: `../${mode ? '..' : ''}` },
+        ]}
+        title="Metrics"
+      />
+      <div className="form p-0">
+        <div className="row">
+          <div className="form-group col-md-6">
+            <label htmlFor="scheduler-select">
+              <I18n>Tech Bar</I18n>
+            </label>
+            <I18n
+              render={translate => (
+                <select
+                  name="scheduler-select"
+                  id="scheduler-select"
+                  className="form-control"
+                  value={schedulerId}
+                  onChange={e => {
+                    setSchedulerId(e.target.value);
+                    setEventType('');
+                    fetchMetricsReset();
+                  }}
+                >
+                  <option value="">{translate('All Tech Bars')}</option>
+                  {techBars.map(techBar => (
+                    <option
+                      value={techBar.values['Id']}
+                      key={techBar.values['Id']}
+                    >
+                      {translate(techBar.values['Name'])}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
           </div>
-        </div>
-        <div className="form p-0">
-          <div className="row">
+          {schedulerId && (
             <div className="form-group col-md-6">
-              <label htmlFor="scheduler-select">
-                <I18n>Tech Bar</I18n>
-              </label>
+              <label htmlFor="event-type-select">Event Type</label>
               <I18n
                 render={translate => (
                   <select
-                    name="scheduler-select"
-                    id="scheduler-select"
+                    name="event-type-select"
+                    id="event-type-select"
                     className="form-control"
-                    value={schedulerId}
+                    value={eventType}
                     onChange={e => {
-                      setSchedulerId(e.target.value);
-                      setEventType('');
-                      fetchMetricsReset();
+                      setEventType(e.target.value);
                     }}
                   >
-                    <option value="">{translate('All Tech Bars')}</option>
-                    {techBars.map(techBar => (
-                      <option
-                        value={techBar.values['Id']}
-                        key={techBar.values['Id']}
-                      >
-                        {translate(techBar.values['Name'])}
+                    <option value="">{translate('All Event Types')}</option>
+                    {eventTypes.map(eventType => (
+                      <option value={eventType} key={eventType}>
+                        {translate(eventType)}
                       </option>
                     ))}
                   </select>
                 )}
               />
             </div>
-            {schedulerId && (
+          )}
+        </div>
+      </div>
+
+      <div>
+        <ul className="nav nav-tabs">
+          <li role="presentation" className="nav-item">
+            <Link
+              to={`${mode ? '../' : ''}`}
+              getProps={isActiveClass('nav-link')}
+              onClick={() => {
+                if (selectedRange !== 'last30Days') {
+                  setSelectedRange('last30Days');
+                  fetchMetricsReset();
+                }
+              }}
+            >
+              <I18n>
+                <I18n>Summary</I18n>
+              </I18n>
+            </Link>
+          </li>
+          <li role="presentation" className="nav-item">
+            <Link
+              to={`${mode ? '../' : ''}trend`}
+              getProps={isActiveClass('nav-link')}
+              onClick={() => {
+                if (selectedRange !== 'last12Months') {
+                  setSelectedRange('last12Months');
+                  fetchMetricsReset();
+                }
+              }}
+            >
+              <I18n>Trend</I18n>
+            </Link>
+          </li>
+          <li role="presentation" className="nav-item">
+            <Link
+              to={`${mode ? '../' : ''}export`}
+              getProps={isActiveClass('nav-link')}
+              onClick={() => {
+                fetchMetricsReset();
+                setSelectedRange('singleDay');
+                setSelectedDate(
+                  moment()
+                    .add(-1, 'day')
+                    .format(DATE_FORMAT),
+                );
+              }}
+            >
+              <I18n>Export</I18n>
+            </Link>
+          </li>
+        </ul>
+        <div className="form p-0 my-3">
+          {tabMode !== 'export' ? (
+            <div className="row">
               <div className="form-group col-md-6">
-                <label htmlFor="event-type-select">Event Type</label>
+                <label htmlFor="date-range-select">
+                  <I18n>Date Range</I18n>
+                </label>
                 <I18n
                   render={translate => (
                     <select
-                      name="event-type-select"
-                      id="event-type-select"
+                      name="date-range-select"
+                      id="date-range-select"
                       className="form-control"
-                      value={eventType}
+                      value={selectedRange}
                       onChange={e => {
-                        setEventType(e.target.value);
+                        setSelectedRange(e.target.value);
+                        setSelectedDate(
+                          e.target.value === 'singleMonth'
+                            ? moment()
+                                .startOf('month')
+                                .format(DATE_FORMAT)
+                            : moment()
+                                .add(-1, 'day')
+                                .format(DATE_FORMAT),
+                        );
+                        fetchMetricsReset();
                       }}
                     >
-                      <option value="">{translate('All Event Types')}</option>
-                      {eventTypes.map(eventType => (
-                        <option value={eventType} key={eventType}>
-                          {translate(eventType)}
+                      {tabMode === 'summary' && (
+                        <option value="singleDay">
+                          {translate('Single Day')}
                         </option>
-                      ))}
+                      )}
+                      <option value="last7Days">
+                        {translate('Last 7 Days')}
+                      </option>
+                      <option value="last30Days">
+                        {translate('Last 30 Days')}
+                      </option>
+                      <option value="singleMonth">
+                        {translate('Single Month')}
+                      </option>
+                      <option value="monthToDate">
+                        {translate('Month to Date')}
+                      </option>
+                      {tabMode === 'trend' && (
+                        <option value="last12Months">
+                          {translate('Last 12 Months')}
+                        </option>
+                      )}
+                      {tabMode === 'trend' && (
+                        <option value="yearToDate">
+                          {translate('Year To Date')}
+                        </option>
+                      )}
                     </select>
                   )}
                 />
               </div>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <ul className="nav nav-tabs">
-            <li role="presentation" className="nav-item">
-              <Link
-                to={`${mode ? '../' : ''}`}
-                getProps={isActiveClass('nav-link')}
-                onClick={() => {
-                  if (selectedRange !== 'last30Days') {
-                    setSelectedRange('last30Days');
-                    fetchMetricsReset();
-                  }
-                }}
-              >
-                <I18n>
-                  <I18n>Summary</I18n>
-                </I18n>
-              </Link>
-            </li>
-            <li role="presentation" className="nav-item">
-              <Link
-                to={`${mode ? '../' : ''}trend`}
-                getProps={isActiveClass('nav-link')}
-                onClick={() => {
-                  if (selectedRange !== 'last12Months') {
-                    setSelectedRange('last12Months');
-                    fetchMetricsReset();
-                  }
-                }}
-              >
-                <I18n>Trend</I18n>
-              </Link>
-            </li>
-            <li role="presentation" className="nav-item">
-              <Link
-                to={`${mode ? '../' : ''}export`}
-                getProps={isActiveClass('nav-link')}
-                onClick={() => {
-                  fetchMetricsReset();
-                  setSelectedRange('singleDay');
-                  setSelectedDate(
-                    moment()
-                      .add(-1, 'day')
-                      .format(DATE_FORMAT),
-                  );
-                }}
-              >
-                <I18n>Export</I18n>
-              </Link>
-            </li>
-          </ul>
-          <div className="form p-0 my-3">
-            {tabMode !== 'export' ? (
-              <div className="row">
-                <div className="form-group col-md-6">
-                  <label htmlFor="date-range-select">
-                    <I18n>Date Range</I18n>
-                  </label>
-                  <I18n
-                    render={translate => (
-                      <select
-                        name="date-range-select"
-                        id="date-range-select"
-                        className="form-control"
-                        value={selectedRange}
-                        onChange={e => {
-                          setSelectedRange(e.target.value);
-                          setSelectedDate(
-                            e.target.value === 'singleMonth'
-                              ? moment()
-                                  .startOf('month')
-                                  .format(DATE_FORMAT)
-                              : moment()
-                                  .add(-1, 'day')
-                                  .format(DATE_FORMAT),
-                          );
-                          fetchMetricsReset();
-                        }}
-                      >
-                        {tabMode === 'summary' && (
-                          <option value="singleDay">
-                            {translate('Single Day')}
-                          </option>
-                        )}
-                        <option value="last7Days">
-                          {translate('Last 7 Days')}
-                        </option>
-                        <option value="last30Days">
-                          {translate('Last 30 Days')}
-                        </option>
-                        <option value="singleMonth">
-                          {translate('Single Month')}
-                        </option>
-                        <option value="monthToDate">
-                          {translate('Month to Date')}
-                        </option>
-                        {tabMode === 'trend' && (
-                          <option value="last12Months">
-                            {translate('Last 12 Months')}
-                          </option>
-                        )}
-                        {tabMode === 'trend' && (
-                          <option value="yearToDate">
-                            {translate('Year To Date')}
-                          </option>
-                        )}
-                      </select>
-                    )}
-                  />
-                </div>
-                {(selectedRange === 'singleDay' ||
-                  selectedRange === 'singleMonth') && (
-                  <div className="form-group col-md-6">
-                    <label htmlFor="date-select">
-                      <I18n>Date</I18n>
-                    </label>
-                    <input
-                      type="date"
-                      id="date-select"
-                      className="form-control"
-                      value={selectedDate}
-                      onChange={e => {
-                        const date = moment(e.target.value);
-                        const newDate =
-                          date.isValid() && selectedRange === 'singleMonth'
-                            ? moment(e.target.value)
-                                .startOf('month')
-                                .format(DATE_FORMAT)
-                            : e.target.value;
-                        setSelectedDate(newDate);
-                        if (selectedDate !== newDate) {
-                          fetchMetricsReset();
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="row">
+              {(selectedRange === 'singleDay' ||
+                selectedRange === 'singleMonth') && (
                 <div className="form-group col-md-6">
                   <label htmlFor="date-select">
                     <I18n>Date</I18n>
@@ -271,60 +228,87 @@ export const TechBarMetricsComponent = ({
                     className="form-control"
                     value={selectedDate}
                     onChange={e => {
-                      setSelectedDate(e.target.value);
+                      const date = moment(e.target.value);
+                      const newDate =
+                        date.isValid() && selectedRange === 'singleMonth'
+                          ? moment(e.target.value)
+                              .startOf('month')
+                              .format(DATE_FORMAT)
+                          : e.target.value;
+                      setSelectedDate(newDate);
+                      if (selectedDate !== newDate) {
+                        fetchMetricsReset();
+                      }
                     }}
                   />
                 </div>
+              )}
+            </div>
+          ) : (
+            <div className="row">
+              <div className="form-group col-md-6">
+                <label htmlFor="date-select">
+                  <I18n>Date</I18n>
+                </label>
+                <input
+                  type="date"
+                  id="date-select"
+                  className="form-control"
+                  value={selectedDate}
+                  onChange={e => {
+                    setSelectedDate(e.target.value);
+                  }}
+                />
               </div>
-            )}
-          </div>
-          {tabMode === 'summary' && (
-            <div>
-              <MetricsSummary
-                schedulerId={schedulerId}
-                eventType={eventType}
-                techBars={techBars}
-              />
-            </div>
-          )}
-          {tabMode === 'trend' && (
-            <div>
-              <MetricsTrend
-                schedulerId={schedulerId}
-                eventType={eventType}
-                techBars={techBars}
-                dates={
-                  dateRanges[selectedRange]
-                    ? dateRanges[selectedRange]
-                    : selectedRange === 'singleMonth'
-                      ? buildDateRangeForSelectedMonth(selectedDate)
-                      : [selectedDate]
-                }
-                formatDate={date =>
-                  moment(date).format(
-                    selectedRange === 'last12Months' ||
-                    selectedRange === 'yearToDate'
-                      ? 'MMM, YYYY'
-                      : 'll',
-                  )
-                }
-              />
-            </div>
-          )}
-          {tabMode === 'export' && (
-            <div>
-              <MetricsExport
-                selectedDate={selectedDate}
-                schedulerId={schedulerId}
-                eventType={eventType}
-                techBars={techBars}
-              />
             </div>
           )}
         </div>
+        {tabMode === 'summary' && (
+          <div>
+            <MetricsSummary
+              schedulerId={schedulerId}
+              eventType={eventType}
+              techBars={techBars}
+            />
+          </div>
+        )}
+        {tabMode === 'trend' && (
+          <div>
+            <MetricsTrend
+              schedulerId={schedulerId}
+              eventType={eventType}
+              techBars={techBars}
+              dates={
+                dateRanges[selectedRange]
+                  ? dateRanges[selectedRange]
+                  : selectedRange === 'singleMonth'
+                    ? buildDateRangeForSelectedMonth(selectedDate)
+                    : [selectedDate]
+              }
+              formatDate={date =>
+                moment(date).format(
+                  selectedRange === 'last12Months' ||
+                  selectedRange === 'yearToDate'
+                    ? 'MMM, YYYY'
+                    : 'll',
+                )
+              }
+            />
+          </div>
+        )}
+        {tabMode === 'export' && (
+          <div>
+            <MetricsExport
+              selectedDate={selectedDate}
+              schedulerId={schedulerId}
+              eventType={eventType}
+              techBars={techBars}
+            />
+          </div>
+        )}
       </div>
     </div>
-  </Fragment>
+  </div>
 );
 
 const fillDateArray = (
@@ -438,7 +422,7 @@ export const TechBarMetrics = compose(
   withProps(({ schedulerId, metrics }) => {
     return {
       eventTypes:
-        schedulerId && metrics.size > 0
+        schedulerId && metrics && metrics.size > 0
           ? metrics.getIn([0, 'data', 'eventTypes']).map(event => event.type)
           : [],
     };

@@ -33,26 +33,16 @@ export const TechBarsComponent = ({
   selectCurrentTechBar,
 }) => (
   <Fragment>
-    <PageTitle parts={['All Tech Bars']} />
-    <div className="page-container page-container--tech-bar container">
+    <div className="page-container page-container--tech-bar page-container--lg">
       <div className="page-panel">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to="../">
-                <I18n>tech bar</I18n>
-              </Link>{' '}
-              /{' '}
-            </span>
-            <h1>
-              <I18n>All Tech Bars</I18n>
-            </h1>
-          </div>
-        </div>
+        <PageTitle
+          parts={['All Tech Bars']}
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: 'Tech Bar', to: '..' },
+          ]}
+          title="All Tech Bars"
+        />
         <section>
           <div className="cards cards--thirds">
             {techBars.map(techBar => (
@@ -67,118 +57,137 @@ export const TechBarsComponent = ({
                     : undefined
                 }
               >
-                <CardRow className="flex-grow-1">
-                  <CardRow type="prepend">
-                    <span className="fa fa-map-marker fa-3x" />
-                  </CardRow>
-                  <CardCol>
-                    <CardRow>
-                      <strong>
-                        <I18n>{techBar.values['Name']}</I18n>
-                      </strong>
+                <CardCol>
+                  <CardRow>
+                    <CardRow type="prepend">
+                      <span className="fa fa-map-marker fa-3x" />
                     </CardRow>
-                    {techBar.values['Location'] && (
-                      <CardRow type="meta" className="text-muted pt-0">
-                        <I18n>{techBar.values['Location']}</I18n>
+                    <CardCol>
+                      <CardRow>
+                        <strong>
+                          <I18n>{techBar.values['Name']}</I18n>
+                        </strong>
                       </CardRow>
-                    )}
-                    {techBar.values['Description'] && (
-                      <CardRow type="meta" className="pt-1">
-                        <I18n>{techBar.values['Description']}</I18n>
-                      </CardRow>
-                    )}
-                    {techBar.values['Details'] && (
-                      <CardRow type="meta" className="pt-1">
-                        <I18n>{techBar.values['Details']}</I18n>
+                      {techBar.values['Location'] && (
+                        <CardRow type="meta" className="text-muted pt-0">
+                          <I18n>{techBar.values['Location']}</I18n>
+                        </CardRow>
+                      )}
+                    </CardCol>
+                    <CardRow type="append">
+                      {hasTechBarDisplayRole(techBar.values['Name']) && (
+                        <CardRow type="append">
+                          <Dropdown
+                            toggle={toggleDropdown(techBar.id)}
+                            isOpen={openDropdown === techBar.id}
+                          >
+                            <DropdownToggle color="link" className="btn-sm">
+                              <span className="fa fa-ellipsis-v fa-2x" />
+                            </DropdownToggle>
+                            <DropdownMenu right>
+                              <Link
+                                to={`../display/${
+                                  techBar.values['Id']
+                                }/checkin`}
+                                onClick={toggleDropdown(techBar.id)}
+                                className="dropdown-item"
+                                target="_blank"
+                              >
+                                <span className="fa fa-fw fa-external-link mr-2" />
+                                <span>
+                                  <I18n>Check In</I18n>
+                                </span>
+                              </Link>
+                              <Link
+                                to={`../display/${
+                                  techBar.values['Id']
+                                }/feedback`}
+                                onClick={toggleDropdown(techBar.id)}
+                                className="dropdown-item"
+                                target="_blank"
+                              >
+                                <span className="fa fa-external-link fa-fw mr-2" />
+                                <span>
+                                  <I18n>Feedback</I18n>
+                                </span>
+                              </Link>
+                              <Link
+                                to={`../display/${
+                                  techBar.values['Id']
+                                }/checkin?crosslink`}
+                                onClick={toggleDropdown(techBar.id)}
+                                className="dropdown-item"
+                                target="_blank"
+                              >
+                                <span className="fa fa-external-link fa-fw mr-2" />
+                                <span>
+                                  <I18n>Check In</I18n> / <I18n>Feedback</I18n>
+                                </span>
+                              </Link>
+                              <Link
+                                to={`../display/${
+                                  techBar.values['Id']
+                                }/overhead`}
+                                onClick={toggleDropdown(techBar.id)}
+                                className="dropdown-item"
+                                target="_blank"
+                              >
+                                <span className="fa fa-external-link fa-fw mr-2" />
+                                <span>
+                                  <I18n>Overhead</I18n>
+                                </span>
+                              </Link>
+                            </DropdownMenu>
+                          </Dropdown>
+                        </CardRow>
+                      )}
+                    </CardRow>
+                  </CardRow>
+
+                  <CardRow
+                    type="meta"
+                    className="flex-grow-1 flex-shrink-1 overflow-auto my-2"
+                  >
+                    <CardCol>
+                      {techBar.values['Description'] && (
+                        <CardRow type="meta" className="pt-1">
+                          <I18n>{techBar.values['Description']}</I18n>
+                        </CardRow>
+                      )}
+                      {techBar.values['Details'] && (
+                        <CardRow type="meta" className="pt-1">
+                          <I18n>{techBar.values['Details']}</I18n>
+                        </CardRow>
+                      )}
+                    </CardCol>
+                  </CardRow>
+
+                  <CardCol className="pt-0 flex-grow-0">
+                    <CardRow>
+                      <Link
+                        to={`../appointment/${techBar.values['Id']}`}
+                        className="btn btn-primary flex-grow-1"
+                      >
+                        <I18n>Schedule Now</I18n> →
+                      </Link>
+                    </CardRow>
+                    {techBars.size > 1 && (
+                      <CardRow>
+                        {currentTechBar && techBar.id === currentTechBar.id ? (
+                          <button className="btn btn-sm btn-success" disabled>
+                            <I18n>Current Tech Bar</I18n>
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-link btn-sm"
+                            onClick={() => selectCurrentTechBar(techBar.id)}
+                          >
+                            <I18n>Set as Current Tech Bar</I18n>
+                          </button>
+                        )}
                       </CardRow>
                     )}
                   </CardCol>
-                  {hasTechBarDisplayRole(techBar.values['Name']) && (
-                    <CardRow type="append">
-                      <Dropdown
-                        toggle={toggleDropdown(techBar.id)}
-                        isOpen={openDropdown === techBar.id}
-                      >
-                        <DropdownToggle color="link" className="btn-sm">
-                          <span className="fa fa-ellipsis-v fa-2x" />
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                          <Link
-                            to={`../display/${techBar.values['Id']}/checkin`}
-                            onClick={toggleDropdown(techBar.id)}
-                            className="dropdown-item"
-                            target="_blank"
-                          >
-                            <span className="fa fa-fw fa-external-link mr-2" />
-                            <span>
-                              <I18n>Check In</I18n>
-                            </span>
-                          </Link>
-                          <Link
-                            to={`../display/${techBar.values['Id']}/feedback`}
-                            onClick={toggleDropdown(techBar.id)}
-                            className="dropdown-item"
-                            target="_blank"
-                          >
-                            <span className="fa fa-external-link fa-fw mr-2" />
-                            <span>
-                              <I18n>Feedback</I18n>
-                            </span>
-                          </Link>
-                          <Link
-                            to={`../display/${
-                              techBar.values['Id']
-                            }/checkin?crosslink`}
-                            onClick={toggleDropdown(techBar.id)}
-                            className="dropdown-item"
-                            target="_blank"
-                          >
-                            <span className="fa fa-external-link fa-fw mr-2" />
-                            <span>
-                              <I18n>Check In</I18n> / <I18n>Feedback</I18n>
-                            </span>
-                          </Link>
-                          <Link
-                            to={`../display/${techBar.values['Id']}/overhead`}
-                            onClick={toggleDropdown(techBar.id)}
-                            className="dropdown-item"
-                            target="_blank"
-                          >
-                            <span className="fa fa-external-link fa-fw mr-2" />
-                            <span>
-                              <I18n>Overhead</I18n>
-                            </span>
-                          </Link>
-                        </DropdownMenu>
-                      </Dropdown>
-                    </CardRow>
-                  )}
-                </CardRow>
-                <CardCol className="pt-0 flex-grow-0">
-                  <CardRow>
-                    <Link
-                      to={`../appointment/${techBar.values['Id']}`}
-                      className="btn btn-primary flex-grow-1"
-                    >
-                      <I18n>Schedule Now</I18n> →
-                    </Link>
-                  </CardRow>
-                  {techBars.size > 1 && (
-                    <CardRow>
-                      {currentTechBar && techBar.id === currentTechBar.id ? (
-                        <button className="btn btn-sm btn-success" disabled>
-                          <I18n>Current Tech Bar</I18n>
-                        </button>
-                      ) : (
-                        <button
-                          className="btn btn-link btn-sm"
-                          onClick={() => selectCurrentTechBar(techBar.id)}
-                        >
-                          <I18n>Set as Current Tech Bar</I18n>
-                        </button>
-                      )}
-                    </CardRow>
-                  )}
                 </CardCol>
               </Card>
             ))}

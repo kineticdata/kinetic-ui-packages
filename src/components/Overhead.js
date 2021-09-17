@@ -14,6 +14,9 @@ import moment from 'moment';
 import { List } from 'immutable';
 
 export const OverheadComponent = ({ errors, records }) => {
+  const checkedIn = records && records.filter(r => r.status === 'Checked In');
+  const inProgress = records && records.filter(r => r.status === 'In Progress');
+
   return (
     <section className="tech-bar-display tech-bar-display--overhead">
       <div className="full-screen-container">
@@ -28,8 +31,14 @@ export const OverheadComponent = ({ errors, records }) => {
                 <I18n>Checked In</I18n>
               </span>
             </h1>
-            <ol className="overhead-display-list">
-              {records.filter(r => r.status === 'Checked In').map(r => (
+            <ol
+              className={`overhead-display-list ${
+                checkedIn.size < 10
+                  ? 'overhead-display-list--short'
+                  : 'overhead-display-list--long'
+              }`}
+            >
+              {checkedIn.map(r => (
                 <li key={r.id}>
                   {r.displayName}{' '}
                   {r.isWalkIn ? (
@@ -59,8 +68,14 @@ export const OverheadComponent = ({ errors, records }) => {
                 <I18n>Now Serving</I18n>
               </span>
             </h1>
-            <ol className="overhead-display-list">
-              {records.filter(r => r.status === 'In Progress').map(r => (
+            <ol
+              className={`overhead-display-list ${
+                inProgress.size < 10
+                  ? 'overhead-display-list--short'
+                  : 'overhead-display-list--long'
+              }`}
+            >
+              {inProgress.map(r => (
                 <li key={r.id}>
                   {r.displayName}{' '}
                   {r.isWalkIn ? (

@@ -26,17 +26,14 @@ export const SchedulerSettingsComponent = ({
         type="TechBar"
         pathPrefix={`/kapps/${kapp.slug}/settings/schedulers`}
         breadcrumbs={[
+          { label: 'Home', path: `/` },
           {
-            label: 'tech bar',
-            path: `/kapps/${kapp.slug}`,
+            label: `${kapp.name} Settings`,
+            to: `/kapps/${kapp.slug}/settings`,
           },
           {
-            label: 'settings',
-            path: `/kapps/${kapp.slug}/settings`,
-          },
-          {
-            label: 'schedulers',
-            path: `/kapps/${kapp.slug}/settings/schedulers`,
+            label: 'Schedulers',
+            to: `/kapps/${kapp.slug}/settings/schedulers`,
           },
         ]}
       />
@@ -45,17 +42,14 @@ export const SchedulerSettingsComponent = ({
         profile={profile}
         pathPrefix={`/kapps/${kapp.slug}/settings/schedulers`}
         breadcrumbs={[
+          { label: 'Home', path: `/` },
           {
-            label: 'tech bar',
-            path: `/kapps/${kapp.slug}`,
+            label: `${kapp.name} Settings`,
+            to: `/kapps/${kapp.slug}/settings`,
           },
           {
-            label: 'settings',
-            path: `/kapps/${kapp.slug}/settings`,
-          },
-          {
-            label: 'schedulers',
-            path: `/kapps/${kapp.slug}/settings/schedulers`,
+            label: 'Schedulers',
+            to: `/kapps/${kapp.slug}/settings/schedulers`,
           },
         ]}
       />
@@ -64,13 +58,10 @@ export const SchedulerSettingsComponent = ({
         profile={profile}
         pathPrefix={`/kapps/${kapp.slug}/settings/schedulers`}
         breadcrumbs={[
+          { label: 'Home', path: `/` },
           {
-            label: 'tech bar',
-            path: `/kapps/${kapp.slug}`,
-          },
-          {
-            label: 'settings',
-            path: `/kapps/${kapp.slug}/settings`,
+            label: `${kapp.name} Settings`,
+            to: `/kapps/${kapp.slug}/settings`,
           },
         ]}
       />
