@@ -123,15 +123,14 @@ export const FormSubmissionsComponent = ({
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
           return (
             <div className="page-container">
-              <div className="page-panel page-panel--white">
+              <div className="page-panel">
                 <PageTitle
                   parts={[form.name, `Forms`]}
                   settings
-                  hero={false}
                   breadcrumbs={[
-                    { label: 'services', to: '../../..' },
-                    { label: 'settings', to: '../..' },
-                    { label: 'forms', to: '..' },
+                    { label: 'Home', to: '/' },
+                    { label: `${kapp.name} Settings`, to: '../..' },
+                    { label: 'Forms', to: '..' },
                   ]}
                   title={form.name}
                   actions={[
@@ -190,8 +189,10 @@ export const FormSubmissionsComponent = ({
                       </div>
                     )}
                   </div>
-                  <h3 className="section__title pr-0 mb-2">
-                    <I18n>Submissions</I18n>
+                  <h3 className="section__title">
+                    <span className="title">
+                      <I18n>Submissions</I18n>
+                    </span>
                     {filter}
                   </h3>
                   <div className="section__content">

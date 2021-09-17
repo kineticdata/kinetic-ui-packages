@@ -10,8 +10,8 @@ import {
 import { Redirect } from '@reach/router';
 import {
   ActivityFeed,
-  ErrorUnexpected,
-  Loading,
+  ErrorMessage,
+  LoadingMessage,
 } from '@kineticdata/bundle-common';
 import { connect } from './redux/store';
 
@@ -19,12 +19,13 @@ import { actions as categoriesActions } from './redux/modules/servicesApp';
 import { actions as submissionCountActions } from './redux/modules/submissionCounts';
 
 import { PageTitle } from './components/shared/PageTitle';
-import { Catalog } from './components/home/Catalog';
+// import { Catalog } from './components/home/Catalog';
 import { CategoryList } from './components/category_list/CategoryList';
 import { Category } from './components/category/Category';
-import { CatalogSearchResults } from './components/search_results/CatalogSearchResults';
-import { Sidebar } from './components/Sidebar';
-import { Sidebar as SettingsSidebar } from './components/settings/Sidebar';
+// import { CatalogSearchResults } from './components/search_results/CatalogSearchResults';
+// import { Sidebar } from './components/Sidebar';
+// import { Sidebar as SettingsSidebar } from './components/settings/Sidebar';
+import { Favorites } from './components/favorites/Favorites';
 import { FormContainer } from './components/form/FormContainer';
 import { FormList } from './components/form_list/FormList';
 import { RequestList } from './components/request_list/RequestList';
@@ -48,73 +49,59 @@ const SubmissionRedirect = props => (
 );
 
 const AppComponent = props => {
-  if (props.error) {
-    return <ErrorUnexpected />;
-  } else if (props.loading) {
-    return <Loading text="App is loading ..." />;
-  } else {
-    return props.render({
-      sidebar: (
-        <Router>
-          <SettingsSidebar
-            path="settings/*"
-            settingsBackPath={props.settingsBackPath}
-          />
-          <Sidebar
-            path="*"
-            counts={props.submissionCounts}
-            homePageMode={props.homePageMode}
-            homePageItems={props.homePageItems}
-            openSettings={props.openSettings}
-          />
-        </Router>
-      ),
-      main: (
-        <I18n>
-          <main className="package-layout package-layout--services">
-            <PageTitle parts={['Loading...']} />
-            <Router>
-              <Settings path="settings/*" />
-              <SubmissionRedirect
-                path="submissions/:id"
-                appLocation={props.appLocation}
-              />
-              <SubmissionRedirect
-                path="forms/:formSlug/submissions/:id"
-                appLocation={props.appLocation}
-              />
+  return props.render({
+    main: props.error ? (
+      <ErrorMessage
+        title="Unexpected Error"
+        message="Sorry, an unexpected error has occurred!"
+      />
+    ) : props.loading ? (
+      <LoadingMessage />
+    ) : (
+      <I18n>
+        <main className="package-layout package-layout--services">
+          <PageTitle parts={['Loading...']} />
+          <Router>
+            <Settings path="settings/*" />
+            <SubmissionRedirect
+              path="submissions/:id"
+              appLocation={props.appLocation}
+            />
+            <SubmissionRedirect
+              path="forms/:formSlug/submissions/:id"
+              appLocation={props.appLocation}
+            />
 
-              <Catalog
-                path="/"
-                homePageMode={props.homePageMode}
-                homePageItems={props.homePageItems}
-              />
-              <CategoryList path="categories" />
-              <Category path="categories/:categorySlug" />
-              <FormContainer path="categories/:categorySlug/:formSlug" />
-              <FormContainer path="categories/:categorySlug/:formSlug/:submissionId" />
-              <FormList path="forms" />
-              <FormContainer path="forms/:formSlug" />
-              <FormContainer path="forms/:formSlug/:submissionId" />
-              <CatalogSearchResults path="search" />
-              <CatalogSearchResults path="search/:query" />
-              <ActivityFeed.MountWrapper
-                feedKey={requestFeedKey}
-                path="requests"
-              >
-                <RequestList feedKey={requestFeedKey} default />
-                <RequestList feedKey={requestFeedKey} path=":type" />
-                <FormContainer path="request/:submissionId" />
-                <FormContainer path=":type/request/:submissionId" />
-                <RequestShowContainer path="request/:submissionId/:mode" />
-                <RequestShowContainer path=":type/request/:submissionId/:mode" />
-              </ActivityFeed.MountWrapper>
-            </Router>
-          </main>
-        </I18n>
-      ),
-    });
-  }
+            {/*<Catalog
+              path="/"
+              homePageMode={props.homePageMode}
+              homePageItems={props.homePageItems}
+            />*/}
+            <Redirect from="/" to="categories" noThrow />
+
+            <CategoryList path="categories" />
+            <Category path="categories/:categorySlug" />
+            <FormContainer path="categories/:categorySlug/:formSlug" />
+            <FormContainer path="categories/:categorySlug/:formSlug/:submissionId" />
+            <FormList path="forms" />
+            <FormContainer path="forms/:formSlug" />
+            <FormContainer path="forms/:formSlug/:submissionId" />
+            {/*<CatalogSearchResults path="search" />
+            <CatalogSearchResults path="search/:query" />*/}
+            <Favorites path="favorites" />
+            <ActivityFeed.MountWrapper feedKey={requestFeedKey} path="requests">
+              <RequestList feedKey={requestFeedKey} default />
+              <RequestList feedKey={requestFeedKey} path=":type" />
+              <FormContainer path="request/:submissionId" />
+              <FormContainer path=":type/request/:submissionId" />
+              <RequestShowContainer path="request/:submissionId/:mode" />
+              <RequestShowContainer path=":type/request/:submissionId/:mode" />
+            </ActivityFeed.MountWrapper>
+          </Router>
+        </main>
+      </I18n>
+    ),
+  });
 };
 
 const mapStateToProps = state => {

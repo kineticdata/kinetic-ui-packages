@@ -1,5 +1,6 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
-import { fetchForms } from '@kineticdata/react';
+import { fetchForms, updateProfile } from '@kineticdata/react';
+import { addToast } from '@kineticdata/bundle-common';
 import { actions, types } from '../modules/forms';
 import * as constants from '../../constants';
 
@@ -67,6 +68,60 @@ export function* fetchFormsRequestSaga({ payload }) {
   // TODO add recording of search history
 }
 
+export function* addFavoriteFormSaga({ payload }) {
+  try {
+    const appActions = yield select(state => state.app.actions);
+    const me = yield select(state => state.app.profile);
+    const newFavorites = me.profileAttributesMap['Services Favorites'].concat(
+      payload,
+    );
+    const { error } = yield call(updateProfile, {
+      profile: {
+        profileAttributesMap: {
+          'Services Favorites': newFavorites,
+        },
+      },
+    });
+
+    if (error) {
+      console.log(error);
+      addToast({ severity: 'danger', message: 'Failed to save favorite' });
+    } else {
+      addToast('Favorite successfully saved');
+      yield put(appActions.refreshProfile());
+    }
+  } catch (e) {
+    console.log('Error adding favorite form:', e);
+  }
+}
+
+export function* removeFavoriteFormSaga({ payload }) {
+  try {
+    const appActions = yield select(state => state.app.actions);
+    const me = yield select(state => state.app.profile);
+    const newFavorites = me.profileAttributesMap['Services Favorites'].filter(
+      sf => sf !== payload,
+    );
+    const { error } = yield call(updateProfile, {
+      profile: {
+        profileAttributesMap: {
+          'Services Favorites': newFavorites,
+        },
+      },
+    });
+
+    if (error) {
+      console.log(error);
+      addToast({ severity: 'danger', message: 'Failed to remove favorite' });
+    } else {
+      addToast('Favorite successfully removed');
+      yield put(appActions.refreshProfile());
+    }
+  } catch (e) {
+    console.log('Error removing favorite form:', e);
+  }
+}
+
 export function* watchForms() {
   yield takeEvery(
     [
@@ -76,4 +131,6 @@ export function* watchForms() {
     ],
     fetchFormsRequestSaga,
   );
+  yield takeEvery(types.ADD_FAVORITE_FORM, addFavoriteFormSaga);
+  yield takeEvery(types.REMOVE_FAVORITE_FORM, removeFavoriteFormSaga);
 }

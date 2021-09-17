@@ -10,6 +10,8 @@ export const types = {
   FETCH_FORMS_PREVIOUS: ns('FETCH_FORMS_PREVIOUS'),
   FETCH_FORMS_SUCCESS: ns('FETCH_FORMS_SUCCESS'),
   FETCH_FORMS_FAILURE: ns('FETCH_FORMS_FAILURE'),
+  ADD_FAVORITE_FORM: ns('ADD_FAVORITE_FORM'),
+  REMOVE_FAVORITE_FORM: ns('REMOVE_FAVORITE_FORM'),
 };
 
 export const actions = {
@@ -18,6 +20,8 @@ export const actions = {
   fetchFormsPrevious: noPayload(types.FETCH_FORMS_PREVIOUS),
   fetchFormsSuccess: withPayload(types.FETCH_FORMS_SUCCESS),
   fetchFormsFailure: withPayload(types.FETCH_FORMS_FAILURE),
+  addFavoriteForm: withPayload(types.ADD_FAVORITE_FORM),
+  removeFavoriteForm: withPayload(types.REMOVE_FAVORITE_FORM),
 };
 
 export const State = Record({
@@ -59,6 +63,8 @@ const reducer = (state = State(), { type, payload = {} }) => {
         .set('paging', false);
     case types.FETCH_FORMS_FAILURE:
       return state.set('error', payload).set('paging', false);
+    case types.REMOVE_FAVORITE_FORM:
+      return state.set('limit', 14);
     default:
       return state;
   }

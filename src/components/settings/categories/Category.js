@@ -91,15 +91,14 @@ export const CategoryComponent = ({
           : 'New Category';
       return (
         <div className="page-container">
-          <div className="page-panel page-panel--white">
+          <div className="page-panel">
             <PageTitle
               parts={[pageName, `Categories`]}
               settings
-              hero={false}
               breadcrumbs={[
-                { label: 'services', to: `../../..${parent ? '/..' : ''}` },
-                { label: 'settings', to: `../..${parent ? '/..' : ''}` },
-                { label: 'categories', to: `..${parent ? '/..' : ''}` },
+                { label: 'Home', to: '/' },
+                { label: `${currentKapp.name} Settings`, to: '../..' },
+                { label: 'Categories', to: `..${parent ? '/..' : ''}` },
                 ...(parent
                   ? parent.getTrail()
                   : category
@@ -107,7 +106,7 @@ export const CategoryComponent = ({
                     : []
                 ).map(ancestorCategory => ({
                   label: ancestorCategory.name,
-                  to: `../../${ancestorCategory.slug}`,
+                  to: `../${ancestorCategory.slug}`,
                 })),
               ]}
               title={pageName}
@@ -122,7 +121,9 @@ export const CategoryComponent = ({
                 ]
               }
             />
-            {initialized && <section className="form">{form}</section>}
+            {initialized && (
+              <section className="form form-unstyled mb-5">{form}</section>
+            )}
           </div>
         </div>
       );

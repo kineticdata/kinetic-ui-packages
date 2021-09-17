@@ -101,13 +101,13 @@ export const getStatusClass = ({ values, form, coreState }) => {
 export const getStatusColor = props => {
   switch (getStatusClass(props)) {
     case constants.SUCCESS_LABEL_CLASS:
-      return 'success';
+      return 'info';
     case constants.WARNING_LABEL_CLASS:
       return 'warning';
     case constants.DANGER_LABEL_CLASS:
       return 'danger';
     default:
-      return 'dark';
+      return 'subtle';
   }
 };
 

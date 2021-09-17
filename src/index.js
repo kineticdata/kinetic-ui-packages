@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import matchPath from 'rudy-match-path';
 import { LocationProvider, Router } from '@reach/router';
 import {
   CommonProvider,
@@ -11,6 +10,14 @@ import { is } from 'immutable';
 import { connectedHistory, context, store } from './redux/store';
 import { syncAppState } from './redux/modules/app';
 import { App, PublicApp } from './App';
+
+import * as Constants from './constants';
+import * as Utils from './utils';
+import { CategoryHelper } from './models';
+import { CategoryCard } from './components/shared/CategoryCard';
+import { RequestCard } from './components/shared/RequestCard';
+
+export { CategoryCard, CategoryHelper, Constants, Utils, RequestCard };
 
 export default class extends Component {
   constructor(props) {
@@ -69,12 +76,15 @@ export default class extends Component {
     );
   }
 
-  static shouldSuppressSidebar = ({ appLocation, location }) =>
-    matchPath(location.pathname, { path: `${appLocation}`, exact: true });
+  // static shouldSuppressSidebar = ({ appLocation, location }) =>
+  //   matchPath(location.pathname, { path: `${appLocation}`, exact: true });
 
   // Set to true if package allows public (unauthenticated) routes
   static hasPublicRoutes = true;
 
   // Class that will be added to the body when this package is rendered
   static bodyClassName = 'package--services';
+
+  // Relative route to package settings page
+  static settingsRoute = '/settings';
 }

@@ -178,7 +178,7 @@ export function* sendMessageRequestSaga(action) {
         values: { 'Discussion Id': discussion.id },
       });
 
-      yield put(actions.fetchDiscussionSuccess(discussion));
+      yield* fetchDiscussionRequestSaga({ payload: submission.id });
     }
   }
 

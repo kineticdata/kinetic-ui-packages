@@ -32,21 +32,27 @@ const fieldSet = [
 const FormLayout = ({ fields, error, buttons }) => (
   <Fragment>
     <h2 className="section__title">
-      <I18n>Display Options</I18n>
+      <span className="title">
+        <I18n>Display Options</I18n>
+      </span>
     </h2>
     {fields.get('name')}
     {fields.get('icon')}
     {fields.get('recordSearchHistory')}
     <br />
     <h2 className="section__title">
-      <I18n>Workflow Options</I18n>
+      <span className="title">
+        <I18n>Workflow Options</I18n>
+      </span>
     </h2>
     {fields.get('defaultServiceDaysDue')}
     {fields.get('defaultKappApprover')}
     {fields.get('defaultTaskAssigneeTeam')}
     <br />
     <h2 className="section__title">
-      <I18n>Form Mapping</I18n>
+      <span className="title">
+        <I18n>Form Mapping</I18n>
+      </span>
     </h2>
     {fields.get('defaultApprovalForm')}
     {fields.get('defaultTaskForm')}
@@ -257,18 +263,19 @@ export const ServicesSettingsComponent = ({
   >
     {({ form, initialized }) => (
       <div className="page-container">
-        <div className="page-panel page-panel--white">
+        <div className="page-panel">
           <PageTitle
             parts={['General']}
             settings
-            hero={false}
             breadcrumbs={[
-              { label: 'services', to: '../..' },
-              { label: 'settings', to: '..' },
+              { label: 'Home', to: '/' },
+              { label: `${currentKapp.name} Settings`, to: '..' },
             ]}
-            title={`${currentKapp.name} Settings`}
+            title="General Settings"
           />
-          {initialized && <section className="form">{form}</section>}
+          {initialized && (
+            <section className="form form-unstyled mb-5">{form}</section>
+          )}
         </div>
       </div>
     )}

@@ -4,35 +4,19 @@ import { connect } from '../../redux/store';
 import { Link } from '@reach/router';
 import { I18n } from '@kineticdata/react';
 import { get } from 'immutable';
-import {
-  Card,
-  CardCol,
-  CardRow,
-  CardCorner,
-  services,
-  Utils,
-} from '@kineticdata/bundle-common';
+import { Card, CardCol, CardRow, services } from '@kineticdata/bundle-common';
 import { Form } from '../../models';
 import { actions } from '../../redux/modules/forms';
 
-export const ServiceCardComponent = get(services, 'ServiceCard', props => {
-  const { path, form, favoritesEnabled, favorites, components = {} } = props;
+export const FavoritesCardComponent = get(services, 'ServiceCard', props => {
+  const { path, form, components = {} } = props;
   return (
-    <Card to={path} components={{ Link, ...components }}>
-      {favoritesEnabled && (
-        <CardCorner
-          tag="button"
-          icon="fa fa-star"
-          active={favorites.includes(form.slug)}
-          hover
-          onClick={
-            favorites.includes(form.slug)
-              ? props.handleRemoveFavorite
-              : props.handleAddFavorite
-          }
-          title="Toggle Favorite"
-        />
-      )}
+    <Card
+      to={path}
+      bar="left"
+      barSize="xs"
+      components={{ Link, ...components }}
+    >
       <CardCol>
         <CardRow type="title">
           <span
@@ -40,11 +24,15 @@ export const ServiceCardComponent = get(services, 'ServiceCard', props => {
               form.icon ||
               Form(form).icon ||
               'circle'
-            ).replace(/^fa-/i, '')} fa-fw`}
+            ).replace(/^fa-/i, '')} fa-fw fa-rounded`}
           />
           <span>
             <I18n>{form.name}</I18n>
           </span>
+          <span
+            onClick={props.handleRemoveFavorite}
+            className="toggle fa fa-fw fa-trash"
+          />
         </CardRow>
         <CardRow className="text-muted">
           <I18n
@@ -59,31 +47,22 @@ export const ServiceCardComponent = get(services, 'ServiceCard', props => {
 });
 
 const mapStateToProps = state => ({
-  favoritesEnabled: Utils.hasProfileAttributeDefinition(
-    state.app.space,
-    'Services Favorites',
-  ),
   favorites: state.app.profile.profileAttributesMap['Services Favorites'],
 });
 
 const mapDispatchToProps = {
-  addFavoriteForm: actions.addFavoriteForm,
   removeFavoriteForm: actions.removeFavoriteForm,
 };
 
-export const ServiceCard = compose(
+export const FavoritesCard = compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
   ),
   withHandlers({
-    handleAddFavorite: props => e => {
-      e.preventDefault();
-      props.addFavoriteForm(props.form.slug);
-    },
     handleRemoveFavorite: props => e => {
       e.preventDefault();
       props.removeFavoriteForm(props.form.slug);
     },
   }),
-)(ServiceCardComponent);
+)(FavoritesCardComponent);

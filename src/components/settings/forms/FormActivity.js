@@ -18,15 +18,14 @@ export const FormActivityContainer = ({
   submissionError,
 }) => (
   <div className="page-container">
-    <div className="page-panel page-panel--white">
+    <div className="page-panel">
       <PageTitle
         parts={[submission && submission.handle, form && form.name, 'Forms']}
         settings
-        hero={false}
         breadcrumbs={[
-          { label: 'services', to: '../../../../..' },
-          { label: 'settings', to: '../../../..' },
-          { label: 'forms', to: '../../..' },
+          { label: 'Home', to: '/' },
+          { label: `${kapp.name} Settings`, to: '../../../..' },
+          { label: 'Forms', to: '../../..' },
           { label: form.name, to: '../..' },
         ]}
         title={submission && submission.handle}
@@ -119,7 +118,9 @@ export const FormActivityContainer = ({
             </dl>
           </div>
           <h3 className="section__title">
-            <I18n>Fulfillment Process</I18n>
+            <span className="title">
+              <I18n>Fulfillment Process</I18n>
+            </span>
           </h3>
           <div className="section__content scroll-wrapper-h">
             {submission.activities.filter(activity => activity.type === 'Task')
@@ -170,7 +171,9 @@ export const FormActivityContainer = ({
             )}
           </div>
           <h3 className="section__title">
-            <I18n>Submission Activity</I18n>
+            <span className="title">
+              <I18n>Submission Activity</I18n>
+            </span>
           </h3>
           <div className="section__content scroll-wrapper-h">
             {submission.activities.filter(activity => activity.type !== 'Task')
@@ -221,7 +224,9 @@ export const FormActivityContainer = ({
             )}
           </div>
           <h3 className="section__title">
-            <I18n>Values</I18n>
+            <span className="title">
+              <I18n>Values</I18n>
+            </span>
           </h3>
           <div className="section__content scroll-wrapper-h">
             <table className="table table-sm table-striped table--settings">

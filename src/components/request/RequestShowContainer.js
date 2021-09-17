@@ -5,17 +5,17 @@ import {
   withHandlers,
   withProps,
 } from 'recompose';
-import { openModalForm, selectAdminKappSlug, selectDiscussionsEnabled, Utils } from '@kineticdata/bundle-common';
+import {
+  openModalForm,
+  selectAdminKappSlug,
+  selectDiscussionsEnabled,
+  Utils,
+} from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/submission';
 import { connect } from '../../redux/store';
 import * as constants from '../../constants';
 import { getFeedbackFormConfig } from '../../utils';
 import { RequestShow } from './RequestShow';
-
-export const openDiscussion = props => () => props.setViewDiscussionModal(true);
-
-export const closeDiscussion = props => () =>
-  props.setViewDiscussionModal(false);
 
 export const mapStateToProps = (state, props) => ({
   submission: state.submission.data,
@@ -27,6 +27,7 @@ export const mapStateToProps = (state, props) => ({
   kappSlug: state.app.kappSlug,
   appLocation: state.app.location,
   discussionsEnabled: selectDiscussionsEnabled(state),
+  me: state.app.profile,
   isSmallLayout: state.app.layoutSize === 'small',
   adminKappSlug: selectAdminKappSlug(state),
 });
@@ -47,7 +48,7 @@ const enhance = compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  withState('viewDiscussionModal', 'setViewDiscussionModal', false),
+  withState('viewDiscussion', 'setViewDiscussion', false),
   lifecycle({
     componentWillMount() {
       this.props.fetchSubmission(this.props.submissionId);
@@ -62,6 +63,7 @@ const enhance = compose(
   withProps(props => {
     return {
       disableStartDiscussion:
+        !props.discussionsEnabled ||
         !props.submission ||
         props.submission.coreState !== constants.CORE_STATE_SUBMITTED ||
         Utils.hasAttributeValue(
@@ -96,8 +98,8 @@ const enhance = compose(
     };
   }),
   withHandlers({
-    openDiscussion,
-    closeDiscussion,
+    toggleDiscussion: props => () =>
+      props.setViewDiscussion(!props.viewDiscussion),
     startDiscussion: props => () =>
       props.setSendMessageModalOpen({ isOpen: true, type: 'comment' }),
     provideFeedback: props => () =>
