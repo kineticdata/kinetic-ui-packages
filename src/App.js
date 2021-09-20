@@ -17,6 +17,7 @@ import { QueueListContainer } from './components/queue_list/QueueListContainer';
 import { NewItemMenuContainer } from './components/new_item_menu/NewItemMenuContainer';
 import { WorkMenuContainer } from './components/work_menu/WorkMenu';
 import { Settings } from './components/settings/Settings';
+import { FormPreview } from './components/FormPreview';
 
 const CustomRedirect = props => (
   <Redirect to={`${props.appLocation}/item/${props.id}`} noThrow />
@@ -69,6 +70,8 @@ const AppComponent = props => {
               to={`${props.appLocation}/item/:id`}
               noThrow
             />
+            <FormPreview path="forms/:formSlug/:id" />
+            <FormPreview path="forms/:formSlug" />
           </Router>
           <NewItemMenuContainer />
           <WorkMenuContainer />
@@ -104,10 +107,7 @@ const mapDispatchToProps = {
 };
 
 const enhance = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     handleOpenNewItemMenu: ({ openNewItemMenu }) => () => openNewItemMenu(),
   }),
