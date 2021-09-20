@@ -1,0 +1,76 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Submissions ~ Queue
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.submissions {
+  // This represents the overall submission "card" in the queue list view.
+  .submission {
+    border-bottom: 1px solid $gray8;
+    color: $blue-lake;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    padding: 0.75rem 1.5rem;
+    @include setBgColorAndHover($white);
+    // This is the details part of the card.
+    &:last-child {
+      border-bottom: none;
+    }
+    &-summary {
+      flex: 1 0 100%;
+      text-decoration: none;
+    }
+    &__title {
+      color: $gray80;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 0.25rem 0;
+      line-height: 1.5rem;
+    }
+    &__meta {
+      font-size: 0.875rem;
+      line-height: 1.3125rem;
+      margin-bottom: 0;
+      color: $gray60;
+      display: flex;
+      align-items: center;
+    }
+    &__handler,
+    &__assignment {
+      margin-left: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: none;
+      white-space: nowrap;
+      flex-grow: 0;
+    }
+    .icon--discussion {
+      padding: 0 0.75rem;
+      line-height: 1.5rem;
+    }
+    &__timestamps {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      
+      .list-group-item {
+        padding: 0;
+        color: $gray60;
+        background-color: transparent;
+        font-weight: 400;
+        font-size: 0.875rem;
+        &:not(:last-child):after {
+          content: '\2022';
+          color: $gray50;
+          margin: 0 0.3125rem;
+        }
+        .time-ago__text {
+          color: $blue-lake;
+          &:hover{
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
