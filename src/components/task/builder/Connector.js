@@ -176,21 +176,33 @@ export class Connector extends Component {
     const dy = y2 - y1;
     const length = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
     const angle = (Math.atan2(dy, dx) * 180) / Math.PI + 180;
-    const attribute = isIE11 ? 'transform' : 'style';
     const connectorValue = isIE11
       ? `translate(${x2} ${y2}) rotate(${angle})`
-      : `transform: translate(${x2}px, ${y2}px) rotate(${angle}deg)`;
+      : `translate(${x2}px, ${y2}px) rotate(${angle}deg)`;
     const connectorLabelValue = isIE11
       ? `translate(${x1 + dx / 2} ${y1 + dy / 2})`
-      : `transform: translate(${x1 + dx / 2}px, ${y1 + dy / 2}px)`;
-    this.connector.current.setAttribute(attribute, connectorValue);
+      : `translate(${x1 + dx / 2}px, ${y1 + dy / 2}px)`;
+
+    if (isIE11) {
+      this.connector.current.transform = connectorValue;
+      if (this.connectorLabel.current) {
+        this.connectorLabel.current.transform = connectorLabelValue;
+      }
+    } else {
+      this.connector.current.style.transform = connectorValue;
+      if (this.connectorLabel.current) {
+        this.connectorLabel.current.style.transform = connectorLabelValue;
+      }
+    }
+
+    // this.connector.current.setAttribute(attribute, connectorValue);
     if (this.connectorTail.current) {
       this.connectorTail.current.setAttribute('cx', length);
     }
     this.connectorBody.current.setAttribute('x2', length);
-    if (this.connectorLabel.current) {
-      this.connectorLabel.current.setAttribute(attribute, connectorLabelValue);
-    }
+    // if (this.connectorLabel.current) {
+    //   this.connectorLabel.current.setAttribute(attribute, connectorLabelValue);
+    // }
   };
 
   render() {

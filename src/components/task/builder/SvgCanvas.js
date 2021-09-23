@@ -189,19 +189,21 @@ export class SvgCanvas extends Component {
 
   setTransform(duration, ease = '') {
     const { scale, x, y } = this.viewport;
-    if (!isIE11) {
-      const transition = duration
-        ? `transition: transform ${duration}ms ${ease}`
-        : '';
-      this.transformer.current.setAttribute(
-        'style',
-        `transform: translate(${x}px, ${y}px) scale(${scale});${transition}`,
-      );
+    if (isIE11) {
+      // this.transformer.current.setAttribute(
+      //   'transform',
+      //   `translate(${x} ${y}) scale(${scale})`,
+      // );
+      this.transformer.current.transform = `translate(${x} ${y}) scale(${scale})`;
     } else {
-      this.transformer.current.setAttribute(
-        'transform',
-        `translate(${x} ${y}) scale(${scale})`,
-      );
+      const transition = duration ? `transform ${duration}ms ${ease}` : '';
+      // this.transformer.current.setAttribute(
+      //   'style',
+      //   `transform: translate(${x}px, ${y}px) scale(${scale});${transition}`,
+      // );
+
+      this.transformer.current.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+      this.transformer.current.style.transition = transition;
     }
     if (
       this.viewport.scale < 0.26 &&
