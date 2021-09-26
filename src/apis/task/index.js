@@ -1034,6 +1034,7 @@ export const updateRunTaskResults = (options = {}) => {
       {
         deferredResults: options.deferredResults,
         results: options.results,
+        message: options.message,
       },
       {
         params: {
