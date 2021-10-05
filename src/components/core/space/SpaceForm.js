@@ -1,4 +1,4 @@
-import { get, Map } from 'immutable';
+import { fromJS, get, Map } from 'immutable';
 import t from 'prop-types';
 import { generateForm } from '../../form/Form';
 import {
@@ -18,7 +18,7 @@ const dataSources = () => ({
     fn: fetchSpace,
     params: [
       {
-        include: 'attributesMap,securityPolicies,details',
+        include: 'allowedIps,attributesMap,securityPolicies,details',
       },
     ],
     transform: result => result.space,
@@ -414,6 +414,26 @@ const fields = () => ({
           }))
           .filter(endpoint => endpoint.name !== ''),
       initialValue: get(space, 'securityPolicies'),
+    },
+    {
+      name: 'allowedIps',
+      label: 'Allowed IPs',
+      type: 'select',
+      options: () =>
+        fromJS([
+          { name: 'description', label: 'Description', type: 'text' },
+          { name: 'value', label: 'IP Range', type: 'text' },
+        ]),
+      visible: ({ values }) => values.get('allowedIpsEnabled', false),
+      initialValue: get(space, 'allowedIps', []),
+      serialize: ({ values }) =>
+        values.get('allowedIpsEnabled', false) ? values.get('allowedIps') : [],
+    },
+    {
+      name: 'allowedIpsEnabled',
+      label: 'Enabled Allowed IP Restrictions?',
+      type: 'checkbox',
+      initialValue: get(space, 'allowedIpsEnabled', false) || false,
     },
     {
       name: 'attributesMap',
