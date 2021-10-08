@@ -194,6 +194,8 @@ export class TreeBuilderComponent extends Component {
             dispatch('TREE_UPDATE_CONNECTOR', { treeKey, ...values }),
           updateNode: (values, dependencies) =>
             dispatch('TREE_UPDATE_NODE', { treeKey, ...values, dependencies }),
+          updateSettings: values =>
+            dispatch('TREE_UPDATE_SETTINGS', { treeKey, values }),
           save: ({
             overwrite = false,
             newName = '',

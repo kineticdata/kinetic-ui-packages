@@ -1,4 +1,4 @@
-import { List, OrderedMap, Record } from 'immutable';
+import { List, Map, OrderedMap, Record } from 'immutable';
 
 /*******************************************************************************
  * Immutable records                                                           *
@@ -9,14 +9,19 @@ export const Point = Record({ x: 0, y: 0 }, 'Point');
 export const Tree = Record({
   bindings: OrderedMap(),
   connectors: OrderedMap(),
+  definitionId: null,
+  inputs: null,
   name: '',
   nextNodeId: 0,
   nextConnectorId: 0,
   nodes: OrderedMap(),
+  notes: '',
+  outputs: null,
+  ownerEmail: '',
   schemaVersion: '',
   sourceGroup: '',
   sourceName: '',
-  taskDefinition: null,
+  status: '',
   versionId: '0',
 });
 
@@ -141,9 +146,15 @@ export const serializeConnector = nodes => ({
 
 export const deserializeTree = ({
   bindings,
+  definitionId,
+  inputs,
   name,
+  notes,
+  outputs,
+  ownerEmail,
   sourceGroup,
   sourceName,
+  status,
   treeJson,
   versionId,
 }) =>
@@ -152,21 +163,50 @@ export const deserializeTree = ({
     connectors: OrderedMap(
       treeJson.connectors.map(deserializeConnector).map(c => [c.id, c]),
     ),
+    definitionId,
+    inputs: List(inputs).map(Map),
     name,
+    notes,
+    outputs: List(outputs).map(Map),
+    ownerEmail,
     nextNodeId: treeJson.lastId + 1,
     nextConnectorId: treeJson.connectors.length,
     nodes: OrderedMap(treeJson.nodes.map(deserializeNode).map(n => [n.id, n])),
     schemaVersion: treeJson.schemaVersion,
     sourceGroup,
     sourceName,
-    taskDefinition: treeJson.taskDefinition,
+    status,
     versionId,
   });
 
 export const serializeTree = (
-  { connectors, nextNodeId, nodes, schemaVersion, taskDefinition, versionId },
+  {
+    connectors,
+    definitionId,
+    inputs,
+    name,
+    nextNodeId,
+    nodes,
+    notes,
+    outputs,
+    ownerEmail,
+    schemaVersion,
+    sourceGroup,
+    sourceName,
+    status,
+    versionId,
+  },
   overwrite = false,
 ) => ({
+  definitionId,
+  inputs,
+  name,
+  notes,
+  outputs,
+  ownerEmail,
+  sourceGroup,
+  sourceName,
+  status,
   treeJson: {
     connectors: connectors
       .toList()
@@ -178,7 +218,6 @@ export const serializeTree = (
       .map(serializeNode)
       .toJS(),
     schemaVersion,
-    ...(taskDefinition ? { taskDefinition } : {}),
   },
   versionId: overwrite ? null : versionId,
 });

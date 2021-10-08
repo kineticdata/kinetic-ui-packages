@@ -13,7 +13,7 @@ import {
   fetchTaskCategories,
   fetchTree,
   updateTree,
-} from '../../../apis/task';
+} from '../../../apis';
 import { renameDependencies, treeReturnTask } from './helpers';
 
 export const mountTreeBuilder = treeKey => dispatch('TREE_MOUNT', { treeKey });
@@ -40,7 +40,7 @@ regSaga(
           name,
           sourceGroup,
           sourceName,
-          include: 'bindings,details,treeJson',
+          include: 'bindings,categories,details,treeJson,inputs,outputs',
         }),
         call(fetchTaskCategories, {
           include:
@@ -66,8 +66,10 @@ regSaga(
       // because of the optimistic locking functionality newName / overwrite can
       // be passed as options to the builder's save function
       const { newName, onError, onSave, overwrite, treeKey } = payload;
-      const { tree } = yield select(state => state.getIn(['trees', treeKey]));
-      const { name, sourceGroup, sourceName } = tree;
+      const { lastSave, tree } = yield select(state =>
+        state.getIn(['trees', treeKey]),
+      );
+      const { name, sourceGroup, sourceName } = lastSave;
       // if a newName was passed we will be creating a new tree with the builder
       // contents, otherwise just an update
       const { error, tree: newTree } = yield newName
@@ -138,17 +140,17 @@ regHandlers({
     state.deleteIn(['trees', treeKey]),
   TREE_LOADED: (state, { payload: { categories, treeKey, tree } }) =>
     state.mergeIn(['trees', treeKey], {
-      categories,
       lastSave: tree,
       loading: false,
       tasks: List(categories)
-        .map(category =>
-          category.name === 'System Controls'
-            ? {
-                ...category,
-                handlers: [...category.handlers, treeReturnTask(tree)],
-              }
-            : category,
+        .map(
+          category =>
+            category.name === 'System Controls'
+              ? {
+                  ...category,
+                  handlers: [...category.handlers, treeReturnTask(tree)],
+                }
+              : category,
         )
         .flatMap(category => [...category.handlers, ...category.trees])
         .sortBy(task => task.name)
@@ -183,23 +185,27 @@ regHandlers({
   TREE_UNDO: (state, { payload: { treeKey } }) =>
     state.getIn(['trees', treeKey, 'undoStack']).isEmpty()
       ? state
-      : state.updateIn(['trees', treeKey], builderState =>
-          builderState.merge({
-            tree: builderState.undoStack.last(),
-            redoStack: builderState.redoStack.push(builderState.tree),
-            undoStack: builderState.undoStack.butLast(),
-          }),
-        ),
+      : state
+          .updateIn(['trees', treeKey], builderState =>
+            builderState.merge({
+              tree: builderState.undoStack.last(),
+              redoStack: builderState.redoStack.push(builderState.tree),
+              undoStack: builderState.undoStack.butLast(),
+            }),
+          )
+          .updateIn(['trees', treeKey], synchronizeRoutineDefinition),
   TREE_REDO: (state, { payload: { treeKey } }) =>
     state.getIn(['trees', treeKey, 'redoStack']).isEmpty()
       ? state
-      : state.updateIn(['trees', treeKey], builderState =>
-          builderState.merge({
-            tree: builderState.redoStack.last(),
-            redoStack: builderState.redoStack.butLast(),
-            undoStack: builderState.undoStack.push(builderState.tree),
-          }),
-        ),
+      : state
+          .updateIn(['trees', treeKey], builderState =>
+            builderState.merge({
+              tree: builderState.redoStack.last(),
+              redoStack: builderState.redoStack.butLast(),
+              undoStack: builderState.undoStack.push(builderState.tree),
+            }),
+          )
+          .updateIn(['trees', treeKey], synchronizeRoutineDefinition),
   TREE_UPDATE: (state, { payload: { tree, treeKey } }) =>
     remember(state, treeKey).setIn(['trees', treeKey, 'tree'], tree),
   TREE_UPDATE_NODE: (
@@ -293,4 +299,35 @@ regHandlers({
       ['trees', treeKey, 'tree', 'connectors', id, 'tailId'],
       nodeId,
     ),
+  TREE_UPDATE_SETTINGS: (state, { payload: { treeKey, values } }) => {
+    // If the updated settings are for a routine we rebuild the "Tree Input"
+    // bindings.
+    const bindings = values.inputs
+      ? {
+          ...state.getIn(['trees', treeKey, 'tree', 'bindings']),
+          'Tree Input': values.inputs
+            .groupBy(input => input.get('name'))
+            .map(list => list.first().get('name'))
+            .map(name => `<%=@inputs['${name}']%>`)
+            .toJS(),
+        }
+      : state.getIn(['trees', treeKey, 'tree', 'bindings']);
+    return remember(state, treeKey)
+      .mergeIn(['trees', treeKey, 'tree'], { ...values, bindings })
+      .updateIn(['trees', treeKey], synchronizeRoutineDefinition);
+  },
 });
+
+const synchronizeRoutineDefinition = treeBuilderState => {
+  const {
+    tree: { definitionId, inputs, outputs },
+  } = treeBuilderState;
+  return treeBuilderState.update('tasks', tasks =>
+    tasks.map(
+      (task, taskDefinitionId) =>
+        definitionId === taskDefinitionId
+          ? { ...task, inputs: inputs.toJS(), outputs: outputs.toJS() }
+          : task,
+    ),
+  );
+};
