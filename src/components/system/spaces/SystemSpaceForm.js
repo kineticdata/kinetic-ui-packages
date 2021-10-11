@@ -1,12 +1,12 @@
 import { fetchSpace, updateSpace } from '../../../apis';
-import { get } from 'immutable';
+import { fromJS, get } from 'immutable';
 import { generateForm } from '../../form/Form';
 import { handleFormErrors } from '../../form/Form.helpers';
 
 const dataSources = ({ slug }) => ({
   space: {
     fn: fetchSpace,
-    params: slug && [{ slug, include: 'details' }],
+    params: slug && [{ slug, include: 'details,allowedIps' }],
     transform: result => result.space,
   },
 });
@@ -17,7 +17,7 @@ const handleSubmit = ({ slug }) => values =>
     space: values,
   }).then(handleFormErrors('space', 'There was an error saving the Space.'));
 
-const fields = ({ slug }) => ({ space }) =>
+const fields = () => ({ space }) =>
   space && [
     {
       name: 'name',
@@ -65,6 +65,26 @@ const fields = ({ slug }) => ({ space }) =>
       initialValue: get(space, 'bundlePath') || '',
       visible: ({ values }) => get(values, 'sharedBundle'),
       required: ({ values }) => get(values, 'sharedBundle'),
+    },
+    {
+      name: 'allowedIps',
+      label: 'Allowed IPs',
+      type: 'select',
+      options: () =>
+        fromJS([
+          { name: 'description', label: 'Description', type: 'text' },
+          { name: 'value', label: 'IP Range', type: 'text' },
+        ]),
+      visible: ({ values }) => values.get('allowedIpsEnabled', false),
+      initialValue: get(space, 'allowedIps', []),
+      serialize: ({ values }) =>
+        values.get('allowedIpsEnabled', false) ? values.get('allowedIps') : [],
+    },
+    {
+      name: 'allowedIpsEnabled',
+      label: 'Enabled Allowed IP Restrictions?',
+      type: 'checkbox',
+      initialValue: get(space, 'allowedIpsEnabled', false) || false,
     },
   ];
 
