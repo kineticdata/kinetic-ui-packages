@@ -6,6 +6,16 @@ import { List, Map, OrderedMap, Record } from 'immutable';
 
 export const Point = Record({ x: 0, y: 0 }, 'Point');
 
+export const WebApi = Record({
+  createdAt: null,
+  createdBy: null,
+  method: null,
+  securityPolicies: null,
+  slug: null,
+  updatedAt: null,
+  updatedBy: null,
+});
+
 export const Tree = Record({
   bindings: OrderedMap(),
   connectors: OrderedMap(),
@@ -64,13 +74,16 @@ export const Connector = Record({
 export const TreeBuilderState = Record({
   categories: OrderedMap(),
   error: null,
+  kappSlug: null,
   lastSave: null,
+  lastWebApi: null,
   loading: true,
   redoStack: List(),
   saving: false,
   tasks: OrderedMap(),
   tree: null,
   undoStack: List(),
+  webApi: null,
 });
 
 export const NodeResultDependency = Record({
@@ -221,3 +234,22 @@ export const serializeTree = (
   },
   versionId: overwrite ? null : versionId,
 });
+
+export const deserializeWebApi = ({
+  createdAt,
+  createdBy,
+  method,
+  securityPolicies,
+  slug,
+  updatedAt,
+  updatedBy,
+}) =>
+  WebApi({
+    createdAt,
+    createdBy,
+    method,
+    securityPolicies: List(securityPolicies).map(Map),
+    slug,
+    updatedAt,
+    updatedBy,
+  });
