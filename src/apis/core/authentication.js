@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { bundle } from '../../helpers';
-import { fetchProfile } from '../../apis';
+import { fetchProfile } from './profile';
 import { handleErrors } from '../http';
 
 export const login = ({ username, password }) =>
@@ -26,7 +26,11 @@ const checkedOrigin = process.env.REACT_APP_API_HOST
     ? window.location.origin
     : null;
 
-const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID || 'system';
+const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID
+  ? process.env.REACT_APP_OAUTH_CLIENT_ID
+  : process.env.NODE_ENV === 'production'
+    ? 'system'
+    : 'system-dev';
 
 export const retrieveJwt = () =>
   new Promise(resolve => {
