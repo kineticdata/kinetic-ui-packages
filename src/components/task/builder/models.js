@@ -32,6 +32,7 @@ export const Tree = Record({
   sourceGroup: '',
   sourceName: '',
   status: '',
+  type: '',
   versionId: '0',
 });
 
@@ -169,6 +170,7 @@ export const deserializeTree = ({
   sourceName,
   status,
   treeJson,
+  type,
   versionId,
 }) =>
   Tree({
@@ -189,6 +191,7 @@ export const deserializeTree = ({
     sourceGroup,
     sourceName,
     status,
+    type,
     versionId,
   });
 

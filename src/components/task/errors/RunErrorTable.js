@@ -34,7 +34,7 @@ const dataSource = ({ runId, id }) => ({
       relatedItem1Type: paramData.filters.get('relatedItem1Type'),
       relatedItem2Id: paramData.filters.get('relatedItem2Id'),
       relatedItem2Type: paramData.filters.get('relatedItem2Type'),
-      include: 'details,run,messages,messages.details',
+      include: 'details,run,run.details,messages,messages.details',
       limit: paramData.pageSize,
       offset: paramData.nextPageToken,
       timeline: paramData.sortColumn,
