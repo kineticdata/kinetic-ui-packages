@@ -1,6 +1,13 @@
 import { generateForm } from '../../form/Form';
 import { get, Map } from 'immutable';
-import { fetchSecurityPolicyDefinitions } from '../../../apis';
+import {
+  createWebApi,
+  updateWebApi,
+  fetchSecurityPolicyDefinitions,
+  createTree,
+  updateTree,
+  fetchSpace,
+} from '../../../apis';
 
 export const WEB_API_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
 
@@ -12,20 +19,62 @@ const securityEndpoints = {
   },
 };
 
-const dataSources = ({ webApi }) => ({
+const dataSources = ({ kappSlug, webApi }) => ({
   securityPolicyDefinitions: {
     fn: fetchSecurityPolicyDefinitions,
-    params: webApi.get('kappSlug')
-      ? [{ kappSlug: webApi.get('kappSlug') }]
-      : [],
+    params:
+      kappSlug || (webApi && webApi.get('kappSlug'))
+        ? [{ kappSlug: kappSlug || (webApi && webApi.get('kappSlug')) }]
+        : [],
     transform: result => result.securityPolicyDefinitions,
   },
 });
 
-const handleSubmit = () => values => values.toObject();
+const handleSubmit = ({ slug, kappSlug, webApi }) => async values => {
+  if (!webApi) {
+    const { space } = await fetchSpace({ include: 'platformComponents' });
+    const sourceName = space.platformComponents.task.config.platformSourceName;
+    const sourceGroup = kappSlug ? `WebApis > ${kappSlug}` : 'WebApis';
+
+    const { webApi, error: error1 } = slug
+      ? await updateWebApi({
+          kappSlug,
+          slug,
+          webApi: values.toJS(),
+          include: 'securityPolicies',
+        })
+      : await createWebApi({
+          kappSlug,
+          webApi: values.toJS(),
+          include: 'securityPolicies',
+        });
+    if (error1) {
+      throw (error1.statusCode === 400 && error1.message) ||
+        'There was an error saving the WebAPI';
+    }
+
+    const { tree, error: error2 } = slug
+      ? await updateTree({
+          sourceName,
+          sourceGroup,
+          name: slug,
+          tree: { sourceName, sourceGroup, name: values.get('slug') },
+        })
+      : await createTree({
+          tree: { sourceGroup, sourceName, name: values.get('slug') },
+        });
+    if (error2) {
+      throw (error2.statusCode === 400 && error2.message) ||
+        'There was an error saving the WebAPI tree';
+    }
+
+    return { tree, webApi };
+  } else {
+    return values.toObject();
+  }
+};
 
 const fields = ({ webApi }) => ({ securityPolicyDefinitions }) =>
-  webApi &&
   securityPolicyDefinitions && [
     {
       name: 'slug',
@@ -97,7 +146,7 @@ const fields = ({ webApi }) => ({ securityPolicyDefinitions }) =>
   ];
 
 export const WebApiForm = generateForm({
-  formOptions: ['webApi'],
+  formOptions: ['kappSlug', 'slug', 'webApi'],
   dataSources,
   fields,
   handleSubmit,

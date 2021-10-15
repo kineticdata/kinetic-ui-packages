@@ -123,6 +123,7 @@ regSaga(
               onError,
             })
           : action('TREE_SAVE_SUCCESS', {
+              previousTree: lastSave,
               treeKey,
               tree: newTree,
               webApi,
@@ -148,10 +149,15 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_SAVE_SUCCESS', function*({ payload: { onSave, tree } }) {
+  takeEvery('TREE_SAVE_SUCCESS', function*({
+    payload: { onSave, previousTree, treeKey },
+  }) {
     try {
       if (isFunction(onSave)) {
-        yield call(onSave, tree);
+        const tree = yield select(state =>
+          state.getIn(['trees', treeKey, 'tree']),
+        );
+        yield call(onSave, tree, previousTree);
       }
     } catch (e) {
       console.error(e);
@@ -364,7 +370,9 @@ regHandlers({
       .updateIn(['trees', treeKey], synchronizeRoutineDefinition);
   },
   TREE_UPDATE_WEB_API: (state, { payload: { treeKey, values } }) =>
-    remember(state, treeKey).mergeIn(['trees', treeKey, 'webApi'], values),
+    remember(state, treeKey)
+      .mergeIn(['trees', treeKey, 'webApi'], values)
+      .setIn(['trees', treeKey, 'tree', 'name'], values.slug),
 });
 
 const synchronizeRoutineDefinition = treeBuilderState => {
