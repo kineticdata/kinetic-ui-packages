@@ -1,6 +1,6 @@
 {
   "name": "@kineticdata/bundle-tech-bar",
-  "version": "5.0.17",
+  "version": "5.1.0-rc.2",
   "main": "./lib/index.js",
   "main:src": "./src/index.js",
   "files": [
@@ -17,13 +17,12 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@kineticdata/bundle-common": "5.0.17",
-    "@kineticdata/react": "5.0.17",
+    "@kineticdata/bundle-common": "5.1.0-rc.2",
+    "@kineticdata/react": "5.1.0-rc.2",
     "@reach/router": "git://github.com/kineticdata/router.git",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.5",
     "downloadjs": "^1.4.7",
-    "font-awesome": "^4.7.0",
     "immutable": "4.0.0-rc.9",
     "isarray": "^2.0.2",
     "md5": "^2.0.0",

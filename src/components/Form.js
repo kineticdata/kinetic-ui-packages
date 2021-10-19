@@ -8,7 +8,6 @@ import {
   ErrorUnexpected,
 } from '@kineticdata/bundle-common';
 import { PageTitle } from './shared/PageTitle';
-import { Link } from '@reach/router';
 import { parse } from 'query-string';
 
 import { I18n } from '@kineticdata/react';
@@ -26,30 +25,16 @@ export const FormComponent = ({
   kappSlug,
 }) => (
   <Fragment>
-    <PageTitle parts={[form ? form.name : '']} />
-    <div className="page-container page-container--tech-bar container">
+    <div className="page-container page-container--tech-bar page-container-lg">
       <div className="page-panel">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to={relativeHomePath}>
-                <I18n>tech bar</I18n>
-              </Link>{' '}
-              /{' '}
-            </span>
-            {form && (
-              <h1>
-                <I18n context={`kapps.${kappSlug}.forms.${formSlug}`}>
-                  {form.name}
-                </I18n>
-              </h1>
-            )}
-          </div>
-        </div>
+        <PageTitle
+          parts={[form ? form.name : '']}
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: 'Tech Bar', to: relativeHomePath },
+          ]}
+          title={form && form.name}
+        />
         <div className="form-description">
           {form &&
             form.description && (

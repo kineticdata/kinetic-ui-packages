@@ -50,274 +50,259 @@ export const HomeComponent = ({
   const selectedTechBar = currentTechBar || techBars.get(0);
   return (
     <Fragment>
-      <PageTitle />
-      <div className="page-container">
+      <div className="page-container page-container--lg">
         <div className="page-panel">
-          <div className="page-panel__header">
-            <div
-              className="hero--tech-bar"
-              style={{ backgroundImage: `url(${heroImage})` }}
-            >
-              <div className="container">
-                <div className="hero-welcome">
-                  <div className="title">
-                    <I18n>Welcome to</I18n>{' '}
-                    <I18n>
-                      {selectedTechBar
-                        ? selectedTechBar.values['Name']
-                        : kapp
-                          ? kapp.name
-                          : 'Tech Bar'}
-                    </I18n>
-                  </div>
-                  <div className="subtitle">
-                    {selectedTechBar ? (
-                      <I18n>{selectedTechBar.values['Description']}</I18n>
-                    ) : (
-                      <I18n>
-                        We deliver in-person service that gets people back on
-                        track.
-                      </I18n>
-                    )}
-                  </div>
-                </div>
-                {selectedTechBar && (
-                  <div className="hero-card">
-                    <Card bar={true} barSize="xs">
-                      <CardRow className="flex-grow-1 flex-shrink-1 overflow-auto">
-                        <CardRow type="prepend">
-                          <span className="fa fa-map-marker fa-3x" />
-                        </CardRow>
-                        <CardCol>
-                          <CardRow>
-                            <strong>
-                              <I18n>{selectedTechBar.values['Name']}</I18n>
-                            </strong>
-                            {techBars.size > 1 && (
-                              <button
-                                className="btn btn-inverse btn-sm ml-auto"
-                                onClick={() => setModalOpen(true)}
-                              >
-                                <I18n>Change</I18n>
-                              </button>
-                            )}
-                          </CardRow>
-                          {selectedTechBar.values['Location'] && (
-                            <CardRow type="meta" className="text-muted p-0">
-                              <I18n>{selectedTechBar.values['Location']}</I18n>
-                            </CardRow>
-                          )}
-                          <CardRow
-                            type="meta"
-                            className="flex-column flex-grow-1 flex-shrink-1 overflow-auto pt-0 mt-1"
-                          >
-                            {selectedTechBar.values['Details'] && (
-                              <p>
-                                <I18n>{selectedTechBar.values['Details']}</I18n>
-                              </p>
-                            )}
-                          </CardRow>
-                        </CardCol>
+          <PageTitle
+            hero={true}
+            image={true}
+            heroImage={heroImage}
+            overlayColor="rgba(0,0,0,0.6)"
+            center={true}
+            title={`Welcome to ${
+              selectedTechBar
+                ? selectedTechBar.values['Name']
+                : kapp
+                  ? kapp.name
+                  : 'Tech Bar'
+            }`}
+            subtitle={
+              selectedTechBar
+                ? selectedTechBar.values['Description']
+                : 'We deliver in-person service that gets people back on track.'
+            }
+            withCard={true}
+          >
+            <Card bar={true} barColor="warning" barSize="xs">
+              <CardCol className="overflow-auto">
+                <CardRow>
+                  <CardRow type="prepend">
+                    <span className="fa fa-map-marker fa-3x" />
+                  </CardRow>
+                  <CardCol>
+                    <CardRow>
+                      <strong>
+                        <I18n>{selectedTechBar.values['Name']}</I18n>
+                      </strong>
+                      {techBars.size > 1 && (
+                        <button
+                          className="btn btn-inverse btn-sm ml-auto"
+                          onClick={() => setModalOpen(true)}
+                        >
+                          <I18n>Change</I18n>
+                        </button>
+                      )}
+                    </CardRow>
+                    {selectedTechBar.values['Location'] && (
+                      <CardRow type="meta" className="text-muted p-0">
+                        <I18n>{selectedTechBar.values['Location']}</I18n>
                       </CardRow>
-                      <CardCol className="pt-0 flex-grow-0 flex-shrink-0">
-                        <CardRow>
-                          <Link
-                            to={`appointment/${selectedTechBar.values['Id']}`}
-                            className="btn btn-primary flex-grow-1"
-                          >
-                            <I18n>Schedule Now</I18n> →
-                          </Link>
-                        </CardRow>
-                        <CardRow className="pt-0">
-                          <div
-                            className={`waiting-users-message ${
-                              waitingUsers === 0 ? '' : ''
-                            }`}
-                          >
-                            <I18n>Currently awaiting assistance</I18n>:{' '}
-                            {waitingUsers}{' '}
-                            <I18n
-                              render={translate =>
-                                waitingUsers === 1
-                                  ? translate('person')
-                                  : translate('people')
-                              }
-                            />
-                          </div>
-                        </CardRow>
-                      </CardCol>
-                    </Card>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="page-panel__body container">
-            <section className="mt-4">
-              {selectedTechBar ? (
-                <div className="info-tile__wrapper">
-                  <Link
-                    to={`appointment/${selectedTechBar.values['Id']}`}
-                    className="info-tile"
-                  >
-                    <div className="icon">
-                      <span className="fa fa-calendar-o fa-fw" />
-                    </div>
-                    <div className="title">
-                      <span className="fa fa-calendar-o fa-fw" />
-                      <I18n>Schedule</I18n>
-                    </div>
-                    <p className="description">
-                      <I18n>Schedule an appointment.</I18n>
-                    </p>
-                  </Link>
-                  <Link to="past" className="info-tile">
-                    <div className="icon">
-                      <span className="fa fa-clock-o fa-fw" />
-                    </div>
-                    <div className="title">
-                      <span className="fa fa-clock-o fa-fw" />
-                      <I18n>History</I18n>
-                    </div>
-                    <p className="description">
-                      <I18n>View all of your past appointments.</I18n>
-                    </p>
-                  </Link>
-                  <I18n
-                    render={translate => (
-                      <div
-                        className="info-tile actionable"
-                        onClick={() =>
-                          openModalForm({
-                            formSlug: 'general-feedback',
-                            kappSlug: kapp.slug,
-                            values: {
-                              'Scheduler Id': selectedTechBar.values['Id'],
-                            },
-                            title: `${translate(
-                              selectedTechBar.values['Name'],
-                            )} ${translate('Feedback')}`,
-                            confirmationMessage: translate(
-                              'Thank you for your feedback.',
-                            ),
-                          })
-                        }
-                      >
-                        <div className="icon">
-                          <span className="fa fa-comment-o fa-fw" />
-                        </div>
-                        <div className="title">
-                          <span className="fa fa-comment-o fa-fw" />
-                          <I18n>Feedback</I18n>
-                        </div>
-                        <p className="description">
-                          <I18n>Questions, comments, or concerns.</I18n>
-                        </p>
-                      </div>
                     )}
-                  />
-                </div>
-              ) : (
-                <div className="alert alert-warning alert-bar">
-                  <div className="h5">There are no Tech Bars configured.</div>
-                  <div>Please contact an administrator.</div>
+                  </CardCol>
+                </CardRow>
+
+                <CardRow
+                  type="meta"
+                  className="flex-grow-1 flex-shrink-1 overflow-auto my-2"
+                >
+                  {selectedTechBar.values['Details'] && (
+                    <p>
+                      <I18n>{selectedTechBar.values['Details']}</I18n>
+                    </p>
+                  )}
+                </CardRow>
+
+                <CardCol className="flex-grow-0 flex-shrink-0">
+                  <CardRow>
+                    <Link
+                      to={`appointment/${selectedTechBar.values['Id']}`}
+                      className="btn btn-primary flex-grow-1"
+                    >
+                      <I18n>Schedule Now</I18n> →
+                    </Link>
+                  </CardRow>
+                  <CardRow type="meta" className="pt-0">
+                    <em
+                      className={`text-muted ${waitingUsers === 0 ? '' : ''}`}
+                    >
+                      <I18n>Currently awaiting assistance</I18n>: {waitingUsers}{' '}
+                      <I18n
+                        render={translate =>
+                          waitingUsers === 1
+                            ? translate('person')
+                            : translate('people')
+                        }
+                      />
+                    </em>
+                  </CardRow>
+                </CardCol>
+              </CardCol>
+            </Card>
+          </PageTitle>
+
+          <section className="mt-4">
+            {selectedTechBar ? (
+              <div className="info-tile__wrapper">
+                <Link
+                  to={`appointment/${selectedTechBar.values['Id']}`}
+                  className="info-tile"
+                >
+                  <div className="icon">
+                    <span className="fa fa-calendar-o fa-fw" />
+                  </div>
+                  <div className="title">
+                    <span className="fa fa-calendar-o fa-fw" />
+                    <I18n>Schedule</I18n>
+                  </div>
+                  <p className="description">
+                    <I18n>Schedule an appointment.</I18n>
+                  </p>
+                </Link>
+                <Link to="past" className="info-tile">
+                  <div className="icon">
+                    <span className="fa fa-clock-o fa-fw" />
+                  </div>
+                  <div className="title">
+                    <span className="fa fa-clock-o fa-fw" />
+                    <I18n>History</I18n>
+                  </div>
+                  <p className="description">
+                    <I18n>View all of your past appointments.</I18n>
+                  </p>
+                </Link>
+                <I18n
+                  render={translate => (
+                    <div
+                      className="info-tile actionable"
+                      onClick={() =>
+                        openModalForm({
+                          formSlug: 'general-feedback',
+                          kappSlug: kapp.slug,
+                          values: {
+                            'Scheduler Id': selectedTechBar.values['Id'],
+                          },
+                          title: `${translate(
+                            selectedTechBar.values['Name'],
+                          )} ${translate('Feedback')}`,
+                          confirmationMessage: translate(
+                            'Thank you for your feedback.',
+                          ),
+                        })
+                      }
+                    >
+                      <div className="icon">
+                        <span className="fa fa-comment-o fa-fw" />
+                      </div>
+                      <div className="title">
+                        <span className="fa fa-comment-o fa-fw" />
+                        <I18n>Feedback</I18n>
+                      </div>
+                      <p className="description">
+                        <I18n>Questions, comments, or concerns.</I18n>
+                      </p>
+                    </div>
+                  )}
+                />
+              </div>
+            ) : (
+              <div className="alert alert-warning alert-bar">
+                <div className="h5">There are no Tech Bars configured.</div>
+                <div>Please contact an administrator.</div>
+              </div>
+            )}
+          </section>
+          <section className="mt-4">
+            <h2 className="section__title">
+              <span className="title">
+                <I18n>Upcoming Appointments</I18n>
+              </span>
+            </h2>
+            <StateListWrapper
+              data={upcomingAppointments}
+              error={error}
+              emptyTitle="You have no upcoming appointments."
+              emptyMessage="As you schedule appointments, they'll appear here."
+            >
+              {data => (
+                <div className="cards mb-3">
+                  {data.map(appt => {
+                    const techBar = techBars.find(
+                      t => t.values['Id'] === appt.values['Scheduler Id'],
+                    );
+                    const date = moment.utc(
+                      appt.values['Event Date'],
+                      DATE_FORMAT,
+                    );
+                    const start = moment.utc(
+                      appt.values['Event Time'],
+                      TIME_FORMAT,
+                    );
+                    const end = start
+                      .clone()
+                      .add(appt.values['Event Duration'], 'minute');
+                    return (
+                      <Card
+                        key={appt.id}
+                        to={`appointment/${appt.values['Scheduler Id']}/${
+                          appt.id
+                        }`}
+                        components={{ Link }}
+                      >
+                        <CardRow>
+                          <CardRow type="prepend">
+                            <span
+                              className="fa fa-calendar fa-rounded"
+                              style={{ background: 'rgb(255, 74, 94)' }}
+                            />
+                          </CardRow>
+                          <CardCol>
+                            <CardRow type="multi">
+                              <CardRow type="subtitle">
+                                <Moment
+                                  timestamp={date}
+                                  format={Moment.formats.dateWithDay}
+                                />
+                              </CardRow>
+                              <CardRow className="text-muted">
+                                <Moment
+                                  timestamp={start}
+                                  format={Moment.formats.time}
+                                />
+                                {` - `}
+                                <Moment
+                                  timestamp={end}
+                                  format={Moment.formats.time}
+                                />
+                              </CardRow>
+                              <CardRow type="meta">
+                                <strong>
+                                  <I18n>{techBar.values['Name']}</I18n>
+                                </strong>
+                              </CardRow>
+                              <CardRow type="meta">
+                                {appt.values['Summary']}
+                              </CardRow>
+                            </CardRow>
+                          </CardCol>
+                          <CardRow type="append">
+                            <span
+                              className={`badge badge-stylized badge-${
+                                appt.coreState === 'Closed' ? 'dark' : 'success'
+                              }`}
+                            >
+                              <I18n>{appt.values['Status']}</I18n>
+                            </span>
+                          </CardRow>
+                        </CardRow>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
-            </section>
-            <section className="mt-4">
-              <h2 className="section__title">
-                <I18n>Upcoming Appointments</I18n>
-              </h2>
-              <StateListWrapper
-                data={upcomingAppointments}
-                error={error}
-                emptyTitle="You have no upcoming appointments."
-                emptyMessage="As you schedule appointments, they'll appear here."
-              >
-                {data => (
-                  <div className="cards mb-3">
-                    {data.map(appt => {
-                      const techBar = techBars.find(
-                        t => t.values['Id'] === appt.values['Scheduler Id'],
-                      );
-                      const date = moment.utc(
-                        appt.values['Event Date'],
-                        DATE_FORMAT,
-                      );
-                      const start = moment.utc(
-                        appt.values['Event Time'],
-                        TIME_FORMAT,
-                      );
-                      const end = start
-                        .clone()
-                        .add(appt.values['Event Duration'], 'minute');
-                      return (
-                        <Card
-                          key={appt.id}
-                          to={`appointment/${appt.values['Scheduler Id']}/${
-                            appt.id
-                          }`}
-                          components={{ Link }}
-                        >
-                          <CardRow>
-                            <CardRow type="prepend">
-                              <span
-                                className="fa fa-calendar fa-rounded"
-                                style={{ background: 'rgb(255, 74, 94)' }}
-                              />
-                            </CardRow>
-                            <CardCol>
-                              <CardRow type="multi">
-                                <CardRow type="subtitle">
-                                  <Moment
-                                    timestamp={date}
-                                    format={Moment.formats.dateWithDay}
-                                  />
-                                </CardRow>
-                                <CardRow className="text-muted">
-                                  <Moment
-                                    timestamp={start}
-                                    format={Moment.formats.time}
-                                  />
-                                  {` - `}
-                                  <Moment
-                                    timestamp={end}
-                                    format={Moment.formats.time}
-                                  />
-                                </CardRow>
-                                <CardRow type="meta">
-                                  <strong>
-                                    <I18n>{techBar.values['Name']}</I18n>
-                                  </strong>
-                                </CardRow>
-                                <CardRow type="meta">
-                                  {appt.values['Summary']}
-                                </CardRow>
-                              </CardRow>
-                            </CardCol>
-                            <CardRow type="append">
-                              <span
-                                className={`badge badge-pill badge-${
-                                  appt.coreState === 'Closed'
-                                    ? 'dark'
-                                    : 'success'
-                                }`}
-                              >
-                                <I18n>{appt.values['Status']}</I18n>
-                              </span>
-                            </CardRow>
-                          </CardRow>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                )}
-              </StateListWrapper>
-            </section>
-          </div>
+            </StateListWrapper>
+          </section>
         </div>
       </div>
+
       {modalOpen && (
         <Modal
           isOpen={!!modalOpen}
