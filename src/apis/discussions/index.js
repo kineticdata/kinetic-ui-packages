@@ -150,6 +150,7 @@ export const fetchDiscussions = ({
   title,
   relatedItem = {},
   isArchived,
+  limit,
   start,
   end,
 }) => {
@@ -158,7 +159,7 @@ export const fetchDiscussions = ({
     .get(`${baseUrl()}/api/v1/discussions`, {
       params: {
         title: title && title.length > 0 ? title : null,
-        limit: DEFAULT_DISCUSSION_LIMIT,
+        limit: limit || DEFAULT_DISCUSSION_LIMIT,
         type,
         key,
         pageToken,

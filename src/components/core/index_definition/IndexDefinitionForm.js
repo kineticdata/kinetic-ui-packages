@@ -1,15 +1,13 @@
-import { fetchForm, updateForm } from '../../../apis';
+import {
+  fetchForm,
+  fetchKapp,
+  fetchSpace,
+  updateForm,
+  updateSpace,
+  updateKapp,
+} from '../../../apis';
 import { generateForm } from '../../form/Form';
-
-const staticParts = [
-  'createdAt',
-  'createdBy',
-  'handle',
-  'submittedAt',
-  'submittedBy',
-  'updatedAt',
-  'updatedBy',
-];
+import { INDEX_STATIC_PARTS } from '../../../helpers';
 
 const getFields = form => form.get('fields');
 
@@ -18,18 +16,28 @@ const getIndexDefinition = (form, indexName) =>
     .get('indexDefinitions')
     .find(indexDefinition => indexDefinition.get('name') === indexName);
 
-const dataSources = ({ formSlug, indexName }) => ({
+const dataSources = ({ kappSlug, formSlug, indexName }) => ({
   form: {
-    fn: fetchForm,
+    fn:
+      !kappSlug && !formSlug
+        ? fetchSpace
+        : kappSlug && !formSlug
+          ? fetchKapp
+          : fetchForm,
     params: [
       {
-        datastore: true,
-        kappSlug: null,
+        kappSlug,
         formSlug,
-        include: 'fields,indexDefinitions',
+        include:
+          'fields,indexDefinitions,indexDefinitions.unpopulatedForms,indexDefinitions.detachedForms',
       },
     ],
-    transform: result => result.form,
+    transform: result =>
+      !kappSlug && !formSlug
+        ? result.space
+        : kappSlug && !formSlug
+          ? result.kapp
+          : result.form,
   },
   fields: {
     fn: getFields,
@@ -41,33 +49,44 @@ const dataSources = ({ formSlug, indexName }) => ({
   },
 });
 
-const handleSubmit = ({ formSlug, indexName }) => (values, { form }) =>
-  updateForm({
-    datastore: true,
-    kappSlug: null,
-    formSlug,
-    form: {
-      indexDefinitions: indexName
-        ? form
-            .get('indexDefinitions')
-            .map(indexDefinition =>
-              indexDefinition.get('name') === indexName
-                ? values
-                : indexDefinition,
-            )
-            .toJS()
-        : form
-            .get('indexDefinitions')
-            .push(values)
-            .toJS(),
-    },
-  }).then(({ form, error }) => {
+const handleSubmit = ({ formSlug, kappSlug, indexName }) => (
+  values,
+  { form },
+) => {
+  const indexDefinitions = indexName
+    ? form
+        .get('indexDefinitions')
+        .map(
+          indexDefinition =>
+            indexDefinition.get('name') === indexName
+              ? values
+              : indexDefinition,
+        )
+        .toJS()
+    : form
+        .get('indexDefinitions')
+        .push(values)
+        .toJS();
+
+  return (!kappSlug && !formSlug
+    ? updateSpace({ space: { indexDefinitions } })
+    : kappSlug && !formSlug
+      ? updateKapp({ kappSlug, kapp: { indexDefinitions } })
+      : updateForm({
+          kappSlug,
+          formSlug,
+          form: {
+            indexDefinitions,
+          },
+        })
+  ).then(({ form, kapp, space, error }) => {
     if (error) {
       throw (error.statusCode === 400 && error.message) ||
         'There was an error saving the index definition';
     }
-    return form;
+    return !kappSlug && !formSlug ? space : kappSlug && !formSlug ? kapp : form;
   });
+};
 
 const fields = ({ formSlug, indexName }) => ({ indexDefinition }) =>
   (!indexName || indexDefinition) && [
@@ -81,7 +100,7 @@ const fields = ({ formSlug, indexName }) => ({ indexDefinition }) =>
           ? fields
               .map(field => `values[${field.get('name')}]`)
               .sort()
-              .concat(staticParts)
+              .concat(INDEX_STATIC_PARTS)
               .map(name => ({ label: name, value: name }))
               .toArray()
           : [],
@@ -92,11 +111,12 @@ const fields = ({ formSlug, indexName }) => ({ indexDefinition }) =>
       label: 'Unique',
       type: 'checkbox',
       initialValue: indexDefinition ? indexDefinition.get('unique') : false,
+      visible: !!formSlug,
     },
   ];
 
 export const IndexDefinitionForm = generateForm({
-  formOptions: ['formSlug', 'indexName'],
+  formOptions: ['kappSlug', 'formSlug', 'indexName'],
   dataSources,
   fields,
   handleSubmit,

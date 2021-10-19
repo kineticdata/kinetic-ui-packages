@@ -6,10 +6,10 @@ import { ComponentConfigContext } from '../common/ComponentConfigContext';
 import { connect, dispatch } from '../../store';
 import {
   configureTable,
+  filterFormKey,
+  isClientSide,
   mountTable,
   unmountTable,
-  isClientSide,
-  filterFormKey,
 } from './Table.redux';
 import { generateKey } from '../../helpers';
 import { generateForm } from '../form/Form';
@@ -388,6 +388,7 @@ export const buildTableHeaderCell = props => (column, index) => {
     columnComponents,
     renderOptions,
     tableOptions,
+    appliedFilters,
   } = props;
   const HeaderCell = columnComponents.getIn(
     [column.get('value'), 'HeaderCell'],
@@ -406,6 +407,7 @@ export const buildTableHeaderCell = props => (column, index) => {
         sorting={sorting}
         sortable={sortable}
         tableOptions={tableOptions}
+        filters={appliedFilters}
       />
     </KeyWrapper>
   );
@@ -441,36 +443,33 @@ export const buildTableBodyRows = props => {
   const BodyRow = components.BodyRow;
   const EmptyBodyRow = components.EmptyBodyRow;
 
-  const tableRows =
-    rows.size > 0 ? (
-      rows.map((row, index) => {
-        const cells = buildTableBodyCells(props, row, index);
-        return (
-          <KeyWrapper key={`row-${index}`}>
-            <BodyRow
-              cells={cells}
-              columns={columns}
-              row={row}
-              index={index}
-              renderOptions={renderOptions}
-              tableOptions={tableOptions}
-            />
-          </KeyWrapper>
-        );
-      })
-    ) : (
-      <EmptyBodyRow
-        colSpan={columnSet.size}
-        initializing={props.initializing}
-        loading={props.loading}
-        appliedFilters={appliedFilters}
-        renderOptions={renderOptions}
-        tableOptions={tableOptions}
-        error={props.error}
-      />
-    );
-
-  return tableRows;
+  return rows.size > 0 ? (
+    rows.map((row, index) => {
+      const cells = buildTableBodyCells(props, row, index);
+      return (
+        <KeyWrapper key={`row-${index}`}>
+          <BodyRow
+            cells={cells}
+            columns={columns}
+            row={row}
+            index={index}
+            renderOptions={renderOptions}
+            tableOptions={tableOptions}
+          />
+        </KeyWrapper>
+      );
+    })
+  ) : (
+    <EmptyBodyRow
+      colSpan={columnSet.size}
+      initializing={props.initializing}
+      loading={props.loading}
+      appliedFilters={appliedFilters}
+      renderOptions={renderOptions}
+      tableOptions={tableOptions}
+      error={props.error}
+    />
+  );
 };
 
 export const buildTableBodyCells = (props, row, rowIndex) => {
@@ -481,6 +480,7 @@ export const buildTableBodyCells = (props, row, rowIndex) => {
     columns,
     columnSet,
     columnComponents,
+    appliedFilters,
     renderOptions,
     tableOptions,
   } = props;
@@ -503,6 +503,7 @@ export const buildTableBodyCells = (props, row, rowIndex) => {
           value={value}
           rows={rows}
           column={column}
+          filters={appliedFilters}
           renderOptions={renderOptions}
           tableOptions={tableOptions}
         />
@@ -583,7 +584,7 @@ const onGotoPage = tableKey => pageNumber => () =>
 const onSortColumn = (tableKey, column) => () =>
   dispatch('SORT_COLUMN', { tableKey, column });
 
-const mapStateToProps = state => (state, props) =>
+const mapStateToProps = () => (state, props) =>
   state.getIn(['tables', props.tableKey], Map()).toObject();
 
 /**
@@ -678,6 +679,7 @@ export const generateTable = ({
     defaultSortDirection: props.defaultSortDirection,
     omitHeader: props.omitHeader,
     includeFooter: props.includeFooter,
+    refreshInterval: props.refreshInterval,
     renderOptions: props.renderOptions,
     uncontrolled: props.uncontrolled,
     // For full client-side tables, with no datasource.
@@ -731,21 +733,19 @@ export class Table extends Component {
 
     return (
       <ComponentConfigContext.Consumer>
-        {componentConfig => {
-          return (
-            <TableImpl
-              {...this.props}
-              components={componentConfig.merge(this.props.components).toJS()}
-              columnComponents={columnComponents}
-              columns={columns}
-              columnSet={columnSet}
-              tableKey={this.tableKey}
-              auto={this.auto}
-            >
-              {this.props.children}
-            </TableImpl>
-          );
-        }}
+        {componentConfig => (
+          <TableImpl
+            {...this.props}
+            components={componentConfig.merge(this.props.components).toJS()}
+            columnComponents={columnComponents}
+            columns={columns}
+            columnSet={columnSet}
+            tableKey={this.tableKey}
+            auto={this.auto}
+          >
+            {this.props.children}
+          </TableImpl>
+        )}
       </ComponentConfigContext.Consumer>
     );
   }

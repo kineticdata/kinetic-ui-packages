@@ -1,4 +1,4 @@
-import { get, Map } from 'immutable';
+import { fromJS, get, Map } from 'immutable';
 import t from 'prop-types';
 import { generateForm } from '../../form/Form';
 import {
@@ -18,7 +18,7 @@ const dataSources = () => ({
     fn: fetchSpace,
     params: [
       {
-        include: 'attributesMap,securityPolicies,details',
+        include: 'allowedIps,attributesMap,securityPolicies,details',
       },
     ],
     transform: result => result.space,
@@ -102,6 +102,26 @@ const securityEndpoints = {
     label: 'User Modification',
     types: ['Space', 'User'],
   },
+  defaultFormDisplay: {
+    endpoint: 'Default Form Display',
+    label: 'Default Form Display',
+    types: ['Space', 'Form'],
+  },
+  defaultFormModification: {
+    endpoint: 'Default Form Modification',
+    label: 'Default Form Modification',
+    types: ['Space', 'Form'],
+  },
+  defaultSubmissionAccess: {
+    endpoint: 'Default Submission Access',
+    label: 'Default Submission Access',
+    types: ['Space', 'Form', 'Submission'],
+  },
+  defaultSubmissionModification: {
+    endpoint: 'Default Submission Modification',
+    label: 'Default Submission Modification',
+    types: ['Space', 'Form', 'Submission'],
+  },
 };
 
 const fields = () => ({
@@ -134,18 +154,18 @@ const fields = () => ({
         get(values, 'displayType') === 'Display Page',
     },
     {
-      name: 'defaultDatastoreFormConfirmationPage',
-      label: 'Default Datastore Form Confirmation Page',
+      name: 'defaultFormConfirmationPage',
+      label: 'Default Form Confirmation Page',
       type: 'text',
-      initialValue: get(space, 'defaultDatastoreFormConfirmationPage'),
+      initialValue: get(space, 'defaultFormConfirmationPage'),
       placeholder: 'confirmation.jsp',
       visible: ({ values }) => get(values, 'displayType') !== 'Single Page App',
     },
     {
-      name: 'defaultDatastoreFormDisplayPage',
-      label: 'Default Datastore Form Display Page',
+      name: 'defaultFormDisplayPage',
+      label: 'Default Form Display Page',
       type: 'text',
-      initialValue: get(space, 'defaultDatastoreFormDisplayPage'),
+      initialValue: get(space, 'defaultFormDisplayPage'),
       placeholder: 'form.jsp',
       visible: ({ values }) => get(values, 'displayType') !== 'Single Page App',
     },
@@ -394,6 +414,26 @@ const fields = () => ({
           }))
           .filter(endpoint => endpoint.name !== ''),
       initialValue: get(space, 'securityPolicies'),
+    },
+    {
+      name: 'allowedIps',
+      label: 'Allowed IPs',
+      type: 'select',
+      options: () =>
+        fromJS([
+          { name: 'description', label: 'Description', type: 'text' },
+          { name: 'value', label: 'IP Range', type: 'text' },
+        ]),
+      visible: ({ values }) => values.get('allowedIpsEnabled', false),
+      initialValue: get(space, 'allowedIps', []),
+      serialize: ({ values }) =>
+        values.get('allowedIpsEnabled', false) ? values.get('allowedIps') : [],
+    },
+    {
+      name: 'allowedIpsEnabled',
+      label: 'Enabled Allowed IP Restrictions?',
+      type: 'checkbox',
+      initialValue: get(space, 'allowedIpsEnabled', false) || false,
     },
     {
       name: 'attributesMap',

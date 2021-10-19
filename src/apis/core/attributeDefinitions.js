@@ -5,6 +5,7 @@ import { handleErrors, headerBuilder, paramBuilder } from '../http';
 // The API returns the singular name of the attribute type, so we remove the "s",
 // except for userProfileAttributeDefinitions and datastoreFormAttributeDefinitions
 // TODO: KCORE-2982
+// TODO: Remove datastoreFormAttributeDefinitions when fully deprecated. See b4a24c6
 const responseEnvelope = attributeType =>
   [
     'userProfileAttributeDefinitions',
@@ -22,13 +23,11 @@ const validateOptions = (functionName, requiredOptions, options) => {
     'categoryAttributeDefinitions',
     'kappAttributeDefinitions',
     'formAttributeDefinitions',
-    'datastoreFormAttributeDefinitions',
   ];
 
   const attributesRequiringKappSlug = [
     'categoryAttributeDefinitions',
     'kappAttributeDefinitions',
-    'formAttributeDefinitions',
   ];
 
   const kappSlugMissing =
@@ -48,12 +47,16 @@ const validateOptions = (functionName, requiredOptions, options) => {
   }
   if (kappSlugMissing) {
     throw new Error(
-      `${functionName} failed! A kappSlug is required when using ${options.attributeType}`,
+      `${functionName} failed! A kappSlug is required when using ${
+        options.attributeType
+      }`,
     );
   }
   if (invalidType) {
     throw new Error(
-      `${functionName} failed! The provided attributeType (${options.attributeType}) is not valid`,
+      `${functionName} failed! The provided attributeType (${
+        options.attributeType
+      }) is not valid`,
     );
   }
 };

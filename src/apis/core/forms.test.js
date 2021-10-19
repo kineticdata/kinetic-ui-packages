@@ -188,79 +188,18 @@ describe('forms api', () => {
       expect(error).toBeUndefined();
     });
 
-    test('datastore form', async () => {
-      axios.post.mockResolvedValue({
-        status: 200,
-        data: {
-          form: {
-            name: 'Test Datastore Form',
-            attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-          },
-        },
-      });
-      const { form, error, errors, serverError } = await createForm({
-        datastore: true,
-        form: {
-          name: 'Test Datastore Form',
-          attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-        },
-        include: 'attributes,pages',
-      });
-      expect(axios.post.mock.calls).toEqual([
-        [
-          'form/app/api/v1/datastore/forms',
-          {
-            name: 'Test Datastore Form',
-            attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-          },
-          {
-            params: { include: 'attributes,pages' },
-            headers: { 'X-Kinetic-AuthAssumed': 'true' },
-          },
-        ],
-      ]);
-      expect(form).toEqual({
-        name: 'Test Datastore Form',
-        attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-      });
-      expect(error).toBeUndefined();
-      expect(errors).toBeUndefined();
-      expect(serverError).toBeUndefined();
-    });
-
-    test('defaults to bundle.kappSlug() when no kappSlug provided', async () => {
-      axios.post.mockResolvedValue({ status: 200, data: {} });
-      await createForm({ form: { name: 'Test' } });
-      expect(axios.post.mock.calls).toEqual([
-        [
-          'form/app/api/v1/kapps/mock-kapp/forms',
-          { name: 'Test' },
-          { params: {}, headers: { 'X-Kinetic-AuthAssumed': 'true' } },
-        ],
-      ]);
-    });
-
     test('missing form', () => {
       expect(() => {
         createForm({});
       }).toThrow('createForm failed! The option "form" is required.');
     });
 
-    test('missing kappSlug', () => {
-      // Note that we need to set it to null becuse by default if kappSlug is
-      // not passed (undefined) it checks the 'bundle' helper.
-      expect(() => {
-        createForm({ form: {}, kappSlug: null });
-      }).toThrow('createForm failed! The option "kappSlug" is required.');
-    });
-
-    test('missing kappSlug allowed when datastore is true', () => {
+    test('missing kappSlug allowed for space forms', () => {
       axios.post.mockResolvedValue({ status: 200, data: {} });
       expect(() => {
         createForm({
           form: {},
           kappSlug: null,
-          datastore: true,
         });
       }).not.toThrowError();
     });
@@ -350,79 +289,19 @@ describe('forms api', () => {
       expect(error).toBeUndefined();
     });
 
-    test('datastore form', async () => {
-      axios.put.mockResolvedValue({
-        status: 200,
-        data: {
-          form: {
-            name: 'Test Datastore Form',
-            attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-          },
-        },
-      });
-      const { form, error } = await updateForm({
-        formSlug: 'test-form',
-        datastore: true,
-        form: {
-          name: 'Test Datastore Form',
-          attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-        },
-        include: 'attributes,pages',
-      });
-      expect(axios.put.mock.calls).toEqual([
-        [
-          'form/app/api/v1/datastore/forms/test-form',
-          {
-            name: 'Test Datastore Form',
-            attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-          },
-          {
-            params: { include: 'attributes,pages' },
-            headers: { 'X-Kinetic-AuthAssumed': 'true' },
-          },
-        ],
-      ]);
-      expect(form).toEqual({
-        name: 'Test Datastore Form',
-        attributes: [{ name: 'Icon', values: ['fa-gear'] }],
-      });
-      expect(error).toBeUndefined();
-    });
-
-    test('defaults to bundle.kappSlug() when no kappSlug provided', async () => {
-      axios.put.mockResolvedValue({ status: 200, data: {} });
-      await updateForm({ form: { name: 'Test' }, formSlug: 'test' });
-      expect(axios.put.mock.calls).toEqual([
-        [
-          'form/app/api/v1/kapps/mock-kapp/forms/test',
-          { name: 'Test' },
-          { params: {}, headers: { 'X-Kinetic-AuthAssumed': 'true' } },
-        ],
-      ]);
-    });
-
     test('missing form', () => {
       expect(() => {
         updateForm({ formSlug: 'test' });
       }).toThrow('updateForm failed! The option "form" is required.');
     });
 
-    test('missing kappSlug', () => {
-      // Note that we need to set it to null becuse by default if kappSlug is
-      // not passed (undefined) it checks the 'bundle' helper.
-      expect(() => {
-        updateForm({ formSlug: 'test', form: {}, kappSlug: null });
-      }).toThrow('updateForm failed! The option "kappSlug" is required.');
-    });
-
-    test('missing kappSlug allowed when datastore is true', () => {
+    test('missing kappSlug allowed for space forms', () => {
       axios.put.mockResolvedValue({ status: 200, data: {} });
       expect(() => {
         updateForm({
           formSlug: 'test',
           form: {},
           kappSlug: null,
-          datastore: true,
         });
       }).not.toThrowError();
     });

@@ -1,4 +1,4 @@
-import { List, Record } from 'immutable';
+import { List, Record, getIn } from 'immutable';
 import moment from 'moment';
 
 export const createDiscussion = discussion =>
@@ -12,6 +12,7 @@ export const createDiscussion = discussion =>
     participants: List(discussion.participants),
     invitations: List(discussion.invitations),
     relatedItems: List(discussion.relatedItems),
+    lastSeenAt: getIn(discussion, ['participants[7].lastSeenAt']),
   });
 
 export const createDiscussionList = discussions =>
@@ -65,5 +66,29 @@ export const sortByLastMessageAt = (d1, d2) => {
 export const getGroupedDiscussions = discussions => {
   return discussions.groupBy(discussion =>
     moment(getLastMessageAt(discussion)).fromNow(),
+  );
+};
+
+export const getLastSeenAt = (discussion, username) =>
+  username && discussion.participants
+    ? getIn(
+        discussion.participants.find(
+          participant => getIn(participant, ['user', 'username']) === username,
+        ),
+        ['lastSeenAt'],
+      )
+    : null;
+
+export const getDiscussionLastTimestamps = (discussion, username) => ({
+  lastMessageAt: getLastMessageAt(discussion),
+  lastSeenAt: getLastSeenAt(discussion, username),
+});
+
+export const isLastMessageUnread = (discussion, username) => {
+  const timestamps = getDiscussionLastTimestamps(discussion, username);
+  return (
+    !!timestamps.lastSeenAt &&
+    !!timestamps.lastMessageAt &&
+    timestamps.lastSeenAt < timestamps.lastMessageAt
   );
 };

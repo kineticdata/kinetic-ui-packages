@@ -91,7 +91,6 @@ AttributeDefinitionForm.propTypes = {
     'categoryAttributeDefinitions',
     'kappAttributeDefinitions',
     'formAttributeDefinitions',
-    'datastoreFormAttributeDefinitions',
   ]).isRequired,
   /** The name of the attribute (assumes new if not null). */
   attributeName: t.string,

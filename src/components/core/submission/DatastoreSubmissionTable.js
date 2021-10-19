@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import { generateTable } from '../../table/Table';
 import { searchSubmissions } from '../../../apis';
 import { generatePaginationParams } from '../../../apis/http';
@@ -122,13 +123,29 @@ const columns = [
   },
 ];
 
-export const DatastoreSubmissionTable = generateTable({
+const DatastoreSubmissionTableComponent = generateTable({
   tableOptions: ['formSlug', 'include'],
   columns,
   dataSource,
   filters,
   filterDataSources,
 });
+
+export class DatastoreSubmissionTable extends Component {
+  componentDidMount() {
+    console.warn(
+      'Datastore Submissions are deprecated in Core 5.1, please upgrade to "form" mode.',
+    );
+  }
+
+  render() {
+    return (
+      <DatastoreSubmissionTableComponent {...this.props}>
+        {this.props.children}
+      </DatastoreSubmissionTableComponent>
+    );
+  }
+}
 
 DatastoreSubmissionTable.displayName = 'DatastoreSubmissionTable';
 export default DatastoreSubmissionTable;

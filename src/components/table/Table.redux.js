@@ -332,7 +332,7 @@ function* calculateRowsTask({ payload }) {
 
     const response = yield call(calculateRows, tableData);
 
-    const { rows, data, nextPageToken, error } = response;
+    const { rows, data, nextPageToken, count, error } = response;
     const onFetch = tableData.get('onFetch');
 
     if (error) {
@@ -344,17 +344,18 @@ function* calculateRowsTask({ payload }) {
           rows: List(),
           data: List(),
           nextPageToken: null,
+          count: null,
         },
       });
     } else {
       yield put({
         type: 'SET_ROWS',
-        payload: { tableKey, rows, data, nextPageToken },
+        payload: { tableKey, rows, data, nextPageToken, count },
       });
     }
 
     if (typeof onFetch === 'function') {
-      yield call(onFetch, { tableKey, rows, error });
+      yield call(onFetch, { tableKey, rows, count, error });
     }
   } catch (e) {
     console.error(e);

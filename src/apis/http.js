@@ -40,7 +40,7 @@ export const paramBuilder = options => {
   const params = {};
 
   if (options.include) params.include = options.include;
-  if (options.limit) params.limit = options.limit;
+  if (options.limit >= 0) params.limit = options.limit;
   if (options.pageToken) params.pageToken = options.pageToken;
   if (options.q) params.q = options.q;
   if (options.direction) params.direction = options.direction;
@@ -85,9 +85,12 @@ export const apiFunction = ({
     dataOption ? [...requiredOptions, dataOption] : requiredOptions,
     options,
   );
+  const urlPostfix = url(options);
   return axios({
     method,
-    url: bundle.apiLocation() + url(options),
+    url: urlPostfix.startsWith('/app')
+      ? urlPostfix
+      : bundle.apiLocation() + urlPostfix,
     data: dataOption && options[dataOption],
     params: paramBuilder(options),
     headers: headerBuilder(options),
@@ -127,11 +130,11 @@ export const apiGroup = ({ dataOption, name, plural, singular }) => ({
   }),
 });
 
-export const formPath = ({ form, kapp, datastore }) =>
-  datastore
+export const formPath = ({ form, kapp }) =>
+  !kapp
     ? form
-      ? `${bundle.spaceLocation()}/app/datastore/forms/${form}`
-      : `${bundle.spaceLocation()}/app/datastore/forms`
+      ? `${bundle.spaceLocation()}/app/forms/${form}`
+      : `${bundle.spaceLocation()}/app/forms`
     : form
       ? `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}/${form}`
       : `${bundle.spaceLocation()}/${kapp || bundle.kappSlug()}`;
@@ -145,10 +148,10 @@ export const submissionPath = ({ submission, datastore }) =>
       ? `${bundle.spaceLocation()}/submissions/${submission}`
       : `${bundle.spaceLocation()}/submissions`;
 
-export const corePath = ({ submission, kapp, form, datastore = false }) =>
+export const corePath = ({ submission, kapp, form, datastore }) =>
   submission
-    ? submissionPath({ submission, datastore })
-    : formPath({ form, kapp, datastore });
+    ? submissionPath({ datastore, submission })
+    : formPath({ form, kapp });
 
 export const operations = Map({
   startsWith: (field, value) => `${field} =* "${value}"`,
@@ -216,3 +219,15 @@ export const generateCESearchParams = ({
   ...searchFilters(filters),
   ...sortParams(sortColumn, sortDirection),
 });
+
+export const transformCoreResult = envelope => (result, paramData) => {
+  const count = paramData.nextPageToken
+    ? result.count + paramData.pageTokens.size * paramData.pageSize
+    : result.count;
+
+  return {
+    data: result[envelope],
+    nextPageToken: result.nextPageToken,
+    count,
+  };
+};

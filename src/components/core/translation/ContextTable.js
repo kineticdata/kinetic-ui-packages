@@ -38,7 +38,7 @@ const filters = () => ({ kapps }) =>
       name: 'context',
       label: 'Context Type',
       type: 'select',
-      options: ['Kapp', 'Datastore', 'Custom'].map(el => ({
+      options: ['Kapp', 'Custom'].map(el => ({
         value: el,
         label: el === 'Kapp' ? 'Form' : el,
       })),

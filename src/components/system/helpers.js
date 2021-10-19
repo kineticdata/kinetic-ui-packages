@@ -169,6 +169,18 @@ export const MSSQL_FIELDS = (
       'password',
     ),
     {
+      name: 'mssql_windowsauthenabled',
+      label: 'Use Windows Authentication (Kerberos)',
+      type: 'select',
+      required: false,
+      visible: trueIfAdapter,
+      options: [
+        { label: 'True', value: 'true' },
+        { label: 'False', value: 'false' },
+      ],
+      initialValue: initialValues('windowsauthenabled', 'false'),
+    },
+    {
       name: 'mssql_sslEnabled',
       label: 'Enable SSL',
       type: 'select',
@@ -211,7 +223,7 @@ export const MSSQL_FIELDS = (
       adapter,
       defaultAdapter,
       'Truststore Password',
-      'ssltruststorepw',
+      'trustStorePassword',
       values => values.get('mssql_sslrootcert', '') !== '',
     ),
     ...generatePasswordFields(
@@ -220,7 +232,7 @@ export const MSSQL_FIELDS = (
       adapter,
       defaultAdapter,
       'Keystore Password',
-      'sslkeystorepw',
+      'keyStoreSecret',
       values => values.get('mssql_sslcert', '') !== '',
     ),
   ];
@@ -340,7 +352,7 @@ export const ORACLE_FIELDS = (
       adapter,
       defaultAdapter,
       'Truststore Password',
-      'truststorePassword',
+      'trustStorePassword',
       values => values.get('oracle_serverCert', '') !== '',
     ),
     ...generatePasswordFields(
@@ -349,7 +361,7 @@ export const ORACLE_FIELDS = (
       adapter,
       defaultAdapter,
       'Keystore Password',
-      'keystorePassword',
+      'keyStorePassword',
       values => values.get('oracle_clientCert', '') !== '',
     ),
   ];
@@ -466,14 +478,15 @@ export const POSTGRES_FIELDS = (
 
 export const adapterProperties = (values, adapter) => {
   const adapterPrefix = `${adapter}_`;
-  const properties = values
-    // Remove the other adapters properties.
-    .filter((_v, key) => key.startsWith(adapterPrefix))
-    // Remove the adapter prefix from the property names.
-    .mapKeys(key => key.replace(adapterPrefix, ''))
-    .toObject();
 
-  return properties;
+  return (
+    values
+      // Remove the other adapters properties.
+      .filter((_v, key) => key.startsWith(adapterPrefix))
+      // Remove the adapter prefix from the property names.
+      .mapKeys(key => key.replace(adapterPrefix, ''))
+      .toObject()
+  );
 };
 
 export const propertiesFromAdapters = (
@@ -545,6 +558,11 @@ export const adapterPropertiesFields = ({
         : property.has('options')
           ? 'select'
           : 'text',
+      placeholder:
+        property.get('sensitive') &&
+        defaultAdapter.get('adapterClass') === property.get('type')
+          ? '•••••••'
+          : undefined,
       helpText: property.get('description'),
       required: ({ values }) =>
         values.get(formPropertyName(prefix, adapterType)) ===

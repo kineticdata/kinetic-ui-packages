@@ -34,8 +34,8 @@ export class I18n extends React.Component {
           }).then(({ submission }) => {
             // Build context using submission data
             const context = submission
-              ? !!this.props.datastore
-                ? `datastore.forms.${submission.form.slug}`
+              ? !submission.form.kapp.slug
+                ? `forms.${submission.form.slug}`
                 : `kapps.${submission.form.kapp.slug}.forms.${
                     submission.form.slug
                   }`

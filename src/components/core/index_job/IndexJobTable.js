@@ -1,5 +1,5 @@
 import React from 'react';
-import { fetchBackgroundJobs, fetchForm } from '../../../apis';
+import { fetchBackgroundJobs } from '../../../apis';
 import { generateTable } from '../../table/Table';
 import { defineFilter } from '../../../helpers';
 
@@ -10,15 +10,12 @@ const clientSide = defineFilter(true)
 
 const indexJobStatuses = ['Running', 'Paused'];
 
-const dataSource = ({ formSlug }) => ({
-  fn: () =>
-    formSlug
-      ? fetchForm({ datastore: true, formSlug, include: 'backgroundJobs' })
-      : fetchBackgroundJobs(),
+const dataSource = ({ formSlug, kappSlug, completed = false }) => ({
+  fn: () => fetchBackgroundJobs({ formSlug, kappSlug, completed }),
   clientSide,
   params: () => [],
   transform: result => ({
-    data: formSlug ? result.form.backgroundJobs : result.backgroundJobs,
+    data: result.backgroundJobs,
   }),
 });
 
@@ -63,13 +60,7 @@ const columns = [
     value: 'progress',
     title: 'Progress',
     components: {
-      BodyCell: props => (
-        <td>
-          {props.value && props.value.get('count')
-            ? `${props.value.get('count')} submissions`
-            : 'None'}
-        </td>
-      ),
+      BodyCell: props => <td>{`${props.value}`}</td>,
     },
   },
   { value: 'startedAt', title: 'Started At' },
@@ -79,7 +70,7 @@ const columns = [
 ];
 
 export const IndexJobTable = generateTable({
-  tableOptions: ['formSlug'],
+  tableOptions: ['formSlug', 'kappSlug', 'completed'],
   dataSource,
   columns,
   filters,

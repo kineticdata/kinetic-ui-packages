@@ -139,7 +139,13 @@ export class Typeahead extends React.Component {
     if (method === 'enter') {
       event.preventDefault();
     }
-    this.setState(this.props.multiple ? { searchValue: '' } : initialState);
+    // Update state if single search or query is multiple and should be cleared
+    if (
+      !this.props.multiple ||
+      (!event.ctrlKey && !event.metaKey && !event.shiftKey)
+    ) {
+      this.setState(this.props.multiple ? { searchValue: '' } : initialState);
+    }
     this.props.onChange(
       this.props.multiple ? this.props.value.push(suggestion) : suggestion,
     );

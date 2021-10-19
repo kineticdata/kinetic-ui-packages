@@ -92,8 +92,8 @@ const serializeQuery = ({ selectedIndexDefinition, values }) => ({
         operator === 'between'
           ? [values.get(`op${i}-operand1`), values.get(`op${i}-operand2`)]
           : operator === 'in'
-          ? [values.get(`op${i}-operand3`)]
-          : [values.get(`op${i}-operand1`)];
+            ? [values.get(`op${i}-operand3`)]
+            : [values.get(`op${i}-operand1`)];
       return reduction.push(List([part, operator, ...rValues]));
     }, List())
     .filter(
@@ -109,10 +109,10 @@ const serializeQuery = ({ selectedIndexDefinition, values }) => ({
       return op === 'between'
         ? query.between(part, `op${i}-operand1`, `op${i}-operand2`)
         : op === 'in'
-        ? query.in(part, `op${i}-operand3`)
-        : op
-        ? query[op](part, `op${i}-operand1`)
-        : query;
+          ? query.in(part, `op${i}-operand3`)
+          : op
+            ? query[op](part, `op${i}-operand1`)
+            : query;
     }, defineKqlQuery())
     .end()(values.toJS()),
 });

@@ -15,18 +15,16 @@ import { buildBindings, slugify } from '../../../helpers';
 const FORM_STATUSES = ['New', 'Active', 'Inactive', 'Delete'];
 
 const FORM_INCLUDES =
-  'details,attributesMap,securityPolicies,indexDefinitions,backgroundJobs,fields,categorizations';
+  'details,attributesMap,securityPolicies,backgroundJobs,fields,categorizations';
 const KAPP_INCLUDES =
   'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies';
 const SPACE_INCLUDES =
-  'spaceAttributeDefinitions,datastoreFormAttributeDefinitions';
+  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies';
 
-const dataSources = ({ formSlug, kappSlug, datastore }) => ({
+const dataSources = ({ formSlug, kappSlug }) => ({
   form: {
     fn: fetchForm,
-    params: formSlug && [
-      { datastore, formSlug, kappSlug, include: FORM_INCLUDES },
-    ],
+    params: formSlug && [{ formSlug, kappSlug, include: FORM_INCLUDES }],
     transform: result => result.form,
   },
   kapp: {
@@ -45,9 +43,7 @@ const dataSources = ({ formSlug, kappSlug, datastore }) => ({
       {
         kappSlug,
         formSlug,
-        attributeType: datastore
-          ? 'datastoreFormAttributeDefinitions'
-          : 'formAttributeDefinitions',
+        attributeType: 'formAttributeDefinitions',
       },
     ],
     transform: result => result.attributeDefinitions,
@@ -64,9 +60,8 @@ const dataSources = ({ formSlug, kappSlug, datastore }) => ({
   },
 });
 
-const handleSubmit = ({ formSlug, kappSlug, datastore }) => values =>
+const handleSubmit = ({ formSlug, kappSlug }) => values =>
   (formSlug ? updateForm : createForm)({
-    datastore,
     kappSlug,
     formSlug,
     form: values.toJS(),
@@ -105,40 +100,26 @@ const securityEndpoints = {
   formDisplay: {
     endpoint: 'Display',
     label: 'Form Display',
-    types: ['Space', 'Kapp', 'Form', 'Datastore Form'],
+    types: ['Space', 'Kapp', 'Form'],
   },
   formModification: {
     endpoint: 'Modification',
     label: 'Form Modification',
-    types: ['Space', 'Kapp', 'Form', 'Datastore Form'],
+    types: ['Space', 'Kapp', 'Form'],
   },
   submissionAccess: {
     endpoint: 'Submission Access',
     label: 'Submission Access',
-    types: [
-      'Space',
-      'Kapp',
-      'Form',
-      'Datastore Form',
-      'Submission',
-      'Datastore Submission',
-    ],
+    types: ['Space', 'Kapp', 'Form', 'Submission'],
   },
   submissionModification: {
     endpoint: 'Submission Modification',
     label: 'Submission Modification',
-    types: [
-      'Space',
-      'Kapp',
-      'Form',
-      'Datastore Form',
-      'Submission',
-      'Datastore Submission',
-    ],
+    types: ['Space', 'Kapp', 'Form', 'Submission'],
   },
 };
 
-const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
+const fields = ({ formSlug, kappSlug }) => ({ form }) =>
   (!formSlug || form) && [
     !!kappSlug && {
       name: 'anonymous',
@@ -218,7 +199,7 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
           space,
           kapp,
           form,
-          scope: kappSlug ? 'Submission' : 'Datastore Submission',
+          scope: kappSlug ? 'Submission' : 'Submission',
         }),
     },
     !!kappSlug && {
@@ -321,7 +302,7 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
   ];
 
 export const FormForm = generateForm({
-  formOptions: ['formSlug', 'kappSlug', 'datastore'],
+  formOptions: ['formSlug', 'kappSlug'],
   dataSources,
   fields,
   handleSubmit,

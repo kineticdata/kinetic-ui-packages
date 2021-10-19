@@ -128,11 +128,21 @@ export class Node extends Component {
    ****************************************************************************/
 
   draw() {
-    const attribute = isIE11 ? 'transform' : 'style';
-    const value = isIE11
-      ? `translate(${this.position.x} ${this.position.y})`
-      : `transform: translate(${this.position.x}px,  ${this.position.y}px)`;
-    this.el.current.setAttribute(attribute, value);
+    // const attribute = isIE11 ? 'transform' : 'style';
+    // const value = isIE11
+    //   ? `translate(${this.position.x} ${this.position.y})`
+    //   : `transform: translate(${this.position.x}px,  ${this.position.y}px)`;
+    // this.el.current.setAttribute(attribute, value);
+
+    if (isIE11) {
+      this.el.current.transform = `translate(${this.position.x} ${
+        this.position.y
+      })`;
+    } else {
+      this.el.current.style.transform = `translate(${this.position.x}px,  ${
+        this.position.y
+      }px)`;
+    }
   }
 
   render() {
@@ -155,8 +165,8 @@ export class Node extends Component {
       type === 'join' || type === 'junction'
         ? constants.NODE_JOIN_JUNCTION_HEIGHT
         : type === 'start'
-        ? constants.NODE_START_RADIUS * 2
-        : constants.NODE_HEIGHT;
+          ? constants.NODE_START_RADIUS * 2
+          : constants.NODE_HEIGHT;
     const width =
       type === 'start' ? constants.NODE_START_RADIUS * 2 : constants.NODE_WIDTH;
     return (

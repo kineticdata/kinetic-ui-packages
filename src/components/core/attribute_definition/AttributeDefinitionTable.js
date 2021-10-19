@@ -63,7 +63,6 @@ AttributeDefinitionTable.propTypes = {
     'category',
     'kapp',
     'form',
-    'datastoreForm',
   ]).isRequired,
   /** The columns that should be displayed.   */
   columnSet: t.arrayOf(t.string),

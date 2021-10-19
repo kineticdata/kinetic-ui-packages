@@ -3,6 +3,8 @@ import qs from 'qs';
 import { bundle } from '../../helpers';
 import { handleErrors, headerBuilder, paramBuilder } from '../http';
 
+// TODO: datastore is deprecated, remove datastore routes from paths.
+
 export const VALID_TIMELINES = [
   'closedAt',
   'createdAt',
@@ -338,18 +340,15 @@ export class SubmissionSearch {
 }
 
 export const searchSubmissions = options => {
-  const { kapp, form, search, datastore = false } = options;
-  const kappSlug = datastore ? null : kapp ? kapp : bundle.kappSlug();
+  const { kapp, form, search } = options;
 
-  if (datastore && !form) {
-    throw new Error('Datastore searches must be scoped to a form.');
-  }
-
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/forms/${form}/submissions`
+  const path = kapp
+    ? form
+      ? `${bundle.apiLocation()}/kapps/${kapp}/forms/${form}/submissions`
+      : `${bundle.apiLocation()}/kapps/${kapp}/submissions`
     : form
-      ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${form}/submissions`
-      : `${bundle.apiLocation()}/kapps/${kappSlug}/submissions`;
+      ? `${bundle.apiLocation()}/datastore/forms/${form}/submissions`
+      : `${bundle.apiLocation()}/submissions`;
 
   const meta = { ...search };
   // Format includes.
@@ -386,13 +385,13 @@ export const searchSubmissions = options => {
 };
 
 export const fetchSubmission = options => {
-  const { id, datastore } = options;
+  const { id } = options;
 
   if (!id) {
     throw new Error('fetchSubmission failed! The option "id" is required.');
   }
 
-  const path = datastore
+  const path = options.datastore
     ? `${bundle.apiLocation()}/datastore/submissions/${id}`
     : `${bundle.apiLocation()}/submissions/${id}`;
 
@@ -415,7 +414,6 @@ export const createSubmission = options => {
     kappSlug = bundle.kappSlug(),
     formSlug,
     values,
-    datastore = false,
     completed = true,
     coreState,
     parent,
@@ -431,9 +429,9 @@ export const createSubmission = options => {
     );
   }
 
-  const path = datastore
-    ? `${bundle.apiLocation()}/datastore/forms/${formSlug}/submissions`
-    : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions`;
+  const path = kappSlug
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions`
+    : `${bundle.apiLocation()}/datastore/forms/${formSlug}/submissions`;
 
   const params = { ...paramBuilder(options), completed, coreState, parent };
 
@@ -449,9 +447,9 @@ export const createSubmission = options => {
 };
 
 export const updateSubmission = options => {
-  const { id, values, datastore = false } = options;
+  const { id, values } = options;
 
-  const path = datastore
+  const path = options.datastore
     ? `${bundle.apiLocation()}/datastore/submissions/${id}`
     : `${bundle.apiLocation()}/submissions/${id}`;
   const params = { ...paramBuilder(options) };
@@ -467,14 +465,33 @@ export const updateSubmission = options => {
   );
 };
 
+export const submitSubmission = options => {
+  const { id, values, page, staged, defer } = options;
+
+  const path = options.datastore
+    ? `${bundle.apiLocation()}/datastore/submissions/${id}`
+    : `${bundle.apiLocation()}/submissions/${id}`;
+  const params = { ...paramBuilder(options), page, staged, defer };
+
+  return (
+    axios
+      .post(path, { values }, { params, headers: headerBuilder(options) })
+      // Remove the response envelop and leave us with the submission one.
+      .then(response => ({ submission: response.data.submission }))
+      // Clean up any errors we receive. Make sure this the last thing so that it
+      // cleans up any errors.
+      .catch(handleErrors)
+  );
+};
+
 export const deleteSubmission = options => {
-  const { id, datastore = false } = options;
+  const { id } = options;
 
   if (!id) {
     throw new Error('deleteSubmission failed! The option "id" is required.');
   }
 
-  const path = datastore
+  const path = options.datastore
     ? `${bundle.apiLocation()}/datastore/submissions/${id}`
     : `${bundle.apiLocation()}/submissions/${id}`;
 
