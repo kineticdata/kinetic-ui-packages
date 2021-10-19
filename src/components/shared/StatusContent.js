@@ -1,14 +1,19 @@
 import React, { Fragment } from 'react';
-import { Link } from '@reach/router';
 import { ButtonGroup } from 'reactstrap';
 import { I18n } from '@kineticdata/react';
 
 const getStatusClass = status =>
-  `submission-status submission-status--${status
-    .toLowerCase()
-    .replace(/\s+/g, '-')}`;
+  `badge badge-${
+    status === 'Open'
+      ? 'info'
+      : status === 'Pending'
+        ? 'warning'
+        : status === 'Complete'
+          ? 'danger'
+          : 'subtle'
+  } badge-stylized`;
 
-const getStatusReason = queueItem => {
+export const getStatusReason = queueItem => {
   switch (queueItem.values.Status) {
     case 'Pending':
       return queueItem.values['Pending Reason'];
@@ -21,45 +26,53 @@ const getStatusReason = queueItem => {
   }
 };
 
-const PrevAndNextGroup = ({ prevAndNext }) => (
-  <ButtonGroup className="queue-details-nav">
-    <Link
-      to={`../${prevAndNext.prev}`}
-      className="btn btn-inverse"
-      disabled={!prevAndNext.prev}
-      aria-label="Previous Queue Item"
-    >
-      <span className="fa fa-fw fa-caret-left" role="presentation" />
-    </Link>
-    <Link
-      to={`../${prevAndNext.next}`}
-      className="btn btn-inverse"
-      disabled={!prevAndNext.next}
-      aria-label="Next Queue Item"
-    >
-      <span className="fa fa-fw fa-caret-right" role="presentation" />
-    </Link>
-  </ButtonGroup>
+export const StatusBadge = ({ queueItem, withReason }) => (
+  <>
+    <span className={getStatusClass(queueItem.values.Status)}>
+      <I18n>{queueItem.values.Status}</I18n>
+    </span>
+    {withReason &&
+      getStatusReason(queueItem) && (
+        <span className="status-reason ml-2">{getStatusReason(queueItem)}</span>
+      )}
+  </>
 );
 
-export const StatusContent = ({ queueItem, prevAndNext }) => (
+export const StatusContent = ({ queueItem, prev, next }) => (
   <Fragment>
     <div
       className={
-        prevAndNext
+        prev || next
           ? 'status-content  status-content--is-active'
           : 'status-content'
       }
     >
-      <span className={getStatusClass(queueItem.values.Status)}>
-        <I18n>{queueItem.values.Status}</I18n>
-      </span>
+      <StatusBadge queueItem={queueItem} />
     </div>
-    {prevAndNext && (
+    {(prev || next) && (
       <span className="submission-status--reason">
         {getStatusReason(queueItem)}
       </span>
     )}
-    {prevAndNext && <PrevAndNextGroup prevAndNext={prevAndNext} />}
+    {(prev || next) && (
+      <ButtonGroup className="queue-details-nav">
+        <button
+          className="btn btn-inverse"
+          disabled={!prev}
+          onClick={prev}
+          aria-label="Previous Queue Item"
+        >
+          <span className="fa fa-fw fa-caret-left" role="presentation" />
+        </button>
+        <button
+          className="btn btn-inverse"
+          disabled={!next}
+          onClick={next}
+          aria-label="Next Queue Item"
+        >
+          <span className="fa fa-fw fa-caret-right" role="presentation" />
+        </button>
+      </ButtonGroup>
+    )}
   </Fragment>
 );

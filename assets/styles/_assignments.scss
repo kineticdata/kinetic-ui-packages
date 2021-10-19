@@ -31,7 +31,7 @@
   &.focus {
     outline: none;
     border-color: $gray50;
-    box-shadow: 0 0 1px 4px rgba($orange-kinops, .25);
+    box-shadow: 0 0 1px 4px rgba($orange-kinops, 0.25);
   }
 
   &.read-only .badge {
@@ -52,4 +52,8 @@
   &.read-only div[role='button'] {
     cursor: default;
   }
+}
+.btn-back .assignment-badge {
+  margin: -0.8125rem 0 -0.8125rem 1.5rem;
+  border: none;
 }

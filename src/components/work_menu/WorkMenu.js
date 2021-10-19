@@ -17,7 +17,13 @@ export const WorkMenu = ({
   handleSaveClick,
 }) =>
   queueItem && (
-    <Modal isOpen toggle={handleCloseClick} size="lg" backdrop="static">
+    <Modal
+      isOpen
+      toggle={handleCloseClick}
+      size="lg"
+      backdrop="static"
+      className="work-menu"
+    >
       <div className="modal-header">
         <div className="modal-title">
           <button
@@ -93,7 +99,6 @@ export const WorkMenuContainer = compose(
         kineticForm = form;
       },
       handleUpdated: props => (response, actions) => {
-        console.log('handleUpdated', response);
         // If the result of submitPage is an update and we do not advance pages
         // on the submission we will close the work menu. Also call actions.stop
         // to prevent a needless AJAX call to reload the embedded form.
@@ -109,7 +114,6 @@ export const WorkMenuContainer = compose(
         }
       },
       handleCompleted: props => (response, actions) => {
-        console.log('handleCompleted', response);
         // If the result of submitPage is a complete and we advance to a virtual
         // confirmation page (currentPage === null (pre form consolidation_, or
         // displayedPage.type is not 'confirmation' (post form consolidation))

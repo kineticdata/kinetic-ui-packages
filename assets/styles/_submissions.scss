@@ -4,14 +4,35 @@
 .submissions {
   // This represents the overall submission "card" in the queue list view.
   .submission {
-    border-bottom: 1px solid $gray8;
+    border-bottom: 1px solid $gray-200;
     color: $blue-lake;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: flex-start;
-    padding: 0.75rem 1.5rem;
+    padding: 1.125rem 1.5rem;
+    user-select: none;
     @include setBgColorAndHover($white);
+    &.selection {
+      &:hover {
+        background-color: rgba($info, 0.03);
+      }
+    }
+    &.selected {
+      background-color: rgba($info, 0.05);
+      &:hover {
+        background-color: rgba($info, 0.07);
+      }
+    }
+    &.selection-disabled {
+      > * {
+        cursor: default;
+      }
+      background-color: $gray-100;
+      &:hover {
+        background-color: $gray-100;
+      }
+    }
     // This is the details part of the card.
     &:last-child {
       border-bottom: none;
@@ -21,7 +42,7 @@
       text-decoration: none;
     }
     &__title {
-      color: $gray80;
+      color: $gray-800;
       font-size: 1.125rem;
       font-weight: 600;
       margin: 0.25rem 0;
@@ -31,9 +52,39 @@
       font-size: 0.875rem;
       line-height: 1.3125rem;
       margin-bottom: 0;
-      color: $gray60;
+      color: $gray-600;
       display: flex;
       align-items: center;
+      .selection-toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 0.5rem;
+        font-size: 1.0625rem;
+        &:before {
+          content: '\f096';
+        }
+        &.checked {
+          color: $info;
+          &:before {
+            content: '\f046';
+          }
+        }
+        &.disabled {
+          color: $gray-500;
+          &:after {
+            color: $danger;
+            content: '\f00d';
+            position: absolute;
+            font-size: 0.65em;
+          }
+        }
+      }
+    }
+    &:hover .submission__meta {
+      .selection-toggle:not(.disabled) {
+        color: rgba($info, 0.89);
+      }
     }
     &__handler,
     &__assignment {
@@ -52,21 +103,21 @@
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      
+
       .list-group-item {
         padding: 0;
-        color: $gray60;
+        color: $gray-600;
         background-color: transparent;
         font-weight: 400;
         font-size: 0.875rem;
         &:not(:last-child):after {
           content: '\2022';
-          color: $gray50;
+          color: $gray-600;
           margin: 0 0.3125rem;
         }
         .time-ago__text {
-          color: $blue-lake;
-          &:hover{
+          color: $link-color;
+          &:hover {
             text-decoration: underline;
           }
         }

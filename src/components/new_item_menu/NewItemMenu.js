@@ -48,16 +48,33 @@ const FormsBackButton = ({ handleFormClick }) => (
   </button>
 );
 
-const AssignmentBackButton = ({ handleAssignmentClick }) => (
+const AssignmentBackButton = ({ handleAssignmentClick, currentAssignment }) => (
   <button
     type="button"
-    className="btn btn-link btn-back"
+    className="btn btn-link btn-back d-flex"
     onClick={handleAssignmentClick(null)}
   >
     <span className="icon">
       <span className="fa fa-fw fa-chevron-left" />
     </span>
     <I18n>Assignment</I18n>
+    <div className="assignment-badge">
+      <span className="badge" aria-hidden="true">
+        {(currentAssignment['Assigned Individual Display Name'] &&
+          currentAssignment['Assigned Individual Display Name'].charAt(0)) ||
+          (currentAssignment['Assigned Team Display Name'] &&
+            currentAssignment['Assigned Team Display Name'].charAt(0))}
+      </span>
+      <div>
+        <div className="assignment-badge__team">
+          <I18n>{currentAssignment['Assigned Team Display Name']}</I18n>
+        </div>
+        <div className="assignment-badge__individual text-truncate">
+          {currentAssignment['Assigned Individual Display Name'] ||
+            currentAssignment['Assigned Individual']}
+        </div>
+      </div>
+    </div>
   </button>
 );
 
@@ -103,7 +120,10 @@ export const NewItemMenu = ({
         )}
       {currentForm !== null &&
         currentAssignment !== null && (
-          <AssignmentBackButton handleAssignmentClick={handleAssignmentClick} />
+          <AssignmentBackButton
+            handleAssignmentClick={handleAssignmentClick}
+            currentAssignment={currentAssignment}
+          />
         )}
     </div>
     <ModalBody>

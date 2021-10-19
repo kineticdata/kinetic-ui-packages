@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Link } from '@reach/router';
 import {
   I18n,
   KappForm,
@@ -22,13 +21,17 @@ const fieldSet = [
 const FormLayout = ({ fields, error, buttons }) => (
   <Fragment>
     <h2 className="section__title">
-      <I18n>Display Options</I18n>
+      <span className="title">
+        <I18n>Display Options</I18n>
+      </span>
     </h2>
     {fields.get('name')}
     {fields.get('icon')}
     <br />
     <h2 className="section__title">
-      <I18n>Form Mapping</I18n>
+      <span className="title">
+        <I18n>Form Mapping</I18n>
+      </span>
     </h2>
     {fields.get('notificationComplete')}
     {fields.get('notificationCreate')}
@@ -146,33 +149,19 @@ export const QueueSettingsComponent = ({ currentKapp, onSave }) => (
   >
     {({ form, initialized }) => (
       <div className="page-container">
-        <PageTitle parts={['General']} settings />
-        <div className="page-panel page-panel--white">
-          <div className="page-title">
-            <div
-              role="navigation"
-              aria-label="breadcrumbs"
-              className="page-title__breadcrumbs"
-            >
-              <span className="breadcrumb-item">
-                <Link to="../../">
-                  <I18n>queue</I18n>
-                </Link>{' '}
-              </span>
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                {' '}
-                <Link to="../">
-                  <I18n>settings</I18n>
-                </Link>{' '}
-                <span aria-hidden="true">/ </span>
-              </span>
-              <h1>
-                <I18n>General Settings</I18n>
-              </h1>
-            </div>
-          </div>
-          {initialized && <section className="form">{form}</section>}
+        <div className="page-panel ">
+          <PageTitle
+            parts={['General']}
+            settings
+            breadcrumbs={[
+              { label: 'Home', to: '/' },
+              { label: `${currentKapp.name} Settings`, to: '..' },
+            ]}
+            title="General Settings"
+          />
+          {initialized && (
+            <section className="form form-unstyled mb-5">{form}</section>
+          )}
         </div>
       </div>
     )}

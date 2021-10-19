@@ -127,53 +127,29 @@ export const FormSubmissionsComponent = ({
         {({ pagination, table, filter, appliedFilters, filterFormKey }) => {
           return (
             <div className="page-container">
-              <PageTitle parts={[form.name, `Forms`]} settings />
-              <div className="page-panel page-panel--white">
-                <div className="page-title">
-                  <div
-                    role="navigation"
-                    aria-label="breadcrumbs"
-                    className="page-title__breadcrumbs"
-                  >
-                    <span className="breadcrumb-item">
-                      <span className="breadcrumb-item">
-                        <Link to="../../../">
-                          <I18n>queue</I18n>
-                        </Link>
-                      </span>{' '}
-                      <span aria-hidden="true">/ </span>
-                      <span className="breadcrumb-item">
-                        <Link to="../../">
-                          <I18n>settings</I18n>
-                        </Link>
-                      </span>{' '}
-                      <span aria-hidden="true">/ </span>
-                      <span className="breadcrumb-item">
-                        <Link to="../">
-                          <I18n>forms</I18n>
-                        </Link>
-                      </span>{' '}
-                      <span aria-hidden="true">/ </span>
-                    </span>
-                    <h1>
-                      <I18n>{form.name}</I18n>
-                    </h1>
-                  </div>
-                  <div className="page-title__actions">
-                    <button
-                      onClick={() => openModal('export')}
-                      value="export"
-                      className="btn btn-secondary pull-left"
-                    >
-                      <span className="fa fa-fw fa-download" />
-                      <I18n> Export Records</I18n>
-                    </button>
-                    <Link to="settings" className="btn btn-primary">
-                      <span className="fa fa-fw fa-cog" />
-                      <I18n> Form Settings</I18n>
-                    </Link>
-                  </div>
-                </div>
+              <div className="page-panel">
+                <PageTitle
+                  parts={[form.name, `Forms`]}
+                  settings
+                  breadcrumbs={[
+                    { label: 'Home', to: '/' },
+                    { label: `${kapp.name} Settings`, to: '../..' },
+                    { label: 'Forms', to: '..' },
+                  ]}
+                  title={form.name}
+                  actions={[
+                    {
+                      label: 'Form Settings',
+                      icon: 'cog',
+                      to: 'settings',
+                    },
+                    {
+                      label: 'Export Records',
+                      onClick: () => openModal('export'),
+                      menu: true,
+                    },
+                  ]}
+                />
                 <div>
                   <div className="data-list data-list--fourths">
                     <dl>
@@ -217,8 +193,10 @@ export const FormSubmissionsComponent = ({
                       </div>
                     )}
                   </div>
-                  <h3 className="section__title pr-0 mb-2">
-                    <I18n>Submissions</I18n>
+                  <h3 className="section__title">
+                    <span className="title">
+                      <I18n>Submissions</I18n>
+                    </span>
                     {filter}
                   </h3>
                   <div className="section__content">

@@ -37,39 +37,19 @@ export const FormSettingsWrapper = compose(
     },
   }),
 )(
-  ({ form, error }) =>
+  ({ form, error, kapp }) =>
     error || !form ? (
       <div className="page-container">
-        <PageTitle parts={[form && form.name, 'Forms', 'Settings']} />
-        <div className="page-panel page-panel--white">
-          <div className="page-title">
-            <div
-              role="navigation"
-              aria-label="breadcrumbs"
-              className="page-title__breadcrumbs"
-            >
-              <span className="breadcrumb-item">
-                <Link to="../../../">
-                  <I18n>queue</I18n>
-                </Link>{' '}
-              </span>
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                {' '}
-                <Link to="../../">
-                  <I18n>settings</I18n>
-                </Link>{' '}
-              </span>
-              <span aria-hidden="true">/ </span>
-              <span className="breadcrumb-item">
-                {' '}
-                <Link to="../">
-                  <I18n>forms</I18n>
-                </Link>{' '}
-              </span>
-              <span aria-hidden="true">/ </span>
-            </div>
-          </div>
+        <div className="page-panel">
+          <PageTitle
+            parts={[form && form.name, 'Forms']}
+            settings
+            breadcrumbs={[
+              { label: 'Home', to: '/' },
+              { label: `${kapp.name} Settings`, to: '../..' },
+              { label: 'Forms', to: '..' },
+            ]}
+          />
           {error ? (
             <ErrorMessage message={error.message} />
           ) : (
@@ -103,7 +83,7 @@ const SettingsCard = ({ path, icon, name, description }) => (
     components={{ Link }}
     bar={true}
     barColor="dark"
-    barSize="sm"
+    barSize="xs"
   >
     <CardCol>
       <CardRow type="title">
@@ -122,27 +102,14 @@ const SettingsCard = ({ path, icon, name, description }) => (
   </Card>
 );
 
-const SettingsNavigationComponent = ({ isSpaceAdmin }) => (
+const SettingsNavigationComponent = ({ kapp, isSpaceAdmin }) => (
   <div className="page-container">
-    <PageTitle settings />
-    <div className="page-panel page-panel--white">
-      <div className="page-title">
-        <div
-          role="navigation"
-          aria-label="breadcrumbs"
-          className="page-title__breadcrumbs"
-        >
-          <span className="breadcrumb-item">
-            <Link to="..">
-              <I18n>queue</I18n>
-            </Link>{' '}
-            <span aria-hidden="true">/ </span>
-          </span>
-          <h1>
-            <I18n>Settings</I18n>
-          </h1>
-        </div>
-      </div>
+    <div className="page-panel">
+      <PageTitle
+        settings
+        breadcrumbs={[{ label: 'Home', to: '/' }]}
+        title={`${kapp.name} Settings`}
+      />
 
       <div className="cards cards--seconds">
         {isSpaceAdmin && (
@@ -165,6 +132,7 @@ const SettingsNavigationComponent = ({ isSpaceAdmin }) => (
 );
 
 const mapStateToProps = state => ({
+  kapp: state.app.kapp,
   isSpaceAdmin: state.app.profile.spaceAdmin,
 });
 

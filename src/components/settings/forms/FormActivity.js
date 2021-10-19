@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import moment from 'moment';
-import { Link } from '@reach/router';
 import { compose, lifecycle } from 'recompose';
 import { TimeAgo } from '@kineticdata/bundle-common';
 import { actions } from '../../../redux/modules/settingsForms';
@@ -8,57 +7,25 @@ import { I18n } from '@kineticdata/react';
 import { connect } from '../../../redux/store';
 import { PageTitle } from '../../shared/PageTitle';
 
-export const FormActivityContainer = ({ loading, submission, space }) =>
+export const FormActivityContainer = ({ loading, submission, kapp, space }) =>
   !loading && (
     <div className="page-container">
-      <PageTitle
-        parts={[
-          submission && submission.handle,
-          submission && submission.form && submission.form.name,
-          'Forms',
-        ]}
-        settings
-      />
-      <div className="page-panel page-panel--white">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to="../../../../..">
-                <I18n>queue</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to="../../../..">
-                <I18n>settings</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to="../../..">
-                <I18n>forms</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to={`../..`}>
-                <I18n
-                  context={`kapps.${submission.form.kapp.slug}.forms.${
-                    submission.form.slug
-                  }`}
-                >
-                  {submission.form.name}
-                </I18n>
-              </Link>{' '}
-            </span>
-            <span aria-hidden="true">/ </span>
-            <h1>{submission.handle}</h1>
-          </div>
-        </div>
+      <div className="page-panel">
+        <PageTitle
+          parts={[
+            submission && submission.handle,
+            submission && submission.form && submission.form.name,
+            'Forms',
+          ]}
+          settings
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: `${kapp.name} Settings`, to: '../../../..' },
+            { label: 'Forms', to: '../../..' },
+            submission && { label: submission.form.name, to: '../..' },
+          ]}
+          title={submission && submission.handle}
+        />
         <section>
           <div className="data-list data-list--fourths">
             <dl>
@@ -143,7 +110,9 @@ export const FormActivityContainer = ({ loading, submission, space }) =>
           </div>
 
           <h3 className="section__title">
-            <I18n>Fulfillment Process</I18n>
+            <span className="title">
+              <I18n>Fulfillment Process</I18n>
+            </span>
           </h3>
           <div className="section__content scroll-wrapper-h">
             {submission.activities.filter(activity => activity.type === 'Task')
@@ -195,7 +164,9 @@ export const FormActivityContainer = ({ loading, submission, space }) =>
           </div>
 
           <h3 className="section__title">
-            <I18n>Submission Activity</I18n>
+            <span className="title">
+              <I18n>Submission Activity</I18n>
+            </span>
           </h3>
           <div className="section__content scroll-wrapper-h">
             {submission.activities.filter(activity => activity.type !== 'Task')
@@ -247,7 +218,9 @@ export const FormActivityContainer = ({ loading, submission, space }) =>
           </div>
 
           <h3 className="section__title">
-            <I18n>Values</I18n>
+            <span className="title">
+              <I18n>Values</I18n>
+            </span>
           </h3>
           <div className="section__content scroll-wrapper-h">
             <table className="table table-sm table-striped settings-table">
@@ -288,6 +261,7 @@ const mapStateToProps = state => ({
   loading: state.settingsForms.submissionLoading,
   submission: state.settingsForms.formSubmission,
   space: state.app.space,
+  kapp: state.app.kapp,
   activityLoading: state.settingsForms.submissionActivityLoading,
 });
 

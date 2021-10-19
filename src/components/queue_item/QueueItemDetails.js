@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { compose, withState, withHandlers, withProps } from 'recompose';
 import { Link } from '@reach/router';
 import {
-  TimeAgo,
-  ViewDiscussionsModal,
   selectDiscussionsEnabled,
+  DiscussionsPanel,
+  EmptyMessage,
 } from '@kineticdata/bundle-common';
 import { selectAssignments } from '../../redux/modules/queueApp';
-import { actions, selectPrevAndNext } from '../../redux/modules/queue';
+import { actions } from '../../redux/modules/queue';
 import { ViewOriginalRequest } from './ViewOriginalRequest';
 import { AssignmentBadge } from './AssignmentBadge';
-import { QueueListItemSmall } from '../queue_list/QueueListItem';
+import { QueueCard } from '../queue_list/QueueListItem';
 import { AssignmentSelector } from '../shared/AssignmentSelector';
-import { StatusContent } from '../shared/StatusContent';
 import { WallyButtonContainer } from '../shared/WallyButton';
 import { I18n } from '@kineticdata/react';
 import { connect } from '../../redux/store';
+import { List } from 'immutable';
+import classNames from 'classnames';
 
 const nonQueueLink = (queueItem, kappSlug) =>
   queueItem.parent &&
@@ -37,91 +38,24 @@ export const QueueItemDetails = ({
   setAssignment,
   assignments,
   openNewItemMenu,
-  viewDiscussionsModal,
   prohibitSubtasks,
   refreshQueueItem,
-  openDiscussions,
-  closeDiscussions,
-  prevAndNext,
   kappSlug,
   discussionsEnabled,
   profile,
-  isSmallLayout,
   creationFields,
-  onCreated,
+  onDiscussionCreated,
   CreationForm,
-}) => (
-  <div className="queue-item-details">
-    {viewDiscussionsModal &&
-      isSmallLayout && (
-        <ViewDiscussionsModal
-          itemType="Submission"
-          itemKey={queueItem.id}
-          close={closeDiscussions}
-          creationFields={creationFields}
-          onCreated={onCreated}
-          CreationForm={CreationForm}
-          me={profile}
-        />
-      )}
-    <div>
+  goToPreviousItem,
+  goToNextItem,
+  currentTab,
+  toggleCurrentTab,
+}) => {
+  const unreadDiscussionsContainerRef = useRef(null);
+
+  return (
+    <div className="queue-item-details">
       <div className="section--general">
-        {discussionsEnabled &&
-          isSmallLayout && (
-            <button
-              onClick={openDiscussions}
-              className="btn btn-inverse btn-discussion btn-block mb-3"
-            >
-              <span
-                className="fa fa-fw fa-comments"
-                style={{ fontSize: '16px' }}
-                role="presentation"
-              />
-              <I18n>Open Discussions</I18n>
-            </button>
-          )}
-        <div className="submission__meta">
-          <StatusContent queueItem={queueItem} prevAndNext={prevAndNext} />
-        </div>
-        <h1 className="section--general__title">{queueItem.values.Summary}</h1>
-        <ul className="list-group timestamps">
-          <li className="list-group-item timestamp">
-            <span className="label">
-              <I18n
-                context={`kapps.${queueItem.form.kapp.slug}.forms.${
-                  queueItem.form.slug
-                }`}
-              >
-                {queueItem.form.name}
-              </I18n>
-            </span>{' '}
-            <span className="value">({queueItem.handle})</span>
-          </li>
-          <li className="list-group-item timestamp">
-            <span className="label">
-              <I18n>Due</I18n>
-            </span>
-            <span className="value">
-              <TimeAgo timestamp={queueItem.values['Due Date']} id="due-date" />
-            </span>
-          </li>
-          <li className="list-group-item timestamp">
-            <span className="label">
-              <I18n>Updated</I18n>
-            </span>
-            <span className="value">
-              <TimeAgo timestamp={queueItem.updatedAt} id="updated-at" />
-            </span>
-          </li>
-          <li className="list-group-item timestamp">
-            <span className="label">
-              <I18n>Created</I18n>
-            </span>
-            <span className="value">
-              <TimeAgo timestamp={queueItem.createdAt} id="created-at" />
-            </span>
-          </li>
-        </ul>
         <pre>{queueItem.values.Details}</pre>
         <div className="actions">
           {!isAssigning && (
@@ -161,49 +95,128 @@ export const QueueItemDetails = ({
         )}
       </div>
 
-      {!prohibitSubtasks && (
-        <div className="section--subtasks">
-          <h2 className="section__title">
-            <I18n>Subtasks</I18n>
-            {queueItem.coreState === 'Draft' && (
-              <button
-                className="btn btn-link"
-                onClick={openNewItemMenu}
-                aria-label="Create new subtask"
+      {(!prohibitSubtasks || discussionsEnabled) && (
+        <div className="mb-5">
+          <ul className="nav nav-tabs" role="tablist">
+            {!prohibitSubtasks && (
+              <li
+                role="tab"
+                className="nav-item"
+                id="subtasks-tab"
+                aria-controls="subtasks-tabpanel"
+                aria-selected={currentTab === 'subtasks'}
               >
-                <span className="fa fa-plus" aria-hidden="true" />
-              </button>
+                <button
+                  onClick={toggleCurrentTab('subtasks')}
+                  className={classNames('nav-link', {
+                    active: currentTab === 'subtasks',
+                  })}
+                >
+                  <I18n>Subtasks</I18n>
+                </button>
+              </li>
             )}
-          </h2>
-          {queueItem.children.length > 0 && (
-            <ul className="list-group submissions">
-              {queueItem.children.map(child => (
-                <QueueListItemSmall
-                  key={child.id}
-                  queueItem={child}
-                  path={`../${child.id}`}
-                />
-              ))}
-            </ul>
-          )}
-          {queueItem.children.length < 1 && (
-            <div className="empty-subtasks">
-              <span className="empty-subtasks__title">
-                <I18n>No Subtasks to display</I18n>
-              </span>
-              <span className="empty-subtasks__message">
-                <I18n>
-                  Subtasks are an easy way to create smaller and/or related
-                  tasks to parent task.
-                </I18n>
-              </span>
-            </div>
-          )}
+            {discussionsEnabled && (
+              <li
+                role="tab"
+                className="nav-item"
+                id="discussions-tab"
+                aria-controls="discussions-tabpanel"
+                aria-selected={currentTab === 'discussions'}
+              >
+                <button
+                  onClick={toggleCurrentTab('discussions')}
+                  className={classNames('nav-link', {
+                    active: currentTab === 'discussions',
+                  })}
+                >
+                  <I18n>Discussions</I18n>
+                  <span ref={unreadDiscussionsContainerRef} />
+                </button>
+              </li>
+            )}
+          </ul>
+
+          <div
+            className={classNames('cards', {
+              'd-none': currentTab !== 'subtasks',
+            })}
+            role="tabpanel"
+            id="subtasks-tabpanel"
+            aria-labelledby="subtasks-tab"
+          >
+            {queueItem.coreState === 'Draft' && (
+              <div className="d-flex justify-content-end mt-n4 mb-4">
+                <button
+                  className="btn btn-white btn-sticky-top"
+                  onClick={openNewItemMenu}
+                  aria-label="Create New Subtask"
+                >
+                  <span className="fa fa-fw fa-plus" aria-hidden="true" />
+                  <span>Create Subtask</span>
+                </button>
+              </div>
+            )}
+            {queueItem.children.length > 0 && (
+              <ul className="list-group submissions">
+                {queueItem.children.map(child => (
+                  <QueueCard
+                    key={child.id}
+                    submission={child}
+                    path={`../${child.id}`}
+                  />
+                ))}
+              </ul>
+            )}
+            {queueItem.children.length < 1 && (
+              <EmptyMessage
+                title="No subtasks to display"
+                message="Subtasks are an easy way to create smaller and/or related tasks to parent task."
+              />
+            )}
+          </div>
+
+          <div
+            className={classNames({
+              'd-none': currentTab !== 'discussions',
+            })}
+            role="tabpanel"
+            id="discussions-tabpanel"
+            aria-labelledby="discussions-tab"
+          >
+            <DiscussionsPanel
+              withAside={true}
+              itemType="Submission"
+              itemKey={queueItem.id}
+              overrideClassName="discussions-container"
+              me={profile}
+              pageSize={3}
+              unreadDiscussionsContainerRef={unreadDiscussionsContainerRef}
+              creationFields={creationFields}
+              onCreated={onDiscussionCreated}
+              CreationForm={CreationForm}
+              renderDiscussionsListHeader={({ handleCreateDiscussionClick }) =>
+                handleCreateDiscussionClick ? (
+                  <div className="d-flex justify-content-end mt-n4 mb-2">
+                    <button
+                      className="btn btn-white btn-sticky-top"
+                      onClick={handleCreateDiscussionClick}
+                    >
+                      <span className="fa fa-fw fa-plus" />
+                      <span>
+                        <I18n>Create Discussion</I18n>
+                      </span>
+                    </button>
+                  </div>
+                ) : null
+              }
+            />
+          </div>
         </div>
       )}
     </div>
-  </div>
-);
+  );
+};
 
 const getAttr = (form, attrName) => {
   const attrConfig =
@@ -222,11 +235,13 @@ export const mapStateToProps = (state, props) => {
       queueItem.form,
       queueItem,
     ).toJS(),
-    prevAndNext: selectPrevAndNext(state, props.filter),
+    defaultFilters: state.queueApp.filters,
     kappSlug: state.app.kappSlug,
     discussionsEnabled: selectDiscussionsEnabled(state),
     profile: state.app.profile,
-    isSmallLayout: state.app.layoutSize === 'small',
+    currentPageData: state.queue.data,
+    hasPreviousPage: state.queue.hasPreviousPage,
+    hasNextPage: state.queue.hasNextPage,
   };
 };
 
@@ -236,7 +251,10 @@ export const mapDispatchToProps = {
   openNewItemMenu: actions.openNewItemMenu,
   fetchCurrentItem: actions.fetchCurrentItem,
   setOffset: actions.setOffset,
-  fetchList: actions.fetchList,
+  fetchList: actions.fetchListRequest,
+  fetchListCount: actions.fetchListCountRequest,
+  fetchNextPage: actions.fetchListNext,
+  fetchPreviousPage: actions.fetchListPrevious,
 };
 
 export const QueueItemDetailsContainer = compose(
@@ -252,15 +270,29 @@ export const QueueItemDetailsContainer = compose(
       permittedSubtasks: permitted && permitted.split(/\s*,\s*/),
     };
   }),
+  withState(
+    'currentTab',
+    'setCurrentTab',
+    props => (!props.prohibitSubtasks ? 'subtasks' : 'discussions'),
+  ),
   withState('isAssigning', 'setIsAssigning', false),
-  withState('viewDiscussionsModal', 'setViewDiscussionsModal', false),
+  withHandlers({
+    refetchCounts: ({ defaultFilters, fetchListCount }) => () => {
+      defaultFilters
+        .filter(filter => ['Mine', 'Unassigned'].includes(filter.name))
+        .forEach(fetchListCount);
+    },
+    toggleCurrentTab: props => tab => e => props.setCurrentTab(tab),
+  }),
   withHandlers({
     toggleAssigning: ({ setIsAssigning, isAssigning }) => () =>
       setIsAssigning(!isAssigning),
-    setAssignment: ({ queueItem, updateQueueItem, setCurrentItem }) => (
-      _v,
-      assignment,
-    ) => {
+    setAssignment: ({
+      queueItem,
+      updateQueueItem,
+      setCurrentItem,
+      refetchCounts,
+    }) => (_v, assignment) => {
       const teamParts = assignment.team.split('::');
       const values = {
         'Assigned Individual': assignment.username,
@@ -272,7 +304,10 @@ export const QueueItemDetailsContainer = compose(
       updateQueueItem({
         id: queueItem.id,
         values,
-        onSuccess: setCurrentItem,
+        onSuccess: submission => {
+          setCurrentItem(submission);
+          refetchCounts();
+        },
       });
     },
     openNewItemMenu: ({
@@ -289,17 +324,67 @@ export const QueueItemDetailsContainer = compose(
     refreshQueueItem: ({
       filter,
       fetchList,
-      setOffset,
       fetchCurrentItem,
       queueItem,
+      refetchCounts,
     }) => () => {
-      if (filter && filter !== null) {
-        fetchList(filter);
-        setOffset(0);
-      }
       fetchCurrentItem(queueItem.id);
+      refetchCounts();
     },
-    openDiscussions: props => () => props.setViewDiscussionsModal(true),
-    closeDiscussions: props => () => props.setViewDiscussionsModal(false),
   }),
+  withProps(
+    ({
+      currentPageData,
+      queueItem,
+      hasPreviousPage,
+      fetchPreviousPage,
+      hasNextPage,
+      fetchNextPage,
+      navigate,
+    }) => {
+      const currentIndex =
+        queueItem && List.isList(currentPageData)
+          ? currentPageData.findIndex(item => item.id === queueItem.id)
+          : -1;
+      return currentIndex >= 0
+        ? {
+            goToPreviousItem:
+              currentIndex === 0
+                ? hasPreviousPage
+                  ? // If on first item of page but previous page exists, fetch
+                    // previous page and then navigate to last item
+                    () =>
+                      fetchPreviousPage(
+                        submissions =>
+                          submissions &&
+                          navigate(
+                            `../${submissions[submissions.length - 1].id}`,
+                          ),
+                      )
+                  : undefined
+                : // If not on first item of page, navigate to previous item
+                  () =>
+                    navigate(
+                      `../${currentPageData.getIn([currentIndex - 1, 'id'])}`,
+                    ),
+            goToNextItem:
+              currentIndex === currentPageData.size - 1
+                ? hasNextPage
+                  ? // If on last item of page but next page exists, fetch
+                    // next page and then navigate to first item
+                    () =>
+                      fetchNextPage(
+                        submissions =>
+                          submissions && navigate(`../${submissions[0].id}`),
+                      )
+                  : undefined
+                : // If not on last item of page, navigate to next item
+                  () =>
+                    navigate(
+                      `../${currentPageData.getIn([currentIndex + 1, 'id'])}`,
+                    ),
+          }
+        : {};
+    },
+  ),
 )(QueueItemDetails);

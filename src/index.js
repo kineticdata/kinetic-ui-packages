@@ -11,6 +11,10 @@ import { connectedHistory, context, store } from './redux/store';
 import { syncAppState } from './redux/modules/app';
 import { App } from './App';
 
+import { QueueCard } from './components/queue_list/QueueListItem';
+
+export { QueueCard };
+
 export default class extends Component {
   constructor(props) {
     super(props);
@@ -66,4 +70,7 @@ export default class extends Component {
 
   // Class that will be added to the body when this package is rendered
   static bodyClassName = 'package--queue';
+
+  // Relative route to package settings page
+  static settingsRoute = '/settings';
 }

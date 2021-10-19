@@ -7,9 +7,9 @@
 
   .section--general {
     color: $blue-lake;
-    padding: 1.5rem;
     display: flex;
     flex-direction: column;
+    margin-bottom: 3rem;
 
     .timestamps {
       display: flex;
@@ -26,7 +26,7 @@
         .value {
           color: $blue-lake;
           margin-left: 0.25rem;
-          &:hover{
+          &:hover {
             text-decoration: underline;
           }
         }
@@ -81,44 +81,30 @@
     width: 100%;
   }
 
-  .section--subtasks {
-    margin: 1.5rem;
-    @media (max-width: 767px) {
-      margin-bottom: 4rem;
+  .empty-subtasks {
+    border-radius: $border-radius-lg;
+    background-color: $gray3;
+    text-align: center;
+    padding: 1.5em;
+
+    &__title {
+      color: $blue-lake;
+      font-size: 14px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: block;
     }
 
-    .submissions {
-      border-top: 1px solid $border-color;
-    }
-
-    .submission {
-      padding: 0.75rem;
-    }
-
-    .empty-subtasks {
-      border-radius: $border-radius-lg;
-      background-color: $gray3;
-      text-align: center;
-      padding: 1.5em;
-
-      &__title {
-        color: $blue-lake;
-        font-size: 14px;
-        font-size: 1.25rem;
-        font-weight: 600;
-        line-height: 1.5rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;display: block;
-      }
-
-      &__message {
-        color: $gray60;
-        font-size: 0.875rem;
-        line-height: 1.5rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;display: block;
-      }
+    &__message {
+      color: $gray60;
+      font-size: 0.875rem;
+      line-height: 1.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: block;
     }
   }
-
 }

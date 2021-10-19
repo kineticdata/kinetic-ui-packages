@@ -1,19 +1,12 @@
 import React from 'react';
 import { QueueListItemSmall } from './QueueListItem';
-import { TOO_MANY_STATUS_STRING } from '../../redux/sagas/queue';
-import {
-  Constants,
-  GroupDivider,
-  LoadingMessage,
-  EmptyMessage,
-} from '@kineticdata/bundle-common';
-import { FilterMenuToolbar } from './FilterMenuToolbar';
-import { FilterMenuMobile } from './FilterMenuMobile';
+import { LoadingMessage, EmptyMessage } from '@kineticdata/bundle-common';
+import { FilterMenuToolbar } from '../filter_menu/FilterMenuToolbar';
+import { FilterMenuModal } from '../filter_menu/FilterMenuModal';
+import { QueueListSidebar } from './QueueListSidebar';
 import { QueueListPagination } from './QueueListPagination';
+import { QueueListSelection } from './QueueListSelection';
 import { PageTitle } from '../shared/PageTitle';
-
-import moment from 'moment';
-import { Moment } from '@kineticdata/react';
 
 const QueueEmptyMessage = ({ filter }) => {
   if (filter.type === 'adhoc') {
@@ -32,8 +25,8 @@ const QueueEmptyMessage = ({ filter }) => {
 
 const QueueErrorMessage = ({ message }) => (
   <EmptyMessage
-    title={message === TOO_MANY_STATUS_STRING ? 'Too Many Items' : 'Error'}
-    message={message}
+    title={'Error'}
+    message={message || 'There was a problem retrieving items.'}
   />
 );
 
@@ -46,142 +39,73 @@ const QueueBadFilterMessage = ({ message }) => (
   />
 );
 
-const GroupByValue = ({ value }) => {
-  if (!value) {
-    return '';
-  } else if (value.match(Constants.DATE_TIME_REGEX)) {
-    return (
-      <Moment
-        timestamp={moment(value)}
-        format={Constants.MOMENT_FORMATS.dateTimeNumeric}
-      />
-    );
-  } else if (value.match(Constants.DATE_REGEX)) {
-    return (
-      <Moment
-        timestamp={moment(value, 'YYYY-MM-DD')}
-        format={Constants.MOMENT_FORMATS.dateNumeric}
-      />
-    );
-  } else if (value.match(Constants.TIME_REGEX)) {
-    return (
-      <Moment
-        timestamp={moment(value, 'HH:mm')}
-        format={Constants.MOMENT_FORMATS.time}
-      />
-    );
-  } else {
-    return value;
-  }
-};
-
 export const QueueList = ({
   filter,
-  queueItems,
-  statusMessage,
-  isLoading,
-  openFilterMenu,
-  sortDirection,
-  sortBy,
-  toggleSortDirection,
-  groupDirection,
-  toggleGroupDirection,
-  refresh,
-  hasPrevPage,
-  hasNextPage,
-  gotoPrevPage,
-  gotoNextPage,
-  count,
-  pageCount,
-  limit,
-  offset,
-  isGrouped,
+  loading,
+  data,
+  error,
+  hasPreviousPage,
+  handleRefresh,
   isMobile,
+  isDesktop,
   filterValidations,
   setQueueListRef,
-  hasTeams,
+  selectionMode,
+  selectedList,
+  toggleSelectedItem,
 }) => {
-  const paginationProps = {
-    hasPrevPage,
-    hasNextPage,
-    gotoPrevPage,
-    gotoNextPage,
-    count,
-    pageCount,
-    limit,
-    offset,
-  };
+  const showPagination =
+    !error && !loading && data && (data.size > 0 || hasPreviousPage);
+
   return (
-    <div className="page-container">
+    <div className="page-container page-container--panels">
+      {(isDesktop || !filter) && (
+        <div className="page-panel page-panel--no-padding page-panel--exact border-right">
+          <QueueListSidebar showCreateNew={!!filter} />
+        </div>
+      )}
       {!filter ? (
-        <div className="page-panel page-panel--no-padding">
+        <div className="page-panel">
           <PageTitle parts={['Invalid List']} />
           <QueueBadFilterMessage />
         </div>
       ) : (
-        <div className="page-panel page-panel--no-padding page-panel--white page-panel--flex">
+        <div className="page-panel page-panel--no-padding page-panel--flex">
           <PageTitle parts={[filter.name || 'Adhoc']} />
           <div className="page-panel__header">
             {isMobile ? (
-              <FilterMenuMobile
-                filter={filter}
-                openFilterMenu={openFilterMenu}
-                refresh={refresh}
-                sortDirection={sortDirection}
-                toggleSortDirection={toggleSortDirection}
-                groupDirection={groupDirection}
-                toggleGroupDirection={toggleGroupDirection}
-                hasTeams={hasTeams}
-              />
+              <FilterMenuModal filter={filter} refresh={handleRefresh} />
             ) : (
-              <FilterMenuToolbar filter={filter} refresh={refresh} />
+              <FilterMenuToolbar
+                filter={filter}
+                refresh={handleRefresh}
+                showFilterMenu={!isDesktop}
+              />
             )}
           </div>
-          <div className="page-panel__body">
+          <div className="page-panel__body" ref={setQueueListRef}>
             {filterValidations.length <= 0 ? (
-              <div
-                className="queue-list-content submissions"
-                ref={setQueueListRef}
-              >
-                {statusMessage ? (
-                  <QueueErrorMessage message={statusMessage} />
-                ) : isLoading ? (
+              <div className="queue-list-content submissions">
+                {error ? (
+                  <QueueErrorMessage message={error.message} />
+                ) : loading ? (
                   <LoadingMessage />
-                ) : queueItems && queueItems.size > 0 ? (
-                  isGrouped ? (
-                    queueItems
-                      .map((items, groupValue) => (
-                        <div
-                          className="items-grouping"
-                          key={groupValue || 'no-group'}
-                        >
-                          <GroupDivider>
-                            <GroupByValue value={groupValue} />
-                          </GroupDivider>
-                          <ul className="list-group">
-                            {items.map(item => (
-                              <QueueListItemSmall
-                                queueItem={item}
-                                key={item.id}
-                                filter={filter}
-                              />
-                            ))}
-                          </ul>
-                        </div>
-                      ))
-                      .toList()
-                  ) : (
-                    <ul className="list-group">
-                      {' '}
-                      {queueItems.map(queueItem => (
-                        <QueueListItemSmall
-                          queueItem={queueItem}
-                          key={queueItem.id}
-                          filter={filter}
-                        />
-                      ))}
-                    </ul>
-                  )
+                ) : data && data.size > 0 ? (
+                  <ul className="list-group">
+                    {data.map(queueItem => (
+                      <QueueListItemSmall
+                        queueItem={queueItem}
+                        key={queueItem.id}
+                        filter={filter}
+                        selectionMode={selectionMode}
+                        selected={
+                          selectionMode && selectedList.has(queueItem.id)
+                        }
+                        selectionDisabled={queueItem.coreState !== 'Draft'}
+                        toggleSelection={toggleSelectedItem}
+                      />
+                    ))}
+                  </ul>
                 ) : (
                   <QueueEmptyMessage filter={filter} />
                 )}
@@ -192,12 +116,16 @@ export const QueueList = ({
               />
             )}
           </div>
-          <div className="page-panel__footer">
-            <QueueListPagination
-              filter={filter}
-              paginationProps={paginationProps}
-            />
-          </div>
+          {selectionMode && (
+            <div className="page-panel__footer">
+              <QueueListSelection refresh={handleRefresh} />
+            </div>
+          )}
+          {showPagination && (
+            <div className="page-panel__footer">
+              <QueueListPagination filter={filter} />
+            </div>
+          )}
         </div>
       )}
     </div>
