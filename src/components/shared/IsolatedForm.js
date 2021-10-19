@@ -19,15 +19,8 @@ const IsolatedFormComponent = ({
 }) => (
   <I18n context={`kapps.${kappSlug}.forms.${formSlug}`}>
     <div className="page--container">
-      <PageTitle parts={[formName]} />
       <div className="page-panel">
-        {showHeader && (
-          <div className="page-title">
-            <h1>
-              <I18n>{formName}</I18n>
-            </h1>
-          </div>
-        )}
+        <PageTitle parts={[formName]} title={showHeader ? formName : null} />
         {submissionId ? (
           <div>
             <CoreForm

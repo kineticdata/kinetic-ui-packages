@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Link } from '@reach/router';
 import { I18n, SpaceForm } from '@kineticdata/react';
 import { compose, withHandlers } from 'recompose';
 import axios from 'axios';
@@ -39,7 +38,9 @@ const buildFieldSet = bundleName => [
 const buildLayout = bundleName => ({ fields, error, buttons }) => (
   <Fragment>
     <h2 className="section__title">
-      <I18n>Display Options</I18n>
+      <span className="title">
+        <I18n>Display Options</I18n>
+      </span>
     </h2>
     {fields.get('name')}
     <div className="form-group__columns">
@@ -50,13 +51,17 @@ const buildLayout = bundleName => ({ fields, error, buttons }) => (
     {bundleName && fields.get('displayValueSPA')}
     <br />
     <h2 className="section__title">
-      <I18n>Workflow Options</I18n>
+      <span className="title">
+        <I18n>Workflow Options</I18n>
+      </span>
     </h2>
     {fields.get('defaultServiceDaysDue')}
     {fields.get('defaultTaskAssigneeTeam')}
     <br />
     <h2 className="section__title">
-      <I18n>Form Mapping</I18n>
+      <span className="title">
+        <I18n>Form Mapping</I18n>
+      </span>
     </h2>
     {fields.get('defaultApprovalForm')}
     {fields.get('defaultTaskFormSlug')}
@@ -334,26 +339,16 @@ export const SpaceSettingsComponent = ({
     {({ form, initialized }) =>
       initialized && (
         <div className="page-container">
-          <PageTitle parts={['General']} />
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <Link to="/settings">
-                    <I18n>settings</I18n>
-                  </Link>
-                </span>{' '}
-                <span aria-hidden="true">/ </span>
-                <h1>
-                  <I18n>Space Settings</I18n>
-                </h1>
-              </div>
-            </div>
-            <section className="form">{form}</section>
+          <div className="page-panel">
+            <PageTitle
+              parts={['General']}
+              breadcrumbs={[
+                { label: 'Home', to: '/' },
+                { label: 'Settings', to: '..' },
+              ]}
+              title="Space Settings"
+            />
+            <section className="form form-unstyled mb-5">{form}</section>
           </div>
         </div>
       )

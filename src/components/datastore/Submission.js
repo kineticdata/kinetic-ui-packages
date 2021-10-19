@@ -8,15 +8,13 @@ import {
   withState,
   lifecycle,
 } from 'recompose';
-import { Link } from '@reach/router';
 import { parse } from 'query-string';
-import { ButtonGroup } from 'reactstrap';
 import { CoreForm } from '@kineticdata/react';
 import {
+  Aside,
   DiscussionsPanel,
   addSuccess,
   addError,
-  ViewDiscussionsModal,
   selectDiscussionsEnabled,
 } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
@@ -57,102 +55,66 @@ const DatastoreSubmissionComponent = ({
   submission,
   formKey,
   discussionsEnabled,
-  viewDiscussionsModal,
-  isSmallLayout,
-  openDiscussions,
-  closeDiscussions,
   profile,
   creationFields,
+  asideOpen,
+  toggleAsideOpen,
 }) => (
-  <I18n context={`datastore.forms.${form.slug}`}>
-    <div className="page-container page-container--panels">
-      <PageTitle
-        parts={[
-          submissionId ? (submission ? submission.handle : '') : 'New Record',
-          form && form.name,
-          'Datastore',
-        ]}
-      />
-      <div className="page-panel page-panel--three-fifths page-panel--white">
-        <div className="page-title">
-          <div
-            role="navigation"
-            aria-label="breadcrumbs"
-            className="page-title__breadcrumbs"
-          >
-            <span className="breadcrumb-item">
-              <Link to="/settings">
-                <I18n>settings</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to={`/settings/datastore/`}>
-                <I18n>datastore</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <span className="breadcrumb-item">
-              <Link to={`/settings/datastore/${form.slug}/`}>
-                <I18n>{form.name}</I18n>
-              </Link>
-            </span>{' '}
-            <span aria-hidden="true">/ </span>
-            <h1>
-              {submissionId ? (
-                submission ? (
-                  submission.label
-                ) : (
-                  ''
-                )
+  <I18n context={`kapps.datastore.forms.${form.slug}`}>
+    <div className="page-container">
+      <div className="page-panel">
+        <PageTitle
+          parts={[
+            submissionId ? (submission ? submission.handle : '') : 'New Record',
+            form && form.name,
+            'Datastore',
+          ]}
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: 'Settings', to: '../../..' },
+            { label: 'Datastore Forms', to: '../..' },
+            { label: form.name, to: `..` },
+          ]}
+          title={
+            submissionId ? (
+              submission ? (
+                submission.label
               ) : (
-                <I18n>New Record</I18n>
-              )}
-            </h1>
-          </div>
-          <div className="page-title__actions">
-            {submissionId &&
-              submission &&
-              showPrevAndNext && (
-                <ButtonGroup className="datastore-prev-next">
-                  <Link
-                    to={prevAndNext.prev || ''}
-                    className="btn btn-inverse"
-                    disabled={!prevAndNext.prev}
-                  >
-                    <span className="icon">
-                      <span className="fa fa-fw fa-caret-left" />
-                    </span>
-                  </Link>
-                  <Link
-                    to={prevAndNext.next || ''}
-                    className="btn btn-inverse"
-                    disabled={!prevAndNext.next}
-                  >
-                    <span className="icon">
-                      <span className="fa fa-fw fa-caret-right" />
-                    </span>
-                  </Link>
-                </ButtonGroup>
-              )}
-            {discussionsEnabled && (
-              <button
-                onClick={openDiscussions}
-                className="btn btn-inverse d-md-none d-lg-none d-xl-none"
-              >
-                <span
-                  className="fa fa-fw fa-comments"
-                  style={{ fontSize: '16px' }}
-                />
-                <I18n>View Discussions</I18n>
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="form-unstyled">
+                ''
+              )
+            ) : (
+              <I18n>New Record</I18n>
+            )
+          }
+          actions={[
+            discussionsEnabled && {
+              icon: 'comments-o',
+              label: 'Discussions',
+              onClick: () => toggleAsideOpen(!asideOpen),
+            },
+            ...(submissionId && submission && showPrevAndNext
+              ? [
+                  {
+                    icon: 'caret-left',
+                    aria: 'Previous Record',
+                    to: prevAndNext.prev || '',
+                    disabled: !prevAndNext.prev,
+                    className: 'btn-outline-dark',
+                  },
+                  {
+                    icon: 'caret-right',
+                    aria: 'Next Record',
+                    to: prevAndNext.next || '',
+                    disabled: !prevAndNext.next,
+                    className: 'btn-outline-dark',
+                  },
+                ]
+              : []),
+          ]}
+        />
+        <div className="form-unstyled mb-5">
           {submissionId ? (
             <CoreForm
-              datastore
               submission={submissionId}
               updated={handleUpdated}
               error={handleError}
@@ -161,7 +123,7 @@ const DatastoreSubmissionComponent = ({
             <CoreForm
               key={formKey}
               form={form.slug}
-              datastore
+              kapp="datastore"
               onCreated={handleCreated}
               error={handleError}
               values={values}
@@ -170,25 +132,22 @@ const DatastoreSubmissionComponent = ({
         </div>
       </div>
       {discussionsEnabled &&
-        submission && (
-          <DiscussionsPanel
-            creationFields={creationFields}
-            CreationForm={CreationForm}
-            itemType="Datastore Submission"
-            itemKey={submissionId}
-            me={profile}
-          />
-        )}
-      {viewDiscussionsModal &&
-        isSmallLayout && (
-          <ViewDiscussionsModal
-            creationFields={creationFields}
-            CreationForm={CreationForm}
-            close={closeDiscussions}
-            itemType="Datastore Submission"
-            itemKey={submissionId}
-            me={profile}
-          />
+        submission &&
+        asideOpen && (
+          <Aside
+            title="Discussions"
+            toggle={() => toggleAsideOpen(false)}
+            className="p-0"
+          >
+            <DiscussionsPanel
+              creationFields={creationFields}
+              CreationForm={CreationForm}
+              itemType="Submission"
+              itemKey={submissionId}
+              me={profile}
+              overrideClassName="page-panel--discussions"
+            />
+          </Aside>
         )}
     </div>
   </I18n>
@@ -234,11 +193,6 @@ export const handleCreated = props => (response, actions) => {
   props.setFormKey(getRandomKey());
 };
 
-export const openDiscussions = props => () =>
-  props.setViewDiscussionsModal(true);
-export const closeDiscussions = props => () =>
-  props.setViewDiscussionsModal(false);
-
 export const mapStateToProps = (state, { id, slug }) => ({
   submissionId: id,
   submission: state.settingsDatastore.submission,
@@ -265,13 +219,11 @@ export const DatastoreSubmission = compose(
     { context },
   ),
   withState('formKey', 'setFormKey', getRandomKey),
-  withState('viewDiscussionsModal', 'setViewDiscussionsModal', false),
+  withState('asideOpen', 'toggleAsideOpen', false),
   withHandlers({
     handleUpdated,
     handleCreated,
     handleError,
-    openDiscussions,
-    closeDiscussions,
   }),
   withProps(
     props =>

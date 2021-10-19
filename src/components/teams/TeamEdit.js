@@ -10,7 +10,9 @@ const asArray = value => (value ? [value] : []);
 const FormLayout = ({ fields, error, buttons }) => (
   <form>
     <div className="section__title">
-      <I18n>General</I18n>
+      <span className="title">
+        <I18n>General</I18n>
+      </span>
     </div>
     {fields.get('parentTeam')}
     {fields.get('localName')}
@@ -19,7 +21,9 @@ const FormLayout = ({ fields, error, buttons }) => (
     {fields.get('icon')}
     <br />
     <div className="section__title">
-      <I18n>Memberships</I18n>
+      <span className="title">
+        <I18n>Memberships</I18n>
+      </span>
     </div>
     {fields.get('memberships')}
     <br />
@@ -28,9 +32,14 @@ const FormLayout = ({ fields, error, buttons }) => (
   </form>
 );
 
-const TeamEditComponent = ({ formKey, slug, handleSave, handleDelete }) => (
+const TeamEditComponent = ({
+  formKey,
+  slug,
+  handleSave,
+  handleDelete,
+  appLocation,
+}) => (
   <div className="page-container page-container--panels">
-    <PageTitle parts={[`Edit Team`, 'Teams']} />
     <TeamForm
       formKey={formKey}
       teamSlug={slug}
@@ -77,29 +86,17 @@ const TeamEditComponent = ({ formKey, slug, handleSave, handleDelete }) => (
       {({ form, bindings: { team, values }, initialized }) =>
         initialized && (
           <Fragment>
-            <div className="page-panel page-panel--white">
-              <div className="page-title">
-                <div
-                  role="navigation"
-                  aria-label="breadcrumbs"
-                  className="page-title__breadcrumbs"
-                >
-                  <span className="breadcrumb-item">
-                    <Link to="/settings">
-                      <I18n>settings</I18n>
-                    </Link>{' '}
-                    /{' '}
-                    <Link to="/settings/teams">
-                      <I18n>teams</I18n>
-                    </Link>{' '}
-                    /
-                  </span>
-                  <h1>
-                    <I18n>{team && team.get('name')}</I18n>
-                  </h1>
-                </div>
-              </div>
-              {form}
+            <div className="page-panel">
+              <PageTitle
+                parts={[`Edit Team`, 'Teams']}
+                breadcrumbs={[
+                  { label: 'Home', to: '/' },
+                  { label: 'Settings', to: '../..' },
+                  { label: 'Teams', to: '..' },
+                ]}
+                title={team && team.get('name')}
+              />
+              <div className="form-unstyled mb-5">{form}</div>
             </div>
           </Fragment>
         )

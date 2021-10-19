@@ -189,32 +189,22 @@ export const RobotsListComponent = ({
     >
       {({ pagination, table }) => (
         <div className="page-container">
-          <PageTitle parts={['Robots']} />
-          <div className="page-panel page-panel--white">
-            <div className="page-title">
-              <div
-                role="navigation"
-                aria-label="breadcrumbs"
-                className="page-title__breadcrumbs"
-              >
-                <span className="breadcrumb-item">
-                  <span className="breadcrumb-item">
-                    <Link to="..">
-                      <I18n>settings</I18n>
-                    </Link>
-                  </span>{' '}
-                  <span aria-hidden="true">/ </span>
-                </span>
-                <h1>
-                  <I18n>Robots</I18n>
-                </h1>
-              </div>
-              <div className="page-title__actions">
-                <Link to={`new`} className="btn btn-primary">
-                  <I18n>Create Robot</I18n>
-                </Link>
-              </div>
-            </div>
+          <div className="page-panel">
+            <PageTitle
+              parts={['Robots']}
+              breadcrumbs={[
+                { label: 'Home', to: '/' },
+                { label: 'Settings', to: '..' },
+              ]}
+              title="Robots"
+              actions={[
+                {
+                  label: 'Create Robot',
+                  icon: 'plus',
+                  to: 'new',
+                },
+              ]}
+            />
             <div className="scroll-wrapper-h">{table}</div>
             {pagination}
           </div>
