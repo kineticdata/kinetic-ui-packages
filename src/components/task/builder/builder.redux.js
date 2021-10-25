@@ -56,7 +56,7 @@ regSaga(
         webApiProps
           ? call(fetchWebApi, {
               ...webApiProps,
-              include: 'details,securityPolicies',
+              include: 'details,securityPolicies,kapp',
             })
           : {},
       ]);
@@ -66,7 +66,8 @@ regSaga(
           kappSlug: webApiProps && webApiProps.kappSlug,
           treeKey,
           tree: deserializeTree(tree),
-          webApi: webApiProps && deserializeWebApi(webApi),
+          webApi:
+            webApiProps && deserializeWebApi(webApi, webApiProps.kappSlug),
         }),
       );
     } catch (e) {

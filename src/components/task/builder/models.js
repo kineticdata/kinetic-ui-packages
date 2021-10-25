@@ -12,6 +12,7 @@ export const WebApi = Record({
   method: null,
   securityPolicies: null,
   slug: null,
+  kappSlug: null,
   updatedAt: null,
   updatedBy: null,
 });
@@ -238,21 +239,25 @@ export const serializeTree = (
   versionId: overwrite ? null : versionId,
 });
 
-export const deserializeWebApi = ({
-  createdAt,
-  createdBy,
-  method,
-  securityPolicies,
-  slug,
-  updatedAt,
-  updatedBy,
-}) =>
+export const deserializeWebApi = (
+  {
+    createdAt,
+    createdBy,
+    method,
+    securityPolicies,
+    slug,
+    updatedAt,
+    updatedBy,
+  },
+  kappSlug,
+) =>
   WebApi({
     createdAt,
     createdBy,
     method,
     securityPolicies: List(securityPolicies).map(Map),
     slug,
+    kappSlug,
     updatedAt,
     updatedBy,
   });
