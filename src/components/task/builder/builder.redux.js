@@ -56,7 +56,7 @@ regSaga(
         webApiProps
           ? call(fetchWebApi, {
               ...webApiProps,
-              include: 'details,securityPolicies,kapp',
+              include: 'details,securityPolicies',
             })
           : {},
       ]);
