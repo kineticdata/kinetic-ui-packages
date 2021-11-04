@@ -154,7 +154,7 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
     },
   ];
 
-const handleSubmit = ({ node }) => values => values.toObject();
+const handleSubmit = ({ node }) => values => node.merge(values);
 
 export const NodeForm = generateForm({
   formOptions: ['node', 'tasks', 'tree'],
