@@ -2,6 +2,11 @@ import { List } from 'immutable';
 import { generateForm } from '../../form/Form';
 import { NodeMessage } from './models';
 import { buildBindings } from './helpers';
+import { fetchForm } from '../../../apis';
+import {
+  checkOmittedParameters,
+  generateTaskDefinition,
+} from './TaskDefinitionConfigForm';
 
 const dataSources = ({ tasks, tree, node }) => ({
   bindings: {
@@ -11,6 +16,33 @@ const dataSources = ({ tasks, tree, node }) => ({
   parameters: {
     fn: node => node.parameters,
     params: [node],
+  },
+  form: {
+    fn: node =>
+      fetchForm({
+        kappSlug: node.parameters.find(parameter => parameter.id === 'kappSlug')
+          .value,
+        formSlug: node.parameters.find(parameter => parameter.id === 'formSlug')
+          .value,
+        include: 'fields,kapp',
+      }).then(data => data.form),
+    params: generateTaskDefinition(tasks.get(node.definitionId))
+      ? [node]
+      : null,
+  },
+  task: {
+    fn: (node, form) =>
+      form
+        ? generateTaskDefinition(tasks.get(node.definitionId))({
+            form: form.toJS(),
+          })
+        : tasks.get(node.definitionId),
+    params: ({ form }) =>
+      generateTaskDefinition(tasks.get(node.definitionId))
+        ? form
+          ? [node, form]
+          : null
+        : [node, null],
   },
 });
 
@@ -87,7 +119,8 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
       initialValue: parameter.value,
       options: parameter.menu ? getOptions(parameter.menu) : bindings,
       transient: true,
-      visible: checkDependsOn(parameter),
+      visible:
+        checkDependsOn(parameter) && checkOmittedParameters(node, parameter),
     })),
     {
       name: 'parameters',

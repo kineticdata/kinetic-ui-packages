@@ -1,6 +1,7 @@
 import { generateForm } from '../../form/Form';
 import { buildBindings, normalizeParameter } from './helpers';
 import { NodeParameter } from './models';
+import { checkOmittedParameters } from './TaskDefinitionConfigForm';
 
 const getOptions = menu =>
   menu
@@ -33,6 +34,7 @@ const fields = ({ node, task, tasks, tree }) => ({ bindings, parameters }) =>
       options: parameter.menu ? getOptions(parameter.menu) : bindings,
       transient: true,
       enabled: false,
+      visible: checkOmittedParameters(node, parameter),
     })),
     ...parameters.map(parameter => {
       const matchingParameter = node.parameters.find(
@@ -49,6 +51,7 @@ const fields = ({ node, task, tasks, tree }) => ({ bindings, parameters }) =>
           : parameter.defaultValue,
         options: parameter.menu ? getOptions(parameter.menu) : bindings,
         transient: true,
+        visible: checkOmittedParameters(node, parameter),
       };
     }),
     {
