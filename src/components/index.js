@@ -11,6 +11,7 @@ export { FormSelect } from './common/FormSelect';
 export { Scroller } from './common/Scroller';
 export { StaticSelect } from './common/StaticSelect';
 export {
+  getCsrfToken,
   getToken,
   logout,
   timedOut,
