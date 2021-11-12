@@ -193,6 +193,8 @@ export class TreeBuilderComponent extends Component {
     const [highlightType, highlightId] = highlight || [];
     if (treeBuilderState) {
       const {
+        lastSave,
+        lastWebApi,
         redoStack,
         saving,
         tasks,
@@ -237,6 +239,8 @@ export class TreeBuilderComponent extends Component {
           zoomOut: () => this.canvasRef.current.zoomOut(),
         },
         dirty: this.isDirty(treeBuilderState),
+        lastTree: lastSave,
+        lastWebApi,
         name: tree ? tree.name : null,
         saving,
         sidebarRef: this.sidebarRef,

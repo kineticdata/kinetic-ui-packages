@@ -377,15 +377,16 @@ regHandlers({
 });
 
 const synchronizeRoutineDefinition = treeBuilderState => {
-  const {
-    tree: { definitionId, inputs, outputs },
-  } = treeBuilderState;
+  const { tree } = treeBuilderState;
+  const { definitionId, inputs, outputs } = tree;
   return treeBuilderState.update('tasks', tasks =>
     tasks.map(
       (task, taskDefinitionId) =>
         definitionId === taskDefinitionId
           ? { ...task, inputs: inputs.toJS(), outputs: outputs.toJS() }
-          : task,
+          : taskDefinitionId === 'system_tree_return_v1'
+            ? treeReturnTask(tree)
+            : task,
     ),
   );
 };
