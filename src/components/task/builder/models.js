@@ -19,6 +19,7 @@ export const WebApi = Record({
 
 export const Tree = Record({
   bindings: OrderedMap(),
+  categories: List(),
   connectors: OrderedMap(),
   definitionId: null,
   inputs: null,
@@ -161,6 +162,7 @@ export const serializeConnector = nodes => ({
 
 export const deserializeTree = ({
   bindings,
+  categories,
   definitionId,
   inputs,
   name,
@@ -176,6 +178,7 @@ export const deserializeTree = ({
 }) =>
   Tree({
     bindings,
+    categories: List(categories).map(Map),
     connectors: OrderedMap(
       treeJson.connectors.map(deserializeConnector).map(c => [c.id, c]),
     ),
@@ -199,6 +202,7 @@ export const deserializeTree = ({
 export const serializeTree = (
   {
     connectors,
+    categories,
     definitionId,
     inputs,
     name,
@@ -215,6 +219,7 @@ export const serializeTree = (
   },
   overwrite = false,
 ) => ({
+  categories,
   definitionId,
   inputs,
   name,
