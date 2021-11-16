@@ -22,14 +22,20 @@ export const handleErrors = error => {
   const type = types[statusCode];
   const { error: errorMessage, errorKey: key = null, message, ...rest } = data;
   const result =
-    typeof data === 'string'
-      ? { message: data, statusCode, key }
-      : {
-          ...rest,
-          message: errorMessage || message || statusText,
-          key,
+    statusCode === 503
+      ? {
           statusCode,
-        };
+          message:
+            'The platform component you are using is not available. Please contact your administrator.',
+        }
+      : typeof data === 'string'
+        ? { message: data, statusCode, key }
+        : {
+            ...rest,
+            message: errorMessage || message || statusText,
+            key,
+            statusCode,
+          };
   if (type) {
     result[type] = true;
   }
