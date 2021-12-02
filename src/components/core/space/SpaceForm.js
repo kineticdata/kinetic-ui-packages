@@ -105,22 +105,22 @@ const securityEndpoints = {
   defaultFormDisplay: {
     endpoint: 'Default Form Display',
     label: 'Default Form Display',
-    types: ['Space', 'Form'],
+    types: ['Form'],
   },
   defaultFormModification: {
     endpoint: 'Default Form Modification',
     label: 'Default Form Modification',
-    types: ['Space', 'Form'],
+    types: ['Form'],
   },
   defaultSubmissionAccess: {
     endpoint: 'Default Submission Access',
     label: 'Default Submission Access',
-    types: ['Space', 'Form', 'Submission'],
+    types: ['Form', 'Submission'],
   },
   defaultSubmissionModification: {
     endpoint: 'Default Submission Modification',
     label: 'Default Submission Modification',
-    types: ['Space', 'Form', 'Submission'],
+    types: ['Form', 'Submission'],
   },
 };
 
