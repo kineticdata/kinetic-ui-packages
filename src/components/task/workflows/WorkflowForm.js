@@ -111,8 +111,8 @@ const fields = ({ name, workflowType }) => ({ workflow, categories }) =>
       initialValue: workflow
         ? workflow.get('sourceName')
         : workflowType === 'routines'
-          ? '-'
-          : '',
+        ? '-'
+        : '',
       helpText:
         'The application that is calling and getting the results back from the workflow.',
     },
@@ -131,8 +131,8 @@ const fields = ({ name, workflowType }) => ({ workflow, categories }) =>
       initialValue: workflow
         ? workflow.get('sourceGroup')
         : workflowType === 'routines'
-          ? '-'
-          : '',
+        ? '-'
+        : '',
       helpText:
         "Categorization of the workflow based on rules provided by the Source. For Request CE it's the combination of the type (submission of form), Kapp Slug and the Form Slug separated by a greater than sign ( > ). Example: Submissions > services > onboarding.",
     },
@@ -231,6 +231,7 @@ const fields = ({ name, workflowType }) => ({ workflow, categories }) =>
       label: 'Inputs',
       type: 'table',
       options: [
+        { name: 'drag', label: null, type: 'drag' },
         { name: 'name', label: 'Name', type: 'text' },
         { name: 'defaultValue', label: 'Default Value', type: 'text' },
         { name: 'description', label: 'Description', type: 'text' },
@@ -243,6 +244,7 @@ const fields = ({ name, workflowType }) => ({ workflow, categories }) =>
       label: 'Outputs',
       type: 'table',
       options: [
+        { name: 'drag', label: null, type: 'drag' },
         { name: 'name', label: 'Name', type: 'text' },
         { name: 'description', label: 'Description', type: 'text' },
       ],
