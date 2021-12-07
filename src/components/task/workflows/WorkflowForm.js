@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  fetchTree,
   fetchSources,
   fetchSource,
   updateTree,
@@ -21,72 +20,38 @@ const buildDefinitionId = text =>
     // Remove unwanted chars
     .replace(/[^A-Za-z0-9_]+/g, '');
 
-const dataSources = ({
-  workflow,
-  workflowType,
-  sourceName,
-  sourceGroup,
-  name,
-}) => {
-  return {
-    workflow: workflow
-      ? {
-          fn: () => workflow,
-          params: [],
-        }
-      : {
-          fn: fetchTree,
-          params: name && [
-            {
-              type: workflowType || 'Tree',
-              sourceName,
-              sourceGroup,
-              name,
-              include: 'details,inputs,outputs,categories',
-            },
-          ],
-          transform: result => result.tree,
+const dataSources = () => ({
+  selectedSource: {
+    fn: fetchSource,
+    params: ({ values }) =>
+      values &&
+      values.get('sourceName') && [
+        {
+          sourceName: values.get('sourceName'),
+          include: 'predefinedSourceGroups,predefinedTreeNames',
         },
-    selectedSource: {
-      fn: fetchSource,
-      params: ({ values }) =>
-        values &&
-        values.get('sourceName') && [
-          {
-            sourceName: values.get('sourceName'),
-            include: 'predefinedSourceGroups,predefinedTreeNames',
-          },
-        ],
-      transform: result => result.source,
-    },
-    sources: {
-      fn: fetchSources,
-      params: [],
-      transform: result =>
-        result.sources.map(s => ({
-          label: s.name,
-          value: s.name,
-        })),
-    },
-    categories: {
-      fn: fetchTaskCategories,
-      params: [],
-      transform: result => result.categories,
-    },
-  };
-};
+      ],
+    transform: result => result.source,
+  },
+  sources: {
+    fn: fetchSources,
+    params: [],
+    transform: result =>
+      result.sources.map(s => ({
+        label: s.name,
+        value: s.name,
+      })),
+  },
+  categories: {
+    fn: fetchTaskCategories,
+    params: [],
+    transform: result => result.categories,
+  },
+});
 
-const handleSubmit = ({
-  workflow,
-  sourceName,
-  sourceGroup,
-  name,
-}) => values => {
+const handleSubmit = ({ workflow }) => values => {
   if (!workflow) {
-    return (name
-      ? updateTree({ sourceName, sourceGroup, name, tree: values.toJS() })
-      : createTree({ tree: values.toJS() })
-    ).then(({ tree, error }) => {
+    return createTree({ tree: values.toJS() }).then(({ tree, error }) => {
       if (error) {
         throw (error.statusCode === 400 && error.message) ||
           'There was an error saving the workflow';
@@ -99,7 +64,7 @@ const handleSubmit = ({
   }
 };
 
-const fields = ({ name, workflowType }) => ({ workflow, categories }) =>
+const fields = ({ name, workflow, workflowType }) => ({ categories }) =>
   (!name || workflow) &&
   categories && [
     {
@@ -111,8 +76,8 @@ const fields = ({ name, workflowType }) => ({ workflow, categories }) =>
       initialValue: workflow
         ? workflow.get('sourceName')
         : workflowType === 'routines'
-        ? '-'
-        : '',
+          ? '-'
+          : '',
       helpText:
         'The application that is calling and getting the results back from the workflow.',
     },
@@ -131,8 +96,8 @@ const fields = ({ name, workflowType }) => ({ workflow, categories }) =>
       initialValue: workflow
         ? workflow.get('sourceGroup')
         : workflowType === 'routines'
-        ? '-'
-        : '',
+          ? '-'
+          : '',
       helpText:
         "Categorization of the workflow based on rules provided by the Source. For Request CE it's the combination of the type (submission of form), Kapp Slug and the Form Slug separated by a greater than sign ( > ). Example: Submissions > services > onboarding.",
     },
@@ -221,7 +186,7 @@ const fields = ({ name, workflowType }) => ({ workflow, categories }) =>
       name: 'categories',
       label: 'Categories',
       type: 'select-multi',
-      initialValue: get(workflow, 'categories', List()).map(c => c.get('name')),
+      initialValue: get(workflow, 'categories', List()),
       options: categories
         .sortBy(c => c.get('name'))
         .map(c => Map({ label: c.get('name'), value: c.get('name') })),
@@ -263,9 +228,6 @@ export const WorkflowForm = ({
   children,
   workflow,
   workflowType,
-  sourceName,
-  sourceGroup,
-  name,
 }) => (
   <Form
     addFields={addFields}
@@ -278,7 +240,7 @@ export const WorkflowForm = ({
     onError={onError}
     dataSources={dataSources}
     fields={fields}
-    formOptions={{ workflow, workflowType, sourceName, sourceGroup, name }}
+    formOptions={{ workflow, workflowType }}
   >
     {children}
   </Form>

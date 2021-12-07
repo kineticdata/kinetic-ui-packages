@@ -178,7 +178,7 @@ export const deserializeTree = ({
 }) =>
   Tree({
     bindings,
-    categories: List(categories).map(Map),
+    categories: List(categories).map(c => c.name),
     connectors: OrderedMap(
       treeJson.connectors.map(deserializeConnector).map(c => [c.id, c]),
     ),
