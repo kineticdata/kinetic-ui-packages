@@ -27,6 +27,9 @@ export const SUBMISSION_LIST_INCLUDES = [
   'details',
   'form',
   'form.kapp',
+  'form.attributes',
+  'form.fields',
+  'form.fields.details',
   'values',
 ];
 

@@ -142,7 +142,6 @@ export const State = Record({
   teamFilters: List(),
   myFilters: List(),
   forms: List(),
-  bulkWorkEnabled: false,
   loading: true,
   error: null,
 });
@@ -189,12 +188,6 @@ export const reducer = (state = State(), { type, payload }) => {
           payload.forms.filter(
             f => f.status === 'Active' || f.status === 'New',
           ),
-        )
-        .set(
-          'bulkWorkEnabled',
-          payload.forms
-            .filter(f => f.status === 'Active' || f.status === 'New')
-            .some(f => f.fields.some(field => field.name === 'Bulk Action')),
         )
         .set('loading', false);
     case types.FETCH_APP_DATA_FAILURE:
