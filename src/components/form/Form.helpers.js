@@ -267,6 +267,7 @@ export const getFieldComponentProps = (field, readOnly) => ({
   onFocus: field.eventHandlers.get('onFocus'),
   options: [
     'attributes',
+    'checkbox-multi',
     'code',
     'form',
     'form-multi',
