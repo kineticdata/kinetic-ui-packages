@@ -47,7 +47,7 @@ const convertRenderType = element => {
   if (element.get('renderType') === 'dropdown') {
     return element.get('choicesResourceName') ? 'text' : 'select';
   } else if (element.get('renderType') === 'checkbox') {
-    return element.get('choicesResourceName') ? 'text' : 'checkbox-multi';
+    return 'text-multi';
   } else if (element.get('renderType') === 'attachment') {
     return 'text';
   }
@@ -56,7 +56,6 @@ const convertRenderType = element => {
 
 const getInitialValue = (submission, element, type) => {
   const name = element.get('name');
-  const isBridged = !!element.get('choicesResourceName');
   const isAttachment = element.get('renderType') === 'attachment';
 
   const value =
@@ -66,7 +65,7 @@ const getInitialValue = (submission, element, type) => {
       element.get('renderType') === 'checkbox' ? List() : '',
     ) || '';
 
-  return isBridged || isAttachment
+  return isAttachment
     ? JSON.stringify(List.isList(value) ? value.toJS() : value)
     : type === 'datetime'
       ? moment(value).format('yyyy-MM-DDThh:mm')
@@ -77,14 +76,16 @@ const getInitialValue = (submission, element, type) => {
 
 const serializer = (element, type) => ({ values }) => {
   const name = element.get('name');
-  const isBridged = !!element.get('choicesResourceName');
 
-  return isBridged
-    ? JSON.parse(values.get(name))
-    : type === 'datetime'
-      ? moment(values.get(name)).format()
-      : values.get(name);
+  return type === 'datetime'
+    ? moment(values.get(name)).format()
+    : values.get(name);
 };
+
+// If the element uses bridged options then the `choices` value represents the
+// label/value mapping from and not actual choices.
+const getChoices = element =>
+  !!element.get('choicesResourceName') ? List() : element.get('choices');
 
 const fields = () => ({ submission }) => {
   if (submission) {
@@ -103,7 +104,7 @@ const fields = () => ({ submission }) => {
               name,
               label: name,
               type,
-              options: element.get('choices'),
+              options: getChoices(element, initialValue),
               initialValue,
               enabled: !isAttachment,
               transient: isAttachment,
