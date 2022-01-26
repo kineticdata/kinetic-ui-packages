@@ -3,7 +3,7 @@ import { generateForm } from '../../form/Form';
 import { fetchForm, fetchKapps } from '../../../apis';
 
 export const checkOmittedParameters = (node, parameter) => {
-  if (node.definitionId === 'prototype_submission_create_v1') {
+  if (node.definitionId === 'system_submission_create_v1') {
     return !['kappSlug', 'formSlug'].includes(parameter.id);
   } else {
     return true;
@@ -11,7 +11,7 @@ export const checkOmittedParameters = (node, parameter) => {
 };
 
 export const generateTaskDefinition = taskDefinition => {
-  if (taskDefinition.definitionName === 'prototype_submission_create') {
+  if (taskDefinition.definitionName === 'system_submission_create') {
     return ({ form }) => ({
       ...taskDefinition,
       parameters: [
