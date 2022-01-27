@@ -47,6 +47,7 @@ export const KineticLib = props => (
           {typeof props.children === 'function' ? (
             <AuthenticationContainer
               noSocket={props.noSocket}
+              skipInit={props.skipInit}
               system={props.system}
             >
               {props.children}
