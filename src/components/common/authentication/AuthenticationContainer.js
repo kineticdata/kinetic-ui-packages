@@ -177,7 +177,7 @@ regSaga(
 const SYSTEM_TOKEN = 'kd-system';
 
 regSaga(
-  takeEvery('INITIALIZE', function*({ payload: { system, socket } }) {
+  takeEvery('INITIALIZE', function*({ payload: { system, socket, skipInit } }) {
     try {
       if (system) {
         let token;
@@ -209,7 +209,8 @@ regSaga(
         if (error) {
           yield put(action('SET_SERVER_ERROR', error));
         } else {
-          const token = isAuthenticated ? yield call(retrieveJwt) : null;
+          const token =
+            isAuthenticated && !skipInit ? yield call(retrieveJwt) : null;
           if (socket && token) {
             yield call(socketIdentify, token);
           }
@@ -293,6 +294,7 @@ export class AuthenticationComponent extends Component {
     } else {
       dispatch('INITIALIZE', {
         socket: !this.props.noSocket,
+        skipInit: this.props.skipInit,
       });
     }
   }
