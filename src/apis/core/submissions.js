@@ -508,3 +508,70 @@ export const deleteSubmission = options => {
       .catch(handleErrors)
   );
 };
+
+export const exportSubmissions = options => {
+  const { kappSlug, formSlug, onDownloadProgress } = options;
+
+  if (!kappSlug) {
+    throw new Error(
+      'exportSubmissions failed! The option "kappSlug" is required.',
+    );
+  }
+
+  if (!formSlug) {
+    throw new Error(
+      'exportSubmissions failed! The option "formSlug" is required.',
+    );
+  }
+
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions-search?export`;
+  return axios.post(
+    path,
+    {},
+    {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+      onDownloadProgress,
+      responseType: 'blob',
+    },
+  );
+};
+
+export const importSubmissions = options => {
+  const { kappSlug, formSlug, onDownloadProgress, file } = options;
+
+  if (!kappSlug) {
+    throw new Error(
+      'exportSubmissions failed! The option "kappSlug" is required.',
+    );
+  }
+
+  if (!formSlug) {
+    throw new Error(
+      'exportSubmissions failed! The option "formSlug" is required.',
+    );
+  }
+
+  if (!file) {
+    throw new Error('exportSubmissions failed! The option "file" is required.');
+  }
+
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions?import`;
+  return axios
+    .post(path, file, {
+      params: paramBuilder(options),
+      headers: {
+        ...headerBuilder(options),
+        'Content-Type': 'application/csv',
+      },
+      onDownloadProgress,
+    })
+    .then(response => response.data)
+    .catch(error => {
+      if (error.response && error.response.data && error.response.data.errors) {
+        return error.response.data;
+      } else {
+        return handleErrors(error);
+      }
+    });
+};
