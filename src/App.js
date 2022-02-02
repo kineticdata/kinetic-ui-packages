@@ -13,6 +13,7 @@ import { Users } from './components/users/Users';
 import { Teams } from './components/teams/Teams';
 import { SchedulerSettings } from './components/SchedulerSettings';
 import { SpaceSettings } from './components/space_settings/SpaceSettings';
+import { CalendarSettings } from './components/calendar/CalendarSettings';
 import { actions as datastoreActions } from './redux/modules/settingsDatastore';
 import { actions } from './redux/modules/settingsApp';
 
@@ -37,6 +38,7 @@ const AppComponent = props => {
             <Notifications path="notifications/*" />
             <Teams path="teams/*" />
             <SchedulerSettings path="schedulers/*" />
+            <CalendarSettings path="calendars/*" />
             <Settings default />
           </Router>
         </main>
