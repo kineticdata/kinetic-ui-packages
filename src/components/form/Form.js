@@ -190,6 +190,18 @@ regHandlers({
         }),
       )
       .updateIn(['forms', formKey], digest),
+  TOGGLE_MULTI_VALUE: (state, { payload: { formKey, name, value } }) =>
+    state
+      .updateIn(['forms', formKey, 'fields', name], field =>
+        field.merge({
+          value: field.get('value').includes(value)
+            ? field.get('value').filter(v => v !== value)
+            : field.get('value').push(value),
+          touched: true,
+          dirty: !is(value, field.initialValue),
+        }),
+      )
+      .updateIn(['forms', formKey], digest),
   FOCUS_FIELD: (state, { payload: { formKey, name } }) =>
     state.setIn(['forms', formKey, 'fields', name, 'focused'], true),
   BLUR_FIELD: (state, { payload: { formKey, name } }) =>
@@ -314,6 +326,7 @@ function* runDataSource(formKey, name, dataSource) {
           'RESET',
           'RESOLVE_DATA_SOURCE',
           'SET_VALUE',
+          'TOGGLE_MULTI_VALUE',
           'SUBMIT_SUCCESS',
         ]),
         take('UNMOUNT_FORM'),
@@ -364,8 +377,8 @@ regSaga(
   }),
 );
 
-regSaga(
-  takeEvery('SET_VALUE', function*({
+regSaga('HANDLE_SET_VALUE', function*() {
+  yield takeEvery(['SET_VALUE', 'TOGGLE_MULTI_VALUE'], function*({
     payload: { formKey, name, triggerChange },
   }) {
     try {
@@ -379,8 +392,8 @@ regSaga(
     } catch (e) {
       console.error(e);
     }
-  }),
-);
+  });
+});
 
 regSaga(
   takeEvery('REJECT_DATA_SOURCE', function*({ payload }) {
@@ -437,9 +450,20 @@ export const setValue = (formKey, name, value, triggerChange = true) => {
   dispatch('SET_VALUE', { formKey, name, value, triggerChange });
 };
 
+export const toggleMultiValue = (
+  formKey,
+  name,
+  value,
+  triggerChange = true,
+) => {
+  dispatch('TOGGLE_MULTI_VALUE', { formKey, name, value, triggerChange });
+};
+
 const actions = {
   setValue: formKey => (name, value, triggerChange = true) =>
     dispatch('SET_VALUE', { formKey, name, value, triggerChange }),
+  toggleMultiValue: formKey => (name, value, triggerChange = true) =>
+    dispatch('TOGGLE_MULTI_VALUE', { formKey, name, value, triggerChange }),
 };
 
 const bindActions = formKey =>
@@ -456,10 +480,13 @@ export const onBlur = ({ formKey, name }) => () => {
   dispatch('BLUR_FIELD', { formKey, name });
 };
 
+const LIST_VALUE_TYPES = ['checkbox-multi'];
 export const onChange = ({ formKey, type, name }) => event => {
   let value;
   if (type === 'checkbox' && event && event.target) {
     value = event.target.checked;
+  } else if (type === 'checkbox-multi') {
+    value = event.target.value;
   } else if (
     type === 'select-multi' &&
     event &&
@@ -474,7 +501,12 @@ export const onChange = ({ formKey, type, name }) => event => {
   } else {
     value = event;
   }
-  actions.setValue(formKey)(name, value);
+
+  if (LIST_VALUE_TYPES.includes(type)) {
+    actions.toggleMultiValue(formKey)(name, value);
+  } else {
+    actions.setValue(formKey)(name, value);
+  }
 };
 
 export const onSubmit = (formKey, fieldSet) => event => {

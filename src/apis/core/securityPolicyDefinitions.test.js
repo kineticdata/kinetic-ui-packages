@@ -31,7 +31,7 @@ describe('securityPolicyDefinitions api', () => {
               message: 'Must be an administrator.',
               name: 'Admins',
               rule:
-                "/* \n * Space admins are allowed access regardless of the the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
+                "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
               type: 'Space',
             },
             {
@@ -62,7 +62,7 @@ describe('securityPolicyDefinitions api', () => {
             message: 'Must be an administrator.',
             name: 'Admins',
             rule:
-              "/* \n * Space admins are allowed access regardless of the the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
+              "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
             type: 'Space',
           },
           {
@@ -90,7 +90,7 @@ describe('securityPolicyDefinitions api', () => {
               message: 'Must be an administrator.',
               name: 'Admins',
               rule:
-                "/* \n * Space admins are allowed access regardless of the the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
+                "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
               type: 'Kapp',
             },
             {
@@ -130,7 +130,7 @@ describe('securityPolicyDefinitions api', () => {
             message: 'Must be an administrator.',
             name: 'Admins',
             rule:
-              "/* \n * Space admins are allowed access regardless of the the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
+              "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
             type: 'Kapp',
           },
           {

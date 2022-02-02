@@ -74,6 +74,7 @@ const searchForms = ({ search = Map() }) => (field, value, callback) => {
       search.get('include') ||
       (search.get('datastore') ? '' : 'categorizations.category'),
     limit: search.get('limit') || 25,
+    public: !!search.get('public'),
   })
     .then(({ forms, error, nextPageToken }) => ({
       suggestions: forms || [],

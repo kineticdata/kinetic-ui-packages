@@ -284,6 +284,8 @@ const timedOut = () => {
 
 const getToken = () => store.getState().getIn(['session', 'token']);
 
+const getCsrfToken = () => store.getState().getIn(['session', 'csrfToken']);
+
 export class AuthenticationComponent extends Component {
   componentDidMount() {
     if (this.props.system) {
@@ -338,4 +340,4 @@ const AuthenticationContainer = connect(mapStateToProps)(
   AuthenticationComponent,
 );
 
-export { AuthenticationContainer, getToken, logout, timedOut };
+export { AuthenticationContainer, getCsrfToken, getToken, logout, timedOut };

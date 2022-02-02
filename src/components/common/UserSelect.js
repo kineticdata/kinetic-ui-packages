@@ -20,6 +20,7 @@ const searchUsers = ({ search = Map() }) => (searchField, value, callback) =>
       .join(' OR '),
     limit: search.get('limit') || 25,
     include: search.get('include') || '',
+    public: !!search.get('public'),
   })
     .then(({ users, error, nextPageToken }) => ({
       suggestions: users || [],

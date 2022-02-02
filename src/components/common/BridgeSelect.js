@@ -22,6 +22,7 @@ const searchOptions = ({ search = Map() }) => (field, value, callback) => {
       }),
       {},
     ),
+    public: !!search.get('public'),
   })
     .then(({ records, error }) => ({
       suggestions: records ? records.slice(0, limit) : [],
