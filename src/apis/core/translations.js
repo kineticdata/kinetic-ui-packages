@@ -161,8 +161,8 @@ export const fetchContexts = (options = {}) => {
         form: c.name.startsWith('kapps')
           ? c.name.split('.')[3]
           : c.name.startsWith('datastore')
-          ? c.name.split('.')[2]
-          : null,
+            ? c.name.split('.')[2]
+            : null,
       })),
     }))
     .catch(handleErrors);
@@ -283,7 +283,9 @@ export const fetchTranslations = (options = {}) => {
       headers: headerBuilder(options),
     })
     .then(response => ({
-      entries: response.data.hasOwnProperty('entries') ? response.data.entries : response.data,
+      entries: response.data.hasOwnProperty('entries')
+        ? response.data.entries
+        : response.data,
     }))
     .catch(handleErrors);
 };

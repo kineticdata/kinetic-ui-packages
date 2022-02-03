@@ -33,7 +33,9 @@ describe('socket', () => {
 
       // The Socket will send an identify automatically with the token.
       await expect(server).toReceiveMessage(
-        `{"topic":"topichub","action":"identify","payload":{"token":"${MOCK_TOKEN}"},"ref":"${socket.ref}"}`,
+        `{"topic":"topichub","action":"identify","payload":{"token":"${MOCK_TOKEN}"},"ref":"${
+          socket.ref
+        }"}`,
       );
       // And the server will reply with an `ack-ok` - note the refs must match for it to know what
       // event the acknowledgement is for.
@@ -57,7 +59,9 @@ describe('socket', () => {
       expect(socket.status).toBe(SOCKET_STATUS.IDENTIFYING);
 
       await expect(server).toReceiveMessage(
-        `{"topic":"topichub","action":"identify","payload":{"token":"${MOCK_TOKEN}"},"ref":"${socket.ref}"}`,
+        `{"topic":"topichub","action":"identify","payload":{"token":"${MOCK_TOKEN}"},"ref":"${
+          socket.ref
+        }"}`,
       );
       // And the server will reply with an `ack-ok` - note the refs must match for it to know what
       // event the acknowledgement is for.

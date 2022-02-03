@@ -19,7 +19,9 @@ const validateOptions = (functionName, requiredOptions, options) => {
   }
   if (kappSlugMissing) {
     throw new Error(
-      `${functionName} failed! A kappSlug is required when using type: ${securityPolicyDefinition.type}`,
+      `${functionName} failed! A kappSlug is required when using type: ${
+        securityPolicyDefinition.type
+      }`,
     );
   }
 };
