@@ -538,22 +538,22 @@ export const exportSubmissions = options => {
 };
 
 export const importSubmissions = options => {
-  const { kappSlug, formSlug, onDownloadProgress, file } = options;
+  const { kappSlug, formSlug, onUploadProgress, file } = options;
 
   if (!kappSlug) {
     throw new Error(
-      'exportSubmissions failed! The option "kappSlug" is required.',
+      'importSubmissions failed! The option "kappSlug" is required.',
     );
   }
 
   if (!formSlug) {
     throw new Error(
-      'exportSubmissions failed! The option "formSlug" is required.',
+      'importSubmissions failed! The option "formSlug" is required.',
     );
   }
 
   if (!file) {
-    throw new Error('exportSubmissions failed! The option "file" is required.');
+    throw new Error('importSubmissions failed! The option "file" is required.');
   }
 
   const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions?import`;
@@ -564,7 +564,7 @@ export const importSubmissions = options => {
         ...headerBuilder(options),
         'Content-Type': 'application/csv',
       },
-      onDownloadProgress,
+      onUploadProgress,
     })
     .then(response => response.data)
     .catch(error => {
