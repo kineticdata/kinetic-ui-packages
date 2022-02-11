@@ -277,6 +277,7 @@ const VALID_RESTARTABLE_COMPONENTS = [
   'discussions',
   'loghub',
   'topics',
+  'indexer',
 ];
 export const postPlatformComponentRestart = (options = {}) => {
   if (
