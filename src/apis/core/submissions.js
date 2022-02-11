@@ -537,8 +537,20 @@ export const exportSubmissions = options => {
   );
 };
 
+export const MODE_IMPORT = 'import';
+export const MODE_BULK = 'bulk';
+
+const modeToFn = mode => (mode === MODE_BULK ? 'post' : 'patch');
+
 export const importSubmissions = options => {
-  const { kappSlug, formSlug, onUploadProgress, file } = options;
+  const {
+    kappSlug,
+    formSlug,
+    onUploadProgress,
+    file,
+    mode = 'post',
+    signal,
+  } = options;
 
   if (!kappSlug) {
     throw new Error(
@@ -557,15 +569,16 @@ export const importSubmissions = options => {
   }
 
   const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions?import`;
-  return axios
-    .post(path, file, {
-      params: paramBuilder(options),
-      headers: {
-        ...headerBuilder(options),
-        'Content-Type': 'application/csv',
-      },
-      onUploadProgress,
-    })
+  return axios[modeToFn(mode)](path, file, {
+    signal,
+    data: file,
+    params: paramBuilder(options),
+    headers: {
+      ...headerBuilder(options),
+      'Content-Type': 'application/csv',
+    },
+    onUploadProgress,
+  })
     .then(response => response.data)
     .catch(error => {
       if (error.response && error.response.data && error.response.data.errors) {
