@@ -356,6 +356,38 @@ export const fetchElasticSearchConfig = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const fetchSystemSecurity = (options = {}) => {
+  return axios
+    .get(
+      '/app/system-coordinator/api/v1/platform/system-security',
+      {},
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({ systemSecurity: response.data }))
+    .catch(handleErrors);
+};
+
+export const updateSystemSecurity = (options = {}) => {
+  const { systemSecurity } = options;
+  if (!systemSecurity) {
+    throw new Error(
+      'updateSystemSecurity failed! The option "systemSecurity" is required.',
+    );
+  }
+
+  return axios
+    .put(
+      `/app/system-coordinator/api/v1/platform/system-security`,
+      systemSecurity,
+      { params: paramBuilder(options), headers: headerBuilder(options) },
+    )
+    .then(response => ({ systemSecurity: response.data }))
+    .catch(handleErrors);
+};
+
 export const fetchSystemLicense = (options = {}) => {
   return axios
     .get('/app/system-coordinator/components/core/app/api/v1/license', {
@@ -420,6 +452,49 @@ export const fetchSystemLicenseCheck = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
+    .then(response => ({ system: response.data }))
+    .catch(handleErrors);
+};
+
+export const fetchSystemBackgroundTasks = (options = {}) => {
+  return axios
+    .get('/app/system-coordinator/api/v1/backgroundTasks', {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ backgroundTasks: response.data.backgroundTasks }))
+    .catch(handleErrors);
+};
+
+export const fetchSystemBackgroundTask = (options = {}) => {
+  const { id } = options;
+  if (!id) {
+    throw new Error(
+      'fetchSystemBackgroundTask failed! The option "id" is required.',
+    );
+  }
+  return axios
+    .get(`/app/system-coordinator/api/v1/backgroundTasks/${id}`, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ backgroundTask: response.data.backgroundTask }))
+    .catch(handleErrors);
+};
+
+export const rotateEncryptionKey = (options = {}) => {
+  const { spaceSlug } = options;
+  return axios
+    .post(
+      spaceSlug
+        ? `/app/system-coordinator/api/v1/tenants/${spaceSlug}/rotateEncryptionKey`
+        : '/app/system-coordinator/api/v1/platform/rotateEncryptionKey',
+      {},
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
     .then(response => ({ system: response.data }))
     .catch(handleErrors);
 };

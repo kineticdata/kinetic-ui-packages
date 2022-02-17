@@ -173,7 +173,11 @@ export { SystemUserForm } from './system/SystemUserForm';
 export { SystemSmtpForm } from './system/SystemSmtpForm';
 export { SystemTaskAdapterForm } from './system/SystemTaskAdapterForm';
 export { SystemIngressForm } from './system/SystemIngressForm';
+export { SystemSecurityForm } from './system/SystemSecurityForm';
 export { SystemForm } from './system/SystemForm';
+export {
+  SystemBackgroundTasksTable,
+} from './system/SystemBackgroundTasksTable';
 export { formPropertyName } from './system/helpers';
 
 // Task
