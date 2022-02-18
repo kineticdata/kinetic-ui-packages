@@ -1,6 +1,7 @@
 import { generateTable } from '../table/Table';
 import { fetchSystemBackgroundTasks } from '../../apis';
 import { defineFilter } from '../../helpers';
+import { List } from 'immutable';
 
 const clientSide = defineFilter(true)
   .startsWith('id', 'id')
@@ -28,6 +29,17 @@ const columns = [
     sortable: false,
   },
   {
+    value: 'createdAt',
+    title: 'Created At',
+    valueTransform: (_value, row) => {
+      const createdTransition = row
+        .get('transitions', List())
+        .find(t => t.has('Created'));
+      return createdTransition ? createdTransition.get('Created') : 'N/A';
+    },
+    sortable: true,
+  },
+  {
     value: 'description',
     title: 'Description',
     sortable: false,
@@ -50,7 +62,6 @@ const columns = [
   {
     value: 'status',
     title: 'Status',
-    sortable: false,
   },
   {
     value: 'transitions',

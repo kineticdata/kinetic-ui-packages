@@ -482,6 +482,22 @@ export const fetchSystemBackgroundTask = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const deleteSystemBackgroundTask = (options = {}) => {
+  const { id } = options;
+  if (!id) {
+    throw new Error(
+      'deleteSystemBackgroundTask failed! The option "id" is required.',
+    );
+  }
+  return axios
+    .delete(`/app/system-coordinator/api/v1/backgroundTasks/${id}`, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ backgroundTask: response.data.backgroundTask }))
+    .catch(handleErrors);
+};
+
 export const rotateEncryptionKey = (options = {}) => {
   const { spaceSlug } = options;
   return axios
