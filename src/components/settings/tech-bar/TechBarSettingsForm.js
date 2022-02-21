@@ -43,7 +43,9 @@ export const TechBarSettingsFormComponent = ({
         {techBar ? (
           hasManagerAccess ? (
             <div className="content-wrapper form-unstyled">
-              <I18n context={`kapps.datastore.forms.${TECH_BAR_SETTINGS_FORM_SLUG}`}>
+              <I18n
+                context={`kapps.datastore.forms.${TECH_BAR_SETTINGS_FORM_SLUG}`}
+              >
                 {techBar.settings.submissionId ? (
                   <CoreForm
                     submission={techBar.settings.submissionId}
