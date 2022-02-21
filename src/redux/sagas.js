@@ -5,6 +5,7 @@ import { watchSettingsDatastore } from './sagas/settingsDatastore';
 import { watchSettingsNotifications } from './sagas/settingsNotifications';
 import { watchSettingsRobots } from './sagas/settingsRobots';
 import { watchSettingsUsers } from './sagas/settingsUsers';
+import { watchSettingsCalendars } from './sagas/settingsCalendars';
 
 export default function* sagas() {
   yield all([
@@ -14,5 +15,6 @@ export default function* sagas() {
     watchSettingsNotifications(),
     watchSettingsRobots(),
     watchSettingsUsers(),
+    watchSettingsCalendars(),
   ]);
 }

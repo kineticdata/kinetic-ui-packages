@@ -12,6 +12,7 @@ export const SidebarComponent = ({
   hasDatastoreAccess,
   hasNotificationAccess,
   hasRobotAccess,
+  hasCalendarAccess,
   hasSchedulerAccess,
   hasTeamAccess,
   hasUserAccess,
@@ -65,6 +66,12 @@ export const SidebarComponent = ({
                 <span className="fa fa-fw fa-angle-right" />
               </Link>
             )}
+            {hasCalendarAccess && (
+              <Link to="calendars" getProps={isActiveClass('nav-link')}>
+                <I18n>Calendars</I18n>
+                <span className="fa fa-fw fa-angle-right" />
+              </Link>
+            )}
           </li>
         </ul>
       </div>
@@ -112,6 +119,7 @@ export const mapStateToProps = state => ({
   hasDatastoreAccess: state.settingsApp.hasDatastoreAccess,
   hasNotificationAccess: state.settingsApp.hasNotificationAccess,
   hasRobotAccess: state.settingsApp.hasRobotAccess,
+  hasCalendarAccess: state.settingsApp.hasCalendarAccess,
   hasSchedulerAccess: state.settingsApp.hasSchedulerAccess,
   hasTeamAccess: state.settingsApp.hasTeamAccess,
   hasUserAccess: state.settingsApp.hasUserAccess,

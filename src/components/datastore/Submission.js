@@ -87,7 +87,7 @@ const DatastoreSubmissionComponent = ({
             )
           }
           actions={[
-            discussionsEnabled &&{
+            discussionsEnabled && {
               icon: 'comments-o',
               label: 'Discussions',
               onClick: () => toggleAsideOpen(!asideOpen),

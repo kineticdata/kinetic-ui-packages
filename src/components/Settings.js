@@ -36,16 +36,14 @@ const SettingsComponent = ({
   hasDatastoreAccess,
   hasNotificationAccess,
   hasRobotAccess,
+  hasCalendarAccess,
   hasSchedulerAccess,
   hasTeamAccess,
   hasUserAccess,
 }) => (
   <div className="page-container">
     <div className="page-panel">
-      <PageTitle
-        breadcrumbs={[{ label: 'Home', to: '/' }]}
-        title="Settings"
-      />
+      <PageTitle breadcrumbs={[{ label: 'Home', to: '/' }]} title="Settings" />
 
       <I18n
         render={translate => (
@@ -108,6 +106,16 @@ const SettingsComponent = ({
                 description={translate('View, create, and edit users')}
               />
             )}
+            {hasCalendarAccess && (
+              <SettingsCard
+                name={translate('Calendar Management')}
+                path={`/settings/calendars`}
+                icon="fa-calendar"
+                description={translate(
+                  'View, create, and edit calendar configurations',
+                )}
+              />
+            )}
           </div>
         )}
       />
@@ -120,6 +128,7 @@ const mapStateToProps = state => ({
   hasDatastoreAccess: state.settingsApp.hasDatastoreAccess,
   hasNotificationAccess: state.settingsApp.hasNotificationAccess,
   hasRobotAccess: state.settingsApp.hasRobotAccess,
+  hasCalendarAccess: state.settingsApp.hasCalendarAccess,
   hasSchedulerAccess: state.settingsApp.hasSchedulerAccess,
   hasTeamAccess: state.settingsApp.hasTeamAccess,
   hasUserAccess: state.settingsApp.hasUserAccess,

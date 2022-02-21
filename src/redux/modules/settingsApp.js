@@ -6,6 +6,7 @@ import {
 } from '@kineticdata/bundle-common';
 import { NOTIFICATIONS_FORM_SLUG } from '../../redux/modules/settingsNotifications';
 import { ROBOT_FORM_SLUG } from '../../redux/modules/settingsRobots';
+import { CALENDAR_FORM_SLUG } from '../../redux/modules/settingsCalendars';
 const { noPayload, withPayload } = Utils;
 const ns = Utils.namespaceBuilder('settings/settingsApp');
 
@@ -27,6 +28,7 @@ export const State = Record({
   hasDatastoreAccess: true,
   hasNotificationAccess: false,
   hasRobotAccess: false,
+  hasCalendarAccess: false,
   hasSchedulerAccess: false,
   hasTeamAccess: false,
   hasUserAccess: false,
@@ -50,7 +52,9 @@ export const reducer = (state = State(), { type, payload }) => {
           .set('hasNotificationAccess', formMap.has(NOTIFICATIONS_FORM_SLUG))
           // Robots available to users who have access to robot form
           .set('hasRobotAccess', formMap.has(ROBOT_FORM_SLUG))
-          // Schedulers avbailable to scheduler admins or scheduler managers
+          // Calendar available to users who have access to the calendar configuration form
+          .set('hasCalendarAccess', formMap.has(CALENDAR_FORM_SLUG))
+          // Schedulers available to scheduler admins or scheduler managers
           .set(
             'hasSchedulerAccess',
             selectHasRoleSchedulerAdmin(payload.me) ||

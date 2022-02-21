@@ -15,7 +15,7 @@ export const SchedulerSettingsComponent = ({
   isSchedulerAdmin,
   isSchedulerManager,
   profile,
-  appLocation
+  appLocation,
 }) =>
   isSchedulerAdmin || isSchedulerManager ? (
     <Router>
