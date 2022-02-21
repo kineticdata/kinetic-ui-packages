@@ -18,18 +18,26 @@ export const handleErrors = error => {
   }
 
   // Destructure out the information needed.
-  const { data = {}, status: statusCode, statusText } = error.response;
+  const { data = {}, status: statusCode, statusText, headers } = error.response;
   const type = types[statusCode];
   const { error: errorMessage, errorKey: key = null, message, ...rest } = data;
   const result =
-    typeof data === 'string'
-      ? { message: data, statusCode, key }
-      : {
-          ...rest,
-          message: errorMessage || message || statusText,
-          key,
-          statusCode,
-        };
+    headers && !headers['content-type'].startsWith('application/json')
+      ? { message: 'An unexpected error occurred.', statusCode }
+      : statusCode === 503
+        ? {
+            statusCode,
+            message:
+              'The platform component you are using is not available. Please contact your administrator.',
+          }
+        : typeof data === 'string'
+          ? { message: data, statusCode, key }
+          : {
+              ...rest,
+              message: errorMessage || message || statusText,
+              key,
+              statusCode,
+            };
   if (type) {
     result[type] = true;
   }

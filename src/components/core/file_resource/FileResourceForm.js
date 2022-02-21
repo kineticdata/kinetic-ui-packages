@@ -104,39 +104,37 @@ const fields = ({ fileResourceSlug }) => ({
       initialValue: get(fileResource, 'filestoreSlug', ''),
       options: ({ filestores }) => filestores,
     },
-    ...(fileResourceSlug
-      ? Object.entries(securityEndpoints).map(
-          ([endpointFieldName, endpoint]) => ({
-            name: endpointFieldName,
-            label: endpoint.label,
-            type: 'select',
-            options: ({ securityPolicyDefinitions }) =>
-              securityPolicyDefinitions
-                ? securityPolicyDefinitions
-                    .filter(definition =>
-                      endpoint.types.includes(definition.get('type')),
-                    )
-                    .map(definition =>
-                      Map({
-                        value: definition.get('name'),
-                        label: definition.get('name'),
-                      }),
-                    )
-                : [],
-            initialValue: fileResource
-              ? fileResource
-                  .get('securityPolicies')
-                  .find(
-                    pol => pol.get('endpoint') === endpoint.endpoint,
-                    null,
-                    Map({}),
-                  )
-                  .get('name', '')
-              : '',
-            transient: true,
-          }),
-        )
-      : []),
+    ...Object.entries(securityEndpoints).map(
+      ([endpointFieldName, endpoint]) => ({
+        name: endpointFieldName,
+        label: endpoint.label,
+        type: 'select',
+        options: ({ securityPolicyDefinitions }) =>
+          securityPolicyDefinitions
+            ? securityPolicyDefinitions
+                .filter(definition =>
+                  endpoint.types.includes(definition.get('type')),
+                )
+                .map(definition =>
+                  Map({
+                    value: definition.get('name'),
+                    label: definition.get('name'),
+                  }),
+                )
+            : [],
+        initialValue: fileResource
+          ? fileResource
+              .get('securityPolicies')
+              .find(
+                pol => pol.get('endpoint') === endpoint.endpoint,
+                null,
+                Map({}),
+              )
+              .get('name', '')
+          : '',
+        transient: true,
+      }),
+    ),
     {
       name: 'securityPolicies',
       label: 'Security Policies',

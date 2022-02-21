@@ -7,7 +7,9 @@ export const fetchSpace = (options = {}) => {
   return axios
     .get(
       options.slug
-        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${options.slug}`
+        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${
+            options.slug
+          }`
         : `${bundle.apiLocation()}/space`,
       {
         params: paramBuilder(options),
@@ -27,7 +29,9 @@ export const updateSpace = (options = {}) => {
   return axios
     .put(
       options.slug
-        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${options.slug}`
+        ? `/app/system-coordinator/components/core/app/api/v1/spaces/${
+            options.slug
+          }`
         : `${bundle.apiLocation()}/space`,
       space,
       {

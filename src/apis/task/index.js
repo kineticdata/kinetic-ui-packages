@@ -848,6 +848,8 @@ export const fetchTaskRuns = (options = {}) =>
         count: get(options, 'count'),
         start: options.start || undefined,
         end: options.end || undefined,
+        afterId: options.afterId || undefined,
+        beforeId: options.beforeId || undefined,
       },
     })
     .then(response => ({
@@ -1029,28 +1031,25 @@ export const fetchTaskRunError = (options = {}) => {
 };
 
 export const updateRunTaskResults = (options = {}) => {
-  validateOptions(
-    'updateRunTaskResults',
-    ['runId', 'taskId', 'results'],
-    options,
-  );
-  const resultKey = options.type || 'results';
+  validateOptions('updateRunTaskResults', ['runId', 'taskId'], options);
 
   return axios
     .put(
       `${bundle.spaceLocation()}/app/components/task/app/api/v2/runs/${
         options.runId
       }/tasks/${options.taskId}`,
-      { [resultKey]: options.results },
+      {
+        deferredResults: options.deferredResults,
+        results: options.results,
+        message: options.message,
+      },
       {
         params: {
           include: options.include,
         },
       },
     )
-    .then(response => ({
-      message: response.data,
-    }))
+    .then(response => response.data)
     .catch(handleErrors);
 };
 

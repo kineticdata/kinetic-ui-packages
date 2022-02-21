@@ -16,6 +16,7 @@ const searchTeams = ({ search = Map() }) => (field, value, callback) =>
       .join(' OR '),
     limit: search.get('limit') || 25,
     include: search.get('include') || '',
+    public: !!search.get('public'),
   })
     .then(({ teams, error, nextPageToken }) => ({
       suggestions: teams || [],

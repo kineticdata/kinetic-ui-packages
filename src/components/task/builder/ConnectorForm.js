@@ -59,7 +59,7 @@ const fields = ({ connector, tasks, tree }) => ({ bindings }) =>
     },
   ];
 
-const handleSubmit = ({ connector }) => values => values.toObject();
+const handleSubmit = ({ connector }) => values => connector.merge(values);
 
 export const ConnectorForm = generateForm({
   formOptions: ['connector', 'tasks', 'tree'],

@@ -50,7 +50,13 @@ export class TreeBuilderComponent extends Component {
     // props at that time
     if (this.props.treeBuilderState === null) {
       configureTreeBuilder(
-        pick(this.props, ['treeKey', 'sourceName', 'sourceGroup', 'name']),
+        pick(this.props, [
+          'treeKey',
+          'sourceName',
+          'sourceGroup',
+          'name',
+          'platformSourceName',
+        ]),
       );
     }
   }
@@ -178,13 +184,24 @@ export class TreeBuilderComponent extends Component {
   watchDrag = (...args) => this.canvasRef.current.watchDrag(...args);
 
   isDirty = treeBuilderState =>
-    treeBuilderState && !is(treeBuilderState.lastSave, treeBuilderState.tree);
+    treeBuilderState &&
+    (!is(treeBuilderState.lastSave, treeBuilderState.tree) ||
+      !is(treeBuilderState.lastWebApi, treeBuilderState.webApi));
 
   render() {
     const { highlight, selected, treeBuilderState, treeKey } = this.props;
     const [highlightType, highlightId] = highlight || [];
     if (treeBuilderState) {
-      const { redoStack, saving, tasks, tree, undoStack } = treeBuilderState;
+      const {
+        lastSave,
+        lastWebApi,
+        redoStack,
+        saving,
+        tasks,
+        tree,
+        undoStack,
+        webApi,
+      } = treeBuilderState;
       return this.props.children({
         actions: {
           deleteConnector: id =>
@@ -194,6 +211,10 @@ export class TreeBuilderComponent extends Component {
             dispatch('TREE_UPDATE_CONNECTOR', { treeKey, ...values }),
           updateNode: (values, dependencies) =>
             dispatch('TREE_UPDATE_NODE', { treeKey, ...values, dependencies }),
+          updateSettings: values =>
+            dispatch('TREE_UPDATE_SETTINGS', { treeKey, values }),
+          updateWebApi: values =>
+            dispatch('TREE_UPDATE_WEB_API', { treeKey, values }),
           save: ({
             overwrite = false,
             newName = '',
@@ -218,12 +239,14 @@ export class TreeBuilderComponent extends Component {
           zoomOut: () => this.canvasRef.current.zoomOut(),
         },
         dirty: this.isDirty(treeBuilderState),
-        name: tree.name,
+        lastTree: lastSave,
+        lastWebApi,
+        name: tree ? tree.name : null,
         saving,
         sidebarRef: this.sidebarRef,
         tasks,
         tree,
-        treeBuilder: (
+        treeBuilder: tree && (
           <Fragment>
             <SvgCanvas ref={this.canvasRef}>
               {tree.connectors
@@ -279,6 +302,7 @@ export class TreeBuilderComponent extends Component {
             </SvgCanvas>
           </Fragment>
         ),
+        webApi,
       });
     }
     return null;

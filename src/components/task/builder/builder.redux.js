@@ -7,13 +7,16 @@ import {
   serializeTree,
   Connector,
   TreeBuilderState,
+  deserializeWebApi,
 } from './models';
 import {
   cloneTree,
   fetchTaskCategories,
   fetchTree,
+  fetchWebApi,
   updateTree,
-} from '../../../apis/task';
+  updateWebApi,
+} from '../../../apis';
 import { renameDependencies, treeReturnTask } from './helpers';
 
 export const mountTreeBuilder = treeKey => dispatch('TREE_MOUNT', { treeKey });
@@ -26,7 +29,10 @@ export const configureTreeBuilder = props => dispatch('TREE_CONFIGURE', props);
 const remember = (state, treeKey) =>
   state
     .updateIn(['trees', treeKey, 'undoStack'], stack =>
-      stack.push(state.getIn(['trees', treeKey, 'tree'])),
+      stack.push({
+        tree: state.getIn(['trees', treeKey, 'tree']),
+        webApi: state.getIn(['trees', treeKey, 'webApi']),
+      }),
     )
     .deleteIn(['trees', treeKey, 'redoStack']);
 
@@ -34,24 +40,34 @@ regSaga(
   takeEvery('TREE_CONFIGURE', function*({ payload }) {
     try {
       const { name, sourceGroup, sourceName, treeKey } = payload;
+      const webApiProps = getWebApiProps(payload);
 
-      const [{ tree }, { categories }] = yield all([
+      const [{ tree }, { categories }, { webApi }] = yield all([
         call(fetchTree, {
           name,
           sourceGroup,
           sourceName,
-          include: 'bindings,details,treeJson',
+          include: 'bindings,categories,details,treeJson,inputs,outputs',
         }),
         call(fetchTaskCategories, {
           include:
             'handlers.results,handlers.parameters,trees.parameters,trees.inputs,trees.outputs',
         }),
+        webApiProps
+          ? call(fetchWebApi, {
+              ...webApiProps,
+              include: 'details,securityPolicies',
+            })
+          : {},
       ]);
       yield put(
         action('TREE_LOADED', {
           categories,
+          kappSlug: webApiProps && webApiProps.kappSlug,
           treeKey,
           tree: deserializeTree(tree),
+          webApi:
+            webApiProps && deserializeWebApi(webApi, webApiProps.kappSlug),
         }),
       );
     } catch (e) {
@@ -66,11 +82,13 @@ regSaga(
       // because of the optimistic locking functionality newName / overwrite can
       // be passed as options to the builder's save function
       const { newName, onError, onSave, overwrite, treeKey } = payload;
-      const { tree } = yield select(state => state.getIn(['trees', treeKey]));
-      const { name, sourceGroup, sourceName } = tree;
+      const { kappSlug, lastSave, lastWebApi, tree, webApi } = yield select(
+        state => state.getIn(['trees', treeKey]),
+      );
+      const { name, sourceGroup, sourceName } = lastSave;
       // if a newName was passed we will be creating a new tree with the builder
       // contents, otherwise just an update
-      const { error, tree: newTree } = yield newName
+      const { error: error1, tree: newTree } = yield newName
         ? call(cloneTree, {
             name,
             sourceGroup,
@@ -86,6 +104,17 @@ regSaga(
             sourceName,
             tree: serializeTree(tree, overwrite),
           });
+
+      const { error: error2 } = yield webApi && !error1
+        ? call(updateWebApi, {
+            slug: lastWebApi.get('slug'),
+            kappSlug,
+            webApi,
+          })
+        : {};
+
+      const error = error1 || error2;
+
       // dispatch the appropriate action based on the result of the call above
       yield put(
         error
@@ -94,7 +123,13 @@ regSaga(
               error: error.message || error,
               onError,
             })
-          : action('TREE_SAVE_SUCCESS', { treeKey, tree: newTree, onSave }),
+          : action('TREE_SAVE_SUCCESS', {
+              previousTree: lastSave,
+              treeKey,
+              tree: newTree,
+              webApi,
+              onSave,
+            }),
       );
     } catch (e) {
       console.error(e);
@@ -115,10 +150,15 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_SAVE_SUCCESS', function*({ payload: { onSave, tree } }) {
+  takeEvery('TREE_SAVE_SUCCESS', function*({
+    payload: { onSave, previousTree, treeKey },
+  }) {
     try {
       if (isFunction(onSave)) {
-        yield call(onSave, tree);
+        const tree = yield select(state =>
+          state.getIn(['trees', treeKey, 'tree']),
+        );
+        yield call(onSave, tree, previousTree);
       }
     } catch (e) {
       console.error(e);
@@ -136,19 +176,24 @@ regHandlers({
     state.setIn(['trees', treeKey], TreeBuilderState()),
   TREE_UNMOUNT: (state, { payload: { treeKey } }) =>
     state.deleteIn(['trees', treeKey]),
-  TREE_LOADED: (state, { payload: { categories, treeKey, tree } }) =>
+  TREE_LOADED: (
+    state,
+    { payload: { categories, kappSlug, treeKey, tree, webApi } },
+  ) =>
     state.mergeIn(['trees', treeKey], {
-      categories,
+      kappSlug,
       lastSave: tree,
+      lastWebApi: webApi,
       loading: false,
       tasks: List(categories)
-        .map(category =>
-          category.name === 'System Controls'
-            ? {
-                ...category,
-                handlers: [...category.handlers, treeReturnTask(tree)],
-              }
-            : category,
+        .map(
+          category =>
+            category.name === 'System Controls'
+              ? {
+                  ...category,
+                  handlers: [...category.handlers, treeReturnTask(tree)],
+                }
+              : category,
         )
         .flatMap(category => [...category.handlers, ...category.trees])
         .sortBy(task => task.name)
@@ -157,6 +202,7 @@ regHandlers({
           OrderedMap(),
         ),
       tree,
+      webApi,
     }),
   TREE_SAVE: (state, { payload: { treeKey } }) =>
     state.mergeIn(['trees', treeKey], {
@@ -167,7 +213,7 @@ regHandlers({
       error,
       saving: false,
     }),
-  TREE_SAVE_SUCCESS: (state, { payload: { tree, treeKey } }) => {
+  TREE_SAVE_SUCCESS: (state, { payload: { tree, treeKey, webApi } }) => {
     const newTree = state.getIn(['trees', treeKey, 'tree']).merge({
       name: tree.name,
       versionId: tree.versionId,
@@ -176,30 +222,44 @@ regHandlers({
       dirty: false,
       error: null,
       lastSave: newTree,
+      lastWebApi: webApi,
       saving: false,
       tree: newTree,
+      webApi,
     });
   },
   TREE_UNDO: (state, { payload: { treeKey } }) =>
     state.getIn(['trees', treeKey, 'undoStack']).isEmpty()
       ? state
-      : state.updateIn(['trees', treeKey], builderState =>
-          builderState.merge({
-            tree: builderState.undoStack.last(),
-            redoStack: builderState.redoStack.push(builderState.tree),
-            undoStack: builderState.undoStack.butLast(),
-          }),
-        ),
+      : state
+          .updateIn(['trees', treeKey], builderState =>
+            builderState.merge({
+              tree: builderState.undoStack.last().tree,
+              redoStack: builderState.redoStack.push({
+                tree: builderState.tree,
+                webApi: builderState.webApi,
+              }),
+              undoStack: builderState.undoStack.butLast(),
+              webApi: builderState.undoStack.last().webApi,
+            }),
+          )
+          .updateIn(['trees', treeKey], synchronizeRoutineDefinition),
   TREE_REDO: (state, { payload: { treeKey } }) =>
     state.getIn(['trees', treeKey, 'redoStack']).isEmpty()
       ? state
-      : state.updateIn(['trees', treeKey], builderState =>
-          builderState.merge({
-            tree: builderState.redoStack.last(),
-            redoStack: builderState.redoStack.butLast(),
-            undoStack: builderState.undoStack.push(builderState.tree),
-          }),
-        ),
+      : state
+          .updateIn(['trees', treeKey], builderState =>
+            builderState.merge({
+              tree: builderState.redoStack.last().tree,
+              redoStack: builderState.redoStack.butLast(),
+              undoStack: builderState.undoStack.push({
+                tree: builderState.tree,
+                webApi: builderState.webApi,
+              }),
+              webApi: builderState.redoStack.last().webApi,
+            }),
+          )
+          .updateIn(['trees', treeKey], synchronizeRoutineDefinition),
   TREE_UPDATE: (state, { payload: { tree, treeKey } }) =>
     remember(state, treeKey).setIn(['trees', treeKey, 'tree'], tree),
   TREE_UPDATE_NODE: (
@@ -293,4 +353,56 @@ regHandlers({
       ['trees', treeKey, 'tree', 'connectors', id, 'tailId'],
       nodeId,
     ),
+  TREE_UPDATE_SETTINGS: (state, { payload: { treeKey, values } }) => {
+    // If the updated settings are for a routine we rebuild the "Tree Input"
+    // bindings.
+    const bindings = values.inputs
+      ? {
+          ...state.getIn(['trees', treeKey, 'tree', 'bindings']),
+          'Tree Input': values.inputs
+            .groupBy(input => input.get('name'))
+            .map(list => list.first().get('name'))
+            .map(name => `<%=@inputs['${name}']%>`)
+            .toJS(),
+        }
+      : state.getIn(['trees', treeKey, 'tree', 'bindings']);
+    return remember(state, treeKey)
+      .mergeIn(['trees', treeKey, 'tree'], { ...values, bindings })
+      .updateIn(['trees', treeKey], synchronizeRoutineDefinition);
+  },
+  TREE_UPDATE_WEB_API: (state, { payload: { treeKey, values } }) =>
+    remember(state, treeKey)
+      .mergeIn(['trees', treeKey, 'webApi'], values)
+      .setIn(['trees', treeKey, 'tree', 'name'], values.slug),
 });
+
+const synchronizeRoutineDefinition = treeBuilderState => {
+  const { tree } = treeBuilderState;
+  const { definitionId, inputs, outputs } = tree;
+  return treeBuilderState.update('tasks', tasks =>
+    tasks.map(
+      (task, taskDefinitionId) =>
+        definitionId === taskDefinitionId
+          ? { ...task, inputs: inputs.toJS(), outputs: outputs.toJS() }
+          : taskDefinitionId === 'system_tree_return_v1'
+            ? treeReturnTask(tree)
+            : task,
+    ),
+  );
+};
+
+const getWebApiProps = ({
+  name,
+  platformSourceName,
+  sourceGroup,
+  sourceName,
+}) => {
+  if (sourceName === platformSourceName && sourceGroup.startsWith('WebApis')) {
+    const kappSlug = sourceGroup.startsWith('WebApis > ')
+      ? sourceGroup.replace('WebApis > ', '')
+      : undefined;
+    const slug = name;
+    return { kappSlug, slug };
+  }
+  return null;
+};

@@ -27,7 +27,7 @@ import {
   systemLogin,
 } from '../../../apis';
 import { socketIdentify } from '../../../apis/socket';
-import { refreshSystemToken } from '../../../apis/system';
+import { refreshSystemToken } from '../../../apis';
 
 const defaultLoginProps = {
   error: null,
@@ -66,7 +66,7 @@ regHandlers({
         system: action.payload.system,
       })
       .set('login', defaultLoginProps),
-
+  SET_SERVER_ERROR: (state, action) => state.set('serverError', action.payload),
   SET_ERROR: (state, action) =>
     state.mergeIn(['login'], {
       error: action.payload,
@@ -84,12 +84,14 @@ regHandlers({
 
 regSaga('WATCH_SYSTEM_AUTHENTICATION', function*() {
   yield take('LOGIN');
-  const system = yield select(state => state.getIn(['session', 'system'], false))
+  const system = yield select(state =>
+    state.getIn(['session', 'system'], false),
+  );
 
   let pollingActive = false;
   while (system) {
     try {
-      const { authenticated, refresh, } = yield race({
+      const { authenticated, refresh } = yield race({
         authenticated: take('SET_AUTHENTICATED'),
         refresh: delay(180000), // 3 minutes.
         isLoggingOut: take('LOGOUT'),
@@ -175,7 +177,7 @@ regSaga(
 const SYSTEM_TOKEN = 'kd-system';
 
 regSaga(
-  takeEvery('INITIALIZE', function*({ payload: { system, socket } }) {
+  takeEvery('INITIALIZE', function*({ payload: { system, socket, skipInit } }) {
     try {
       if (system) {
         let token;
@@ -199,22 +201,29 @@ regSaga(
       } else {
         const {
           securityStrategies,
-          session: { csrfToken, isAuthenticated },
+          session: { csrfToken, isAuthenticated } = {},
           spaceSlug,
+          error,
         } = yield call(fetchSpaMeta);
-        const token = isAuthenticated ? yield call(retrieveJwt) : null;
-        if (socket && token) {
-          yield call(socketIdentify, token);
+
+        if (error) {
+          yield put(action('SET_SERVER_ERROR', error));
+        } else {
+          const token =
+            isAuthenticated && !skipInit ? yield call(retrieveJwt) : null;
+          if (socket && token) {
+            yield call(socketIdentify, token);
+          }
+          yield put(
+            action('SET_INITIALIZED', {
+              csrfToken,
+              securityStrategies,
+              socket,
+              spaceSlug,
+              token,
+            }),
+          );
         }
-        yield put(
-          action('SET_INITIALIZED', {
-            csrfToken,
-            securityStrategies,
-            socket,
-            spaceSlug,
-            token,
-          }),
-        );
       }
     } catch (e) {
       console.error(e);
@@ -276,6 +285,8 @@ const timedOut = () => {
 
 const getToken = () => store.getState().getIn(['session', 'token']);
 
+const getCsrfToken = () => store.getState().getIn(['session', 'csrfToken']);
+
 export class AuthenticationComponent extends Component {
   componentDidMount() {
     if (this.props.system) {
@@ -283,6 +294,7 @@ export class AuthenticationComponent extends Component {
     } else {
       dispatch('INITIALIZE', {
         socket: !this.props.noSocket,
+        skipInit: this.props.skipInit,
       });
     }
   }
@@ -293,10 +305,12 @@ export class AuthenticationComponent extends Component {
       loggedIn,
       login,
       securityStrategies,
+      serverError,
       spaceSlug,
       token,
     } = this.props;
     return this.props.children({
+      serverError,
       initialized: initialized,
       timedOut: loggedIn && !token,
       loggedIn: loggedIn,
@@ -321,10 +335,11 @@ const mapStateToProps = state => ({
   login: state.get('login', defaultLoginProps),
   spaceSlug: state.getIn(['session', 'spaceSlug'], ''),
   securityStrategies: state.getIn(['session', 'securityStrategies'], []),
+  serverError: state.get('serverError'),
 });
 
 const AuthenticationContainer = connect(mapStateToProps)(
   AuthenticationComponent,
 );
 
-export { AuthenticationContainer, getToken, logout, timedOut };
+export { AuthenticationContainer, getCsrfToken, getToken, logout, timedOut };

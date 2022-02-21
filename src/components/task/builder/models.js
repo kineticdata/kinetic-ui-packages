@@ -1,4 +1,4 @@
-import { List, OrderedMap, Record } from 'immutable';
+import { List, Map, OrderedMap, Record } from 'immutable';
 
 /*******************************************************************************
  * Immutable records                                                           *
@@ -6,17 +6,35 @@ import { List, OrderedMap, Record } from 'immutable';
 
 export const Point = Record({ x: 0, y: 0 }, 'Point');
 
+export const WebApi = Record({
+  createdAt: null,
+  createdBy: null,
+  method: null,
+  securityPolicies: null,
+  slug: null,
+  kappSlug: null,
+  updatedAt: null,
+  updatedBy: null,
+});
+
 export const Tree = Record({
   bindings: OrderedMap(),
+  categories: List(),
   connectors: OrderedMap(),
+  definitionId: null,
+  inputs: null,
   name: '',
   nextNodeId: 0,
   nextConnectorId: 0,
   nodes: OrderedMap(),
+  notes: '',
+  outputs: null,
+  ownerEmail: '',
   schemaVersion: '',
   sourceGroup: '',
   sourceName: '',
-  taskDefinition: null,
+  status: '',
+  type: '',
   versionId: '0',
 });
 
@@ -59,13 +77,16 @@ export const Connector = Record({
 export const TreeBuilderState = Record({
   categories: OrderedMap(),
   error: null,
+  kappSlug: null,
   lastSave: null,
+  lastWebApi: null,
   loading: true,
   redoStack: List(),
   saving: false,
   tasks: OrderedMap(),
-  tree: Tree(),
+  tree: null,
   undoStack: List(),
+  webApi: null,
 });
 
 export const NodeResultDependency = Record({
@@ -90,7 +111,7 @@ const deserializeNodeId = id => {
   return match ? parseInt(match[1]) : 0;
 };
 
-const serializeNodeId = node =>
+export const serializeNodeId = node =>
   node.id === 0 ? 'start' : `${node.definitionId}_${node.id}`;
 
 export const deserializeNode = ({
@@ -141,32 +162,73 @@ export const serializeConnector = nodes => ({
 
 export const deserializeTree = ({
   bindings,
+  categories,
+  definitionId,
+  inputs,
   name,
+  notes,
+  outputs,
+  ownerEmail,
   sourceGroup,
   sourceName,
+  status,
   treeJson,
+  type,
   versionId,
 }) =>
   Tree({
     bindings,
+    categories: List(categories).map(c => c.name),
     connectors: OrderedMap(
       treeJson.connectors.map(deserializeConnector).map(c => [c.id, c]),
     ),
+    definitionId,
+    inputs: List(inputs).map(Map),
     name,
+    notes,
+    outputs: List(outputs).map(Map),
+    ownerEmail,
     nextNodeId: treeJson.lastId + 1,
     nextConnectorId: treeJson.connectors.length,
     nodes: OrderedMap(treeJson.nodes.map(deserializeNode).map(n => [n.id, n])),
     schemaVersion: treeJson.schemaVersion,
     sourceGroup,
     sourceName,
-    taskDefinition: treeJson.taskDefinition,
+    status,
+    type,
     versionId,
   });
 
 export const serializeTree = (
-  { connectors, nextNodeId, nodes, schemaVersion, taskDefinition, versionId },
+  {
+    connectors,
+    categories,
+    definitionId,
+    inputs,
+    name,
+    nextNodeId,
+    nodes,
+    notes,
+    outputs,
+    ownerEmail,
+    schemaVersion,
+    sourceGroup,
+    sourceName,
+    status,
+    versionId,
+  },
   overwrite = false,
 ) => ({
+  categories,
+  definitionId,
+  inputs,
+  name,
+  notes,
+  outputs,
+  ownerEmail,
+  sourceGroup,
+  sourceName,
+  status,
   treeJson: {
     connectors: connectors
       .toList()
@@ -178,7 +240,29 @@ export const serializeTree = (
       .map(serializeNode)
       .toJS(),
     schemaVersion,
-    ...(taskDefinition ? { taskDefinition } : {}),
   },
   versionId: overwrite ? null : versionId,
 });
+
+export const deserializeWebApi = (
+  {
+    createdAt,
+    createdBy,
+    method,
+    securityPolicies,
+    slug,
+    updatedAt,
+    updatedBy,
+  },
+  kappSlug,
+) =>
+  WebApi({
+    createdAt,
+    createdBy,
+    method,
+    securityPolicies: List(securityPolicies).map(Map),
+    slug,
+    kappSlug,
+    updatedAt,
+    updatedBy,
+  });

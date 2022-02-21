@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { OrderedMap, Map } from 'immutable';
+import { Map } from 'immutable';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 const TextInput = props => (
   <input
@@ -24,6 +25,8 @@ const CheckboxInput = props => (
     onFocus={props.onFocus}
   />
 );
+
+const DragHandle = props => <span {...props}>&#8597;</span>;
 
 export const TableLayout = ({ rows, onAdd, options }) => (
   <Fragment>
@@ -59,6 +62,7 @@ const RowLayout = ({ fields, onDelete }) => (
 );
 
 const typeToComponent = {
+  drag: 'DragHandle',
   text: 'TextInput',
   checkbox: 'CheckboxInput',
 };
@@ -68,6 +72,7 @@ const defaultComponents = {
   RowLayout,
   TextInput,
   CheckboxInput,
+  DragHandle,
 };
 
 const fieldFromConfig = (config, components = {}) => {
@@ -87,17 +92,31 @@ export const TableInput = props => {
   const handleAddRow = e => {
     e.preventDefault();
 
-    const newRow = options.reduce(
-      (row, config) =>
-        row.set(
-          config.get('name'),
-          config.get('type') === 'checkbox' ? false : '',
-        ),
-      Map(),
-    );
+    const newRow = options
+      .filter(config => config.get('type') !== 'drag')
+      .reduce(
+        (row, config) =>
+          row.set(
+            config.get('name'),
+            config.get('type') === 'checkbox' ? false : '',
+          ),
+        Map(),
+      );
 
     onChange(rows.push(newRow));
   };
+
+  const onDragEnd = e => {
+    if (e.source && e.destination) {
+      onChange(
+        rows
+          .delete(e.source.index)
+          .insert(e.destination.index, rows.get(e.source.index)),
+      );
+    }
+  };
+
+  const isDragDisabled = !options.some(option => option.get('type') === 'drag');
 
   const fieldRows = props.rows.map((row, index) => {
     const handleDeleteRow = e => {
@@ -106,37 +125,66 @@ export const TableInput = props => {
       onChange(rows.delete(index));
     };
 
-    const fields = options.reduce((fields, config) => {
-      const Field = fieldFromConfig(config, appliedComponents);
-      const value = row.get(config.get('name'));
-      const handleChangeField = e => {
-        const value =
-          config.get('type') === 'checkbox' ? e.target.checked : e.target.value;
-        return onChange(rows.setIn([index, config.get('name')], value));
-      };
-
-      return fields.set(
-        config.get('name'),
-        <Field
-          value={value}
-          onChange={handleChangeField}
-          label={config.get('label')}
-          onBlur={onBlur}
-          onFocus={onFocus}
-        />,
-      );
-    }, OrderedMap());
     return (
-      <RowLayout
+      <Draggable
+        draggableId={`draggable${index}`}
+        index={index}
         key={index}
-        fields={fields}
-        options={options}
-        onDelete={handleDeleteRow}
-      />
+        isDragDisabled={isDragDisabled}
+      >
+        {(provided, snapshot) => {
+          // For each of the options specified for the field, we render a table
+          // cell with a field in it. The field type is determined by the type
+          // of the option.
+          const fields = options
+            .toOrderedMap()
+            .mapKeys((_, config) => config.get('name'))
+            .map(config => {
+              const Field = fieldFromConfig(config, appliedComponents);
+              const { label, name, type } = config.toObject();
+              const fieldOnChange = e =>
+                onChange(
+                  rows.setIn(
+                    [index, name],
+                    type === 'checkbox' ? e.target.checked : e.target.value,
+                  ),
+                );
+              const value = row.get(name);
+              const props =
+                type === 'drag'
+                  ? provided.dragHandleProps
+                  : { label, onBlur, onChange: fieldOnChange, onFocus, value };
+              return <Field {...props} />;
+            });
+
+          return (
+            <RowLayout
+              draggableRef={provided.innerRef}
+              draggableProps={provided.draggableProps}
+              dragging={snapshot.isDragging}
+              fields={fields}
+              options={options}
+              onDelete={handleDeleteRow}
+            />
+          );
+        }}
+      </Draggable>
     );
   });
 
   return (
-    <TableLayout rows={fieldRows} onAdd={handleAddRow} options={options} />
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="droppable">
+        {provided => (
+          <TableLayout
+            droppableRef={provided.innerRef}
+            rows={fieldRows}
+            onAdd={handleAddRow}
+            options={options}
+            placeholder={provided.placeholder}
+          />
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 };

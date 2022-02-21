@@ -63,14 +63,14 @@ export const getNodeType = node =>
     ? node.definitionId.startsWith('system_join_v')
       ? 'join'
       : node.definitionId.startsWith('system_junction_v')
-      ? 'junction'
-      : node.definitionId.startsWith('system_loop_head_v')
-      ? 'loop-head'
-      : node.definitionId.startsWith('system_loop_tail_v')
-      ? 'loop-tail'
-      : node.definitionId.startsWith('system_start_v')
-      ? 'start'
-      : null
+        ? 'junction'
+        : node.definitionId.startsWith('system_loop_head_v')
+          ? 'loop-head'
+          : node.definitionId.startsWith('system_loop_tail_v')
+            ? 'loop-tail'
+            : node.definitionId.startsWith('system_start_v')
+              ? 'start'
+              : null
     : null;
 
 export const getNodeShape = (type, { x, y }) =>
@@ -99,8 +99,8 @@ export const getNodeCenter = (type, { x, y }) => ({
     (type === 'start'
       ? constants.NODE_START_RADIUS
       : type === 'join' || type === 'junction'
-      ? constants.NODE_JOIN_JUNCTION_CENTER_Y
-      : constants.NODE_CENTER_Y),
+        ? constants.NODE_JOIN_JUNCTION_CENTER_Y
+        : constants.NODE_CENTER_Y),
 });
 
 const concatMap = (map1, map2) =>
@@ -144,12 +144,13 @@ export const getAncestors = (tree, node, result = Map()) =>
 const bindify = raw =>
   Map(raw)
     .sortBy((_, key) => key)
-    .map(value =>
-      isImmutable(value)
-        ? value
-        : isObject(value)
-        ? Map({ children: bindify(value) })
-        : Map({ value: value.replace(/^<%=(.*)%>$/, '$1') }),
+    .map(
+      value =>
+        isImmutable(value)
+          ? value
+          : isObject(value)
+            ? Map({ children: bindify(value) })
+            : Map({ value: value.replace(/^<%=(.*)%>$/, '$1') }),
     );
 
 export const buildBindings = (tree, tasks, node) => {
@@ -372,7 +373,7 @@ export const normalizeParameter = ({ name, id, defaultValue, ...rest }) => ({
   ...rest,
 });
 
-const defaultOutputs = [
+const defaultOutputs = List([
   { id: 'content', name: 'Content' },
   {
     id: 'content_type',
@@ -381,7 +382,7 @@ const defaultOutputs = [
   },
   { id: 'headers_json', name: 'Headers (JSON)', defaultValue: '{}' },
   { id: 'response_code', name: 'Response Code', defaultValue: '200' },
-];
+]).map(Map);
 
 export const treeReturnTask = tree => ({
   deferrable: false,
@@ -393,19 +394,18 @@ export const treeReturnTask = tree => ({
   selectionCriterion: null,
   status: 'Active',
   visible: false,
-  parameters: (tree.taskDefinition
-    ? tree.taskDefinition.outputs
-    : defaultOutputs
-  ).map(output => ({
-    name: output.name,
-    defaultValue: output.defaultValue || '',
-    menu: null,
-    dependsOnId: null,
-    dependsOnValue: null,
-    description: output.description,
-    id: output.id || output.name,
-    required: false,
-  })),
+  parameters: (tree.definitionId ? tree.outputs : defaultOutputs)
+    .map(output => output.toObject())
+    .map(output => ({
+      name: output.name,
+      defaultValue: output.defaultValue || '',
+      menu: null,
+      dependsOnId: null,
+      dependsOnValue: null,
+      description: output.description,
+      id: output.id || output.name,
+      required: false,
+    })),
   results: [],
 });
 
