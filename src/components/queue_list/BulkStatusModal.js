@@ -62,7 +62,9 @@ const BulkStatusModalComponent = ({
             <div className="text-center h6 mb-4">
               <span className="fa fa-fw fa-lg fa-check-circle ml-2 text-success" />
               {status.success.length === status.count ? (
-                <I18n>All of the selected items were updated successfully.</I18n>
+                <I18n>
+                  All of the selected items were updated successfully.
+                </I18n>
               ) : (
                 <I18n
                   render={translate =>
@@ -249,9 +251,7 @@ export const BulkStatusModal = compose(
         // All failed items
         ...(['all', 'error'].includes(props.keepSelection)
           ? props.status.items.filter(item =>
-              props.status.error.find(
-                error => error.submissionId === item.id,
-              ),
+              props.status.error.find(error => error.submissionId === item.id),
             )
           : []),
       ];

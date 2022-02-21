@@ -119,7 +119,9 @@ export const QueueItem = ({
               value: (
                 <span>
                   <I18n
-                    context={`kapps.${queueItem.form.kapp.slug}.forms.${queueItem.form.slug}`}
+                    context={`kapps.${queueItem.form.kapp.slug}.forms.${
+                      queueItem.form.slug
+                    }`}
                   >
                     {queueItem.form.name}
                   </I18n>{' '}

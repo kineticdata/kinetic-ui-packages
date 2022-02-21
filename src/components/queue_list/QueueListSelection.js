@@ -21,6 +21,7 @@ export const QueueListSelectionComponent = ({
   toggleSelectedItem,
   assignUnavailable,
   assignTooltip,
+  workHidden,
   workUnavailable,
   workTooltip,
   action,
@@ -31,7 +32,6 @@ export const QueueListSelectionComponent = ({
   assignments,
   isMobile,
   refresh,
-  bulkWorkEnabled,
 }) => {
   return (
     <div className="queue-controls">
@@ -73,7 +73,7 @@ export const QueueListSelectionComponent = ({
                 <I18n>{assignTooltip}</I18n>
               </UncontrolledTooltip>
             )}
-          {bulkWorkEnabled && (
+          {!workHidden && (
             <>
               <button
                 id="bulk-work-btn"
@@ -147,7 +147,6 @@ const mapStateToProps = (state, props) => {
     forms: state.queueApp.forms,
     teams: state.queueApp.allTeams,
     isMobile: state.app.layoutSize === 'small',
-    bulkWorkEnabled: state.queueApp.bulkWorkEnabled,
   };
 };
 
@@ -168,6 +167,7 @@ export const QueueListSelection = compose(
     const addProps = {
       assignUnavailable: false,
       assignTooltip: null,
+      workHidden: true,
       workUnavailable: false,
       workTooltip: null,
       assignments: [],
@@ -181,14 +181,11 @@ export const QueueListSelection = compose(
         .reduce((map, item) => {
           const key = `${item.form.slug}_${item.values['Assigned Team']}`;
           if (!map.has(key)) {
-            return map.set(key, [
-              props.forms.find(form => form.slug === item.form.slug),
-              item,
-            ]);
+            return map.set(key, item);
           }
           return map;
         }, Map())
-        .map(([form, item]) => selectAssignmentTeams(props.teams, form, item))
+        .map(item => selectAssignmentTeams(props.teams, item.form, item))
         .toList();
 
       // If there aren't any teams that all selected items can be assigned to,
@@ -238,33 +235,36 @@ export const QueueListSelection = compose(
       );
       // If all items are for a single form, get the from
       const selectedForm =
-        uniqueSelectedForms.size === 1 &&
-        props.forms.find(form => form.slug === uniqueSelectedForms.first());
+        uniqueSelectedForms.size === 1 && props.selectedList.first().form;
 
-      // If multiple forms have been selected, prevent the work action.
-      if (!selectedForm) {
-        addProps.workUnavailable = true;
-        addProps.workTooltip = 'All selected items must be from the same form.';
-      }
-      // If the form of the selected items doesn't support bulk operations,
-      // prevent the work action.
-      else if (
-        !selectedForm.fields ||
-        !selectedForm.fields.some(field => field.name === 'Bulk Action')
-      ) {
-        addProps.workUnavailable = true;
-        addProps.workTooltip =
-          "The form of the selected items doesn't support the bulk work action.";
-      }
-      // If the selected items aren't all assigned to me, prevent the work action.
-      else if (
-        props.selectedList.some(
-          item => item.values['Assigned Individual'] !== props.profile.username,
+      // Show work button if any of the selected items support bulk operations
+      if (
+        !!props.selectedList.find(
+          item =>
+            item.form &&
+            item.form.fields &&
+            item.form.fields.some(field => field.name === 'Bulk Action'),
         )
       ) {
-        addProps.workUnavailable = true;
-        addProps.workTooltip =
-          'The selected items must all be assigned to you.';
+        addProps.workHidden = false;
+
+        // If multiple forms have been selected, prevent the work action.
+        if (!selectedForm) {
+          addProps.workUnavailable = true;
+          addProps.workTooltip =
+            'All selected items must be from the same form, and the form must support bulk work actions.';
+        }
+        // If the selected items aren't all assigned to me, prevent the work action.
+        else if (
+          props.selectedList.some(
+            item =>
+              item.values['Assigned Individual'] !== props.profile.username,
+          )
+        ) {
+          addProps.workUnavailable = true;
+          addProps.workTooltip =
+            'The selected items must all be assigned to you.';
+        }
       }
     }
 
