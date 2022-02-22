@@ -1,0 +1,20 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   List Groups ~ Queue
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.list-group-item,
+.modal-body .list-group-item {
+  border: none;
+  margin-bottom: 0;
+  display: flex;
+  &:first-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+  }
+  &:last-child {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  button .icon {
+    padding-left: 1rem;
+  }
+}
