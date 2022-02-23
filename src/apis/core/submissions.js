@@ -548,7 +548,7 @@ export const importSubmissions = options => {
     formSlug,
     onUploadProgress,
     file,
-    mode = 'post',
+    mode = MODE_IMPORT,
     cancelToken,
   } = options;
 
