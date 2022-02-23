@@ -29,7 +29,9 @@ const buildEndpoint = ({ kappSlug, webhookName }) => {
   const basePath = kappSlug
     ? `${bundle.apiLocation()}/kapps/${kappSlug}/webhooks`
     : `${bundle.apiLocation()}/webhooks`;
-  return webhookName ? `${basePath}/${webhookName}` : basePath;
+  return webhookName
+    ? `${basePath}/${encodeURIComponent(webhookName)}`
+    : basePath;
 };
 
 export const fetchWebhooks = (options = {}) => {

@@ -20,7 +20,9 @@ export const {
   singular: {
     requiredOptions: ['modelName', 'mappingName', 'attributeName'],
     url: ({ modelName, mappingName, attributeName }) =>
-      `/models/${modelName}/mappings/${mappingName}/attributes/${attributeName}`,
+      `/models/${modelName}/mappings/${mappingName}/attributes/${encodeURIComponent(
+        attributeName,
+      )}`,
     transform: response => ({
       bridgeModelAttributeMapping: response.data.attribute,
     }),

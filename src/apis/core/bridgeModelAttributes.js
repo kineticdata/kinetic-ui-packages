@@ -7,10 +7,18 @@ import {
   validateOptions,
 } from '../http';
 
+const buildEndpoint = ({ modelName, attributeName }) => {
+  const an = encodeURIComponent(attributeName);
+  const mn = encodeURIComponent(modelName);
+  return attributeName
+    ? `${bundle.apiLocation()}/models/${mn}/attributes`
+    : `${bundle.apiLocation()}/models/${mn}/attributes/${an}`;
+};
+
 export const fetchBridgeModelAttributes = (options = {}) => {
   validateOptions('fetchBridgeModelAttributes', ['modelName'], options);
   return axios
-    .get(`${bundle.apiLocation()}/models/${options.modelName}/attributes`, {
+    .get(buildEndpoint(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -26,15 +34,11 @@ export const fetchBridgeModelAttribute = (options = {}) => {
     ['modelName', 'attributeName'],
     options,
   );
-  const { modelName, attributeName } = options;
   return axios
-    .get(
-      `${bundle.apiLocation()}/models/${modelName}/attributes/${attributeName}`,
-      {
-        params: paramBuilder(options),
-        headers: headerBuilder(options),
-      },
-    )
+    .get(buildEndpoint(options), {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
     .then(response => ({
       bridgeModelAttribute: response.data.attribute,
     }))
@@ -48,14 +52,10 @@ export const createBridgeModelAttribute = (options = {}) => {
     options,
   );
   return axios
-    .post(
-      `${bundle.apiLocation()}/models/${options.modelName}/attributes`,
-      options.bridgeModelAttribute,
-      {
-        params: paramBuilder(options),
-        headers: headerBuilder(options),
-      },
-    )
+    .post(buildEndpoint(options), options.bridgeModelAttribute, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
     .then(response => ({
       bridgeModelAttribute: response.data.attribute,
     }))
@@ -69,13 +69,12 @@ export const updateBridgeModelAttribute = (options = {}) => {
     options,
   );
 
-  const { modelName, attributeName, bridgeModelAttribute } = options;
+  const { bridgeModelAttribute } = options;
   return axios
-    .put(
-      `${bundle.apiLocation()}/models/${modelName}/attributes/${attributeName}`,
-      bridgeModelAttribute,
-      { params: paramBuilder(options), headers: headerBuilder(options) },
-    )
+    .put(buildEndpoint(options), bridgeModelAttribute, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
     .then(response => ({
       bridgeModelAttribute: response.data.attribute,
     }))
@@ -88,15 +87,11 @@ export const deleteBridgeModelAttribute = (options = {}) => {
     ['modelName', 'attributeName'],
     options,
   );
-  const { modelName, attributeName } = options;
   return axios
-    .delete(
-      `${bundle.apiLocation()}/models/${modelName}/attributes/${attributeName}`,
-      {
-        params: paramBuilder(options),
-        headers: headerBuilder(options),
-      },
-    )
+    .delete(buildEndpoint(options), {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
     .then(response => ({
       bridgeModelAttribute: response.data.attribute,
     }))

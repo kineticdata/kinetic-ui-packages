@@ -7,9 +7,17 @@ import {
   validateOptions,
 } from '../http';
 
+const buildEndpoint = ({ modelName }) => {
+  const mn = encodeURIComponent(modelName);
+
+  return modelName
+    ? `${bundle.apiLocation()}/models/${mn}`
+    : `${bundle.apiLocation()}/models`;
+};
+
 export const fetchBridgeModels = (options = {}) => {
   return axios
-    .get(`${bundle.apiLocation()}/models`, {
+    .get(buildEndpoint(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -20,7 +28,7 @@ export const fetchBridgeModels = (options = {}) => {
 export const fetchBridgeModel = (options = {}) => {
   validateOptions('fetchBridgeModel', ['modelName'], options);
   return axios
-    .get(`${bundle.apiLocation()}/models/${options.modelName}`, {
+    .get(buildEndpoint(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -36,7 +44,7 @@ export const testBridgeModel = (options = {}) => {
     options,
   );
 
-  const { modelName, qualificationName, attributes = [] } = options;
+  const { qualificationName, attributes = [] } = options;
   const method = TEST_METHODS.includes(options.method)
     ? options.method
     : 'retrieve';
@@ -46,7 +54,9 @@ export const testBridgeModel = (options = {}) => {
   }, {});
   return axios
     .post(
-      `${bundle.spaceLocation()}/app/models/${modelName}/qualifications/${qualificationName}/${method}`,
+      `${buildEndpoint(options)}/qualifications/${encodeURIComponent(
+        qualificationName,
+      )}/${encodeURIComponent(method)}`,
       null,
       {
         params: {
@@ -63,7 +73,7 @@ export const testBridgeModel = (options = {}) => {
 export const createBridgeModel = (options = {}) => {
   validateOptions('createBridgeModel', ['bridgeModel'], options);
   return axios
-    .post(`${bundle.apiLocation()}/models`, options.bridgeModel, {
+    .post(buildEndpoint(options), options.bridgeModel, {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -74,11 +84,10 @@ export const createBridgeModel = (options = {}) => {
 export const updateBridgeModel = (options = {}) => {
   validateOptions('updateBridgeModel', ['modelName', 'bridgeModel'], options);
   return axios
-    .put(
-      `${bundle.apiLocation()}/models/${options.modelName}`,
-      options.bridgeModel,
-      { params: paramBuilder(options), headers: headerBuilder(options) },
-    )
+    .put(buildEndpoint(options), options.bridgeModel, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
     .then(response => ({ bridgeModel: response.data.model }))
     .catch(handleErrors);
 };
@@ -86,7 +95,7 @@ export const updateBridgeModel = (options = {}) => {
 export const deleteBridgeModel = (options = {}) => {
   validateOptions('deleteBridgeModel', ['modelName'], options);
   return axios
-    .delete(`${bundle.apiLocation()}/models/${options.modelName}`, {
+    .delete(buildEndpoint(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })

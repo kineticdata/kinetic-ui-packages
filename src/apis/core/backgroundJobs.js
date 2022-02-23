@@ -3,6 +3,7 @@ import { bundle } from '../../helpers';
 import { handleErrors, paramBuilder, headerBuilder } from '../http';
 
 const backgroundJobPath = ({ formSlug, kappSlug, job } = {}) => {
+  const j = encodeURIComponent(job);
   const basePath =
     !formSlug && !kappSlug
       ? `${bundle.apiLocation()}/backgroundJobs`
@@ -12,7 +13,7 @@ const backgroundJobPath = ({ formSlug, kappSlug, job } = {}) => {
           ? `${bundle.apiLocation()}/forms/${formSlug}/backgroundJobs`
           : `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/backgroundJobs`;
 
-  return basePath + (job ? `/${job}` : '');
+  return basePath + (job ? `/${j}` : '');
 };
 
 export const fetchBackgroundJobs = (options = {}) =>

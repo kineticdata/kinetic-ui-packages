@@ -2,12 +2,17 @@ import axios from 'axios';
 import { bundle } from '../../helpers';
 import { handleErrors, headerBuilder, paramBuilder } from '../http';
 
-export const fetchFormTypes = (options = {}) => {
-  const { kappSlug = bundle.kappSlug() } = options;
+const buildEndpoint = ({ kappSlug = bundle.kappSlug(), name }) =>
+  name
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/formTypes/${encodeURIComponent(
+        name,
+      )}`
+    : `${bundle.apiLocation()}/kapps/${kappSlug}/formTypes`;
 
+export const fetchFormTypes = (options = {}) => {
   // Build URL and fetch the form types.
   return axios
-    .get(`${bundle.apiLocation()}/kapps/${kappSlug}/formTypes`, {
+    .get(buildEndpoint(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -18,7 +23,7 @@ export const fetchFormTypes = (options = {}) => {
 };
 
 export const fetchFormType = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), name } = options;
+  const { name } = options;
 
   if (!name) {
     throw new Error('fetchFormType failed! The option "name" is required.');
@@ -26,7 +31,7 @@ export const fetchFormType = (options = {}) => {
 
   // Build URL and fetch the form type.
   return axios
-    .get(`${bundle.apiLocation()}/kapps/${kappSlug}/formTypes/${name}`, {
+    .get(buildEndpoint(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -35,7 +40,7 @@ export const fetchFormType = (options = {}) => {
 };
 
 export const createFormType = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), formType } = options;
+  const { formType } = options;
 
   if (!formType) {
     throw new Error(
@@ -45,7 +50,7 @@ export const createFormType = (options = {}) => {
 
   // Build URL and create the form type.
   return axios
-    .post(`${bundle.apiLocation()}/kapps/${kappSlug}/formTypes`, formType, {
+    .post(buildEndpoint(options), formType, {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -54,7 +59,7 @@ export const createFormType = (options = {}) => {
 };
 
 export const updateFormType = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), formType, name } = options;
+  const { formType, name } = options;
 
   if (!formType) {
     throw new Error(
@@ -70,24 +75,18 @@ export const updateFormType = (options = {}) => {
 
   // Build URL and update the form type.
   return axios
-    .put(
-      `${bundle.apiLocation()}/kapps/${kappSlug}/formTypes/${name}`,
-      formType,
-      {
-        params: paramBuilder(options),
-        headers: headerBuilder(options),
-      },
-    )
+    .put(buildEndpoint(options), formType, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
     .then(response => ({ formType: response.data.formType }))
     .catch(handleErrors);
 };
 
 export const deleteFormType = (options = {}) => {
-  const { kappSlug = bundle.kappSlug(), name } = options;
-
   // Build URL and delete the form type.
   return axios
-    .delete(`${bundle.apiLocation()}/kapps/${kappSlug}/formTypes/${name}`, {
+    .delete(buildEndpoint(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })

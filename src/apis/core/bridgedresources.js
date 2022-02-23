@@ -30,14 +30,13 @@ export const bridgedResourceUrl = (options, counting = false) => {
   if (!bridgedResourceName) {
     throw new Error('Property "bridgedResourceName" is required.');
   }
+
+  const brn = encodeURIComponent(options.bridgedResourceName);
+
   // build the url
   let url = datastore
-    ? `${bundle.spaceLocation()}/app/datastore/forms/${
-        options.formSlug
-      }/bridgedResources/${encodeURIComponent(options.bridgedResourceName)}`
-    : `${bundle.spaceLocation()}/${kappSlug}/${
-        options.formSlug
-      }/bridgedResources/${encodeURIComponent(options.bridgedResourceName)}`;
+    ? `${bundle.spaceLocation()}/app/datastore/forms/${formSlug}/bridgedResources/${brn}`
+    : `${bundle.spaceLocation()}/${kappSlug}/${formSlug}/bridgedResources/${brn}`;
   // append any attributes if they were specified
   if (counting) {
     url += '/count';

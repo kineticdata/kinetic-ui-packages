@@ -61,11 +61,14 @@ const validateOptions = (functionName, requiredOptions, options) => {
   }
 };
 
-const buildEndpoint = ({ attributeType, kappSlug, attributeName }) => {
+const buildEndpoint = ({ kappSlug, attributeType: at, attributeName: an }) => {
+  const attributeType = encodeURIComponent(at);
+  const attributeName = encodeURIComponent(an);
+
   const basePath = kappSlug
     ? `${bundle.apiLocation()}/kapps/${kappSlug}/${attributeType}`
     : `${bundle.apiLocation()}/${attributeType}`;
-  return attributeName ? `${basePath}/${attributeName}` : basePath;
+  return an ? `${basePath}/${attributeName}` : basePath;
 };
 
 export const fetchAttributeDefinitions = (options = {}) => {
@@ -106,14 +109,10 @@ export const createAttributeDefinition = (options = {}) => {
     ['attributeType', 'attributeDefinition'],
     options,
   );
-  // For Creates, we don't append the name to the basePath (it goes in the body)
-  // so not using the buildEndpoint function
-  const basePath = kappSlug
-    ? `${bundle.apiLocation()}/kapps/${kappSlug}/${attributeType}`
-    : `${bundle.apiLocation()}/${attributeType}`;
+
   // The API returns the singular name of the attribute type, so we remove the "s"
   return axios
-    .post(basePath, attributeDefinition, {
+    .post(buildEndpoint({ kappSlug, attributeType }), attributeDefinition, {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })

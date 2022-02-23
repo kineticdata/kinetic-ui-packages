@@ -2,9 +2,14 @@ import axios from 'axios';
 import { bundle } from '../../helpers';
 import { handleErrors, paramBuilder, headerBuilder } from '../http';
 
+const buildEndpoint = ({ clientId }) =>
+  clientId
+    ? `${bundle.apiLocation()}/oauthClients/${encodeURIComponent(clientId)}`
+    : `${bundle.apiLocation()}/oauthClients`;
+
 export const fetchOAuthClients = (options = {}) =>
   axios
-    .get(`${bundle.apiLocation()}/oauthClients`, {
+    .get(buildEndpoint(options), {
       params: { ...paramBuilder(options) },
       headers: headerBuilder(options),
     })
@@ -22,7 +27,7 @@ export const fetchOAuthClient = (options = {}) => {
   }
 
   return axios
-    .get(`${bundle.apiLocation()}/oauthClients/${clientId}`, {
+    .get(buildEndpoint(options), {
       params: { ...paramBuilder(options) },
       headers: headerBuilder(options),
     })
@@ -49,7 +54,7 @@ export const updateOAuthClient = (options = {}) => {
 
   // Build URL and fetch the space.
   return axios
-    .put(`${bundle.apiLocation()}/oauthClients/${clientId}`, client, {
+    .put(buildEndpoint(options), client, {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -68,7 +73,7 @@ export const createOAuthClient = (options = {}) => {
 
   // Build URL and fetch the space.
   return axios
-    .post(`${bundle.apiLocation()}/oauthClients`, client, {
+    .post(buildEndpoint(options), client, {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
@@ -87,7 +92,7 @@ export const deleteOAuthClient = (options = {}) => {
 
   // Build URL and fetch the space.
   return axios
-    .delete(`${bundle.apiLocation()}/oauthClients/${clientId}`, {
+    .delete(buildEndpoint(options), {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
