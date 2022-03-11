@@ -542,6 +542,19 @@ export const MODE_BULK = 'bulk';
 
 const modeToFn = mode => (mode === MODE_BULK ? 'post' : 'patch');
 
+export const importSubmissionStatus = options => {
+  const { kappSlug, formSlug, jobId } = options;
+
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submission-import/${jobId}`;
+  return axios
+    .get(path, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ backgroundJob: response.data.backgroundJob }))
+    .catch(handleErrors);
+};
+
 export const importSubmissions = options => {
   const {
     kappSlug,
@@ -579,7 +592,9 @@ export const importSubmissions = options => {
     },
     onUploadProgress,
   })
-    .then(response => response.data)
+    .then(response => {
+      return response.data;
+    })
     .catch(error => {
       if (error.response && error.response.data && error.response.data.errors) {
         return error.response.data;
