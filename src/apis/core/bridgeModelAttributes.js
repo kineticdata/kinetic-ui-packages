@@ -11,8 +11,8 @@ const buildEndpoint = ({ modelName, attributeName }) => {
   const an = encodeURIComponent(attributeName);
   const mn = encodeURIComponent(modelName);
   return attributeName
-    ? `${bundle.apiLocation()}/models/${mn}/attributes`
-    : `${bundle.apiLocation()}/models/${mn}/attributes/${an}`;
+    ? `${bundle.apiLocation()}/models/${mn}/attributes/${an}`
+    : `${bundle.apiLocation()}/models/${mn}/attributes`;
 };
 
 export const fetchBridgeModelAttributes = (options = {}) => {
