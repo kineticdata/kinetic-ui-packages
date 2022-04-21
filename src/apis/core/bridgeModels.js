@@ -7,6 +7,13 @@ import {
   validateOptions,
 } from '../http';
 
+const buildRuntimeEndpoint = ({ modelName }) => {
+  const mn = encodeURIComponent(modelName);
+
+  return modelName
+    ? `${bundle.spaceLocation()}/app/models/${mn}`
+    : `${bundle.spaceLocation()}/app/models`;
+};
 const buildEndpoint = ({ modelName }) => {
   const mn = encodeURIComponent(modelName);
 
@@ -54,7 +61,7 @@ export const testBridgeModel = (options = {}) => {
   }, {});
   return axios
     .post(
-      `${buildEndpoint(options)}/qualifications/${encodeURIComponent(
+      `${buildRuntimeEndpoint(options)}/qualifications/${encodeURIComponent(
         qualificationName,
       )}/${encodeURIComponent(method)}`,
       null,
