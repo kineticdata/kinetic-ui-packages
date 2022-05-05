@@ -147,7 +147,7 @@ describe('webhooks api', () => {
       });
       expect(axios.get.mock.calls).toEqual([
         [
-          'space/app/api/v1/webhooks/Test Webhook Name',
+          'space/app/api/v1/webhooks/Test%20Webhook%20Name',
           { params: {}, headers: { 'X-Kinetic-AuthAssumed': 'true' } },
         ],
       ]);
@@ -315,7 +315,7 @@ describe('webhooks api', () => {
       });
       expect(axios.put.mock.calls).toEqual([
         [
-          'space/app/api/v1/webhooks/Test Webhook Name',
+          'space/app/api/v1/webhooks/Test%20Webhook%20Name',
           {
             authStrategy: null,
             event: 'Login Failure',

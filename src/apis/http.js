@@ -17,6 +17,10 @@ export const handleErrors = error => {
     throw error;
   }
 
+  if (axios.isCancel(error)) {
+    return { error: 'Canceled by user request.' };
+  }
+
   // Destructure out the information needed.
   const { data = {}, status: statusCode, statusText, headers } = error.response;
   const type = types[statusCode];

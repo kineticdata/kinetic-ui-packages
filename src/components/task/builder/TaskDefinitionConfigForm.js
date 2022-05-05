@@ -11,7 +11,10 @@ export const checkOmittedParameters = (node, parameter) => {
 };
 
 export const generateTaskDefinition = taskDefinition => {
-  if (taskDefinition.definitionName === 'system_submission_create') {
+  if (
+    taskDefinition &&
+    taskDefinition.definitionName === 'system_submission_create'
+  ) {
     return ({ form }) => ({
       ...taskDefinition,
       parameters: [

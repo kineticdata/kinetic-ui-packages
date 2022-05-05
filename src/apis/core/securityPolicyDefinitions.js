@@ -30,7 +30,9 @@ const buildEndpoint = ({ kappSlug, securityPolicyName }) => {
   const basePath = kappSlug
     ? `${bundle.apiLocation()}/kapps/${kappSlug}/securityPolicyDefinitions`
     : `${bundle.apiLocation()}/securityPolicyDefinitions`;
-  return securityPolicyName ? `${basePath}/${securityPolicyName}` : basePath;
+  return securityPolicyName
+    ? `${basePath}/${encodeURIComponent(securityPolicyName)}`
+    : basePath;
 };
 
 export const fetchSecurityPolicyDefinitions = (options = {}) => {

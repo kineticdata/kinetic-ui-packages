@@ -273,7 +273,7 @@ describe('attributeDefinitions api', () => {
       });
       expect(axios.put.mock.calls).toEqual([
         [
-          'space/app/api/v1/spaceAttributeDefinitions/Test Attribute',
+          'space/app/api/v1/spaceAttributeDefinitions/Test%20Attribute',
           {
             name: 'Test Attribute',
             description: 'Test Attr Desc',

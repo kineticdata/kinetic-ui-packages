@@ -12,7 +12,9 @@ export const {
   plural: {
     requiredOptions: ['modelName', 'mappingName'],
     url: ({ modelName, mappingName }) =>
-      `/models/${modelName}/mappings/${mappingName}/qualifications`,
+      `/models/${encodeURIComponent(modelName)}/mappings/${encodeURIComponent(
+        mappingName,
+      )}/qualifications`,
     transform: response => ({
       bridgeModelQualificationMappings: response.data.qualifications,
     }),
@@ -20,7 +22,9 @@ export const {
   singular: {
     requiredOptions: ['modelName', 'mappingName', 'qualificationName'],
     url: ({ modelName, mappingName, qualificationName }) =>
-      `/models/${modelName}/mappings/${mappingName}/qualifications/${qualificationName}`,
+      `/models/${encodeURIComponent(modelName)}/mappings/${encodeURIComponent(
+        mappingName,
+      )}/qualifications/${encodeURIComponent(qualificationName)}`,
     transform: response => ({
       bridgeModelQualificationMapping: response.data.qualification,
     }),

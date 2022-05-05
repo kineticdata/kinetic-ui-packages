@@ -508,3 +508,98 @@ export const deleteSubmission = options => {
       .catch(handleErrors)
   );
 };
+
+export const exportSubmissions = options => {
+  const { kappSlug, formSlug, onDownloadProgress } = options;
+
+  if (!kappSlug) {
+    throw new Error(
+      'exportSubmissions failed! The option "kappSlug" is required.',
+    );
+  }
+
+  if (!formSlug) {
+    throw new Error(
+      'exportSubmissions failed! The option "formSlug" is required.',
+    );
+  }
+
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions-search?export`;
+  return axios.post(
+    path,
+    {},
+    {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+      onDownloadProgress,
+      responseType: 'blob',
+    },
+  );
+};
+
+export const MODE_IMPORT = 'import';
+export const MODE_BULK = 'bulk';
+
+const modeToFn = mode => (mode === MODE_BULK ? 'post' : 'patch');
+
+export const importSubmissionStatus = options => {
+  const { kappSlug, formSlug, jobId } = options;
+
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submission-import/${jobId}`;
+  return axios
+    .get(path, {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then(response => ({ backgroundJob: response.data.backgroundJob }))
+    .catch(handleErrors);
+};
+
+export const importSubmissions = options => {
+  const {
+    kappSlug,
+    formSlug,
+    onUploadProgress,
+    file,
+    mode = MODE_IMPORT,
+    cancelToken,
+  } = options;
+
+  if (!kappSlug) {
+    throw new Error(
+      'importSubmissions failed! The option "kappSlug" is required.',
+    );
+  }
+
+  if (!formSlug) {
+    throw new Error(
+      'importSubmissions failed! The option "formSlug" is required.',
+    );
+  }
+
+  if (!file) {
+    throw new Error('importSubmissions failed! The option "file" is required.');
+  }
+
+  const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions?import`;
+  return axios[modeToFn(mode)](path, file, {
+    cancelToken,
+    data: file,
+    params: paramBuilder(options),
+    headers: {
+      ...headerBuilder(options),
+      'Content-Type': 'application/csv',
+    },
+    onUploadProgress,
+  })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      if (error.response && error.response.data && error.response.data.errors) {
+        return error.response.data;
+      } else {
+        return handleErrors(error);
+      }
+    });
+};

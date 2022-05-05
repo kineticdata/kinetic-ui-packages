@@ -11,7 +11,8 @@ export const {
   dataOption: 'bridgeModelQualification',
   plural: {
     requiredOptions: ['modelName'],
-    url: ({ modelName }) => `/models/${modelName}/qualifications`,
+    url: ({ modelName }) =>
+      `/models/${encodeURIComponent(modelName)}/qualifications`,
 
     transform: response => ({
       bridgeModelQualifications: response.data.qualifications,
@@ -20,7 +21,9 @@ export const {
   singular: {
     requiredOptions: ['modelName', 'qualificationName'],
     url: ({ modelName, qualificationName }) =>
-      `/models/${modelName}/qualifications/${qualificationName}`,
+      `/models/${encodeURIComponent(
+        modelName,
+      )}/qualifications/${encodeURIComponent(qualificationName)}`,
     transform: response => ({
       bridgeModelQualification: response.data.qualification,
     }),
