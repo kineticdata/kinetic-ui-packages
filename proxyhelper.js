@@ -67,7 +67,6 @@ module.exports = (
   secure: true,
   changeOrigin: true,
   ws: true,
-  xfwd: true,
   onProxyReq: (proxyRequest, originalRequest) => {
     // Browsers may send Origin headers even with same-origin
     // requests. To prevent CORS issues, we have to change
@@ -78,7 +77,7 @@ module.exports = (
 
     if (
       process.env.REACT_APP_PROXY_SUBDOMAIN &&
-      (!proxyRequest.path.endsWith('pack') ||
+      (!proxyRequest.path.endsWith('pack') &&
         !proxyRequest.path.endsWith('favicon.ico'))
     ) {
       proxyRequest.setHeader(
