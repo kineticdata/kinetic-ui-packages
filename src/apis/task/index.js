@@ -855,6 +855,7 @@ export const fetchTaskRuns = (options = {}) =>
     .then(response => ({
       runs: response.data.runs,
       count: response.data.count,
+      more: response.data.more,
       nextPageToken: generateNextPageToken(response.data),
     }))
     .catch(handleErrors);
