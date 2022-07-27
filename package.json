@@ -26,7 +26,7 @@
     "httpsnippet": "^1.19.1",
     "immutable": "4.0.0-rc.9",
     "isobject": "^3.0.1",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "papaparse": "^5.2.0",
     "query-string": "^5.1.1",
     "react-redux": "^6.0.1",
