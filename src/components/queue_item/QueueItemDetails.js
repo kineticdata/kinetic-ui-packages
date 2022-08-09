@@ -1,11 +1,7 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { compose, withState, withHandlers, withProps } from 'recompose';
 import { Link } from '@reach/router';
-import {
-  selectDiscussionsEnabled,
-  DiscussionsPanel,
-  EmptyMessage,
-} from '@kineticdata/bundle-common';
+import { EmptyMessage } from '@kineticdata/bundle-common';
 import { selectAssignments } from '../../redux/modules/queueApp';
 import { actions } from '../../redux/modules/queue';
 import { ViewOriginalRequest } from './ViewOriginalRequest';
@@ -41,18 +37,12 @@ export const QueueItemDetails = ({
   prohibitSubtasks,
   refreshQueueItem,
   kappSlug,
-  discussionsEnabled,
   profile,
-  creationFields,
-  onDiscussionCreated,
-  CreationForm,
   goToPreviousItem,
   goToNextItem,
   currentTab,
   toggleCurrentTab,
 }) => {
-  const unreadDiscussionsContainerRef = useRef(null);
-
   return (
     <div className="queue-item-details">
       <div className="section--general">
@@ -95,7 +85,7 @@ export const QueueItemDetails = ({
         )}
       </div>
 
-      {(!prohibitSubtasks || discussionsEnabled) && (
+      {!prohibitSubtasks && (
         <div className="mb-5">
           <ul className="nav nav-tabs" role="tablist">
             {!prohibitSubtasks && (
@@ -113,25 +103,6 @@ export const QueueItemDetails = ({
                   })}
                 >
                   <I18n>Subtasks</I18n>
-                </button>
-              </li>
-            )}
-            {discussionsEnabled && (
-              <li
-                role="tab"
-                className="nav-item"
-                id="discussions-tab"
-                aria-controls="discussions-tabpanel"
-                aria-selected={currentTab === 'discussions'}
-              >
-                <button
-                  onClick={toggleCurrentTab('discussions')}
-                  className={classNames('nav-link', {
-                    active: currentTab === 'discussions',
-                  })}
-                >
-                  <I18n>Discussions</I18n>
-                  <span ref={unreadDiscussionsContainerRef} />
                 </button>
               </li>
             )}
@@ -175,43 +146,6 @@ export const QueueItemDetails = ({
               />
             )}
           </div>
-
-          <div
-            className={classNames({
-              'd-none': currentTab !== 'discussions',
-            })}
-            role="tabpanel"
-            id="discussions-tabpanel"
-            aria-labelledby="discussions-tab"
-          >
-            <DiscussionsPanel
-              withAside={true}
-              itemType="Submission"
-              itemKey={queueItem.id}
-              overrideClassName="discussions-container"
-              me={profile}
-              pageSize={3}
-              unreadDiscussionsContainerRef={unreadDiscussionsContainerRef}
-              creationFields={creationFields}
-              onCreated={onDiscussionCreated}
-              CreationForm={CreationForm}
-              renderDiscussionsListHeader={({ handleCreateDiscussionClick }) =>
-                handleCreateDiscussionClick ? (
-                  <div className="d-flex justify-content-end mt-n4 mb-2">
-                    <button
-                      className="btn btn-white btn-sticky-top"
-                      onClick={handleCreateDiscussionClick}
-                    >
-                      <span className="fa fa-fw fa-plus" />
-                      <span>
-                        <I18n>Create Discussion</I18n>
-                      </span>
-                    </button>
-                  </div>
-                ) : null
-              }
-            />
-          </div>
         </div>
       )}
     </div>
@@ -237,7 +171,6 @@ export const mapStateToProps = (state, props) => {
     ).toJS(),
     defaultFilters: state.queueApp.filters,
     kappSlug: state.app.kappSlug,
-    discussionsEnabled: selectDiscussionsEnabled(state),
     profile: state.app.profile,
     currentPageData: state.queue.data,
     hasPreviousPage: state.queue.hasPreviousPage,
@@ -273,7 +206,7 @@ export const QueueItemDetailsContainer = compose(
   withState(
     'currentTab',
     'setCurrentTab',
-    props => (!props.prohibitSubtasks ? 'subtasks' : 'discussions'),
+    props => (!props.prohibitSubtasks ? 'subtasks' : ''),
   ),
   withState('isAssigning', 'setIsAssigning', false),
   withHandlers({
