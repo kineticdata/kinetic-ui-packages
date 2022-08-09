@@ -1,5 +1,5 @@
 # Space
-The Space bundle is designed to be a launching point for all other Kapps in the system. Within the space bundle, you can see a list of discussions you are involved in, access other kapps, update your profile, and browse/update teams.
+The Space bundle is designed to be a launching point for all other Kapps in the system. Within the space bundle, you can access other kapps, update your profile, and browse/update teams.
 ![Space Screenshot](./screenshot.png)
 
 ## Space Configuration References
@@ -16,7 +16,6 @@ Attribute Name | Description     | Example
 _**Approver_ | Options are: a Team Name, a Users username, `manager` or `none`. If this is set, all forms in this kapp will get approvals sent to the value set here unless specified in a form. | `none`
 _**Approval Form Slug_ | The form slug for which approvals should be created in (if not defined on form) | `approval`
 Description    | A short description of what this kapp is used for, typically displayed on the Kapp Listing (home) Page | `Browse, request and check status of services`
-Discussion Id | The Id of the Discussion related to this kapp. Typically where kapp owners can collaborate on suggestions or changes. | `<discussion guid>`
 _**Form Workflow_ | Defines which workflow type should be executed for each type of action. All values should be prefixed with an action (Created, Deleted, Updated) Workflow types are (Standard, True, False, or a custom process name) Example (Created - False | Deleted - True | Updated - My Custom Process) | `Updated - False`
 Record Search History | This attribute controls when searches made from this kapp are recorded. Options are All (all searches will be recorded) / None (Only record when no results found) / Off (never record search history) | `All`
 Icon           | The [Font Awesome Icons](http://fontawesome.io/icons/) Font Awesome icon used to represent this kapp. | `fa-book`

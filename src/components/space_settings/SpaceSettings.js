@@ -180,7 +180,6 @@ export const SpaceSettingsComponent = ({
           helpText:
             'Allows Space Administrators to set a default Kapp that will display for Users in their Space. This can be overridden by a User Profile Attribute.',
           options: [
-            { label: 'Discussions', value: 'discussions' },
             ...visibleKapps.map(kapp => ({
               label: kapp.name,
               value: kapp.slug,

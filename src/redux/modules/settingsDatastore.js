@@ -563,8 +563,7 @@ export const reducer = (state = State(), { type, payload }) => {
     case types.RESET_SUBMISSION:
       return state
         .set('submissionLoading', true)
-        .set('submission', null)
-        .set('currentDiscussion', null);
+        .set('submission', null);
     case types.SET_FORM_CHANGES:
       return state.setIn(['currentFormChanges', payload.type], payload.value);
     case types.OPEN_MODAL:
