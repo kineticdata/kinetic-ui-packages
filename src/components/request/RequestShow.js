@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from '@reach/router';
 import {
-  DiscussionsPanel,
   TimeAgo,
   Utils,
   ErrorMessage,
@@ -101,13 +100,7 @@ export const RequestShow = ({
   error,
   listType,
   mode,
-  discussion,
   sendMessageModalOpen,
-  viewDiscussion,
-  toggleDiscussion,
-  disableStartDiscussion,
-  discussionsEnabled,
-  startDiscussion,
   disableProvideFeedback,
   provideFeedback,
   disableHandleClone,
@@ -159,12 +152,6 @@ export const RequestShow = ({
               onClick: provideFeedback,
               menu: true,
             },
-            !discussion &&
-              !disableStartDiscussion && {
-                label: 'Start Discussion',
-                onClick: startDiscussion,
-                menu: true,
-              },
           ]
         }
         meta={
@@ -179,23 +166,6 @@ export const RequestShow = ({
           ]
         }
       />
-
-      {submission &&
-        discussionsEnabled &&
-        discussion && (
-          <DiscussionsPanel
-            withAside={true}
-            discussions={[discussion]}
-            overrideClassName="discussions-container mb-5"
-            me={me}
-            renderHeader={() => (
-              <div className="section__title section__title--sm mb-2">
-                <div className="title">Discussion</div>
-              </div>
-            )}
-            renderDiscussionHeader={false}
-          />
-        )}
 
       {error && (
         <ErrorMessage

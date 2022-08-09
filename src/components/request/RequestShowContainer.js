@@ -1,14 +1,7 @@
-import {
-  compose,
-  lifecycle,
-  withState,
-  withHandlers,
-  withProps,
-} from 'recompose';
+import { compose, lifecycle, withHandlers, withProps } from 'recompose';
 import {
   openModalForm,
   selectAdminKappSlug,
-  selectDiscussionsEnabled,
   Utils,
 } from '@kineticdata/bundle-common';
 import { actions } from '../../redux/modules/submission';
@@ -22,11 +15,9 @@ export const mapStateToProps = (state, props) => ({
   error: state.submission.error,
   listType: props.type,
   mode: props.mode,
-  discussion: state.submission.discussion,
   sendMessageModalOpen: state.submission.isSendMessageModalOpen,
   kappSlug: state.app.kappSlug,
   appLocation: state.app.location,
-  discussionsEnabled: selectDiscussionsEnabled(state),
   me: state.app.profile,
   isSmallLayout: state.app.layoutSize === 'small',
   adminKappSlug: selectAdminKappSlug(state),
@@ -39,7 +30,6 @@ export const mapDispatchToProps = {
   deleteSubmission: actions.deleteSubmissionRequest,
   startPoller: actions.startSubmissionPoller,
   stopPoller: actions.stopSubmissionPoller,
-  fetchDiscussion: actions.fetchDiscussionRequest,
   setSendMessageModalOpen: actions.setSendMessageModalOpen,
 };
 
@@ -48,11 +38,9 @@ const enhance = compose(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  withState('viewDiscussion', 'setViewDiscussion', false),
   lifecycle({
     componentWillMount() {
       this.props.fetchSubmission(this.props.submissionId);
-      this.props.fetchDiscussion(this.props.submissionId);
       this.props.startPoller(this.props.submissionId);
     },
     componentWillUnmount() {
@@ -62,17 +50,6 @@ const enhance = compose(
   }),
   withProps(props => {
     return {
-      disableStartDiscussion:
-        !props.discussionsEnabled ||
-        !props.submission ||
-        props.submission.coreState !== constants.CORE_STATE_SUBMITTED ||
-        Utils.hasAttributeValue(
-          props.submission.form,
-          'Comment Disabled',
-          ['true', 'yes'],
-          true,
-          false,
-        ),
       disableProvideFeedback:
         !props.submission ||
         props.submission.coreState !== constants.CORE_STATE_CLOSED,
@@ -98,10 +75,6 @@ const enhance = compose(
     };
   }),
   withHandlers({
-    toggleDiscussion: props => () =>
-      props.setViewDiscussion(!props.viewDiscussion),
-    startDiscussion: props => () =>
-      props.setSendMessageModalOpen({ isOpen: true, type: 'comment' }),
     provideFeedback: props => () =>
       openModalForm(
         getFeedbackFormConfig(props.adminKappSlug, props.submission.id),
