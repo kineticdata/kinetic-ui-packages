@@ -1,34 +1,15 @@
 import React, { Fragment } from 'react';
-import { compose, lifecycle, withProps, withState } from 'recompose';
+import { compose, lifecycle, withProps } from 'recompose';
 import {
   ErrorMessage,
   LoadingMessage,
   TimeAgo,
-  DiscussionsPanel,
-  selectDiscussionsEnabled,
-  Aside,
 } from '@kineticdata/bundle-common';
 import { actions } from '../../../redux/modules/surveys';
 import { connect } from '../../../redux/store';
 import { I18n } from '@kineticdata/react';
 import { PageTitle } from '../../shared/PageTitle';
 import { CoreStateBadge } from '../../shared/StatusBadge';
-
-const CreationForm = ({ onChange, values, errors }) => (
-  <div className="form-group">
-    <label htmlFor="title">Title</label>
-    <input
-      id="title"
-      name="title"
-      type="text"
-      value={values.title}
-      onChange={onChange}
-    />
-    {errors.title && (
-      <small className="form-text text-danger">{errors.title}</small>
-    )}
-  </div>
-);
 
 export const SubmissionDetailsContainer = ({
   kapp,
@@ -37,11 +18,7 @@ export const SubmissionDetailsContainer = ({
   callFormAction,
   submission,
   submissionError,
-  discussionsEnabled,
   profile,
-  creationFields,
-  asideOpen,
-  toggleAsideOpen,
 }) =>
   form && (
     <div className="page-container">
@@ -59,26 +36,16 @@ export const SubmissionDetailsContainer = ({
           title={submission ? submission.label : 'New Submission'}
           actions={
             form.status === 'Active' &&
-            formActions
-              .map(el => ({
-                key: el.slug,
-                label: el.name,
-                onClick: () =>
-                  callFormAction({
-                    formSlug: el.slug,
-                    surveySubmission: submission,
-                  }),
-                menu: true,
-              }))
-              .concat(
-                discussionsEnabled
-                  ? {
-                      icon: 'comments-o',
-                      label: 'Discussions',
-                      onClick: () => toggleAsideOpen(!asideOpen),
-                    }
-                  : null,
-              )
+            formActions.map(el => ({
+              key: el.slug,
+              label: el.name,
+              onClick: () =>
+                callFormAction({
+                  formSlug: el.slug,
+                  surveySubmission: submission,
+                }),
+              menu: true,
+            }))
           }
         />
 
@@ -218,24 +185,6 @@ export const SubmissionDetailsContainer = ({
           </div>
         )}
       </div>
-      {discussionsEnabled &&
-        submission &&
-        asideOpen && (
-          <Aside
-            title="Discussions"
-            toggle={() => toggleAsideOpen(false)}
-            className="p-0"
-          >
-            <DiscussionsPanel
-              creationFields={creationFields}
-              CreationForm={CreationForm}
-              itemType="Submission"
-              itemKey={submission.id}
-              me={profile}
-              overrideClassName="page-panel--discussions"
-            />
-          </Aside>
-        )}
     </div>
   );
 
@@ -245,7 +194,6 @@ const mapStateToProps = state => ({
   formActions: state.surveyApp.formActions,
   submission: state.surveys.submission,
   submissionError: state.surveys.submissionError,
-  discussionsEnabled: selectDiscussionsEnabled(state),
   profile: state.app.profile,
 });
 
@@ -261,12 +209,7 @@ export const SubmissionDetails = compose(
   ),
   withProps(props => ({
     form: props.forms && props.forms.find(form => form.slug === props.slug),
-    creationFields: props.submission && {
-      title: props.submission.label || 'Survey Submission Discussion',
-      description: props.submission.form.name || '',
-    },
   })),
-  withState('asideOpen', 'toggleAsideOpen', false),
   lifecycle({
     componentWillMount() {
       this.props.fetchSubmissionRequest({
