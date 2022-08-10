@@ -16,7 +16,6 @@ import RequestInterceptor from './components/common/authentication/RequestInterc
 export * from './apis';
 export * from './components';
 export * from './helpers';
-export * from './models';
 
 const requestInterceptor = new RequestInterceptor(store);
 export const authInterceptor = new AuthInterceptor(
@@ -46,7 +45,6 @@ export const KineticLib = props => (
         >
           {typeof props.children === 'function' ? (
             <AuthenticationContainer
-              noSocket={props.noSocket}
               skipInit={props.skipInit}
               system={props.system}
             >

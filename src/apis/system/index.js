@@ -274,9 +274,7 @@ export const updateSystemFilestore = (options = {}) => {
 const VALID_RESTARTABLE_COMPONENTS = [
   'agent',
   'core',
-  'discussions',
   'loghub',
-  'topics',
   'indexer',
 ];
 export const postPlatformComponentRestart = (options = {}) => {

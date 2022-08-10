@@ -36,15 +36,8 @@ export * from './core/webhooks';
 export * from './core/webhooksJobs';
 export * from './core/workflows';
 
-// Discussions
-export * from './discussions';
-
 // Http
 export { generateCESearchParams } from './http';
-
-// Topics
-export { socket } from './socket';
-export * from './topics';
 
 // Task
 export * from './task';

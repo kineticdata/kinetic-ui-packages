@@ -57,11 +57,6 @@ const handleSubmit = () => values =>
   });
 
 const securityEndpoints = {
-  discussionCreation: {
-    endpoint: 'Discussion Creation',
-    label: 'Discussion Creation',
-    types: ['Space'],
-  },
   spaceDisplay: {
     endpoint: 'Display',
     label: 'Space Display',

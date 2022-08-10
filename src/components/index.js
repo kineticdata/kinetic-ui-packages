@@ -53,14 +53,6 @@ export {
 } from './task/builder/builder.redux';
 export { searchNodeResultDependencies } from './task/builder/helpers';
 
-// Discussions
-export { Discussion } from './discussions/Discussion';
-export { DateBanner } from './discussions/DateBanner';
-export { DiscussionForm } from './discussions/DiscussionForm';
-export { InvitationForm } from './discussions/InvitationForm';
-export { MessageHistory } from './discussions/MessageHistory';
-export { UserMessageGroup } from './discussions/UserMessageGroup';
-
 // Agent
 export { BridgeTable } from './agent/bridge/BridgeTable';
 export { BridgeForm } from './agent/bridge/BridgeForm';
