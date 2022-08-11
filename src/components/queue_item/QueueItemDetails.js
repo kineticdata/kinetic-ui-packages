@@ -258,7 +258,10 @@ export const mapDispatchToProps = {
 };
 
 export const QueueItemDetailsContainer = compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   withProps(({ queueItem }) => {
     const prohibit = getAttr(queueItem.form, 'Prohibit Subtasks');
     const permitted = getAttr(queueItem.form, 'Permitted Subtasks');
@@ -267,8 +270,10 @@ export const QueueItemDetailsContainer = compose(
       permittedSubtasks: permitted && permitted.split(/\s*,\s*/),
     };
   }),
-  withState('currentTab', 'setCurrentTab', props =>
-    !props.prohibitSubtasks ? 'subtasks' : 'discussions',
+  withState(
+    'currentTab',
+    'setCurrentTab',
+    props => (!props.prohibitSubtasks ? 'subtasks' : 'discussions'),
   ),
   withState('isAssigning', 'setIsAssigning', false),
   withHandlers({
@@ -277,8 +282,9 @@ export const QueueItemDetailsContainer = compose(
         .filter(filter => ['Mine', 'Unassigned'].includes(filter.name))
         // Refetch current filters count if it isn't the Mine or Unassigned defaults
         .concat(
-          filter.type === 'default' &&
-            ['Mine', 'Unassigned'].includes(filter.name)
+          !filter ||
+          (filter.type === 'default' &&
+            ['Mine', 'Unassigned'].includes(filter.name))
             ? []
             : [filter],
         )
