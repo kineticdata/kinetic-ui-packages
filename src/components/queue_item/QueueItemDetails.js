@@ -88,24 +88,22 @@ export const QueueItemDetails = ({
       {!prohibitSubtasks && (
         <div className="mb-5">
           <ul className="nav nav-tabs" role="tablist">
-            {!prohibitSubtasks && (
-              <li
-                role="tab"
-                className="nav-item"
-                id="subtasks-tab"
-                aria-controls="subtasks-tabpanel"
-                aria-selected={currentTab === 'subtasks'}
+            <li
+              role="tab"
+              className="nav-item"
+              id="subtasks-tab"
+              aria-controls="subtasks-tabpanel"
+              aria-selected={currentTab === 'subtasks'}
+            >
+              <button
+                onClick={toggleCurrentTab('subtasks')}
+                className={classNames('nav-link', {
+                  active: currentTab === 'subtasks',
+                })}
               >
-                <button
-                  onClick={toggleCurrentTab('subtasks')}
-                  className={classNames('nav-link', {
-                    active: currentTab === 'subtasks',
-                  })}
-                >
-                  <I18n>Subtasks</I18n>
-                </button>
-              </li>
-            )}
+                <I18n>Subtasks</I18n>
+              </button>
+            </li>
           </ul>
 
           <div
