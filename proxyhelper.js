@@ -125,7 +125,9 @@ const getProxyConfig = (
   const mainPaths = [
     '**',
     '!/',
+    '!/favicon.ico',
     '!/index.html',
+    '!/images/**',
     '!/static/**',
     '!/sockjs-node',
   ];
