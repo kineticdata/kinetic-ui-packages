@@ -1,3 +1,4 @@
+const proxy = require('http-proxy-middleware');
 const removeSecure = cookie => cookie.replace(/;\s*Secure/i, '');
 const removeSameSiteNone = cookie => cookie.replace(/;\s*SameSite=None/i, '');
 
@@ -59,53 +60,107 @@ const defaultProxyLogger = ({
   }
 };
 
-module.exports = (
-  target = process.env.REACT_APP_PROXY_HOST,
-  { proxyLogger } = {},
-) => ({
-  target,
-  secure: true,
-  changeOrigin: true,
-  ws: true,
-  onProxyReq: (proxyRequest, originalRequest) => {
-    // Browsers may send Origin headers even with same-origin
-    // requests. To prevent CORS issues, we have to change
-    // the Origin to match the target URL.
-    if (proxyRequest.getHeader('origin')) {
-      proxyRequest.setHeader('origin', target);
-    }
+const setupProxy = ({
+                      target = process.env.REACT_APP_PROXY_HOST,
+                      proxyLogger,
+                      pathRewrite,
+                    } = {}) => {
+  return {
+    target,
+    secure: false,
+    pathRewrite,
+    changeOrigin: true,
+    onProxyReq: (proxyRequest, originalRequest) => {
+      // Browsers may send Origin headers even with same-origin
+      // requests. To prevent CORS issues, we have to change
+      // the Origin to match the target URL.
+      if (proxyRequest.getHeader('origin')) {
+        proxyRequest.setHeader('origin', target);
+      }
 
-    if (
-      process.env.REACT_APP_PROXY_SUBDOMAIN &&
-      (!proxyRequest.path.endsWith('pack') &&
-        !proxyRequest.path.endsWith('favicon.ico'))
-    ) {
-      proxyRequest.setHeader(
-        'X-Kinetic-Subdomain',
-        process.env.REACT_APP_PROXY_SUBDOMAIN,
-      );
-      proxyRequest.path =
-        '/' + process.env.REACT_APP_PROXY_SUBDOMAIN + proxyRequest.path;
-    }
+      if (
+        process.env.REACT_APP_PROXY_SUBDOMAIN &&
+        !proxyRequest.path.endsWith('pack') &&
+        !proxyRequest.path.endsWith('favicon.ico')
+      ) {
+        proxyRequest.setHeader(
+          'X-Kinetic-Subdomain',
+          process.env.REACT_APP_PROXY_SUBDOMAIN,
+        );
+        proxyRequest.path =
+          '/' + process.env.REACT_APP_PROXY_SUBDOMAIN + proxyRequest.path;
+      }
 
-    if (process.env.PROXY_DEBUGGING)
-      (proxyLogger || defaultProxyLogger)({
-        proxyRequest,
-        originalRequest,
-      });
-  },
-  onProxyRes: (proxyResponse, originalRequest) => {
-    if (process.env.PROXY_DEBUGGING)
-      (proxyLogger || defaultProxyLogger)({
-        proxyResponse,
-        originalRequest,
-      });
+      if (process.env.PROXY_DEBUGGING)
+        (proxyLogger || defaultProxyLogger)({
+          proxyRequest,
+          originalRequest,
+        });
+    },
+    onProxyRes: (proxyResponse, originalRequest) => {
+      if (process.env.PROXY_DEBUGGING)
+        (proxyLogger || defaultProxyLogger)({
+          proxyResponse,
+          originalRequest,
+        });
 
-    const setCookie = proxyResponse.headers['set-cookie'];
-    if (setCookie && originalRequest.protocol === 'http') {
-      proxyResponse.headers['set-cookie'] = Array.isArray(setCookie)
-        ? setCookie.map(removeSecure).map(removeSameSiteNone)
-        : removeSameSiteNone(removeSecure(setCookie));
-    }
-  },
-});
+      const setCookie = proxyResponse.headers['set-cookie'];
+      if (setCookie && originalRequest.protocol === 'http') {
+        proxyResponse.headers['set-cookie'] = Array.isArray(setCookie)
+          ? setCookie.map(removeSecure).map(removeSameSiteNone)
+          : removeSameSiteNone(removeSecure(setCookie));
+      }
+    },
+  };
+};
+
+const getProxyConfig = (
+  app,
+  {
+    mainTarget = process.env.REACT_APP_PROXY_HOST,
+    loghubTarget = process.env.REACT_APP_LOGHUB_PROXY_HOST,
+    proxyLogger,
+  } = {},
+) => {
+  const mainPaths = [
+    '**',
+    '!/',
+    '!/index.html',
+    '!/static/**',
+    '!/sockjs-node',
+  ];
+
+  const finalConfigs = [
+    {
+      paths: mainPaths,
+      options: setupProxy({ target: mainTarget, proxyLogger }),
+    },
+  ];
+
+  if (loghubTarget) {
+    // If we're overriding the underlying Loghub host, bypass it in the main.
+    mainPaths.push('!/app/loghub/**');
+    const options = setupProxy({
+      target: loghubTarget,
+      proxyLogger,
+      pathRewrite: {
+        '^/app/loghub': '/app',
+      },
+    });
+    finalConfigs.push({ paths: ['/app/loghub/**'], options });
+  }
+
+  return finalConfigs.map(config => {
+    config.proxy = ({
+      paths = config.paths,
+      options = config.options,
+    } = {}) => {
+      app.use(proxy(paths, options));
+    };
+    return config;
+  });
+};
+
+setupProxy.getProxyConfig = getProxyConfig;
+
+module.exports = setupProxy;
