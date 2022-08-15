@@ -32,6 +32,7 @@ const TableComponent = props => {
       tableKey,
       filterFormKey,
       count,
+      extraData,
     } = props;
     const table = buildTable(props);
     const filter = components.FilterForm
@@ -51,6 +52,7 @@ const TableComponent = props => {
       rows,
       count,
       error,
+      extraData,
     });
   }
   return null;
@@ -276,6 +278,7 @@ const buildPaginationControl = props => {
     components,
     loading,
     renderOptions,
+    extraData,
   } = props;
   const PaginationControl = components.PaginationControl;
   const prevPage = hasPrevPage(
@@ -323,6 +326,7 @@ const buildPaginationControl = props => {
       count={count}
       renderOptions={renderOptions}
       tableOptions={tableOptions}
+      extraData={extraData}
     />
   );
 };
@@ -346,6 +350,7 @@ export const buildTable = props => {
       empty={props.rows.isEmpty()}
       renderOptions={props.renderOptions}
       tableOptions={props.tableOptions}
+      extraData={props.extraData}
     />
   );
 };
@@ -483,6 +488,7 @@ export const buildTableBodyCells = (props, row, rowIndex) => {
     appliedFilters,
     renderOptions,
     tableOptions,
+    extraData,
   } = props;
 
   return fromColumnSet(columns, columnSet).map((column, index) => {
@@ -506,6 +512,7 @@ export const buildTableBodyCells = (props, row, rowIndex) => {
           filters={appliedFilters}
           renderOptions={renderOptions}
           tableOptions={tableOptions}
+          extraData={extraData}
         />
       </KeyWrapper>
     );

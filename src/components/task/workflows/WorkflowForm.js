@@ -80,6 +80,7 @@ const fields = ({ name, workflow, workflowType }) => ({ categories }) =>
           : '',
       helpText:
         'The application that is calling and getting the results back from the workflow.',
+      visible: !workflow || !workflow.get('event'),
     },
     {
       name: 'sourceGroup',
@@ -100,6 +101,16 @@ const fields = ({ name, workflow, workflowType }) => ({ categories }) =>
           : '',
       helpText:
         "Categorization of the workflow based on rules provided by the Source. For Request CE it's the combination of the type (submission of form), Kapp Slug and the Form Slug separated by a greater than sign ( > ). Example: Submissions > services > onboarding.",
+      visible: !workflow || !workflow.get('event'),
+    },
+    {
+      name: 'event',
+      label: 'Event',
+      type: 'text',
+      initialValue: workflow ? workflow.get('event') : '',
+      required: workflow && !!workflow.get('event'),
+      visible: workflow && !!workflow.get('event'),
+      enabled: false,
     },
     {
       name: 'name',

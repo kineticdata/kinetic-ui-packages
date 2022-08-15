@@ -49,12 +49,19 @@ export const fetchTrees = (options = {}) =>
     .catch(handleErrors);
 
 export const fetchTree = (options = {}) => {
-  validateOptions('fetchTree', ['name'], options);
-  const id = buildTreeId(options);
+  if (!options.guid) {
+    validateOptions('fetchTree', ['name'], options);
+  }
 
   return axios
     .get(
-      `${bundle.spaceLocation()}/app/components/task/app/api/v2/trees/${id}`,
+      options.guid
+        ? `${bundle.spaceLocation()}/app/components/task/app/api/v2/trees/guid/${
+            options.guid
+          }`
+        : `${bundle.spaceLocation()}/app/components/task/app/api/v2/trees/${buildTreeId(
+            options,
+          )}`,
       {
         params: {
           include: options.include,

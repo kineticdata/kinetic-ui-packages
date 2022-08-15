@@ -182,6 +182,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                 dataSource={[Function]}
                 dispatch={[Function]}
                 error={null}
+                extraData={null}
                 filterForm={false}
                 filterFormKey="mock-table-key.filter-form"
                 filters={Immutable.Map {}}
@@ -272,6 +273,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                   dataSource={[Function]}
                   dispatch={[Function]}
                   error={null}
+                  extraData={null}
                   filterForm={false}
                   filterFormKey="mock-table-key.filter-form"
                   filters={Immutable.Map {}}
@@ -305,6 +307,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                   <TableViewMock
                     appliedFilters={Immutable.Map {}}
                     error={null}
+                    extraData={null}
                     filter={
                       <FilterLayout
                         appliedFilters={Immutable.Map {}}
@@ -327,6 +330,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                     pagination={
                       <PaginationControl
                         endIndex={1}
+                        extraData={null}
                         filterFormKey="mock-table-key.filter-form"
                         gotoPage={[Function]}
                         loading={false}
@@ -376,6 +380,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                         }
                         empty={false}
                         error={null}
+                        extraData={null}
                         filterFormKey="mock-table-key.filter-form"
                         footer={null}
                         header={
@@ -444,6 +449,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                       }
                       empty={false}
                       error={null}
+                      extraData={null}
                       filterFormKey="mock-table-key.filter-form"
                       footer={null}
                       header={
@@ -577,6 +583,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                     </TableLayout>
                     <PaginationControl
                       endIndex={1}
+                      extraData={null}
                       filterFormKey="mock-table-key.filter-form"
                       gotoPage={[Function]}
                       loading={false}
@@ -1029,6 +1036,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                 dataSource={[Function]}
                 dispatch={[Function]}
                 error={null}
+                extraData={null}
                 filterForm={false}
                 filterFormKey="mock-table-key.filter-form"
                 filters={
@@ -1214,6 +1222,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                   dataSource={[Function]}
                   dispatch={[Function]}
                   error={null}
+                  extraData={null}
                   filterForm={false}
                   filterFormKey="mock-table-key.filter-form"
                   filters={
@@ -1295,6 +1304,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                       }
                     }
                     error={null}
+                    extraData={null}
                     filter={
                       <FilterLayout
                         appliedFilters={
@@ -1429,6 +1439,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                     pagination={
                       <PaginationControl
                         endIndex={1}
+                        extraData={null}
                         filterFormKey="mock-table-key.filter-form"
                         gotoPage={[Function]}
                         loading={false}
@@ -1473,6 +1484,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                                 },
                                               }
                                             }
+                                            extraData={null}
                                             filters={
                                               Immutable.Map {
                                                 "name": Immutable.Map {
@@ -1529,6 +1541,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                                 "type": "text",
                                               }
                                             }
+                                            extraData={null}
                                             filters={
                                               Immutable.Map {
                                                 "name": Immutable.Map {
@@ -1587,6 +1600,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                                 "options": [Function],
                                               }
                                             }
+                                            extraData={null}
                                             filters={
                                               Immutable.Map {
                                                 "name": Immutable.Map {
@@ -1677,6 +1691,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                         }
                         empty={false}
                         error={null}
+                        extraData={null}
                         filterFormKey="mock-table-key.filter-form"
                         footer={null}
                         header={
@@ -1843,6 +1858,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               },
                                             }
                                           }
+                                          extraData={null}
                                           filters={
                                             Immutable.Map {
                                               "name": Immutable.Map {
@@ -1899,6 +1915,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               "type": "text",
                                             }
                                           }
+                                          extraData={null}
                                           filters={
                                             Immutable.Map {
                                               "name": Immutable.Map {
@@ -1957,6 +1974,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               "options": [Function],
                                             }
                                           }
+                                          extraData={null}
                                           filters={
                                             Immutable.Map {
                                               "name": Immutable.Map {
@@ -2047,6 +2065,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                       }
                       empty={false}
                       error={null}
+                      extraData={null}
                       filterFormKey="mock-table-key.filter-form"
                       footer={null}
                       header={
@@ -2629,6 +2648,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               },
                                             }
                                           }
+                                          extraData={null}
                                           filters={
                                             Immutable.Map {
                                               "name": Immutable.Map {
@@ -2685,6 +2705,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               "type": "text",
                                             }
                                           }
+                                          extraData={null}
                                           filters={
                                             Immutable.Map {
                                               "name": Immutable.Map {
@@ -2743,6 +2764,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               "options": [Function],
                                             }
                                           }
+                                          extraData={null}
                                           filters={
                                             Immutable.Map {
                                               "name": Immutable.Map {
@@ -2848,6 +2870,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             },
                                           }
                                         }
+                                        extraData={null}
                                         filters={
                                           Immutable.Map {
                                             "name": Immutable.Map {
@@ -2904,6 +2927,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             "type": "text",
                                           }
                                         }
+                                        extraData={null}
                                         filters={
                                           Immutable.Map {
                                             "name": Immutable.Map {
@@ -2962,6 +2986,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             "options": [Function],
                                           }
                                         }
+                                        extraData={null}
                                         filters={
                                           Immutable.Map {
                                             "name": Immutable.Map {
@@ -3059,6 +3084,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           },
                                         }
                                       }
+                                      extraData={null}
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -3119,6 +3145,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           "type": "text",
                                         }
                                       }
+                                      extraData={null}
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -3183,6 +3210,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           "options": [Function],
                                         }
                                       }
+                                      extraData={null}
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -3242,6 +3270,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                     </TableLayout>
                     <PaginationControl
                       endIndex={1}
+                      extraData={null}
                       filterFormKey="mock-table-key.filter-form"
                       gotoPage={[Function]}
                       loading={false}
