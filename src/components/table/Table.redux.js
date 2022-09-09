@@ -146,7 +146,7 @@ regHandlers({
         columns,
         pageSize = 25,
         defaultSortColumn = null,
-        defaultSortDirection = 'desc',
+        defaultSortDirection = 'asc',
         tableOptions,
         onValidateFilters,
         filterForm,
@@ -268,9 +268,9 @@ regHandlers({
           .set(
             'sortDirection',
             sortColumn === column
-              ? sortDirection === 'desc'
-                ? 'asc'
-                : 'desc'
+              ? sortDirection === 'asc'
+                ? 'desc'
+                : 'asc'
               : 'asc',
           )
           .set('sortColumn', column)
@@ -517,7 +517,7 @@ const applyClientSideFilters = (tableData, data) => {
     .update(
       d => (sortColumn ? d.sortBy(r => r.get(sortColumn.get('value'))) : d),
     )
-    .update(d => (sortDirection === 'asc' ? d.reverse() : d))
+    .update(d => (sortDirection === 'asc' ? d : d.reverse()))
     .update(d => d.slice(startIndex, endIndex));
 };
 
