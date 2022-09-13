@@ -143,6 +143,7 @@ const buildFilterForm = props => {
       fieldSet={props.filterSet}
       onSave={props.onSearch}
       appliedFilters={props.appliedFilters}
+      autoFocus={0}
     />
   );
 };
