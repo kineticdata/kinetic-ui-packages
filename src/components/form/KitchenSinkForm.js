@@ -100,6 +100,87 @@ export const KitchenSinkForm = generateForm({
       helpText: 'This is a checkbox with help text',
     },
     {
+      name: 'checkbox-multi1',
+      type: 'checkbox-multi',
+      label: 'Checkbox Multi 1',
+      options: [
+        {
+          label: 'Circle',
+          value: 'circle',
+        },
+        {
+          label: 'Triangle',
+          value: 'triangle',
+        },
+        {
+          label: 'Square',
+          value: 'square',
+        },
+      ],
+    },
+    {
+      name: 'checkbox-multi2',
+      type: 'checkbox-multi',
+      label: 'Checkbox Multi 2',
+      required: true,
+      options: [
+        {
+          label: 'Circle',
+          value: 'circle',
+        },
+        {
+          label: 'Triangle',
+          value: 'triangle',
+        },
+        {
+          label: 'Square',
+          value: 'square',
+        },
+      ],
+    },
+    {
+      name: 'checkbox-multi3',
+      type: 'checkbox-multi',
+      label: 'Checkbox Multi 3',
+      enabled: false,
+      initialValue: 'triangle',
+      options: [
+        {
+          label: 'Circle',
+          value: 'circle',
+        },
+        {
+          label: 'Triangle',
+          value: 'triangle',
+        },
+        {
+          label: 'Square',
+          value: 'square',
+        },
+      ],
+    },
+    {
+      name: 'checkbox-multi4',
+      type: 'checkbox-multi',
+      label: 'Checkbox Multi 4',
+      helpText: 'Help Text',
+      placeholder: 'Placeholder',
+      options: [
+        {
+          label: 'Circle',
+          value: 'circle',
+        },
+        {
+          label: 'Triangle',
+          value: 'triangle',
+        },
+        {
+          label: 'Square',
+          value: 'square',
+        },
+      ],
+    },
+    {
       name: 'code1',
       type: 'code',
       label: 'Code 1',

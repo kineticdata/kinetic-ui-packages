@@ -126,5 +126,6 @@ export const StaticSelect = props => (
     onFocus={props.onFocus}
     onBlur={props.onBlur}
     placeholder={props.placeholder}
+    id={props.id}
   />
 );

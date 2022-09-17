@@ -96,5 +96,6 @@ export const TeamSelect = props => (
     onFocus={props.onFocus}
     onBlur={props.onBlur}
     placeholder={props.placeholder}
+    id={props.id}
   />
 );

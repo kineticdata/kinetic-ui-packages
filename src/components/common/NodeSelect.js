@@ -45,5 +45,6 @@ export const NodeSelect = props => (
     onHighlight={pair => props.onHighlight(pair && pair.first())}
     onBlur={props.onBlur}
     placeholder={props.placeholder}
+    id={props.id}
   />
 );
