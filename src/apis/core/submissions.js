@@ -340,15 +340,14 @@ export class SubmissionSearch {
 }
 
 export const searchSubmissions = options => {
-  const { kapp, form, search } = options;
+  const { kapp, form, search, get = false } = options;
+  const endpoint = !get ? 'submissions-search' : 'submissions';
+  // Default kapp to 'datastore' if not provided to support deprecated datastore functionality
+  const kappSlug = kapp || 'datastore';
 
-  const path = kapp
-    ? form
-      ? `${bundle.apiLocation()}/kapps/${kapp}/forms/${form}/submissions`
-      : `${bundle.apiLocation()}/kapps/${kapp}/submissions`
-    : form
-      ? `${bundle.apiLocation()}/datastore/forms/${form}/submissions`
-      : `${bundle.apiLocation()}/submissions`;
+  const path = form
+      ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${form}/${endpoint}`
+      : `${bundle.apiLocation()}/kapps/${kappSlug}/${endpoint}`;
 
   const meta = { ...search };
   // Format includes.
@@ -362,11 +361,17 @@ export const searchSubmissions = options => {
   }
 
   // Fetch the submissions.
-  let promise = axios.get(path, {
-    paramsSerializer: params => qs.stringify(params),
-    params: { ...meta, ...paramBuilder(options) },
-    headers: headerBuilder(options),
-  });
+  let promise = !get
+      ? axios.post(
+          path,
+          { ...meta, ...paramBuilder(options) },
+          { headers: headerBuilder(options) },
+      )
+      : axios.get(path, {
+        paramsSerializer: params => qs.stringify(params),
+        params: { ...meta, ...paramBuilder(options) },
+        headers: headerBuilder(options),
+      });
 
   // Remove the response envelop and leave us with the submissions.
   promise = promise.then(response => ({

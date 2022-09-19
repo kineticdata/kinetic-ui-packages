@@ -57,7 +57,7 @@ describe('bridged resource api', () => {
 
     test('datastore form', () => {
       expect(bridgedResourceUrl({ ...options, datastore: true })).toBe(
-        'user/app/datastore/forms/formslug/bridgedResources/Collection',
+        'user/datastore/formslug/bridgedResources/Collection',
       );
     });
 

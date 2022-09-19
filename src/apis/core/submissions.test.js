@@ -324,7 +324,7 @@ describe('#searchSubmissions', () => {
 
       search = new SubmissionSearch().build();
 
-      axios.get = resolvePromiseWith(response);
+      axios.post = resolvePromiseWith(response);
     });
 
     test('does not return errors', () => {
@@ -352,6 +352,34 @@ describe('#searchSubmissions', () => {
     test('does return submissions', () => {
       expect.assertions(2);
       return searchSubmissions({ search }).then(({ submissions }) => {
+        expect(submissions).toBeDefined();
+        expect(submissions).toBeInstanceOf(Array);
+      });
+    });
+  });
+
+  describe('when successful - get', () => {
+    let response;
+    let search;
+
+    beforeEach(() => {
+      response = {
+        status: 200,
+        data: {
+          submissions: [],
+          messages: [],
+          nextPageToken: 'page-token',
+        },
+      };
+
+      search = new SubmissionSearch().build();
+
+      axios.get = resolvePromiseWith(response);
+    });
+
+    test('does return submissions', () => {
+      expect.assertions(2);
+      return searchSubmissions({ search, get: true }).then(({ submissions }) => {
         expect(submissions).toBeDefined();
         expect(submissions).toBeInstanceOf(Array);
       });

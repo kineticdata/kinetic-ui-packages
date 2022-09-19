@@ -34,9 +34,10 @@ export const bridgedResourceUrl = (options, counting = false) => {
   const brn = encodeURIComponent(options.bridgedResourceName);
 
   // build the url
-  let url = datastore
-    ? `${bundle.spaceLocation()}/app/datastore/forms/${formSlug}/bridgedResources/${brn}`
-    : `${bundle.spaceLocation()}/${kappSlug}/${formSlug}/bridgedResources/${brn}`;
+  let url = !datastore
+    ? `${bundle.spaceLocation()}/${kappSlug}/${formSlug}/bridgedResources/${brn}`
+    // Default kapp to 'datastore' if not provided to support deprecated datastore functionality
+    : `${bundle.spaceLocation()}/datastore/${formSlug}/bridgedResources/${brn}`;
   // append any attributes if they were specified
   if (counting) {
     url += '/count';
