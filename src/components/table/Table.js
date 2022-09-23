@@ -143,7 +143,7 @@ const buildFilterForm = props => {
       fieldSet={props.filterSet}
       onSave={props.onSearch}
       appliedFilters={props.appliedFilters}
-      autoFocus={0}
+      autoFocus={props.filterAutoFocus}
     />
   );
 };
@@ -681,6 +681,7 @@ export const generateTable = ({
         .toObject(),
     ),
     filterSet: props.filterSet,
+    filterAutoFocus: props.filterAutoFocus,
     columnSet: props.columnSet,
     pageSize: props.pageSize,
     defaultSortColumn: props.defaultSortColumn,
