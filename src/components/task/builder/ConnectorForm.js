@@ -41,6 +41,7 @@ const fields = ({ connector, tasks, tree }) => ({ bindings }) =>
       label: 'From Node',
       type: 'text',
       enabled: false,
+      visible: false,
       initialValue: connector.tailId,
     },
     {
@@ -48,6 +49,7 @@ const fields = ({ connector, tasks, tree }) => ({ bindings }) =>
       label: 'To Node',
       type: 'text',
       enabled: false,
+      visible: false,
       initialValue: connector.headId,
     },
     {
@@ -55,6 +57,7 @@ const fields = ({ connector, tasks, tree }) => ({ bindings }) =>
       label: 'Id',
       type: 'text',
       enabled: false,
+      visible: false,
       initialValue: connector.id,
     },
   ];

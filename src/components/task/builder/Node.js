@@ -202,6 +202,18 @@ export class Node extends Component {
             onMouseDown={this.drag}
           />
         )}
+        {type !== 'start' && (
+          <rect
+            className="node-text-skeleton low-detail-only"
+            height={12}
+            width={150}
+            x={(constants.NODE_WIDTH - 150) / 2}
+            y={(constants.NODE_HEIGHT - 12) / 2}
+            rx={4}
+            ry={4}
+          />
+        )}
+        />
         <SvgText
           className={classNames('node-name med-detail', type)}
           x={0}
@@ -213,28 +225,44 @@ export class Node extends Component {
           {type === 'junction' ? 'Junction' : type === 'join' ? 'Join' : name}
         </SvgText>
         {isRoutine && (
-          <path d={constants.NODE_LEFT_BAR_PATH} className="routine-bar" />
+          <path
+            d={constants.NODE_LEFT_BAR_PATH}
+            className="routine-bar"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
         )}
         {type === 'loop-head' && (
-          <path d={constants.NODE_BOTTOM_BAR_PATH} className="loop-bar" />
+          <path
+            d={constants.NODE_BOTTOM_BAR_PATH}
+            className="loop-bar"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
         )}
         {type === 'loop-tail' && (
-          <path d={constants.NODE_TOP_BAR_PATH} className="loop-bar" />
+          <path
+            d={constants.NODE_TOP_BAR_PATH}
+            className="loop-bar"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
         )}
         {defers && (
-          <path d={constants.NODE_CORNER_TAB_PATH} className="defers-tab" />
+          <path
+            d={constants.NODE_CORNER_TAB_PATH}
+            className="defers-tab"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
         )}
         <image
           className="high-detail"
           xlinkHref={plusIcon}
           height={constants.ICON_SIZE}
           width={constants.ICON_SIZE}
-          x={
+          x={width - constants.ICON_CENTER}
+          y={
             (type === 'start'
               ? constants.NODE_START_RADIUS
-              : constants.NODE_CENTER_X) - constants.ICON_CENTER
+              : constants.NODE_CENTER_Y) - constants.ICON_CENTER
           }
-          y={height - constants.ICON_CENTER}
           onMouseDown={this.dragPlus}
         />
       </g>

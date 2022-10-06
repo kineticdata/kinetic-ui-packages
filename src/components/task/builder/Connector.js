@@ -273,6 +273,7 @@ export class Connector extends Component {
                   width={constants.ICON_SIZE}
                   rx={constants.CONNECTOR_LABEL_RADIUS}
                   ry={constants.CONNECTOR_LABEL_RADIUS}
+                  strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
                 />
               </g>
             ) : label ? (

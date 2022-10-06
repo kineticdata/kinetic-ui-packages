@@ -13,9 +13,8 @@ import {
   NodeParameter,
   NodeResultDependency,
   NodeMessage,
-  Point,
 } from './models';
-import { NEW_TASK_DX, NEW_TASK_DY, NEW_TASK_GAP_REQUIED } from './constants';
+import { NEW_TASK_DX, NEW_TASK_DY } from './constants';
 
 export const isIE11 = document.documentMode === 11;
 
@@ -411,34 +410,11 @@ export const treeReturnTask = tree => ({
 
 export const getNewNodePosition = (node, childNodes) => {
   if (childNodes.length === 0) {
-    return node.position.update('y', y => y + NEW_TASK_DY);
-  } else if (childNodes.length === 1) {
-    return childNodes[0].position.update('x', x => x + NEW_TASK_DX);
+    return node.position.update('x', x => x + NEW_TASK_DX);
   } else {
-    const sortedChildren = List(childNodes).sortBy(node => node.position.x);
-    const betweenNodes = sortedChildren
-      .skip(2)
-      // build a list of adjacent pairs of nodes
-      .reduce(
-        (reduction, child) => reduction.push([reduction.last()[1], child]),
-        List.of([sortedChildren.first(), sortedChildren.get(1)]),
-      )
-      // filter out pairs of nodes that don't have enough space between them
-      // for a new node
-      .filter(
-        ([left, right]) =>
-          right.position.x - left.position.x >= NEW_TASK_GAP_REQUIED,
-      )
-      // use the first pair of nodes with a large enough space between them
-      .first();
-    if (betweenNodes) {
-      const [left, right] = betweenNodes;
-      return Point({
-        x: (left.position.x + right.position.x) / 2,
-        y: (left.position.y + right.position.y) / 2,
-      });
-    } else {
-      return sortedChildren.last().position.update('x', x => x + NEW_TASK_DX);
-    }
+    const maxChild = List(childNodes)
+      .sortBy(node => node.position.y)
+      .maxBy(node => node.position.y);
+    return maxChild.position.update('y', y => y + NEW_TASK_DY);
   }
 };
