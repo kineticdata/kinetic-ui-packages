@@ -206,7 +206,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                   ]
                 }
                 sortColumn={null}
-                sortDirection="desc"
+                sortDirection="asc"
                 sortable={true}
                 tableKey="mock-table-key"
                 tableOptions={Object {}}
@@ -297,7 +297,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                     ]
                   }
                   sortColumn={null}
-                  sortDirection="desc"
+                  sortDirection="asc"
                   sortable={true}
                   tableKey="mock-table-key"
                   tableOptions={Object {}}
@@ -1084,7 +1084,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                   ]
                 }
                 sortColumn={null}
-                sortDirection="desc"
+                sortDirection="asc"
                 sortable={true}
                 tableKey="mock-table-key"
                 tableOptions={Object {}}
@@ -1270,7 +1270,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                     ]
                   }
                   sortColumn={null}
-                  sortDirection="desc"
+                  sortDirection="asc"
                   sortable={true}
                   tableKey="mock-table-key"
                   tableOptions={Object {}}
