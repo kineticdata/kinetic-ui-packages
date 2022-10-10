@@ -26,7 +26,9 @@ export const handleErrors = error => {
   const type = types[statusCode];
   const { error: errorMessage, errorKey: key = null, message, ...rest } = data;
   const result =
-    headers && !headers['content-type'].startsWith('application/json')
+    headers &&
+    (!headers['content-type'] ||
+      !headers['content-type'].startsWith('application/json'))
       ? { message: 'An unexpected error occurred.', statusCode }
       : statusCode === 503
         ? {
