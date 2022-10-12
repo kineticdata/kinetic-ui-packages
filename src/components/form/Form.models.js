@@ -57,6 +57,7 @@ export const Field = Record({
   errors: List(),
   eventHandlers: Map(),
   focused: false,
+  form: null,
   functions: Map(),
   helpText: '',
   id: '',

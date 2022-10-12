@@ -19,17 +19,17 @@ const getStatusProps = props => ({
   info: props.short
     ? 'Type to find an attribute.'
     : props.pending
-    ? 'Searching…'
-    : null,
+      ? 'Searching…'
+      : null,
   warning:
     props.error || props.empty || props.more
       ? props.error
         ? props.error
         : props.more
-        ? 'Too many results, first 50 shown. Please refine your search.'
-        : props.empty
-        ? 'No matches found.'
-        : null
+          ? 'Too many results, first 50 shown. Please refine your search.'
+          : props.empty
+            ? 'No matches found.'
+            : null
       : null,
 });
 
@@ -46,5 +46,6 @@ export const AttributeSelect = props => (
     onBlur={props.onBlur}
     placeholder={props.placeholder}
     id={props.id}
+    form={props.form}
   />
 );

@@ -103,5 +103,6 @@ export const UserSelect = props => (
     onBlur={props.onBlur}
     placeholder={props.placeholder}
     id={props.id}
+    form={props.form}
   />
 );
