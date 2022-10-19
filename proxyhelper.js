@@ -130,6 +130,8 @@ const getProxyConfig = (
     '!/images/**',
     '!/static/**',
     '!/sockjs-node',
+    '!/manifest.json',
+    '!/*.hot-update.js*',
   ];
 
   const finalConfigs = [
