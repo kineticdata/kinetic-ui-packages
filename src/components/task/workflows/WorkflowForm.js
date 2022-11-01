@@ -2,7 +2,6 @@ import React from 'react';
 import {
   fetchSources,
   fetchSource,
-  updateTree,
   createTree,
   fetchTaskCategories,
 } from '../../../apis';

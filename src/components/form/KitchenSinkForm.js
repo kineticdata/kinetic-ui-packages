@@ -671,7 +671,7 @@ export const KitchenSinkForm = generateForm({
       type: 'select-multi',
       label: 'Select Multi 3',
       enabled: false,
-      initialValue: ['circle', 'triangle'],
+      // initialValue: ['circle', 'triangle'],
       options: [
         {
           label: 'Circle',
