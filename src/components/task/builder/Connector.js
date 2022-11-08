@@ -171,6 +171,7 @@ export class Connector extends Component {
    ****************************************************************************/
 
   draw = () => {
+    this.connector.current.parentElement.style.display = '';
     const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = getRectIntersections(this);
     const dx = x2 - x1;
     const dy = y2 - y1;
@@ -231,6 +232,7 @@ export class Connector extends Component {
           create: type === 'Create',
           update: type === 'Update',
         })}
+        style={{ display: 'none' }}
       >
         <g ref={this.connector}>
           <line

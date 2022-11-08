@@ -17,14 +17,15 @@ export class SvgCanvas extends Component {
 
   watchDrag = ({
     event,
+    nativeEvent,
     onClick,
     onMove,
     onDrop,
     scaled = true,
     relative = true,
   }) => {
-    event.preventDefault();
-    event.stopPropagation();
+    event && event.preventDefault();
+    event && event.stopPropagation();
     // boolean to prevent race condition where onMove could be called after
     // onDrop was called
     let dragging = false;
@@ -36,8 +37,8 @@ export class SvgCanvas extends Component {
     let dragged = false;
     // for relative mode, track the last x and y positions so we can pass the
     // deltas to onMove
-    let lastX = event.nativeEvent.clientX;
-    let lastY = event.nativeEvent.clientY;
+    let lastX = event ? event.nativeEvent.clientX : nativeEvent.clientX;
+    let lastY = event ? event.nativeEvent.clientY : nativeEvent.clientY;
     // for non-relative mode we want to calculate the virtual position in the
     // canvas, to do this we need to subtract the offsets below from the client
     // position (this is because offsetX and offsetY can't be trusted in IE).

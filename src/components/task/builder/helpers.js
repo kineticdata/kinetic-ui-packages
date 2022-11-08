@@ -194,18 +194,20 @@ export const buildBindings = (tree, tasks, node) => {
 // should be called with a task definition, then it stubs out a node and
 // connector and passes a complete function which should be called with the
 // fully configured node and connector
-export const addNewTask = (treeKey, tree, parent, position) => ({
+export const addNewTask = (treeKey, tree, parent, position, reset) => ({
+  cancel: reset,
   tree: tree,
   selectCloneNode: cloneNode =>
-    addNewTaskNext({ cloneNode, parent, tree, treeKey }),
+    addNewTaskNext({ cloneNode, position, parent, reset, tree, treeKey }),
   selectTaskDefinition: task =>
-    addNewTaskNext({ parent, position, task, tree, treeKey }),
+    addNewTaskNext({ parent, position, reset, task, tree, treeKey }),
 });
 
 const addNewTaskNext = ({
   cloneNode,
   parent,
   position,
+  reset,
   task,
   tree,
   treeKey,
@@ -252,10 +254,12 @@ const addNewTaskNext = ({
   // called with the final connector and node records that are to be added to
   // the tree and persisted
   return {
+    cancel: reset,
     connector,
     node,
     stagedTree,
     complete: ({ connector, node }) => {
+      reset();
       return dispatch('TREE_UPDATE', {
         treeKey,
         tree: stagedTree
