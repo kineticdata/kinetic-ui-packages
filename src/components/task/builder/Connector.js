@@ -290,7 +290,7 @@ export class Connector extends Component {
                   ry={constants.CONNECTOR_LABEL_RADIUS}
                 />
                 <SvgText
-                  className="connector-label med-detail"
+                  className="connector-label high-detail"
                   x={-constants.CONNECTOR_LABEL_CENTER_X}
                   y={-constants.CONNECTOR_LABEL_CENTER_Y}
                   width={constants.CONNECTOR_LABEL_WIDTH}
