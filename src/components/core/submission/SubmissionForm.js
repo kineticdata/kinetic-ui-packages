@@ -1,7 +1,44 @@
+import React from 'react';
 import { List, getIn } from 'immutable';
+import { FieldWrapper, FormUtils } from '@kineticdata/ui';
 import { fetchSubmission, updateSubmission } from '../../../apis';
 import { generateForm } from '../../form/Form';
+import classNames from 'classnames';
 import moment from 'moment';
+
+// Custom renderer for attachment fields to show the JSON content, but prevent
+// editing. Make JSON more readable since this field is always disabled.
+const AttachmentField = props => {
+  const renderOptions = FormUtils.parseRenderOptions(props);
+  const valueSize = List.isList(props.value) ? props.value.size : 0;
+  const value = List.isList(props.value)
+    ? JSON.stringify(props.value, null, 4)
+    : props.value;
+  return (
+    <FieldWrapper {...props} renderOptions={renderOptions}>
+      <textarea
+        ref={props.focusRef}
+        rows={valueSize > 0 ? 8 : 1}
+        cols={props.cols}
+        className={classNames('form-control', {
+          'form-control-sm': renderOptions.size === 'sm',
+          'is-invalid': renderOptions.hasErrors,
+          'has-btn': renderOptions.hasClear && !!props.value,
+          'is-empty': !props.value,
+        })}
+        id={props.id || props.name}
+        name={props.name}
+        value={value}
+        onBlur={props.onBlur}
+        onChange={props.onChange}
+        onFocus={props.onFocus}
+        placeholder={renderOptions.placeholder}
+        disabled={!props.enabled}
+        form={props.form}
+      />
+    </FieldWrapper>
+  );
+};
 
 const dataSources = ({ submissionId }) => ({
   submission: {
@@ -56,22 +93,21 @@ const convertRenderType = element => {
 
 const getInitialValue = (submission, element, type) => {
   const name = element.get('name');
-  const isAttachment = element.get('renderType') === 'attachment';
 
   const value =
     getIn(
       submission,
       ['values', name],
-      element.get('renderType') === 'checkbox' ? List() : '',
+      ['checkbox', 'attachment'].includes(element.get('renderType'))
+        ? List()
+        : '',
     ) || '';
 
-  return isAttachment
-    ? JSON.stringify(List.isList(value) ? value.toJS() : value)
-    : type === 'datetime'
-      ? moment(value).format('yyyy-MM-DDThh:mm')
-      : type === 'date'
-        ? moment(value).format('yyyy-MM-DD')
-        : value;
+  return type === 'datetime'
+    ? moment(value).format('yyyy-MM-DDThh:mm')
+    : type === 'date'
+      ? moment(value).format('yyyy-MM-DD')
+      : value;
 };
 
 const serializer = (element, type) => ({ values }) => {
@@ -108,6 +144,7 @@ const fields = () => ({ submission }) => {
               initialValue,
               enabled: !isAttachment,
               transient: isAttachment,
+              component: isAttachment ? AttachmentField : undefined,
               serialize: serializer(element, type),
             })
           : values;
