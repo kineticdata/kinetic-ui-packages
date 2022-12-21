@@ -103,9 +103,9 @@ const getInitialValue = (submission, element, type) => {
         : '',
     ) || '';
 
-  return type === 'datetime'
+  return type === 'datetime' && value
     ? moment(value).format('yyyy-MM-DDThh:mm')
-    : type === 'date'
+    : type === 'date' && value
       ? moment(value).format('yyyy-MM-DD')
       : value;
 };
@@ -113,7 +113,7 @@ const getInitialValue = (submission, element, type) => {
 const serializer = (element, type) => ({ values }) => {
   const name = element.get('name');
 
-  return type === 'datetime'
+  return type === 'datetime' && values.get(name)
     ? moment(values.get(name)).format()
     : values.get(name);
 };
