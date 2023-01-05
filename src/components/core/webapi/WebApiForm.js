@@ -74,7 +74,7 @@ const handleSubmit = ({ slug, kappSlug, webApi }) => async values => {
   }
 };
 
-const fields = ({ webApi }) => ({ securityPolicyDefinitions }) =>
+const fields = ({ webApi, tree }) => ({ securityPolicyDefinitions }) =>
   securityPolicyDefinitions && [
     {
       name: 'slug',
@@ -143,10 +143,17 @@ const fields = ({ webApi }) => ({ securityPolicyDefinitions }) =>
           .toList(),
       initialValue: get(webApi, 'securityPolicies'),
     },
+    {
+      name: 'ownerEmail',
+      label: 'Process Owner Email',
+      type: 'text',
+      required: false,
+      initialValue: get(tree, 'ownerEmail') || '',
+    },
   ];
 
 export const WebApiForm = generateForm({
-  formOptions: ['kappSlug', 'slug', 'webApi'],
+  formOptions: ['kappSlug', 'slug', 'webApi', 'tree'],
   dataSources,
   fields,
   handleSubmit,

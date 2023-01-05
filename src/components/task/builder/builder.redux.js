@@ -408,7 +408,8 @@ regHandlers({
   TREE_UPDATE_WEB_API: (state, { payload: { treeKey, values } }) =>
     remember(state, treeKey)
       .mergeIn(['trees', treeKey, 'webApi'], values)
-      .setIn(['trees', treeKey, 'tree', 'name'], values.slug),
+      .setIn(['trees', treeKey, 'tree', 'name'], values.slug)
+      .setIn(['trees', treeKey, 'tree', 'ownerEmail'], values.ownerEmail),
 });
 
 const synchronizeRoutineDefinition = treeBuilderState => {
