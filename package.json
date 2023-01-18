@@ -2,7 +2,6 @@
   "name": "@kineticdata/bundle-tech-bar",
   "version": "5.1.2",
   "main": "./lib/index.js",
-  "main:src": "./src/index.js",
   "files": [
     "assets",
     "lib"
@@ -12,7 +11,7 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production babel src --out-dir lib",
-    "lint": "eslint src --ext .js",
+    "lint": "cross-env NODE_ENV=production eslint src --ext .js",
     "preversion": "yarn lint",
     "prepublishOnly": "yarn build"
   },
@@ -42,11 +41,6 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
   },
-  "devDependencies": {
-    "@babel/cli": "^7.10.3",
-    "@react-workspaces/react-scripts": "^3.4.0-alpha-01",
-    "cross-env": "^7.0.2"
-  },
   "babel": {
     "presets": [
       [
@@ -56,8 +50,5 @@
         }
       ]
     ]
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   }
 }
