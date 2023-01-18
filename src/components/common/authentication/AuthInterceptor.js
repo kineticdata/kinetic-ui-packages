@@ -54,9 +54,6 @@ export default class AuthInterceptor {
     ) {
       if (!this.authPromise) {
         this.authPromise = this.authenticate();
-        this.authPromise.finally(() => {
-          this.authPromise = null;
-        });
       }
       return new Promise((resolve, reject) => {
         this.authPromise
@@ -67,6 +64,9 @@ export default class AuthInterceptor {
           })
           .catch(() => {
             reject(error);
+          })
+          .finally(() => {
+            this.authPromise = null;
           });
       });
     } else {

@@ -1,4 +1,4 @@
-const proxy = require('http-proxy-middleware');
+const { createProxyMiddleware: proxy } = require('http-proxy-middleware');
 const removeSecure = cookie => cookie.replace(/;\s*Secure/i, '');
 const removeSameSiteNone = cookie => cookie.replace(/;\s*SameSite=None/i, '');
 
@@ -61,10 +61,10 @@ const defaultProxyLogger = ({
 };
 
 const setupProxy = ({
-                      target = process.env.REACT_APP_PROXY_HOST,
-                      proxyLogger,
-                      pathRewrite,
-                    } = {}) => {
+  target = process.env.REACT_APP_PROXY_HOST,
+  proxyLogger,
+  pathRewrite,
+} = {}) => {
   return {
     target,
     secure: false,

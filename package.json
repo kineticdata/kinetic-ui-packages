@@ -3,7 +3,6 @@
   "version": "5.1.2",
   "description": "A React library for the Kinetic Platform",
   "main": "lib/index.js",
-  "main:src": "src/index.js",
   "files": [
     "assets",
     "lib",
@@ -14,7 +13,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "eslint src --ext .js",
+    "lint": "cross-env NODE_ENV=production eslint src --ext .js",
     "preversion": "yarn lint",
     "prepublishOnly": "yarn build"
   },
@@ -25,7 +24,6 @@
     "draft-js": "^0.11.0",
     "history": "^4.9.0",
     "immutable": "4.0.0-rc.9",
-    "jest-immutable-matchers": "^2.0.1",
     "kld-intersections": "^0.7.0",
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15",
@@ -48,24 +46,6 @@
   "peerDependencies": {
     "react": "16.x"
   },
-  "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@react-workspaces/react-scripts": "^3.4.0-alpha-01",
-    "@types/jest": "^25.2.1",
-    "babel-polyfill": "^6.26.0",
-    "cross-env": "^5.2.0",
-    "enzyme": "^3.9.0",
-    "enzyme-adapter-react-16": "^1.9.1",
-    "enzyme-to-json": "^3.3.5",
-    "faker": "^4.1.0",
-    "jest-websocket-mock": "^2.0.2",
-    "mock-socket": "^9.0.3",
-    "react-addons-test-utils": "^15.6.2",
-    "stylelint": "^10.1.0",
-    "stylelint-config-rational-order": "^0.1.2",
-    "stylelint-order": "^3.0.1",
-    "wait-for-expect": "^3.0.2"
-  },
   "author": "Kinetic Data, Inc",
   "homepage": "https://kineticdata.github.io/react-kinetic-lib",
   "license": "MIT",
@@ -87,8 +67,5 @@
         }
       ]
     ]
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   }
 }
