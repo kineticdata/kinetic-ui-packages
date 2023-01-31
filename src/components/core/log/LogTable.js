@@ -58,6 +58,7 @@ const dataSource = () => ({
         nextPageToken: paramData.nextPageToken,
         start,
         end,
+        tail: true,
       },
     ];
     return fetchParams;
