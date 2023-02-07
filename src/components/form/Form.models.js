@@ -38,6 +38,8 @@ export const FIELD_DEFAULT_VALUES = Map({
   attributes: Map(),
   checkbox: false,
   'checkbox-multi': List(),
+  file: List(),
+  'file-multi': List(),
   form: null,
   'form-multi': List(),
   map: OrderedMap(),
