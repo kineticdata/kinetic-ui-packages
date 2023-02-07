@@ -1,13 +1,18 @@
 import React from 'react';
 import { List, getIn } from 'immutable';
-import { fetchSubmission, updateSubmission } from '../../../apis';
+import {
+  createSubmission,
+  fetchForm,
+  fetchSubmission,
+  updateSubmission,
+} from '../../../apis';
 import { generateForm } from '../../form/Form';
 import moment from 'moment';
 
-const dataSources = ({ submissionId }) => ({
+const dataSources = ({ kappSlug, formSlug, submissionId }) => ({
   submission: {
     fn: fetchSubmission,
-    params: [
+    params: submissionId && [
       {
         id: submissionId,
         include:
@@ -16,18 +21,36 @@ const dataSources = ({ submissionId }) => ({
     ],
     transform: result => result.submission,
   },
+  form: {
+    fn: fetchForm,
+    params: kappSlug &&
+      formSlug && [
+        {
+          kappSlug,
+          formSlug,
+          include: 'pages',
+        },
+      ],
+    transform: result => result.form,
+  },
+  pages: {
+    fn: form => form.get('pages'),
+    params: ({ form, submission }) =>
+      submission ? [submission.get('form')] : form ? [form] : null,
+  },
 });
 
-const handleSubmit = ({ submissionId: id }) => values =>
-  updateSubmission({ id, values: values.toJS() }).then(
-    ({ submission, error }) => {
-      if (error) {
-        throw (error.statusCode === 400 && error.message) ||
-          'There was an error saving the submission';
-      }
-      return submission;
-    },
-  );
+const handleSubmit = ({ kappSlug, formSlug, submissionId: id }) => values =>
+  (id
+    ? updateSubmission({ id, values: values.toJS() })
+    : createSubmission({ kappSlug, formSlug, values: values.toJS() })
+  ).then(({ submission, error }) => {
+    if (error) {
+      throw (error.statusCode === 400 && error.message) ||
+        'There was an error saving the submission';
+    }
+    return submission;
+  });
 
 const traverseElement = (traverse, iteratee, acc) => {
   const element = traverse.get(0);
@@ -50,7 +73,11 @@ const convertRenderType = element => {
   } else if (element.get('renderType') === 'checkbox') {
     return 'text-multi';
   } else if (element.get('renderType') === 'attachment') {
-    return 'text';
+    if (element.get('allowMultiple')) {
+      return 'file-multi';
+    } else {
+      return 'file';
+    }
   }
   return element.get('renderType');
 };
@@ -87,17 +114,14 @@ const serializer = (element, type) => ({ values }) => {
 const getChoices = element =>
   !!element.get('choicesResourceName') ? List() : element.get('choices');
 
-const fields = () => ({ submission }) => {
-  if (submission) {
-    const pages = submission.getIn(['form', 'pages'], List());
-
+const fields = () => ({ form, pages, submission }) => {
+  if (pages) {
     const values = traverseElement(
       pages,
       (element, values) => {
         const name = element.get('name');
         const type = convertRenderType(element);
-        const initialValue = getInitialValue(submission, element, type);
-        const isAttachment = element.get('renderType') === 'attachment';
+        const initialValue = getInitialValue(submission || {}, element, type);
 
         return element.get('type') === 'field'
           ? values.push({
@@ -106,8 +130,7 @@ const fields = () => ({ submission }) => {
               type,
               options: getChoices(element, initialValue),
               initialValue,
-              enabled: !isAttachment,
-              transient: isAttachment,
+              transient: element.get('renderType') === 'attachment',
               serialize: serializer(element, type),
             })
           : values;
@@ -119,7 +142,7 @@ const fields = () => ({ submission }) => {
 };
 
 export const SubmissionForm = generateForm({
-  formOptions: ['submissionId'],
+  formOptions: ['kappSlug', 'formSlug', 'submissionId'],
   dataSources,
   fields,
   handleSubmit,
