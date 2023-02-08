@@ -2,6 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 import { bundle } from '../../helpers';
 import { handleErrors, headerBuilder, paramBuilder } from '../http';
+import { get } from 'immutable';
 
 // TODO: datastore is deprecated, remove datastore routes from paths.
 
@@ -346,8 +347,8 @@ export const searchSubmissions = options => {
   const kappSlug = kapp || 'datastore';
 
   const path = form
-      ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${form}/${endpoint}`
-      : `${bundle.apiLocation()}/kapps/${kappSlug}/${endpoint}`;
+    ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${form}/${endpoint}`
+    : `${bundle.apiLocation()}/kapps/${kappSlug}/${endpoint}`;
 
   const meta = { ...search };
   // Format includes.
@@ -362,12 +363,12 @@ export const searchSubmissions = options => {
 
   // Fetch the submissions.
   let promise = !get
-      ? axios.post(
-          path,
-          { ...meta, ...paramBuilder(options) },
-          { headers: headerBuilder(options) },
+    ? axios.post(
+        path,
+        { ...meta, ...paramBuilder(options) },
+        { headers: headerBuilder(options) },
       )
-      : axios.get(path, {
+    : axios.get(path, {
         paramsSerializer: params => qs.stringify(params),
         params: { ...meta, ...paramBuilder(options) },
         headers: headerBuilder(options),
@@ -468,6 +469,46 @@ export const updateSubmission = options => {
       // cleans up any errors.
       .catch(handleErrors)
   );
+};
+
+export const saveSubmissionMultipart = options => {
+  const {
+    kappSlug,
+    formSlug,
+    id,
+    values,
+    files,
+    coreState,
+    parent,
+    completed = !id,
+  } = options;
+
+  // Determine whether we should use the create or update endpoint based on the
+  // options provided (the rest of the HTTP request behaves the same way
+  // regardless).
+  let path;
+  if (!!id) {
+    path = `${bundle.apiLocation()}/submissions-multipart/${id}`;
+  } else if (!!kappSlug && !!formSlug) {
+    path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions-multipart`;
+  } else {
+    throw new Error(
+      'saveSubmissionMultipart failed! Either the "id" option or the "kappSlug" and "formSlug" options need to be provided.',
+    );
+  }
+
+  const headers = headerBuilder(options);
+  const params = { ...paramBuilder(options), completed, coreState, parent };
+  const data = new FormData();
+  data.append('_submission', JSON.stringify({ values }));
+  files.forEach(fileValue => {
+    data.append(get(fileValue, 'field'), get(fileValue, 'file'));
+  });
+
+  return axios
+    .post(path, data, { params, headers })
+    .then(response => ({ submission: response.data.submission }))
+    .catch(handleErrors);
 };
 
 export const submitSubmission = options => {
