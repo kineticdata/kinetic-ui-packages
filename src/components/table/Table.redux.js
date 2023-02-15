@@ -575,7 +575,7 @@ const calculateRows = tableData => {
         nextPageToken,
         count:
           dataSource.clientSideSearch || dataSource.clientSide
-            ? rows.size
+            ? data.size
             : count,
         data,
         rows,
