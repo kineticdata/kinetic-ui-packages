@@ -27,7 +27,7 @@ const kappTrees = kappWebhookEvents =>
 const formTrees = webhookEvents =>
   webhookEvents.get('Submission').map(event => `Submission ${event}`);
 
-const getPossibleTrees = ({
+export const getPossibleTrees = ({
   kappSlug,
   formSlug,
   spaceWebhookEvents,
