@@ -127,4 +127,96 @@ describe('submission filter helpers', () => {
       expect(result.first()).toBe('values[B]');
     });
   });
+
+  describe('for timelines', () => {
+    const INDEX_TIMELINE = fromJS({
+      name: 'closedAt',
+      parts: ['closedAt'],
+    });
+
+    test('when nothing is selected, only values[A] is available for equalities', () => {
+      const result = availableParts(
+        values,
+        indexes.push(INDEX_TIMELINE).push(INDEX_A_B),
+        List([]),
+        'eq',
+      );
+      expect(result).toBeImmutableList();
+      expect(result.size).toBe(1);
+      expect(result.first()).toBe('values[A]');
+    });
+
+    test('when values[A] is selected, only values[B] is available for equalities', () => {
+      const result = availableParts(
+        values,
+        indexes.push(INDEX_TIMELINE).push(INDEX_A_B),
+        List(['values[A]']),
+        'eq',
+      );
+      expect(result).toBeImmutableList();
+      expect(result.size).toBe(1);
+      expect(result.first()).toBe('values[B]');
+    });
+
+    test('when nothing is selected, timelines should be available in range', () => {
+      const result = availableParts(
+        values,
+        indexes.push(INDEX_TIMELINE).push(INDEX_A_B),
+        List([]),
+        'range',
+      );
+      expect(result).toBeImmutableList();
+      expect(result.size).toBe(1);
+      expect(result.get(0).get(0)).toBe('closedAt');
+    });
+
+    test('when values[A] is selected, only values[B] is available in range', () => {
+      const result = availableParts(
+        values,
+        indexes.push(INDEX_TIMELINE).push(INDEX_A_B),
+        List(['values[A]']),
+        'range',
+      );
+      expect(result).toBeImmutableList();
+      expect(result.size).toBe(1);
+      expect(result.get(0).get(0)).toBe('values[B]');
+    });
+
+    test('when nothing is select, timelines and values[A] should be available in order by', () => {
+      const result = availableParts(
+        values,
+        indexes.push(INDEX_TIMELINE).push(INDEX_A_B),
+        List([]),
+        'orderBy',
+      );
+      expect(result).toBeImmutableList();
+      expect(result.size).toBe(5);
+    });
+
+    test('when values[A] is selected, only values[B] is available in order by', () => {
+      const result = availableParts(
+        values,
+        indexes.push(INDEX_TIMELINE).push(INDEX_A_B),
+        List(['values[A]']),
+        'orderBy',
+      );
+      expect(result).toBeImmutableList();
+      expect(result.size).toBe(1);
+      expect(result.get(0)).toBe('values[B]');
+    });
+
+    test('when values[A] and values[B] are selected, all timeline options are available in order by', () => {
+      const result = availableParts(
+        values,
+        indexes.push(INDEX_TIMELINE).push(INDEX_A_B),
+        List(['values[A]', 'values[B]']),
+        'orderBy',
+      );
+      expect(result).toBeImmutableList();
+      expect(result.size).toBe(4);
+      expect(result).toEqual(
+        List(['closedAt', 'createdAt', 'submittedAt', 'updatedAt']),
+      );
+    });
+  });
 });

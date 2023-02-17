@@ -31,7 +31,17 @@ export const filterDataSources = ({ formSlug, kappSlug }) => ({
     params: ({ form }) => form && [form],
   },
   indexDefinitions: {
-    fn: form => form.get('indexDefinitions'),
+    fn: form =>
+      form.get('indexDefinitions').concat(
+        TIMELINES.map(timeline =>
+          Map({
+            name: timeline,
+            parts: List([timeline]),
+            status: 'Built',
+            unique: false,
+          }),
+        ),
+      ),
     params: ({ form }) => form && [form],
   },
 });
