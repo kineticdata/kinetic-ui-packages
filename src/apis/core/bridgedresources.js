@@ -36,8 +36,8 @@ export const bridgedResourceUrl = (options, counting = false) => {
   // build the url
   let url = !datastore
     ? `${bundle.spaceLocation()}/${kappSlug}/${formSlug}/bridgedResources/${brn}`
-    // Default kapp to 'datastore' if not provided to support deprecated datastore functionality
-    : `${bundle.spaceLocation()}/datastore/${formSlug}/bridgedResources/${brn}`;
+    : // Default kapp to 'datastore' if not provided to support deprecated datastore functionality
+      `${bundle.spaceLocation()}/datastore/${formSlug}/bridgedResources/${brn}`;
   // append any attributes if they were specified
   if (counting) {
     url += '/count';
@@ -154,16 +154,16 @@ export const fetchBridgedResource = (options = {}) => {
     })
     .then(({ data }) => {
       const { record, records } = data;
-
       if (record) {
         return { record: record.attributes };
       } else if (records) {
         return {
           records: convertMultipleBridgeRecords(records),
-          metadata: {
-            count: records.metadata && records.metadata.size,
-            nextPageToken: records.metadata && records.metadata.nextPageToken,
-          },
+          metadata:
+            // To ensure backwards compatibility continue mapping size to count
+            records.metadata && typeof records.metadata.size !== 'undefined'
+              ? { count: records.metadata.size, ...records.metadata }
+              : { ...records.metadata },
         };
       }
 
