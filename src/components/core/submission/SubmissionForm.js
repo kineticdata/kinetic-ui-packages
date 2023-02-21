@@ -1,4 +1,3 @@
-import React from 'react';
 import { List, getIn, remove, Map } from 'immutable';
 import {
   fetchForm,
