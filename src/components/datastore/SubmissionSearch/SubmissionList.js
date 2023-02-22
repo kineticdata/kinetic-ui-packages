@@ -12,18 +12,6 @@ import {
   ErrorMessage,
 } from '@kineticdata/bundle-common';
 
-const DiscussionIcon = () => (
-  <span className="icon">
-    <span
-      className="fa fa-fw fa-comments"
-      style={{
-        color: 'rgb(9, 84, 130)',
-        fontSize: '16px',
-      }}
-    />
-  </span>
-);
-
 const sortTable = ({ clientSortInfo, setClientSortInfo }) => column => {
   if (
     clientSortInfo &&
@@ -112,8 +100,6 @@ const SubmissionListComponent = ({
                   <thead className="d-none d-md-table-header-group sortable">
                     <tr>
                       {visibleColumns.map(c => {
-                        const isDiscussionIdField =
-                          c.name === 'Discussion Id' ? true : false;
                         const sortClass =
                           (clientSortInfo &&
                             clientSortInfo.type === c.type &&
@@ -129,11 +115,7 @@ const SubmissionListComponent = ({
                             onClick={e => sortTable(c)}
                             scope="col"
                           >
-                            {isDiscussionIdField ? (
-                              <DiscussionIcon />
-                            ) : (
-                              <I18n>{c.label}</I18n>
-                            )}
+                            <I18n>{c.label}</I18n>
                           </th>
                         );
                       })}

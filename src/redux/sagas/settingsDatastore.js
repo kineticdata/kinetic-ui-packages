@@ -478,7 +478,6 @@ export function* cloneSubmissionSaga(action) {
     // Some values on the original submission should be reset.
     const overrideFields = Map({
       Status: 'Draft',
-      'Discussion Id': null,
       Observers: [],
     });
 

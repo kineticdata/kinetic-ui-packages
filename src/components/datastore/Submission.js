@@ -1,22 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'redux-first-history';
-import {
-  compose,
-  withHandlers,
-  withProps,
-  withState,
-  lifecycle,
-} from 'recompose';
+import { compose, withHandlers, withState, lifecycle } from 'recompose';
 import { parse } from 'query-string';
-import { CoreForm } from '@kineticdata/react';
-import {
-  Aside,
-  DiscussionsPanel,
-  addSuccess,
-  addError,
-  selectDiscussionsEnabled,
-} from '@kineticdata/bundle-common';
+import { CoreForm, I18n } from '@kineticdata/react';
+import { addSuccess, addError } from '@kineticdata/bundle-common';
 import { PageTitle } from '../shared/PageTitle';
 import {
   selectPrevAndNext,
@@ -24,24 +12,6 @@ import {
   actions,
 } from '../../redux/modules/settingsDatastore';
 import { context } from '../../redux/store';
-
-import { I18n } from '@kineticdata/react';
-
-const CreationForm = ({ onChange, values, errors }) => (
-  <div className="form-group">
-    <label htmlFor="title">Title</label>
-    <input
-      id="title"
-      name="title"
-      type="text"
-      value={values.title}
-      onChange={onChange}
-    />
-    {errors.title && (
-      <small className="form-text text-danger">{errors.title}</small>
-    )}
-  </div>
-);
 
 const DatastoreSubmissionComponent = ({
   form,
@@ -54,11 +24,7 @@ const DatastoreSubmissionComponent = ({
   values,
   submission,
   formKey,
-  discussionsEnabled,
   profile,
-  creationFields,
-  asideOpen,
-  toggleAsideOpen,
 }) => (
   <I18n context={`kapps.datastore.forms.${form.slug}`}>
     <div className="page-container">
@@ -87,11 +53,6 @@ const DatastoreSubmissionComponent = ({
             )
           }
           actions={[
-            discussionsEnabled && {
-              icon: 'comments-o',
-              label: 'Discussions',
-              onClick: () => toggleAsideOpen(!asideOpen),
-            },
             ...(submissionId && submission && showPrevAndNext
               ? [
                   {
@@ -131,24 +92,6 @@ const DatastoreSubmissionComponent = ({
           )}
         </div>
       </div>
-      {discussionsEnabled &&
-        submission &&
-        asideOpen && (
-          <Aside
-            title="Discussions"
-            toggle={() => toggleAsideOpen(false)}
-            className="p-0"
-          >
-            <DiscussionsPanel
-              creationFields={creationFields}
-              CreationForm={CreationForm}
-              itemType="Submission"
-              itemKey={submissionId}
-              me={profile}
-              overrideClassName="page-panel--discussions"
-            />
-          </Aside>
-        )}
     </div>
   </I18n>
 );
@@ -200,7 +143,6 @@ export const mapStateToProps = (state, { id, slug }) => ({
   prevAndNext: selectPrevAndNext(state),
   form: selectFormBySlug(state, slug),
   values: valuesFromQueryParams(state.router.location.search),
-  discussionsEnabled: selectDiscussionsEnabled(state),
   isSmallLayout: state.app.layoutSize === 'small',
   profile: state.app.profile,
 });
@@ -219,21 +161,11 @@ export const DatastoreSubmission = compose(
     { context },
   ),
   withState('formKey', 'setFormKey', getRandomKey),
-  withState('asideOpen', 'toggleAsideOpen', false),
   withHandlers({
     handleUpdated,
     handleCreated,
     handleError,
   }),
-  withProps(
-    props =>
-      props.submission && {
-        creationFields: {
-          title: props.submission.label || 'Datastore Discussion',
-          description: props.submission.form.name || '',
-        },
-      },
-  ),
   lifecycle({
     componentWillMount() {
       if (this.props.id) {

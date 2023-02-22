@@ -1273,7 +1273,7 @@ const canGenerateAttributes = ({
 const windowFocusListener = ({ setStaleFields, origForm }) => () => {
   // Check if form fields are stale, and if yes, allow user to reload form
   axios
-    .get(`${bundle.apiLocation()}/datastore/forms/${origForm.slug}`, {
+    .get(`${bundle.apiLocation()}/kapps/datastore/forms/${origForm.slug}`, {
       params: { include: 'fields' },
     })
     .then(response => ({ form: response.data.form }))
