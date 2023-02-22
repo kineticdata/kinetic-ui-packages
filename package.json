@@ -1,6 +1,6 @@
 {
   "name": "@kineticdata/bundle-tech-bar",
-  "version": "5.1.2",
+  "version": "6.0.0",
   "main": "./lib/index.js",
   "files": [
     "assets",
@@ -16,8 +16,8 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@kineticdata/bundle-common": "5.1.2",
-    "@kineticdata/react": "5.1.2",
+    "@kineticdata/bundle-common": "6.0.0",
+    "@kineticdata/react": "6.0.0",
     "@reach/router": "https://github.com/kineticdata/router.git",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.5",
