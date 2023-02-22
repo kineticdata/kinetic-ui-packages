@@ -29,6 +29,7 @@ export const fetchLogs = (options = {}) => {
         pageToken: options.nextPageToken,
         start: options.start,
         end: options.end,
+        tail: options.tail,
       },
       headers: headerBuilder(options),
     })

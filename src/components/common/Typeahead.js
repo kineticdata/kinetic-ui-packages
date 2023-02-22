@@ -212,6 +212,9 @@ export class Typeahead extends React.Component {
                 onChange: onChangeNOOP,
                 onFocus: this.props.onFocus,
                 selection: this.props.value,
+                placeholder: this.props.placeholder,
+                id: this.props.id,
+                form: this.props.form,
               }}
               onSuggestionHighlighted={this.onHighlight}
               onSuggestionSelected={this.onSuggestionSelected}
@@ -315,6 +318,9 @@ function renderSelections() {
       getSuggestionValue,
       multiple,
       value,
+      placeholder,
+      id,
+      form,
     },
     remove,
   } = this;
@@ -329,6 +335,9 @@ function renderSelections() {
         remove={multiple ? remove(i) : remove()}
         selection={selection}
         suggestionValue={suggestionValue}
+        placeholder={!multiple ? placeholder : null}
+        id={!multiple ? id : null}
+        form={form}
       />
     );
   });

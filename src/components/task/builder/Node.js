@@ -3,10 +3,12 @@ import { isArray, isFunction } from 'lodash-es';
 import classNames from 'classnames';
 import { dispatch } from '../../../store';
 import * as constants from './constants';
-import { addNewTask, getNewNodePosition, getNodeType, isIE11 } from './helpers';
+import { getNodeType, isIE11 } from './helpers';
 import { Point } from './models';
 import { SvgText } from './SvgText';
 import plusIcon from '../../../../assets/task/icons/plus_small.svg';
+import dragHandleIcon from '../../../../assets/task/icons/drag-handle.svg';
+import { NODE_HEIGHT, NODE_START_RADIUS, NODE_WIDTH } from './constants';
 
 export class Node extends Component {
   constructor(props) {
@@ -21,22 +23,6 @@ export class Node extends Component {
   /*****************************************************************************
    * Click handlers                                                            *
    ****************************************************************************/
-
-  addNewNode = () => {
-    if (isFunction(this.props.onNew)) {
-      this.props.onNew(
-        addNewTask(
-          this.props.treeKey,
-          this.props.tree,
-          this.props.node,
-          getNewNodePosition(
-            this.props.node,
-            this.treeBuilder.getChildNodes(this.props.node.id),
-          ),
-        ),
-      );
-    }
-  };
 
   onSelect = shiftKey => () => {
     if (isFunction(this.props.onSelect)) {
@@ -70,7 +56,16 @@ export class Node extends Component {
       relative: false,
       onMove: this.treeBuilder.dragNewConnector(this.props.node),
       onDrop: this.treeBuilder.dropNewConnector,
-      onClick: this.addNewNode,
+      onClick: this.treeBuilder.addNewNode(
+        this.props.node,
+        event.nativeEvent,
+        getNodeType(this.props.node) === 'start'
+          ? NODE_START_RADIUS * 2 - 18
+          : NODE_WIDTH - 18,
+        getNodeType(this.props.node) === 'start'
+          ? (NODE_START_RADIUS * 2 - NODE_HEIGHT) / 2
+          : 0,
+      ),
     });
   };
 
@@ -91,6 +86,11 @@ export class Node extends Component {
     this.treeBuilder
       .getConnectorsByTail(this.props.node.id)
       .forEach(connector => connector.setTail(this.position, false));
+
+    if (!this.props.id && this.treeBuilder.newConnector.current) {
+      this.treeBuilder.newConnector.current.setHead(this.position, false);
+    }
+
     this.draw();
   };
 
@@ -147,14 +147,16 @@ export class Node extends Component {
 
   render() {
     const { node, highlighted, primary, selected, tasks } = this.props;
-    const { defers, definitionId, name } = node;
+    const { defers, definitionId, id, name } = node;
+    const tempNode = typeof id !== 'number';
     const missing =
+      !tempNode &&
       !tasks.has(node.definitionId) &&
       !node.definitionId.startsWith('system_tree_return_v') &&
       !node.definitionId.startsWith('system_start_v');
     const invalid =
       missing ||
-      !name ||
+      (!tempNode && !name) ||
       node.parameters.some(
         parameter => parameter.required && parameter.value === '',
       );
@@ -193,15 +195,28 @@ export class Node extends Component {
               primary,
               selected,
               missing,
+              positioning: tempNode,
             })}
             height={height}
             width={constants.NODE_WIDTH}
             rx={constants.NODE_RADIUS}
             ry={constants.NODE_RADIUS}
             strokeWidth={constants.NODE_STROKE_WIDTH}
-            onMouseDown={this.drag}
+            onMouseDown={tempNode ? undefined : this.drag}
           />
         )}
+        {type !== 'start' && (
+          <rect
+            className="node-text-skeleton low-detail-only"
+            height={12}
+            width={150}
+            x={(constants.NODE_WIDTH - 150) / 2}
+            y={(constants.NODE_HEIGHT - 12) / 2}
+            rx={4}
+            ry={4}
+          />
+        )}
+        />
         <SvgText
           className={classNames('node-name med-detail', type)}
           x={0}
@@ -210,33 +225,67 @@ export class Node extends Component {
           width={width}
           padding={constants.NODE_NAME_PADDING}
         >
-          {type === 'junction' ? 'Junction' : type === 'join' ? 'Join' : name}
+          {type === 'junction'
+            ? 'Junction'
+            : type === 'join'
+              ? 'Join'
+              : tempNode
+                ? 'Drag new node'
+                : name}
         </SvgText>
         {isRoutine && (
-          <path d={constants.NODE_LEFT_BAR_PATH} className="routine-bar" />
+          <path
+            d={constants.NODE_LEFT_BAR_PATH}
+            className="routine-bar"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
         )}
         {type === 'loop-head' && (
-          <path d={constants.NODE_BOTTOM_BAR_PATH} className="loop-bar" />
+          <path
+            d={constants.NODE_BOTTOM_BAR_PATH}
+            className="loop-bar"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
         )}
         {type === 'loop-tail' && (
-          <path d={constants.NODE_TOP_BAR_PATH} className="loop-bar" />
+          <path
+            d={constants.NODE_TOP_BAR_PATH}
+            className="loop-bar"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
         )}
         {defers && (
-          <path d={constants.NODE_CORNER_TAB_PATH} className="defers-tab" />
+          <path
+            d={constants.NODE_CORNER_TAB_PATH}
+            className="defers-tab"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
         )}
-        <image
-          className="high-detail"
-          xlinkHref={plusIcon}
-          height={constants.ICON_SIZE}
-          width={constants.ICON_SIZE}
-          x={
-            (type === 'start'
-              ? constants.NODE_START_RADIUS
-              : constants.NODE_CENTER_X) - constants.ICON_CENTER
-          }
-          y={height - constants.ICON_CENTER}
-          onMouseDown={this.dragPlus}
-        />
+        {!tempNode && (
+          <image
+            className="high-detail"
+            xlinkHref={plusIcon}
+            height={constants.ICON_SIZE}
+            width={constants.ICON_SIZE}
+            x={width - constants.ICON_CENTER}
+            y={
+              (type === 'start'
+                ? constants.NODE_START_RADIUS
+                : constants.NODE_CENTER_Y) - constants.ICON_CENTER
+            }
+            onMouseDown={this.dragPlus}
+          />
+        )}
+        {tempNode && (
+          <image
+            xlinkHref={dragHandleIcon}
+            height={24}
+            width={24}
+            x={12}
+            y={constants.NODE_CENTER_Y - 12}
+            style={{ cursor: 'grabbing' }}
+          />
+        )}
       </g>
     );
   }

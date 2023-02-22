@@ -53,14 +53,6 @@ export {
 } from './task/builder/builder.redux';
 export { searchNodeResultDependencies } from './task/builder/helpers';
 
-// Discussions
-export { Discussion } from './discussions/Discussion';
-export { DateBanner } from './discussions/DateBanner';
-export { DiscussionForm } from './discussions/DiscussionForm';
-export { InvitationForm } from './discussions/InvitationForm';
-export { MessageHistory } from './discussions/MessageHistory';
-export { UserMessageGroup } from './discussions/UserMessageGroup';
-
 // Agent
 export { BridgeTable } from './agent/bridge/BridgeTable';
 export { BridgeForm } from './agent/bridge/BridgeForm';
@@ -196,6 +188,8 @@ export { TriggerTable } from './task/triggers/TriggerTable';
 export { RunErrorTable } from './task/errors/RunErrorTable';
 export { SystemErrorsTable } from './task/errors/SystemErrorsTable';
 export { WorkflowTable } from './task/workflows/WorkflowTable';
+export { LinkedWorkflowTable } from './task/workflows/LinkedWorkflowTable';
+export { LinkedWorkflowForm } from './task/workflows/LinkedWorkflowForm';
 export { MissingRoutineTable } from './task/workflows/MissingRoutineTable';
 export { WorkflowForm } from './task/workflows/WorkflowForm';
 export { SourceTable } from './task/sources/SourceTable';

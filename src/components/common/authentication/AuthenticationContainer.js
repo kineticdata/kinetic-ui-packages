@@ -26,7 +26,6 @@ import {
   fetchSpaMeta,
   systemLogin,
 } from '../../../apis';
-import { socketIdentify } from '../../../apis/socket';
 import { refreshSystemToken } from '../../../apis';
 
 const defaultLoginProps = {
@@ -60,7 +59,6 @@ regHandlers({
         initialized: true,
         loggedIn: !!action.payload.token,
         securityStrategies: action.payload.securityStrategies,
-        socket: action.payload.socket,
         spaceSlug: action.payload.spaceSlug,
         token: action.payload.token,
         system: action.payload.system,
@@ -177,7 +175,7 @@ regSaga(
 const SYSTEM_TOKEN = 'kd-system';
 
 regSaga(
-  takeEvery('INITIALIZE', function*({ payload: { system, socket, skipInit } }) {
+  takeEvery('INITIALIZE', function*({ payload: { system, skipInit } }) {
     try {
       if (system) {
         let token;
@@ -193,7 +191,6 @@ regSaga(
 
         yield put(
           action('SET_INITIALIZED', {
-            socket,
             system,
             token,
           }),
@@ -211,14 +208,10 @@ regSaga(
         } else {
           const token =
             isAuthenticated && !skipInit ? yield call(retrieveJwt) : null;
-          if (socket && token) {
-            yield call(socketIdentify, token);
-          }
           yield put(
             action('SET_INITIALIZED', {
               csrfToken,
               securityStrategies,
-              socket,
               spaceSlug,
               token,
             }),
@@ -252,10 +245,6 @@ regSaga(
 
 regSaga(
   takeEvery('SET_AUTHENTICATED', function*({ payload }) {
-    const socket = yield select(state => state.getIn(['session', 'socket']));
-    if (socket) {
-      yield call(socketIdentify, payload.token);
-    }
     if (isFunction(payload.callback)) {
       yield call(payload.callback);
     }
@@ -290,12 +279,9 @@ const getCsrfToken = () => store.getState().getIn(['session', 'csrfToken']);
 export class AuthenticationComponent extends Component {
   componentDidMount() {
     if (this.props.system) {
-      dispatch('INITIALIZE', { system: true, socket: false });
+      dispatch('INITIALIZE', { system: true });
     } else {
-      dispatch('INITIALIZE', {
-        socket: !this.props.noSocket,
-        skipInit: this.props.skipInit,
-      });
+      dispatch('INITIALIZE', { skipInit: this.props.skipInit });
     }
   }
 

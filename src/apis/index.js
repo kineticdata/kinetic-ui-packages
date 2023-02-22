@@ -22,6 +22,7 @@ export * from './core/meta';
 export * from './core/notices';
 export * from './core/oauthClients';
 export * from './core/platformComponents';
+export * from './core/platformItems';
 export * from './core/profile';
 export * from './core/securityPolicyDefinitions';
 export * from './core/space';
@@ -33,16 +34,10 @@ export * from './core/version';
 export * from './core/webApis';
 export * from './core/webhooks';
 export * from './core/webhooksJobs';
-
-// Discussions
-export * from './discussions';
+export * from './core/workflows';
 
 // Http
 export { generateCESearchParams } from './http';
-
-// Topics
-export { socket } from './socket';
-export * from './topics';
 
 // Task
 export * from './task';

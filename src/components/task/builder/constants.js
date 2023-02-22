@@ -11,25 +11,25 @@ export const CONNECTOR_TAIL_RADIUS = 6;
 export const CONNECTOR_LABEL_WIDTH = 130;
 export const CONNECTOR_LABEL_HEIGHT = 18;
 export const CONNECTOR_LABEL_PADDING = 5;
-export const CONNECTOR_LABEL_RADIUS = 3;
+export const CONNECTOR_LABEL_RADIUS = 2;
 export const CONNECTOR_STROKE_WIDTH = 4;
 
-export const ICON_SIZE = 18;
+export const ICON_SIZE = 16;
 
-export const NEW_TASK_DX = 200;
-export const NEW_TASK_DY = 200;
-export const NEW_TASK_GAP_REQUIED = 300;
+export const NEW_TASK_DX = 350;
+export const NEW_TASK_DY = 75;
 
 export const NODE_BADGE_OFFSET = 6;
-export const NODE_BAR_THICKNESS = 5;
-export const NODE_RADIUS = 3;
+export const NODE_BAR_THICKNESS = 8;
+export const NODE_RADIUS = 8;
 export const NODE_HEIGHT = 45;
-export const NODE_JOIN_JUNCTION_HEIGHT = 25;
-export const NODE_START_RADIUS = 25;
-export const NODE_STROKE_WIDTH = 2;
+export const NODE_JOIN_JUNCTION_HEIGHT = 45;
+export const NODE_START_RADIUS = 28;
+export const NODE_STROKE_WIDTH = 1;
 export const NODE_PADDING = 10;
 export const NODE_NAME_PADDING = 7.5;
-export const NODE_WIDTH = 135;
+export const NODE_WIDTH = 200;
+export const NODE_DECORATION_STROKE_WIDTH = 1;
 
 // Derived constants
 export const NODE_CENTER_X = NODE_WIDTH / 2;
@@ -43,13 +43,17 @@ export const CONNECTOR_LABEL_CENTER_Y = CONNECTOR_LABEL_HEIGHT / 2;
 
 // compute x, y coordinates for outer boundaries of nodes (which includes the
 // stroke width)
-const MIN = -NODE_STROKE_WIDTH / 2;
-const MAX_X = NODE_WIDTH + NODE_STROKE_WIDTH / 2;
-const MAX_Y = NODE_HEIGHT + NODE_STROKE_WIDTH / 2;
+const MIN = -NODE_STROKE_WIDTH / 2 + NODE_DECORATION_STROKE_WIDTH / 2;
+const MAX_X =
+  NODE_WIDTH + NODE_STROKE_WIDTH / 2 - NODE_DECORATION_STROKE_WIDTH / 2;
+const MAX_Y =
+  NODE_HEIGHT + NODE_STROKE_WIDTH / 2 - NODE_DECORATION_STROKE_WIDTH / 2;
 
 // compute the dimensions of the node that include the stroke width
-const OUTER_WIDTH = NODE_WIDTH + NODE_STROKE_WIDTH;
-const OUTER_HEIGHT = NODE_HEIGHT + NODE_STROKE_WIDTH;
+const OUTER_WIDTH =
+  NODE_WIDTH + NODE_STROKE_WIDTH - NODE_DECORATION_STROKE_WIDTH;
+const OUTER_HEIGHT =
+  NODE_HEIGHT + NODE_STROKE_WIDTH - NODE_DECORATION_STROKE_WIDTH;
 
 // pre-builder arc strings because they are verbose and the key distinction is
 // whether the last values are positive or negative and that gets lost in the

@@ -100,6 +100,87 @@ export const KitchenSinkForm = generateForm({
       helpText: 'This is a checkbox with help text',
     },
     {
+      name: 'checkbox-multi1',
+      type: 'checkbox-multi',
+      label: 'Checkbox Multi 1',
+      options: [
+        {
+          label: 'Circle',
+          value: 'circle',
+        },
+        {
+          label: 'Triangle',
+          value: 'triangle',
+        },
+        {
+          label: 'Square',
+          value: 'square',
+        },
+      ],
+    },
+    {
+      name: 'checkbox-multi2',
+      type: 'checkbox-multi',
+      label: 'Checkbox Multi 2',
+      required: true,
+      options: [
+        {
+          label: 'Circle',
+          value: 'circle',
+        },
+        {
+          label: 'Triangle',
+          value: 'triangle',
+        },
+        {
+          label: 'Square',
+          value: 'square',
+        },
+      ],
+    },
+    {
+      name: 'checkbox-multi3',
+      type: 'checkbox-multi',
+      label: 'Checkbox Multi 3',
+      enabled: false,
+      initialValue: 'triangle',
+      options: [
+        {
+          label: 'Circle',
+          value: 'circle',
+        },
+        {
+          label: 'Triangle',
+          value: 'triangle',
+        },
+        {
+          label: 'Square',
+          value: 'square',
+        },
+      ],
+    },
+    {
+      name: 'checkbox-multi4',
+      type: 'checkbox-multi',
+      label: 'Checkbox Multi 4',
+      helpText: 'Help Text',
+      placeholder: 'Placeholder',
+      options: [
+        {
+          label: 'Circle',
+          value: 'circle',
+        },
+        {
+          label: 'Triangle',
+          value: 'triangle',
+        },
+        {
+          label: 'Square',
+          value: 'square',
+        },
+      ],
+    },
+    {
       name: 'code1',
       type: 'code',
       label: 'Code 1',
@@ -161,6 +242,56 @@ export const KitchenSinkForm = generateForm({
       label: 'Code 4',
       language: 'js-template',
       helpText: 'Help Text',
+    },
+    {
+      name: 'date1',
+      type: 'date',
+      label: 'Date 1',
+    },
+    {
+      name: 'date2',
+      type: 'date',
+      label: 'Date 2',
+      required: true,
+    },
+    {
+      name: 'date3',
+      type: 'date',
+      label: 'Date 3',
+      enabled: false,
+      initialValue: '1999-12-31',
+    },
+    {
+      name: 'date4',
+      type: 'date',
+      label: 'Date 4',
+      helpText: 'Help Text',
+      placeholder: 'Placeholder',
+    },
+    {
+      name: 'datetime1',
+      type: 'datetime',
+      label: 'Date-Time 1',
+    },
+    {
+      name: 'datetime2',
+      type: 'datetime',
+      label: 'Date-Time 2',
+      required: true,
+    },
+    {
+      name: 'datetime3',
+      type: 'datetime',
+      label: 'Date-Time 3',
+      enabled: false,
+      initialValue: '1999-12-31T23:59',
+    },
+    {
+      name: 'datetime4',
+      type: 'datetime',
+      label: 'Date-Time 4',
+      helpText: 'Help Text',
+      placeholder: 'Placeholder',
     },
     {
       name: 'form1',
@@ -540,7 +671,7 @@ export const KitchenSinkForm = generateForm({
       type: 'select-multi',
       label: 'Select Multi 3',
       enabled: false,
-      initialValue: ['circle', 'triangle'],
+      // initialValue: ['circle', 'triangle'],
       options: [
         {
           label: 'Circle',
@@ -673,6 +804,31 @@ export const KitchenSinkForm = generateForm({
       name: 'text-multi4',
       type: 'text-multi',
       label: 'Text Multi 4',
+      helpText: 'Help Text',
+      placeholder: 'Placeholder',
+    },
+    {
+      name: 'time1',
+      type: 'time',
+      label: 'Time 1',
+    },
+    {
+      name: 'time2',
+      type: 'time',
+      label: 'Time 2',
+      required: true,
+    },
+    {
+      name: 'time3',
+      type: 'time',
+      label: 'Time 3',
+      enabled: false,
+      initialValue: '23:59',
+    },
+    {
+      name: 'time4',
+      type: 'time',
+      label: 'Time 4',
       helpText: 'Help Text',
       placeholder: 'Placeholder',
     },

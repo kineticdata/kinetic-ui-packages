@@ -171,6 +171,7 @@ export class Connector extends Component {
    ****************************************************************************/
 
   draw = () => {
+    this.connector.current.parentElement.style.display = '';
     const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = getRectIntersections(this);
     const dx = x2 - x1;
     const dy = y2 - y1;
@@ -231,6 +232,7 @@ export class Connector extends Component {
           create: type === 'Create',
           update: type === 'Update',
         })}
+        style={{ display: 'none' }}
       >
         <g ref={this.connector}>
           <line
@@ -273,6 +275,7 @@ export class Connector extends Component {
                   width={constants.ICON_SIZE}
                   rx={constants.CONNECTOR_LABEL_RADIUS}
                   ry={constants.CONNECTOR_LABEL_RADIUS}
+                  strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
                 />
               </g>
             ) : label ? (
@@ -287,7 +290,7 @@ export class Connector extends Component {
                   ry={constants.CONNECTOR_LABEL_RADIUS}
                 />
                 <SvgText
-                  className="connector-label med-detail"
+                  className="connector-label high-detail"
                   x={-constants.CONNECTOR_LABEL_CENTER_X}
                   y={-constants.CONNECTOR_LABEL_CENTER_Y}
                   width={constants.CONNECTOR_LABEL_WIDTH}

@@ -70,6 +70,7 @@ export const createField = formKey => ({
   constraint,
   constraintMessage,
   enabled,
+  form,
   helpText,
   initialValue,
   label,
@@ -123,6 +124,7 @@ export const createField = formKey => ({
     // Pass-through options
     constraint,
     constraintMessage,
+    form,
     helpText,
     language,
     name,
@@ -257,6 +259,7 @@ export const getFieldComponentProps = (field, readOnly) => ({
   enabled: readOnly ? false : field.enabled,
   errors: field.errors,
   focused: field.focused,
+  form: field.form,
   helpText: field.helpText,
   id: field.id,
   label: field.label,

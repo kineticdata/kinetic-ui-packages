@@ -146,7 +146,7 @@ regHandlers({
         columns,
         pageSize = 25,
         defaultSortColumn = null,
-        defaultSortDirection = 'desc',
+        defaultSortDirection = 'asc',
         tableOptions,
         onValidateFilters,
         filterForm,
@@ -162,6 +162,7 @@ regHandlers({
             ['tables', tableKey],
             Map({
               data: hasData(data) ? fromJS(data) : data,
+              extraData: null,
               dataSource,
               tableOptions,
               columns,
@@ -198,7 +199,17 @@ regHandlers({
 
   SET_ROWS: (
     state,
-    { payload: { tableKey, rows, data, nextPageToken, count, error = null } },
+    {
+      payload: {
+        tableKey,
+        rows,
+        data,
+        extraData = null,
+        nextPageToken,
+        count,
+        error = null,
+      },
+    },
   ) =>
     state.updateIn(
       ['tables', tableKey],
@@ -207,6 +218,7 @@ regHandlers({
         table
           .set('rows', rows)
           .set('data', data)
+          .set('extraData', extraData)
           .set('currentPageToken', nextPageToken)
           .set('nextPageToken', null)
           .set('count', count)
@@ -256,9 +268,9 @@ regHandlers({
           .set(
             'sortDirection',
             sortColumn === column
-              ? sortDirection === 'desc'
-                ? 'asc'
-                : 'desc'
+              ? sortDirection === 'asc'
+                ? 'desc'
+                : 'asc'
               : 'asc',
           )
           .set('sortColumn', column)
@@ -332,7 +344,7 @@ function* calculateRowsTask({ payload }) {
 
     const response = yield call(calculateRows, tableData);
 
-    const { rows, data, nextPageToken, count, error } = response;
+    const { rows, data, nextPageToken, count, error, extraData } = response;
     const onFetch = tableData.get('onFetch');
 
     if (error) {
@@ -345,17 +357,18 @@ function* calculateRowsTask({ payload }) {
           data: List(),
           nextPageToken: null,
           count: null,
+          extraData,
         },
       });
     } else {
       yield put({
         type: 'SET_ROWS',
-        payload: { tableKey, rows, data, nextPageToken, count },
+        payload: { tableKey, rows, data, nextPageToken, count, extraData },
       });
     }
 
     if (typeof onFetch === 'function') {
-      yield call(onFetch, { tableKey, rows, count, error });
+      yield call(onFetch, { tableKey, rows, count, error, extraData });
     }
   } catch (e) {
     console.error(e);
@@ -504,7 +517,7 @@ const applyClientSideFilters = (tableData, data) => {
     .update(
       d => (sortColumn ? d.sortBy(r => r.get(sortColumn.get('value'))) : d),
     )
-    .update(d => (sortDirection === 'asc' ? d.reverse() : d))
+    .update(d => (sortDirection === 'asc' ? d : d.reverse()))
     .update(d => d.slice(startIndex, endIndex));
 };
 
@@ -547,7 +560,7 @@ const calculateRows = tableData => {
     return dataSource.fn(...params).then(response => {
       if (response.error) return response;
 
-      const { nextPageToken, data: responseData, count } = transform(
+      const { nextPageToken, data: responseData, count, extraData } = transform(
         response,
         paramData,
       );
@@ -562,10 +575,11 @@ const calculateRows = tableData => {
         nextPageToken,
         count:
           dataSource.clientSideSearch || dataSource.clientSide
-            ? rows.size
+            ? data.size
             : count,
         data,
         rows,
+        extraData,
       };
     });
   } else {

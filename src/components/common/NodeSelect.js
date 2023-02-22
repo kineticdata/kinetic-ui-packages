@@ -20,13 +20,13 @@ const getStatusProps = props => ({
   info: props.short
     ? 'Type to find a node.'
     : props.pending
-    ? 'Searching…'
-    : null,
+      ? 'Searching…'
+      : null,
   warning: props.error
     ? 'There was an error searching nodes.'
     : props.empty
-    ? 'No matching nodes.'
-    : null,
+      ? 'No matching nodes.'
+      : null,
 });
 
 export const NodeSelect = props => (
@@ -45,5 +45,7 @@ export const NodeSelect = props => (
     onHighlight={pair => props.onHighlight(pair && pair.first())}
     onBlur={props.onBlur}
     placeholder={props.placeholder}
+    id={props.id}
+    form={props.form}
   />
 );

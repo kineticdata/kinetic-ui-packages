@@ -32,6 +32,7 @@ const TableComponent = props => {
       tableKey,
       filterFormKey,
       count,
+      extraData,
     } = props;
     const table = buildTable(props);
     const filter = components.FilterForm
@@ -51,6 +52,7 @@ const TableComponent = props => {
       rows,
       count,
       error,
+      extraData,
     });
   }
   return null;
@@ -111,6 +113,8 @@ const filtersToFields = components =>
     AttributesField: components.AttributesFilter,
     CheckboxField: components.CheckboxFilter,
     CodeField: components.CodeFilter,
+    DateField: components.DateFilter,
+    DatetimeField: components.DatetimeFilter,
     FormField: components.FormFilter,
     FormMultiField: components.FormMultiFilter,
     PasswordField: components.PasswordFilter,
@@ -121,6 +125,7 @@ const filtersToFields = components =>
     SelectMultiField: components.SelectMultiFilter,
     TextField: components.TextFilter,
     TextMultiField: components.TextMultiFilter,
+    TimeField: components.TimeFilter,
     UserField: components.UserFilter,
     UserMultiField: components.UserMultiFilter,
     TableField: components.TableFilter,
@@ -141,6 +146,7 @@ const buildFilterForm = props => {
       fieldSet={props.filterSet}
       onSave={props.onSearch}
       appliedFilters={props.appliedFilters}
+      autoFocus={props.filterAutoFocus}
     />
   );
 };
@@ -276,6 +282,7 @@ const buildPaginationControl = props => {
     components,
     loading,
     renderOptions,
+    extraData,
   } = props;
   const PaginationControl = components.PaginationControl;
   const prevPage = hasPrevPage(
@@ -323,6 +330,7 @@ const buildPaginationControl = props => {
       count={count}
       renderOptions={renderOptions}
       tableOptions={tableOptions}
+      extraData={extraData}
     />
   );
 };
@@ -346,6 +354,7 @@ export const buildTable = props => {
       empty={props.rows.isEmpty()}
       renderOptions={props.renderOptions}
       tableOptions={props.tableOptions}
+      extraData={props.extraData}
     />
   );
 };
@@ -483,6 +492,7 @@ export const buildTableBodyCells = (props, row, rowIndex) => {
     appliedFilters,
     renderOptions,
     tableOptions,
+    extraData,
   } = props;
 
   return fromColumnSet(columns, columnSet).map((column, index) => {
@@ -506,6 +516,7 @@ export const buildTableBodyCells = (props, row, rowIndex) => {
           filters={appliedFilters}
           renderOptions={renderOptions}
           tableOptions={tableOptions}
+          extraData={extraData}
         />
       </KeyWrapper>
     );
@@ -673,6 +684,7 @@ export const generateTable = ({
         .toObject(),
     ),
     filterSet: props.filterSet,
+    filterAutoFocus: props.filterAutoFocus,
     columnSet: props.columnSet,
     pageSize: props.pageSize,
     defaultSortColumn: props.defaultSortColumn,

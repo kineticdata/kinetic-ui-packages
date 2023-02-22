@@ -10,7 +10,9 @@ import {
   deserializeWebApi,
 } from './models';
 import {
-  cloneTree,
+  createWorkflow,
+  createTree,
+  fetchPlatformItem,
   fetchTaskCategories,
   fetchTree,
   fetchWebApi,
@@ -60,10 +62,21 @@ regSaga(
             })
           : {},
       ]);
+
+      let platformItem = null;
+      if (tree.event) {
+        const result = yield call(fetchPlatformItem, {
+          type: tree.platformItemType,
+          id: tree.platformItemId,
+        });
+        platformItem = result.platformItem;
+      }
+
       yield put(
         action('TREE_LOADED', {
           categories,
           kappSlug: webApiProps && webApiProps.kappSlug,
+          platformItem,
           treeKey,
           tree: deserializeTree(tree),
           webApi:
@@ -76,28 +89,48 @@ regSaga(
   }),
 );
 
+const getPlatformItemSlugs = platformItem =>
+  platformItem.kapp
+    ? { formSlug: platformItem.slug, kappSlug: platformItem.kapp.slug }
+    : platformItem.space
+      ? { kappSlug: platformItem.slug }
+      : {};
+
 regSaga(
   takeEvery('TREE_SAVE', function*({ payload }) {
     try {
       // because of the optimistic locking functionality newName / overwrite can
       // be passed as options to the builder's save function
       const { newName, onError, onSave, overwrite, treeKey } = payload;
-      const { kappSlug, lastSave, lastWebApi, tree, webApi } = yield select(
-        state => state.getIn(['trees', treeKey]),
-      );
+      const {
+        kappSlug,
+        lastSave,
+        lastWebApi,
+        platformItem,
+        tree,
+        webApi,
+      } = yield select(state => state.getIn(['trees', treeKey]));
       const { name, sourceGroup, sourceName } = lastSave;
       // if a newName was passed we will be creating a new tree with the builder
       // contents, otherwise just an update
-      const { error: error1, tree: newTree } = yield newName
-        ? call(cloneTree, {
-            name,
-            sourceGroup,
-            sourceName,
-            tree: {
-              name: newName,
-              ...serializeTree(tree, true),
-            },
-          })
+      // additionally, if the tree is a linked workflow then we call a core
+      // endpoint to create the workflow
+      const {
+        error: error1,
+        tree: newTree,
+        workflow: newWorkflow,
+      } = yield newName
+        ? tree.event
+          ? call(createWorkflow, {
+              workflow: { ...serializeTree(tree), name: newName },
+              ...getPlatformItemSlugs(platformItem),
+            })
+          : call(createTree, {
+              tree: {
+                ...serializeTree(tree, true),
+                name: newName,
+              },
+            })
         : call(updateTree, {
             name,
             sourceGroup,
@@ -126,7 +159,7 @@ regSaga(
           : action('TREE_SAVE_SUCCESS', {
               previousTree: lastSave,
               treeKey,
-              tree: newTree,
+              tree: newTree || newWorkflow,
               webApi,
               onSave,
             }),
@@ -178,13 +211,14 @@ regHandlers({
     state.deleteIn(['trees', treeKey]),
   TREE_LOADED: (
     state,
-    { payload: { categories, kappSlug, treeKey, tree, webApi } },
+    { payload: { categories, kappSlug, platformItem, treeKey, tree, webApi } },
   ) =>
     state.mergeIn(['trees', treeKey], {
       kappSlug,
       lastSave: tree,
       lastWebApi: webApi,
       loading: false,
+      platformItem,
       tasks: List(categories)
         .map(
           category =>
@@ -216,6 +250,7 @@ regHandlers({
   TREE_SAVE_SUCCESS: (state, { payload: { tree, treeKey, webApi } }) => {
     const newTree = state.getIn(['trees', treeKey, 'tree']).merge({
       name: tree.name,
+      sourceGroup: tree.sourceGroup,
       versionId: tree.versionId,
     });
     return state.mergeIn(['trees', treeKey], {
@@ -373,7 +408,8 @@ regHandlers({
   TREE_UPDATE_WEB_API: (state, { payload: { treeKey, values } }) =>
     remember(state, treeKey)
       .mergeIn(['trees', treeKey, 'webApi'], values)
-      .setIn(['trees', treeKey, 'tree', 'name'], values.slug),
+      .setIn(['trees', treeKey, 'tree', 'name'], values.slug)
+      .setIn(['trees', treeKey, 'tree', 'ownerEmail'], values.ownerEmail),
 });
 
 const synchronizeRoutineDefinition = treeBuilderState => {

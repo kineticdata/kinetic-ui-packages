@@ -11,6 +11,7 @@ const TextInput = props => (
     onBlur={props.onBlur}
     onChange={props.onChange}
     onFocus={props.onFocus}
+    form={props.form}
   />
 );
 
@@ -23,6 +24,7 @@ const CheckboxInput = props => (
     onBlur={props.onBlur}
     onChange={props.onChange}
     onFocus={props.onFocus}
+    form={props.form}
   />
 );
 
@@ -82,7 +84,15 @@ const fieldFromConfig = (config, components = {}) => {
 };
 
 export const TableInput = props => {
-  const { components = {}, options, rows, onChange, onBlur, onFocus } = props;
+  const {
+    components = {},
+    options,
+    rows,
+    onChange,
+    onBlur,
+    onFocus,
+    form,
+  } = props;
   const appliedComponents = {
     ...defaultComponents,
     ...components,
@@ -153,7 +163,14 @@ export const TableInput = props => {
               const props =
                 type === 'drag'
                   ? provided.dragHandleProps
-                  : { label, onBlur, onChange: fieldOnChange, onFocus, value };
+                  : {
+                      label,
+                      onBlur,
+                      onChange: fieldOnChange,
+                      onFocus,
+                      value,
+                      form,
+                    };
               return <Field {...props} />;
             });
 

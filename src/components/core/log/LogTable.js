@@ -33,10 +33,10 @@ export const generateLogQuery = appliedFilters => {
           .subtract(60, 'minutes')
           .toISOString()
       : startDate === '' && endDate !== ''
-      ? moment(endDate)
-          .subtract(60, 'minutes')
-          .toISOString()
-      : moment(startDate).toISOString();
+        ? moment(endDate)
+            .subtract(60, 'minutes')
+            .toISOString()
+        : moment(startDate).toISOString();
   const end =
     endDate === '' ? moment().toISOString() : moment(endDate).toISOString();
 
@@ -58,6 +58,7 @@ const dataSource = () => ({
         nextPageToken: paramData.nextPageToken,
         start,
         end,
+        tail: true,
       },
     ];
     return fetchParams;
@@ -130,6 +131,21 @@ const filters = () => () => [
 ];
 
 const columns = [
+  {
+    value: 'timestamp',
+    title: 'Timestamp',
+    sortable: false,
+  },
+  {
+    value: 'message',
+    title: 'Message',
+    sortable: false,
+  },
+  {
+    value: 'level',
+    title: 'Level',
+    sortable: false,
+  },
   {
     value: 'app.component',
     title: 'Component',
@@ -256,22 +272,6 @@ const columns = [
   {
     value: 'k8s.pod',
     title: 'Pod',
-    sortable: false,
-  },
-
-  {
-    value: 'level',
-    title: 'Level',
-    sortable: false,
-  },
-  {
-    value: 'message',
-    title: 'Message',
-    sortable: false,
-  },
-  {
-    value: 'timestamp',
-    title: 'Timestamp',
     sortable: false,
   },
 ];

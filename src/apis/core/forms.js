@@ -6,7 +6,8 @@ const getPath = (kappSlug, formSlug) => {
   const formSuffix = formSlug ? `/${formSlug}` : '';
   return kappSlug
     ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms${formSuffix}`
-    : `${bundle.apiLocation()}/datastore/forms${formSuffix}`;
+    // Default kapp to 'datastore' if not provided to support deprecated datastore functionality
+    : `${bundle.apiLocation()}/kapps/datastore/forms${formSuffix}`;
 };
 
 // TODO: datastore is deprecated, remove datastore routes from paths.

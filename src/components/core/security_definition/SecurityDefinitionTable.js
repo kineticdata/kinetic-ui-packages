@@ -25,14 +25,14 @@ const dataSource = ({ kappSlug }) => ({
   }),
 });
 
-const filters = () => () => [
+const filters = ({ kappSlug }) => () => [
   { name: 'name', label: 'Name', type: 'text' },
   {
     name: 'type',
     label: 'Type',
     type: 'select',
-    options: kappSlug =>
-      kappSlug.kappSlug
+    options: () =>
+      kappSlug
         ? KAPP_SECURITY_DEFINITION_TYPES.map(el => ({
             value: el,
             label: el,

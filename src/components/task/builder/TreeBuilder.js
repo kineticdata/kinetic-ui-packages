@@ -1,10 +1,10 @@
 import React, { createRef, Component, Fragment } from 'react';
-import { pick } from 'lodash-es';
+import { isFunction, pick } from 'lodash-es';
 import { connect, dispatch } from '../../../store';
 import { configureTreeBuilder } from './builder.redux';
 import * as constants from './constants';
-import { isPointInNode } from './helpers';
-import { Connector as ConnectorModel } from './models';
+import { addNewTask, isPointInNode } from './helpers';
+import { Connector as ConnectorModel, Node as NodeModel } from './models';
 import { SvgCanvas } from './SvgCanvas';
 import { Node } from './Node';
 import { Connector } from './Connector';
@@ -13,8 +13,9 @@ import { is } from 'immutable';
 export class TreeBuilderComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { newConnector: null };
+    this.state = { newConnector: null, newNode: null };
     this.newConnector = createRef();
+    this.newNode = createRef();
     this.canvasRef = createRef();
     this.connectorMap = {
       byHead: {},
@@ -157,6 +158,52 @@ export class TreeBuilderComponent extends Component {
     this.setState({ newConnector: null });
   };
 
+  addNewNode = (parentNode, nativeEvent, dx, dy) => () => {
+    const newNode = NodeModel({
+      position: parentNode.position
+        .update('x', x => x + dx)
+        .update('y', y => y + dy),
+    });
+    const newConnector = ConnectorModel({
+      tailId: parentNode.id,
+      headId: newNode.id,
+    });
+    this.setState({
+      newConnector,
+      newNode,
+      newNodeParent: parentNode,
+    });
+    this.watchDrag({
+      nativeEvent,
+      onMove: this.dragNewNode,
+      onDrop: this.confirmNewNode,
+      onClick: this.confirmNewNode,
+    });
+  };
+
+  dragNewNode = position => {
+    if (this.newNode.current) {
+      this.newNode.current.setTreeBuilder(this);
+      this.newNode.current.move(position);
+    }
+  };
+
+  confirmNewNode = () => {
+    if (isFunction(this.props.onNew)) {
+      setTimeout(() => {
+        this.props.onNew(
+          addNewTask(
+            this.props.treeKey,
+            this.props.treeBuilderState.tree,
+            this.state.newNodeParent,
+            this.newNode.current.position,
+            () => this.setState({ newConnector: null, newNode: null }),
+          ),
+        );
+      }, 500);
+    }
+  };
+
   registerConnector = connector => connectorInstance => {
     const { headId, id, tailId } = connector;
     this.connectorMap.byHead[headId] = this.connectorMap.byHead[headId] || {};
@@ -292,13 +339,21 @@ export class TreeBuilderComponent extends Component {
                     }
                     primary={selected.getIn([0, 'nodeId']) === node.id}
                     selected={selected.some(({ nodeId }) => nodeId === node.id)}
-                    onNew={this.props.onNew}
                     onSelect={this.props.onSelectNode}
                     tasks={tasks}
                     tree={tree}
                   />
                 ))
                 .toList()}
+              {this.state.newNode && (
+                <Node
+                  ref={this.newNode}
+                  treeKey={treeKey}
+                  node={this.state.newNode}
+                  tasks={tasks}
+                  tree={tree}
+                />
+              )}
             </SvgCanvas>
           </Fragment>
         ),
