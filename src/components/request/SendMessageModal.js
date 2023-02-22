@@ -6,7 +6,7 @@ import { connect } from '../../redux/store';
 
 const SendMessageModalComponent = props => {
   const title =
-    props.actionType === 'comment' ? 'Start Discussion' : 'Request to Cancel';
+    props.actionType === 'comment' ? 'Add a Comment' : 'Request to Cancel';
 
   const placeholder =
     props.actionType === 'comment'

@@ -8,7 +8,6 @@ The Services Application leverages different type of Kinetic Request CE configur
 ### Form Fields Reference
 Field Name  | Field Type | Description
 ----------  | ----------- | -----------
-Discussion Id  | Text | Stores the ID of the tasks related Discussion
 Observing Teams | Checkbox | Used to control security and which teams are able to view the Task
 Observing Individuals | Checkbox | Used to control security and which users are able to view the Task
 Requested By | Text | Stores the username of the person who actually made this request
@@ -34,7 +33,6 @@ Attribute Name | Description     | Example
 _**Approver_ | Options are: a Team Name, a Users username, `manager` or `none`. If this is set, all forms in this kapp will get approvals sent to the value set here unless specified in a form. | `none`
 _**Approval Form Slug_ | The form slug for which approvals should be created in (if not defined on form) | `approval`
 Description    | A short description of what this kapp is used for, typically displayed on the Kapp Listing (home) Page | `Browse, request and check status of services`
-Discussion Id | The Id of the Discussion related to this kapp. Typically where kapp owners can collaborate on suggestions or changes. | `<discussion guid>`
 _**Form Workflow_ | Defines which workflow type should be executed for each type of action. All values should be prefixed with an action (Created, Deleted, Updated) Workflow types are (Standard, True, False, or a custom process name) Example (Created - False | Deleted - True | Updated - My Custom Process) | `Updated - False`
 Record Search History | This attribute controls when searches made from this kapp are recorded. Options are All (all searches will be recorded) / None (Only record when no results found) / Off (never record search history) | `All`
 Icon           | The [Font Awesome Icons](http://fontawesome.io/icons/) Font Awesome icon used to represent this kapp. | `fa-book`
@@ -53,7 +51,6 @@ Attribute Name | Description     | Example
 _**Approver_ | Options are: a Team Name, a Users username, `manager` or `none`. | `none`
 _**Approval Form Slug_ | The Queue kapp form which approvals related to this form should be created in (Kapp setting is used if not set here) | `approval`
 Description | A short description of what this kapp is used for, typically displayed on the Kapp Listing (home) Page | `Need something from HR? Request it here!`
-Discussion Id | The Id of the Discussion related to this form. Typically where form owners can collaborate on suggestions or changes. | `<discussion guid>`
 Cancel Disabled | This attribute controls whether or not submissions for this form can be canceled. If set to true, the Request to Cancel button will not display. | `true`
 Cloning Disabled | This attribute controls whether or not submissions for this form can be cloned. If set to true, the Clone as Draft button will not display. | ``
 Comment Disabled_ | This attribute controls whether or not submissions for this form can have comments added. If set to true, the Add Comment button will not display. | `true`
@@ -71,7 +68,6 @@ _**Task Form Slug_ | The form to use when creating a fulfillment task for this i
 #### Category Attributes
 Attribute Name | Description     | Example
 -------------- | --------------  | --------------
-Discussion Id | The Id of the Discussion related to this category. Typically where form owners can collaborate on suggestions or changes to forms within this category. | `<discussion guid>`
 Hidden | If this category should be hidden from the category list. | `Home Page Services`
 Icon | The [Font Awesome Icons](http://fontawesome.io/icons/) Font Awesome icon used to represent this category. | `fa-truck`
 Label | The Display Label used to represent this category. | `Human Resources`

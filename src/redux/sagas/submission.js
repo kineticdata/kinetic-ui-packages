@@ -12,11 +12,6 @@ import {
   fetchSubmission,
   createSubmission,
   deleteSubmission,
-  updateSubmission,
-  fetchDiscussions,
-  createRelatedItem,
-  createDiscussion,
-  sendMessage,
 } from '@kineticdata/react';
 import { addToast, addToastAlert } from '@kineticdata/bundle-common';
 import { Map, Seq } from 'immutable';
@@ -63,7 +58,6 @@ export function* cloneSubmissionRequestSaga(action) {
     // Some values on the original submission should be reset.
     const overrideFields = Map({
       Status: 'Draft',
-      'Discussion Id': null,
       Observers: [],
     });
 
@@ -117,87 +111,12 @@ export function* deleteSubmissionRequestSaga(action) {
   }
 }
 
-export function* fetchDiscussionRequestSaga(action) {
-  const { discussions, error } = yield call(fetchDiscussions, {
-    relatedItem: {
-      type: 'Submission',
-      key: action.payload,
-    },
-  });
-
-  if (error) {
-    addToast({ severity: 'danger', message: 'Discussion failed to load' });
-  } else if (discussions && discussions.length > 0) {
-    yield put(actions.fetchDiscussionSuccess(discussions[0]));
-  }
-}
-
 export function* sendMessageRequestSaga(action) {
   const kappSlug = yield select(state => state.app.kappSlug);
   const submission = yield select(state => state.submission.data);
-  let discussion = yield select(state => state.submission.discussion);
-  const profile = yield select(state => state.app.profile);
   const sendMessageType = yield select(
     state => state.submission.sendMessageType,
   );
-
-  // If discussion is null, fetch again to make sure
-  if (discussion === null) {
-    yield* fetchDiscussionRequestSaga({ payload: submission.id });
-    discussion = yield select(state => state.submission.discussion);
-  }
-
-  // Create the Discussion if it doesn't exist for the submission
-  if (discussion === null) {
-    const { discussion: newDiscussion } = yield call(createDiscussion, {
-      title: submission.label,
-      description: `Global discussion for ${submission.label}`,
-      owningUsers: [{ username: profile.username }],
-    });
-
-    if (newDiscussion) {
-      discussion = newDiscussion;
-      // Relate the new Discussion to the Submission
-      yield call(createRelatedItem, discussion.id, {
-        type: 'Submission',
-        key: submission.id,
-      });
-      // Create an Initial Message in the Disussion to provide context
-      const initialMessage = `I would like to start a discussion about my ${
-        submission.form.name
-      } - ${submission.label} request (with confirmation ${submission.handle})`;
-
-      yield call(sendMessage, {
-        id: discussion.id,
-        message: initialMessage,
-      });
-
-      // Update Submission with Discussion ID
-      yield call(updateSubmission, {
-        id: submission.id,
-        values: { 'Discussion Id': discussion.id },
-      });
-
-      yield* fetchDiscussionRequestSaga({ payload: submission.id });
-    }
-  }
-
-  if (discussion !== null) {
-    // Send the Comment/Cancel Request Message
-    const commentMessage =
-      sendMessageType === 'comment'
-        ? action.payload
-        : `I would like to cancel my ${submission.form.name} - ${
-            submission.label
-          } request (with confirmation ${submission.handle})
-
-        ${action.payload}`;
-
-    yield call(sendMessage, {
-      id: discussion.id,
-      message: commentMessage,
-    });
-  }
 
   const formConfig =
     sendMessageType === 'comment'
@@ -252,6 +171,5 @@ export function* watchSubmission() {
   yield takeEvery(types.FETCH_SUBMISSION_REQUEST, fetchSubmissionRequestSaga);
   yield takeEvery(types.CLONE_SUBMISSION_REQUEST, cloneSubmissionRequestSaga);
   yield takeEvery(types.DELETE_SUBMISSION_REQUEST, deleteSubmissionRequestSaga);
-  yield takeEvery(types.FETCH_DISCUSSION_REQUEST, fetchDiscussionRequestSaga);
   yield takeEvery(types.SEND_MESSAGE_REQUEST, sendMessageRequestSaga);
 }

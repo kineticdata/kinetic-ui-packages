@@ -1,8 +1,7 @@
 {
   "name": "@kineticdata/bundle-services",
-  "version": "5.1.1",
+  "version": "6.0.0",
   "main": "./lib/index.js",
-  "main:src": "./src/index.js",
   "files": [
     "assets",
     "lib"
@@ -12,20 +11,20 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production babel src --out-dir lib",
-    "lint": "eslint src --ext .js",
+    "lint": "cross-env NODE_ENV=production eslint src --ext .js",
     "preversion": "yarn lint",
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@kineticdata/bundle-common": "5.1.1",
-    "@kineticdata/react": "5.1.1",
+    "@kineticdata/bundle-common": "6.0.0",
+    "@kineticdata/react": "6.0.0",
     "@reach/router": "https://github.com/kineticdata/router.git",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.5",
     "downloadjs": "^1.4.7",
     "immutable": "4.0.0-rc.9",
     "isobject": "^3.0.1",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "papaparse": "^5.2.0",
     "query-string": "^5.1.1",
     "react-beautiful-dnd": "^11.0.5",
@@ -42,11 +41,6 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
   },
-  "devDependencies": {
-    "@babel/cli": "^7.10.3",
-    "@react-workspaces/react-scripts": "^3.4.0-alpha-01",
-    "cross-env": "^7.0.2"
-  },
   "babel": {
     "presets": [
       [
@@ -56,8 +50,5 @@
         }
       ]
     ]
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   }
 }
