@@ -97,6 +97,7 @@ export const selectAssignmentTeams = (allTeams, form, queueItem) => {
 export const mapTeamsToAssignments = teams => {
   return teams.flatMap(t =>
     t.memberships
+      .filter(m => m.user.enabled)
       .map(m => {
         const user = m.user;
         user.team = t.name;

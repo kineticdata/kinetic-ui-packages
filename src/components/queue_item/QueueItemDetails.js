@@ -1,11 +1,7 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { compose, withState, withHandlers, withProps } from 'recompose';
 import { Link } from '@reach/router';
-import {
-  selectDiscussionsEnabled,
-  DiscussionsPanel,
-  EmptyMessage,
-} from '@kineticdata/bundle-common';
+import { EmptyMessage } from '@kineticdata/bundle-common';
 import { selectAssignments } from '../../redux/modules/queueApp';
 import { actions } from '../../redux/modules/queue';
 import { ViewOriginalRequest } from './ViewOriginalRequest';
@@ -41,18 +37,12 @@ export const QueueItemDetails = ({
   prohibitSubtasks,
   refreshQueueItem,
   kappSlug,
-  discussionsEnabled,
   profile,
-  creationFields,
-  onDiscussionCreated,
-  CreationForm,
   goToPreviousItem,
   goToNextItem,
   currentTab,
   toggleCurrentTab,
 }) => {
-  const unreadDiscussionsContainerRef = useRef(null);
-
   return (
     <div className="queue-item-details">
       <div className="section--general">
@@ -95,46 +85,25 @@ export const QueueItemDetails = ({
         )}
       </div>
 
-      {(!prohibitSubtasks || discussionsEnabled) && (
+      {!prohibitSubtasks && (
         <div className="mb-5">
           <ul className="nav nav-tabs" role="tablist">
-            {!prohibitSubtasks && (
-              <li
-                role="tab"
-                className="nav-item"
-                id="subtasks-tab"
-                aria-controls="subtasks-tabpanel"
-                aria-selected={currentTab === 'subtasks'}
+            <li
+              role="tab"
+              className="nav-item"
+              id="subtasks-tab"
+              aria-controls="subtasks-tabpanel"
+              aria-selected={currentTab === 'subtasks'}
+            >
+              <button
+                onClick={toggleCurrentTab('subtasks')}
+                className={classNames('nav-link', {
+                  active: currentTab === 'subtasks',
+                })}
               >
-                <button
-                  onClick={toggleCurrentTab('subtasks')}
-                  className={classNames('nav-link', {
-                    active: currentTab === 'subtasks',
-                  })}
-                >
-                  <I18n>Subtasks</I18n>
-                </button>
-              </li>
-            )}
-            {discussionsEnabled && (
-              <li
-                role="tab"
-                className="nav-item"
-                id="discussions-tab"
-                aria-controls="discussions-tabpanel"
-                aria-selected={currentTab === 'discussions'}
-              >
-                <button
-                  onClick={toggleCurrentTab('discussions')}
-                  className={classNames('nav-link', {
-                    active: currentTab === 'discussions',
-                  })}
-                >
-                  <I18n>Discussions</I18n>
-                  <span ref={unreadDiscussionsContainerRef} />
-                </button>
-              </li>
-            )}
+                <I18n>Subtasks</I18n>
+              </button>
+            </li>
           </ul>
 
           <div
@@ -175,43 +144,6 @@ export const QueueItemDetails = ({
               />
             )}
           </div>
-
-          <div
-            className={classNames({
-              'd-none': currentTab !== 'discussions',
-            })}
-            role="tabpanel"
-            id="discussions-tabpanel"
-            aria-labelledby="discussions-tab"
-          >
-            <DiscussionsPanel
-              withAside={true}
-              itemType="Submission"
-              itemKey={queueItem.id}
-              overrideClassName="discussions-container"
-              me={profile}
-              pageSize={3}
-              unreadDiscussionsContainerRef={unreadDiscussionsContainerRef}
-              creationFields={creationFields}
-              onCreated={onDiscussionCreated}
-              CreationForm={CreationForm}
-              renderDiscussionsListHeader={({ handleCreateDiscussionClick }) =>
-                handleCreateDiscussionClick ? (
-                  <div className="d-flex justify-content-end mt-n4 mb-2">
-                    <button
-                      className="btn btn-white btn-sticky-top"
-                      onClick={handleCreateDiscussionClick}
-                    >
-                      <span className="fa fa-fw fa-plus" />
-                      <span>
-                        <I18n>Create Discussion</I18n>
-                      </span>
-                    </button>
-                  </div>
-                ) : null
-              }
-            />
-          </div>
         </div>
       )}
     </div>
@@ -237,7 +169,6 @@ export const mapStateToProps = (state, props) => {
     ).toJS(),
     defaultFilters: state.queueApp.filters,
     kappSlug: state.app.kappSlug,
-    discussionsEnabled: selectDiscussionsEnabled(state),
     profile: state.app.profile,
     currentPageData: state.queue.data,
     hasPreviousPage: state.queue.hasPreviousPage,
@@ -258,7 +189,10 @@ export const mapDispatchToProps = {
 };
 
 export const QueueItemDetailsContainer = compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
   withProps(({ queueItem }) => {
     const prohibit = getAttr(queueItem.form, 'Prohibit Subtasks');
     const permitted = getAttr(queueItem.form, 'Permitted Subtasks');
@@ -267,8 +201,10 @@ export const QueueItemDetailsContainer = compose(
       permittedSubtasks: permitted && permitted.split(/\s*,\s*/),
     };
   }),
-  withState('currentTab', 'setCurrentTab', props =>
-    !props.prohibitSubtasks ? 'subtasks' : 'discussions',
+  withState(
+    'currentTab',
+    'setCurrentTab',
+    props => (!props.prohibitSubtasks ? 'subtasks' : ''),
   ),
   withState('isAssigning', 'setIsAssigning', false),
   withHandlers({
@@ -277,8 +213,9 @@ export const QueueItemDetailsContainer = compose(
         .filter(filter => ['Mine', 'Unassigned'].includes(filter.name))
         // Refetch current filters count if it isn't the Mine or Unassigned defaults
         .concat(
-          filter.type === 'default' &&
-            ['Mine', 'Unassigned'].includes(filter.name)
+          !filter ||
+          (filter.type === 'default' &&
+            ['Mine', 'Unassigned'].includes(filter.name))
             ? []
             : [filter],
         )

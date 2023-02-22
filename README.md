@@ -15,7 +15,6 @@ Assigned Team Display Name | Text | Stores the Display Name of which team the Ta
 Cancelation Reason  | Text | If a task is in a `Cancelled` status, this field is required and displayed in the App
 Deferral Token    | Text | Stores the token used to relate this task to the process that initiated it (Typically only used with `Automated` type Tasks)
 Details | Text | This field should provide any details needed for the assignee to complete the Task
-Discussion Id  | Text | Stores the ID of the tasks related Discussion
 Due Date | Date/Time | This field is used to display when the task needs to be completed by
 Observing Teams | Checkbox | Used to control security and which teams are able to view the Task
 Observing Individuals | Checkbox | Used to control security and which users are able to view the Task
@@ -53,7 +52,6 @@ Attribute Name | Description     | Example
 -------------- | --------------  | --------------
 Icon           | The [Font Awesome Icons](http://fontawesome.io/icons/) Font Awesome icon used to represent this Form within the app. | `fa-tasks`
 Assignment Type | Dictates if the App should present an assignment selector before displaying a form. If not set on a given form, the App will present a Assignment Selector before displaying the form when creating the Task. If set to `None` the form builder will need to display the `Assigned Team` / `Assigned Individual` fields or default them. | `None`
-Discussion Id | The Id of the Discussion related to this form. Typically where form owners can collaborate on form changes. | `<discussion guid>`
 Owning Team   | Dictates who can create a new task using this form from within the app. If left blank, anyone with access to the Queue App can create new tasks using this form.  | `Human Resources`
 Permitted Subtasks | Dictates which subtasks are allowed to be created / related to tasks that use this form. If left blank, any sub-tasks can be added to tasks created with this form. This attribute allows multiple values which should be the `Form Slug` of the desired sub-task | `adhoc-approval`
 Prohibit Subtasks | Setting this value to `True` will not allow a user to create sub-tasks on a task created using this form. | `True`
