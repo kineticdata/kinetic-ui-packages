@@ -14,8 +14,11 @@ _Note: Once you do this and start customizing a pre-built package, any improveme
 
 - **Queue** `packages/queue`
 - **Services** `packages/services`
+- **Settings** `packages/settings`
+- **Survey** `packages/survey`
+- **Tech Bar** `packages/tech-bar`
 
-* **Scaffold** `packages/scaffold` - _Used to build your own custom package._
+The above packages are for v6 of the bundle. If you need the v5 package, append `-v5` to the end of the package name when adding the source code.
 
 _Please contact us to request the addition of the source code for any other pre-built packages._
 
@@ -49,6 +52,7 @@ In `bundle/packages/<PACKAGE_DIR>/package.json` update the name and (optionally)
   Example: `@kineticdata/bundle-services` => `@kineticdata/bundle-services-custom`
 - You may optionally change the version number if you'd like. We'll be adding this package as a dependency within the `app` package which is where this version will be used.  
   Example: `5.1.2` => `5.0.0`
+- _If you are importing a v6 package into a v5 bundle that still uses `@react-workspaces/react-scripts`, you will need to add the following line to this package.json file: `"main:src": "./src/index.js"`_
 
 #### Update References to Imported Package
 
@@ -60,10 +64,19 @@ Next, you will need to update the references that used the original package to u
   Example: `import ServicesApp from '@kineticdata/bundle-services'` => `import ServicesApp from '@kineticdata/bundle-services-custom'`
 - In `bundle/packages/app/src/assets/styles/master.scss`, replace references to any style sheets from the original package.  
   Example: `@import '~@kineticdata/bundle-services/assets/styles/master'` => `@import '~@kineticdata/bundle-services-custom/assets/styles/master'`
+- You may need to search through your bundle to see if there are any other imports from the original package, and replace those with the new package name. The number of these references that exist within the bundle may vary between different bundles.  
+  Example: `import { RequestCard } from '@kineticdata/bundle-services'` => `import { RequestCard } from '@kineticdata/bundle-services-custom';`
 
-_If you would like to use both the original package from NPM and the modified version, instead of replacing the parts defined in the three steps above, add new lines for your modified package._
+_If you would like to use both the original package from NPM and the modified version, instead of replacing the parts defined in the four steps above, add new lines for your modified package._
 
-**Lastly, you will need to run `yarn install` in your bundle to update its dependencies and have it use the added source code.**
+#### Update Craco Config (v6+ bundles only)
+
+Next, you will need to update the craco config file to recognize that this new package is local to enable proper monorepo functionality.
+
+- In `bundle/craco.config.js`, add a line to the `packages` map at the top of the file, that maps the directory name of your new package to the package name.  
+  Example: `'services': '@kineticdata/bundle-services-custom'`
+
+**Lastly, you will need to run `yarn install` in the bundle directory to update its dependencies and have it use the added source code.**
 
 ## Updating Source Code of Pre-Built Package in Your Custom Bundle
 
