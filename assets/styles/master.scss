@@ -1,0 +1,14 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * kinops Queue
+ * Copyright (c) 2017 - 2019 Kinetic Data, Inc.
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.package--queue {
+  @import 'list-group';
+  @import 'submissions';
+  @import 'queue_list';
+  @import 'status';
+  @import 'queue_item_details';
+  @import 'assignments';
+  @import 'temp';
+}

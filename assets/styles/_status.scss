@@ -1,0 +1,44 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Status ~ Queue
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.status-reason {
+  font-weight: 400;
+  font-style: italic;
+}
+.status-content {
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 1rem;
+  &--is-active {
+  }
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+.submission__meta {
+  display: flex;
+  align-items: center;
+}
+
+.submission-status {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.0625rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 1rem;
+  color: $gray80;
+  &--reason {
+    color: darken($blue-sky, 12);
+    font-size: 0.875rem;
+    margin-left: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: none;
+    white-space: nowrap;
+    flex: 1;
+  }
+}
