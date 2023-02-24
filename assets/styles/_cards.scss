@@ -1,0 +1,39 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Card Overrides ~ services
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.card .status {
+  text-align: center;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  align-self: center;
+  border-radius: 0.75rem;
+  margin-left: auto;
+  flex: 0 0 auto;
+  line-height: 1.0625rem;
+  color: $gray80;
+
+  &--default {
+    color: darken($blue, 12);
+    background-color: rgba($blue, 0.2);
+  }
+
+  &--warning {
+    color: darken($orange, 24);
+    background-color: rgba($orange, 0.2);
+  }
+
+  &--success {
+    color: darken($green-grass, 18);
+    background-color: rgba($green-grass, 0.2);
+  }
+
+  &--danger {
+    color: darken($red, 18);
+    background-color: rgba($red, 0.1);
+  }
+}

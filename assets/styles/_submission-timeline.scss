@@ -1,0 +1,82 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Timeline  ~ services
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+// Timeline
+.submission-timeline {
+  > div {
+    margin: 0 0 2rem 2rem;
+    padding: 0;
+    border-left: 1px solid $gray16;
+  }
+  li {
+    list-style: none;
+  }
+  dt {
+    font-size: 0.625rem;
+    font-weight: 600;
+    line-height: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  dd {
+    color: $gray60;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1rem;
+  }
+}
+.card--timeline {
+  position: relative;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0 1rem 1rem;
+  list-style: none;
+  &__circle {
+    width: 0.5625rem;
+    height: 0.5625rem;
+    background-color: $info;
+    border-radius: 50%;
+    display: block;
+    position: absolute;
+    left: -1.3125rem;
+    top: 50%;
+  }
+  .card-title {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    margin: 0;
+    color: $blue-lake;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.6875rem;
+    border-bottom: 1px solid $gray16;
+  }
+  p {
+    color: $gray80;
+    margin-bottom: 0;
+  }
+  .time-ago__text {
+    font-weight: 100;
+  }
+}
+
+.timeline-status {
+  display: table;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: $border-radius;
+  color: darken($green-grass, 18.5);
+  background-color: #d3f6e2;
+  text-align: center;
+  margin-left: -2.375rem;
+  &--end {
+    color: $white;
+    background-color: darken($red, 18);
+  }
+  &--pending {
+    color: darken($orange, 24);
+    background-color: #ffead4;
+    margin-left: -3rem;
+  }
+}
