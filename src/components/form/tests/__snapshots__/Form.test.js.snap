@@ -1,0 +1,4511 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dataSources simple 1`] = `
+<FormLayout
+  bindings={
+    Object {
+      "dependency": "Test Arg",
+      "message": "Hello World!",
+      "values": Immutable.OrderedMap {
+        "test": "Hello World!",
+      },
+    }
+  }
+  buttons={
+    <FormButtonsMock
+      clearError={[Function]}
+      dirty={false}
+      error={null}
+      fields={
+        Immutable.OrderedMap {
+          "test": Immutable.Record {
+            "constraint": null,
+            "constraintMessage": "Invalid",
+            "dirty": false,
+            "enabled": true,
+            "errors": Immutable.List [],
+            "eventHandlers": Immutable.Map {
+              "onBlur": [Function],
+              "onChange": [Function],
+              "onFocus": [Function],
+            },
+            "focused": false,
+            "form": null,
+            "functions": Immutable.Map {
+              "enabled": null,
+              "label": null,
+              "options": null,
+              "placeholder": null,
+              "required": null,
+              "search": null,
+              "transient": null,
+              "visible": null,
+            },
+            "helpText": "",
+            "id": "dGVzdCB0ZXN0",
+            "initialValue": "Hello World!",
+            "label": "",
+            "language": "",
+            "name": "test",
+            "onChange": null,
+            "options": Immutable.List [],
+            "pattern": null,
+            "patternMessage": "Invalid format",
+            "placeholder": "",
+            "renderAttributes": Immutable.Map {},
+            "required": false,
+            "requiredMessage": "This field is required",
+            "search": Immutable.Map {},
+            "serialize": null,
+            "touched": false,
+            "transient": false,
+            "type": "text",
+            "valid": true,
+            "value": "Hello World!",
+            "visible": true,
+          },
+        }
+      }
+      formKey="test"
+      formOptions={Object {}}
+      reset={[Function]}
+      submit={[Function]}
+      submitting={false}
+    />
+  }
+  dirty={false}
+  error={null}
+  fields={
+    Immutable.OrderedMap {
+      "test": <TextFieldMock
+        dirty={false}
+        enabled={true}
+        errors={Immutable.List []}
+        focusRef={null}
+        focused={false}
+        form={null}
+        helpText=""
+        id="dGVzdCB0ZXN0"
+        label=""
+        name="test"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        options={Immutable.List []}
+        placeholder=""
+        renderAttributes={Immutable.Map {}}
+        required={false}
+        touched={false}
+        value="Hello World!"
+        visible={true}
+      />,
+    }
+  }
+  formKey="test"
+  formOptions={Object {}}
+  meta={
+    Immutable.OrderedMap {
+      "test": Immutable.Map {
+        "visible": true,
+      },
+    }
+  }
+>
+  <TextFieldMock
+    dirty={false}
+    enabled={true}
+    errors={Immutable.List []}
+    focusRef={null}
+    focused={false}
+    form={null}
+    helpText=""
+    id="dGVzdCB0ZXN0"
+    key="test"
+    label=""
+    name="test"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    options={Immutable.List []}
+    placeholder=""
+    renderAttributes={Immutable.Map {}}
+    required={false}
+    touched={false}
+    value="Hello World!"
+    visible={true}
+  />
+  <FormButtonsMock
+    clearError={[Function]}
+    dirty={false}
+    error={null}
+    fields={
+      Immutable.OrderedMap {
+        "test": Immutable.Record {
+          "constraint": null,
+          "constraintMessage": "Invalid",
+          "dirty": false,
+          "enabled": true,
+          "errors": Immutable.List [],
+          "eventHandlers": Immutable.Map {
+            "onBlur": [Function],
+            "onChange": [Function],
+            "onFocus": [Function],
+          },
+          "focused": false,
+          "form": null,
+          "functions": Immutable.Map {
+            "enabled": null,
+            "label": null,
+            "options": null,
+            "placeholder": null,
+            "required": null,
+            "search": null,
+            "transient": null,
+            "visible": null,
+          },
+          "helpText": "",
+          "id": "dGVzdCB0ZXN0",
+          "initialValue": "Hello World!",
+          "label": "",
+          "language": "",
+          "name": "test",
+          "onChange": null,
+          "options": Immutable.List [],
+          "pattern": null,
+          "patternMessage": "Invalid format",
+          "placeholder": "",
+          "renderAttributes": Immutable.Map {},
+          "required": false,
+          "requiredMessage": "This field is required",
+          "search": Immutable.Map {},
+          "serialize": null,
+          "touched": false,
+          "transient": false,
+          "type": "text",
+          "valid": true,
+          "value": "Hello World!",
+          "visible": true,
+        },
+      }
+    }
+    formKey="test"
+    formOptions={Object {}}
+    reset={[Function]}
+    submit={[Function]}
+    submitting={false}
+  />
+</FormLayout>
+`;
+
+exports[`dataSources simple 2`] = `
+Array [
+  Array [],
+]
+`;
+
+exports[`dataSources simple 3`] = `
+Array [
+  Array [
+    "Test Arg",
+  ],
+]
+`;
+
+exports[`dataSources simple 4`] = `
+Array [
+  Array [
+    Object {},
+  ],
+  Array [
+    Object {
+      "dependency": "Test Arg",
+    },
+  ],
+  Array [
+    Object {
+      "dependency": "Test Arg",
+      "message": "Hello World!",
+      "values": Immutable.OrderedMap {
+        "test": "Hello World!",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields constraint given false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraint given function that returns a string 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "test message",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraint given function that returns false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "Invalid",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraint given function that returns null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "Invalid",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraint given function that returns true 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraint given function that returns true 2`] = `
+Array [
+  Array [
+    Object {
+      "values": Immutable.OrderedMap {
+        "test": "",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields constraint given null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraintMessage given constraint false and constraintMessage string 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "test message",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraintMessage given constraint true and constraintMessage function that returns null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraintMessage given constraint true and constraintMessage function that returns string 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraintMessage given constraint true and constraintMessage null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraintMessage given constraint true and constraintMessage string 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields constraintMessage given constraint with string and constraintMessage string 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "test",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields enabled given a function that returns a boolean 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={false}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields enabled given a function that returns a boolean 2`] = `
+Array [
+  Array [
+    Object {
+      "values": Immutable.OrderedMap {
+        "test": "",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields enabled given a null value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={null}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields enabled given a string value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled="true"
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields enabled given false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={false}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields enabled given true 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable attributes 1`] = `
+<AttributesFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.Map {
+      "testkey": "Hello World!",
+    }
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable checkbox 1`] = `
+<CheckboxFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={true}
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable code 1`] = `
+<CodeFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  language=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="<div>code test</div>"
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable form 1`] = `
+<FormFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  search={Immutable.Map {}}
+  touched={false}
+  value={
+    Immutable.Map {
+      "name": "Test Form",
+      "slug": "test-form",
+    }
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable form-multi 1`] = `
+<FormMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  search={Immutable.Map {}}
+  touched={false}
+  value={
+    Immutable.List [
+      Immutable.Map {
+        "name": "Test Form A",
+        "slug": "test-form-a",
+      },
+      Immutable.Map {
+        "name": "Test Form B",
+        "slug": "test-form-b",
+      },
+    ]
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable password 1`] = `
+<PasswordFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="test-password"
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable radio 1`] = `
+<RadioFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.Map {
+      "label": "radio test",
+      "value": "radio-test",
+    }
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable select 1`] = `
+<SelectFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.Map {
+      "value": "Hello World!",
+      "label": "Hello World!",
+    }
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable select-multi 1`] = `
+<SelectMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.List [
+      Immutable.Map {
+        "value": "Hello World A",
+        "label": "Hello World A",
+      },
+      Immutable.Map {
+        "value": "Hello World B",
+        "label": "Hello World B",
+      },
+    ]
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable team 1`] = `
+<TeamFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.Map {
+      "name": "Test Team",
+      "slug": "test-team",
+    }
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable team-multi 1`] = `
+<TeamMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.List [
+      Immutable.Map {
+        "name": "Test Team A",
+        "slug": "test-team-a",
+      },
+      Immutable.Map {
+        "name": "Test Team B",
+        "slug": "test-team-b",
+      },
+    ]
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable text 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="Hello World!"
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable text-multi 1`] = `
+<TextMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.List [
+      "Hello World A",
+      "Hello World B",
+    ]
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable user 1`] = `
+<UserFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.Map {
+      "username": "test-user",
+    }
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields initialValue initialValue properly converted to immutable user-multi 1`] = `
+<UserMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={
+    Immutable.List [
+      Immutable.Map {
+        "username": "test-user-a",
+      },
+      Immutable.Map {
+        "username": "test-user-b",
+      },
+    ]
+  }
+  visible={true}
+/>
+`;
+
+exports[`fields label given a function value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label="Functional Label"
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="foo"
+  visible={true}
+/>
+`;
+
+exports[`fields label given a function value 2`] = `
+Array [
+  Array [
+    Object {
+      "values": Immutable.OrderedMap {
+        "test": "foo",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields label given a null value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label={null}
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields label given a string value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label="Testing Label"
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields pattern given function that returns null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "Invalid format",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="314159"
+  visible={true}
+/>
+`;
+
+exports[`fields pattern given function that returns regex and matching initialValue 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "Invalid format",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="314159"
+  visible={true}
+/>
+`;
+
+exports[`fields pattern given function that returns regex and matching initialValue 2`] = `Array []`;
+
+exports[`fields pattern given regex and matching initialValue 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="314159"
+  visible={true}
+/>
+`;
+
+exports[`fields patternMessage given no trigger 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="314159"
+  visible={true}
+/>
+`;
+
+exports[`fields patternMessage given trigger and message function that returns null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      [Function],
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="hello"
+  visible={true}
+/>
+`;
+
+exports[`fields patternMessage given trigger and message function that returns string 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      [Function],
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="hello"
+  visible={true}
+/>
+`;
+
+exports[`fields patternMessage given trigger and null message 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      null,
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="hello"
+  visible={true}
+/>
+`;
+
+exports[`fields patternMessage given trigger and string message 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "test message",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value="hello"
+  visible={true}
+/>
+`;
+
+exports[`fields placeholder given a function that returns a null value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder={null}
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields placeholder given a function that returns a string value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder="Test ABC"
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields placeholder given a function that returns a string value 2`] = `
+Array [
+  Array [
+    Object {
+      "values": Immutable.OrderedMap {
+        "test": "",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields placeholder given a null value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder={null}
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields placeholder given a string value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder="Test 123"
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields required given false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields required given function that returns false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields required given function that returns null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={null}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields required given function that returns true 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "This field is required",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={true}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields required given function that returns true 2`] = `
+Array [
+  Array [
+    Object {
+      "values": Immutable.OrderedMap {
+        "test": "",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields required given function that returns true 3`] = `
+Array [
+  Array [
+    Object {
+      "values": Immutable.OrderedMap {
+        "test": "",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields required given true 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "This field is required",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={true}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields required has value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={true}
+  touched={false}
+  value="Test"
+  visible={true}
+/>
+`;
+
+exports[`fields requiredMessage given no trigger 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={true}
+  touched={false}
+  value="hello"
+  visible={true}
+/>
+`;
+
+exports[`fields requiredMessage given trigger and message function that returns null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      [Function],
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={true}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields requiredMessage given trigger and message function that returns string 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      [Function],
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={true}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields requiredMessage given trigger and null message 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      null,
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={true}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields requiredMessage given trigger and string message 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={
+    Immutable.List [
+      "test message",
+    ]
+  }
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={true}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields transient given a null value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields transient given a string value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields transient given false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields transient given function that returns false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields transient given function that returns null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields transient given function that returns true 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields transient given function that returns true 2`] = `
+Array [
+  Array [
+    Object {
+      "values": Immutable.OrderedMap {
+        "test": "",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields transient given true 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields type attributes minimal 1`] = `
+<AttributesFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={Immutable.Map {}}
+  visible={true}
+/>
+`;
+
+exports[`fields type checkbox minimal 1`] = `
+<CheckboxFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={false}
+  visible={true}
+/>
+`;
+
+exports[`fields type code minimal 1`] = `
+<CodeFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  language=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields type password minimal 1`] = `
+<PasswordFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields type radio minimal 1`] = `
+<RadioFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields type select minimal 1`] = `
+<SelectFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields type select-multi minimal 1`] = `
+<SelectMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`fields type team minimal 1`] = `
+<TeamFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`fields type team-multi minimal 1`] = `
+<TeamMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`fields type text minimal 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields type text-multi minimal 1`] = `
+<TextMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`fields type user minimal 1`] = `
+<UserFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`fields type user-multi minimal 1`] = `
+<UserMultiFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`fields visible given a null value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={null}
+/>
+`;
+
+exports[`fields visible given a string value 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible="false"
+/>
+`;
+
+exports[`fields visible given false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={false}
+/>
+`;
+
+exports[`fields visible given function that returns false 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={false}
+/>
+`;
+
+exports[`fields visible given function that returns null 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={null}
+/>
+`;
+
+exports[`fields visible given function that returns true 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`fields visible given function that returns true 2`] = `
+Array [
+  Array [
+    Object {
+      "values": Immutable.OrderedMap {
+        "test": "",
+      },
+    },
+  ],
+]
+`;
+
+exports[`fields visible given true 1`] = `
+<TextFieldMock
+  dirty={false}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={false}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`handleSubmit happy path 1`] = `
+<FormLayout
+  bindings={
+    Object {
+      "values": Immutable.OrderedMap {
+        "test2": "",
+      },
+    }
+  }
+  buttons={
+    <FormButtonsMock
+      clearError={[Function]}
+      dirty={false}
+      error={null}
+      fields={
+        Immutable.OrderedMap {
+          "test2": Immutable.Record {
+            "constraint": null,
+            "constraintMessage": "Invalid",
+            "dirty": false,
+            "enabled": true,
+            "errors": Immutable.List [],
+            "eventHandlers": Immutable.Map {
+              "onBlur": [Function],
+              "onChange": [Function],
+              "onFocus": [Function],
+            },
+            "focused": false,
+            "form": null,
+            "functions": Immutable.Map {
+              "enabled": null,
+              "label": null,
+              "options": null,
+              "placeholder": null,
+              "required": null,
+              "search": null,
+              "transient": null,
+              "visible": null,
+            },
+            "helpText": "",
+            "id": "dGVzdCB0ZXN0Mg",
+            "initialValue": "",
+            "label": "",
+            "language": "",
+            "name": "test2",
+            "onChange": null,
+            "options": Immutable.List [],
+            "pattern": null,
+            "patternMessage": "Invalid format",
+            "placeholder": "",
+            "renderAttributes": Immutable.Map {},
+            "required": false,
+            "requiredMessage": "This field is required",
+            "search": Immutable.Map {},
+            "serialize": null,
+            "touched": false,
+            "transient": false,
+            "type": "text",
+            "valid": true,
+            "value": "",
+            "visible": true,
+          },
+        }
+      }
+      formKey="test"
+      formOptions={
+        Object {
+          "testOption": "Foo",
+        }
+      }
+      reset={[Function]}
+      submit={[Function]}
+      submitting={true}
+    />
+  }
+  dirty={false}
+  error={null}
+  fields={
+    Immutable.OrderedMap {
+      "test2": <TextFieldMock
+        dirty={false}
+        enabled={true}
+        errors={Immutable.List []}
+        focusRef={null}
+        focused={false}
+        form={null}
+        helpText=""
+        id="dGVzdCB0ZXN0Mg"
+        label=""
+        name="test2"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        options={Immutable.List []}
+        placeholder=""
+        renderAttributes={Immutable.Map {}}
+        required={false}
+        touched={false}
+        value=""
+        visible={true}
+      />,
+    }
+  }
+  formKey="test"
+  formOptions={
+    Object {
+      "testOption": "Foo",
+    }
+  }
+  meta={
+    Immutable.OrderedMap {
+      "test2": Immutable.Map {
+        "visible": true,
+      },
+    }
+  }
+>
+  <TextFieldMock
+    dirty={false}
+    enabled={true}
+    errors={Immutable.List []}
+    focusRef={null}
+    focused={false}
+    form={null}
+    helpText=""
+    id="dGVzdCB0ZXN0Mg"
+    key="test2"
+    label=""
+    name="test2"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    options={Immutable.List []}
+    placeholder=""
+    renderAttributes={Immutable.Map {}}
+    required={false}
+    touched={false}
+    value=""
+    visible={true}
+  />
+  <FormButtonsMock
+    clearError={[Function]}
+    dirty={false}
+    error={null}
+    fields={
+      Immutable.OrderedMap {
+        "test2": Immutable.Record {
+          "constraint": null,
+          "constraintMessage": "Invalid",
+          "dirty": false,
+          "enabled": true,
+          "errors": Immutable.List [],
+          "eventHandlers": Immutable.Map {
+            "onBlur": [Function],
+            "onChange": [Function],
+            "onFocus": [Function],
+          },
+          "focused": false,
+          "form": null,
+          "functions": Immutable.Map {
+            "enabled": null,
+            "label": null,
+            "options": null,
+            "placeholder": null,
+            "required": null,
+            "search": null,
+            "transient": null,
+            "visible": null,
+          },
+          "helpText": "",
+          "id": "dGVzdCB0ZXN0Mg",
+          "initialValue": "",
+          "label": "",
+          "language": "",
+          "name": "test2",
+          "onChange": null,
+          "options": Immutable.List [],
+          "pattern": null,
+          "patternMessage": "Invalid format",
+          "placeholder": "",
+          "renderAttributes": Immutable.Map {},
+          "required": false,
+          "requiredMessage": "This field is required",
+          "search": Immutable.Map {},
+          "serialize": null,
+          "touched": false,
+          "transient": false,
+          "type": "text",
+          "valid": true,
+          "value": "",
+          "visible": true,
+        },
+      }
+    }
+    formKey="test"
+    formOptions={
+      Object {
+        "testOption": "Foo",
+      }
+    }
+    reset={[Function]}
+    submit={[Function]}
+    submitting={true}
+  />
+</FormLayout>
+`;
+
+exports[`handleSubmit happy path 2`] = `
+<FormLayout
+  bindings={
+    Object {
+      "values": Immutable.OrderedMap {
+        "test2": "",
+      },
+    }
+  }
+  buttons={
+    <FormButtonsMock
+      clearError={[Function]}
+      dirty={false}
+      error={null}
+      fields={
+        Immutable.OrderedMap {
+          "test2": Immutable.Record {
+            "constraint": null,
+            "constraintMessage": "Invalid",
+            "dirty": false,
+            "enabled": true,
+            "errors": Immutable.List [],
+            "eventHandlers": Immutable.Map {
+              "onBlur": [Function],
+              "onChange": [Function],
+              "onFocus": [Function],
+            },
+            "focused": false,
+            "form": null,
+            "functions": Immutable.Map {
+              "enabled": null,
+              "label": null,
+              "options": null,
+              "placeholder": null,
+              "required": null,
+              "search": null,
+              "transient": null,
+              "visible": null,
+            },
+            "helpText": "",
+            "id": "dGVzdCB0ZXN0Mg",
+            "initialValue": "",
+            "label": "",
+            "language": "",
+            "name": "test2",
+            "onChange": null,
+            "options": Immutable.List [],
+            "pattern": null,
+            "patternMessage": "Invalid format",
+            "placeholder": "",
+            "renderAttributes": Immutable.Map {},
+            "required": false,
+            "requiredMessage": "This field is required",
+            "search": Immutable.Map {},
+            "serialize": null,
+            "touched": false,
+            "transient": false,
+            "type": "text",
+            "valid": true,
+            "value": "",
+            "visible": true,
+          },
+        }
+      }
+      formKey="test"
+      formOptions={
+        Object {
+          "testOption": "Foo",
+        }
+      }
+      reset={[Function]}
+      submit={[Function]}
+      submitting={false}
+    />
+  }
+  dirty={false}
+  error={null}
+  fields={
+    Immutable.OrderedMap {
+      "test2": <TextFieldMock
+        dirty={false}
+        enabled={true}
+        errors={Immutable.List []}
+        focusRef={null}
+        focused={false}
+        form={null}
+        helpText=""
+        id="dGVzdCB0ZXN0Mg"
+        label=""
+        name="test2"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        options={Immutable.List []}
+        placeholder=""
+        renderAttributes={Immutable.Map {}}
+        required={false}
+        touched={false}
+        value=""
+        visible={true}
+      />,
+    }
+  }
+  formKey="test"
+  formOptions={
+    Object {
+      "testOption": "Foo",
+    }
+  }
+  meta={
+    Immutable.OrderedMap {
+      "test2": Immutable.Map {
+        "visible": true,
+      },
+    }
+  }
+>
+  <TextFieldMock
+    dirty={false}
+    enabled={true}
+    errors={Immutable.List []}
+    focusRef={null}
+    focused={false}
+    form={null}
+    helpText=""
+    id="dGVzdCB0ZXN0Mg"
+    key="test2"
+    label=""
+    name="test2"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onFocus={[Function]}
+    options={Immutable.List []}
+    placeholder=""
+    renderAttributes={Immutable.Map {}}
+    required={false}
+    touched={false}
+    value=""
+    visible={true}
+  />
+  <FormButtonsMock
+    clearError={[Function]}
+    dirty={false}
+    error={null}
+    fields={
+      Immutable.OrderedMap {
+        "test2": Immutable.Record {
+          "constraint": null,
+          "constraintMessage": "Invalid",
+          "dirty": false,
+          "enabled": true,
+          "errors": Immutable.List [],
+          "eventHandlers": Immutable.Map {
+            "onBlur": [Function],
+            "onChange": [Function],
+            "onFocus": [Function],
+          },
+          "focused": false,
+          "form": null,
+          "functions": Immutable.Map {
+            "enabled": null,
+            "label": null,
+            "options": null,
+            "placeholder": null,
+            "required": null,
+            "search": null,
+            "transient": null,
+            "visible": null,
+          },
+          "helpText": "",
+          "id": "dGVzdCB0ZXN0Mg",
+          "initialValue": "",
+          "label": "",
+          "language": "",
+          "name": "test2",
+          "onChange": null,
+          "options": Immutable.List [],
+          "pattern": null,
+          "patternMessage": "Invalid format",
+          "placeholder": "",
+          "renderAttributes": Immutable.Map {},
+          "required": false,
+          "requiredMessage": "This field is required",
+          "search": Immutable.Map {},
+          "serialize": null,
+          "touched": false,
+          "transient": false,
+          "type": "text",
+          "valid": true,
+          "value": "",
+          "visible": true,
+        },
+      }
+    }
+    formKey="test"
+    formOptions={
+      Object {
+        "testOption": "Foo",
+      }
+    }
+    reset={[Function]}
+    submit={[Function]}
+    submitting={false}
+  />
+</FormLayout>
+`;
+
+exports[`handleSubmit happy path 3`] = `
+Array [
+  Array [
+    Object {
+      "testOption": "Foo",
+    },
+  ],
+]
+`;
+
+exports[`handleSubmit happy path 4`] = `
+Array [
+  Array [
+    Object {
+      "testOption": "Foo",
+    },
+  ],
+]
+`;
+
+exports[`handleSubmit happy path 5`] = `
+Array [
+  Array [
+    Immutable.OrderedMap {
+      "test2": "",
+    },
+    Object {
+      "values": Immutable.OrderedMap {
+        "test2": "",
+      },
+    },
+  ],
+  Array [],
+]
+`;
+
+exports[`handleSubmit happy path 6`] = `
+Array [
+  Array [
+    "Success!",
+  ],
+]
+`;
+
+exports[`handleSubmit submit error 1`] = `
+<FormLayout
+  bindings={
+    Object {
+      "values": Immutable.OrderedMap {},
+    }
+  }
+  buttons={
+    <FormButtonsMock
+      clearError={[Function]}
+      dirty={false}
+      error="This is a test error"
+      fields={Immutable.OrderedMap {}}
+      formKey="test"
+      formOptions={Object {}}
+      reset={[Function]}
+      submit={[Function]}
+      submitting={false}
+    />
+  }
+  dirty={false}
+  error={
+    <FormErrorMock
+      clear={[Function]}
+      error="This is a test error"
+    />
+  }
+  fields={Immutable.OrderedMap {}}
+  formKey="test"
+  formOptions={Object {}}
+  meta={Immutable.OrderedMap {}}
+>
+  <FormErrorMock
+    clear={[Function]}
+    error="This is a test error"
+  />
+  <FormButtonsMock
+    clearError={[Function]}
+    dirty={false}
+    error="This is a test error"
+    fields={Immutable.OrderedMap {}}
+    formKey="test"
+    formOptions={Object {}}
+    reset={[Function]}
+    submit={[Function]}
+    submitting={false}
+  />
+</FormLayout>
+`;
+
+exports[`handleSubmit submit error calls onError 1`] = `
+Array [
+  Array [
+    Object {
+      "testOption": "Foo",
+    },
+  ],
+]
+`;
+
+exports[`handleSubmit submit error calls onError 2`] = `
+Array [
+  Array [
+    "TEST ERROR",
+  ],
+]
+`;
+
+exports[`handleSubmit submit unexpected error, we expect the promise to reject with a string 1`] = `
+<FormLayout
+  bindings={
+    Object {
+      "values": Immutable.OrderedMap {},
+    }
+  }
+  buttons={
+    <FormButtonsMock
+      clearError={[Function]}
+      dirty={false}
+      error="Unexpected error occurred"
+      fields={Immutable.OrderedMap {}}
+      formKey="test"
+      formOptions={Object {}}
+      reset={[Function]}
+      submit={[Function]}
+      submitting={false}
+    />
+  }
+  dirty={false}
+  error={
+    <FormErrorMock
+      clear={[Function]}
+      error="Unexpected error occurred"
+    />
+  }
+  fields={Immutable.OrderedMap {}}
+  formKey="test"
+  formOptions={Object {}}
+  meta={Immutable.OrderedMap {}}
+>
+  <FormErrorMock
+    clear={[Function]}
+    error="Unexpected error occurred"
+  />
+  <FormButtonsMock
+    clearError={[Function]}
+    dirty={false}
+    error="Unexpected error occurred"
+    fields={Immutable.OrderedMap {}}
+    formKey="test"
+    formOptions={Object {}}
+    reset={[Function]}
+    submit={[Function]}
+    submitting={false}
+  />
+</FormLayout>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES attributes 1`] = `
+<AttributesFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.Map {}}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES checkbox 1`] = `
+<CheckboxFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={false}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES code 1`] = `
+<CodeFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  language=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES form 1`] = `
+<FormFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  search={Immutable.Map {}}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES form-multi 1`] = `
+<FormMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  search={Immutable.Map {}}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES password 1`] = `
+<PasswordFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES radio 1`] = `
+<RadioFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES select 1`] = `
+<SelectFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES select-multi 1`] = `
+<SelectMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES team 1`] = `
+<TeamFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES team-multi 1`] = `
+<TeamMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES text 1`] = `
+<TextFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES text-multi 1`] = `
+<TextMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES user 1`] = `
+<UserFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue empty string values should use FIELD_DEFAULT_VALUES user-multi 1`] = `
+<UserMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES attributes 1`] = `
+<AttributesFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.Map {}}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES checkbox 1`] = `
+<CheckboxFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={false}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES code 1`] = `
+<CodeFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  language=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES form 1`] = `
+<FormFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  search={Immutable.Map {}}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES form-multi 1`] = `
+<FormMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  search={Immutable.Map {}}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES password 1`] = `
+<PasswordFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES radio 1`] = `
+<RadioFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES select 1`] = `
+<SelectFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES select-multi 1`] = `
+<SelectMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES team 1`] = `
+<TeamFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES team-multi 1`] = `
+<TeamMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES text 1`] = `
+<TextFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES text-multi 1`] = `
+<TextMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES user 1`] = `
+<UserFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue null values should use FIELD_DEFAULT_VALUES user-multi 1`] = `
+<UserMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue triggerChange 1`] = `
+<TextFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value="Hello World!"
+  visible={true}
+/>
+`;
+
+exports[`setValue triggerChange 2`] = `
+Array [
+  Array [
+    Object {
+      "test": 2,
+      "values": Immutable.OrderedMap {
+        "test": "Hello World!",
+      },
+    },
+    Object {
+      "setValue": [Function],
+      "toggleMultiValue": [Function],
+    },
+  ],
+]
+`;
+
+exports[`setValue triggerChange false 1`] = `
+<TextFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value="Hello World!"
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES attributes 1`] = `
+<AttributesFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.Map {}}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES checkbox 1`] = `
+<CheckboxFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={false}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES code 1`] = `
+<CodeFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  language=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES form 1`] = `
+<FormFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  search={Immutable.Map {}}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES form-multi 1`] = `
+<FormMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  search={Immutable.Map {}}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES password 1`] = `
+<PasswordFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES radio 1`] = `
+<RadioFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES select 1`] = `
+<SelectFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES select-multi 1`] = `
+<SelectMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES team 1`] = `
+<TeamFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES team-multi 1`] = `
+<TeamMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES text 1`] = `
+<TextFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value=""
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES text-multi 1`] = `
+<TextMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  options={Immutable.List []}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES user 1`] = `
+<UserFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={null}
+  visible={true}
+/>
+`;
+
+exports[`setValue undefined values should use FIELD_DEFAULT_VALUES user-multi 1`] = `
+<UserMultiFieldMock
+  dirty={true}
+  enabled={true}
+  errors={Immutable.List []}
+  focusRef={null}
+  focused={false}
+  form={null}
+  helpText=""
+  id="dGVzdCB0ZXN0"
+  key="test"
+  label=""
+  name="test"
+  onBlur={[Function]}
+  onChange={[Function]}
+  onFocus={[Function]}
+  placeholder=""
+  renderAttributes={Immutable.Map {}}
+  required={false}
+  touched={true}
+  value={Immutable.List []}
+  visible={true}
+/>
+`;
+
+exports[`submitForm with fieldset and values 1`] = `
+Array [
+  Array [
+    Immutable.OrderedMap {
+      "firstName": "Matt",
+      "lastName": "",
+    },
+    Object {
+      "values": Immutable.OrderedMap {
+        "firstName": "Matt",
+        "lastName": "",
+        "email": "",
+      },
+    },
+  ],
+]
+`;
+
+exports[`submitForm with fieldset and values 2`] = `
+Object {
+  "values": Immutable.OrderedMap {
+    "firstName": "Matt",
+    "lastName": "",
+    "email": "",
+  },
+}
+`;

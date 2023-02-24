@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="28px" viewBox="0 0 27 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>icon / scale-minus</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon-/-scale-minus" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="minus">
+            <rect id="Rectangle-Copy" fill="#7E8083" x="0" y="0" width="27" height="28"></rect>
+            <path d="M21.7143044,12.0714179 C21.7143044,11.4798994 21.2343932,10.9999881 20.6428746,10.9999881 L7.07142985,10.9999881 C6.47991129,10.9999881 6,11.4798994 6,12.0714179 L6,14.2142776 C6,14.8057962 6.47991129,15.2857075 7.07142985,15.2857075 L20.6428746,15.2857075 C21.2343932,15.2857075 21.7143044,14.8057962 21.7143044,14.2142776 L21.7143044,12.0714179 Z" id="minus---FontAwesome" fill="#FFFFFF"></path>
+        </g>
+    </g>
+</svg>
