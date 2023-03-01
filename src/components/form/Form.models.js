@@ -47,6 +47,7 @@ export const FIELD_DEFAULT_VALUES = Map({
   team: null,
   'team-multi': List(),
   'text-multi': List(),
+  toggle: false,
   user: null,
   'user-multi': List(),
 });

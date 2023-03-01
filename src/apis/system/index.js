@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { handleErrors, headerBuilder, paramBuilder } from '../http';
+import {
+  formDataBuilder,
+  handleErrors,
+  headerBuilder,
+  paramBuilder,
+} from '../http';
 
 export const fetchTenants = (options = {}) => {
   // Build URL and fetch the space.
@@ -31,7 +36,7 @@ export const fetchTenant = (options = {}) => {
 };
 
 export const updateTenant = (options = {}) => {
-  const { slug, tenant } = options;
+  const { slug, tenant, multipart } = options;
   if (!tenant) {
     throw new Error('updateTenant failed! The option "tenant" is required.');
   }
@@ -40,25 +45,33 @@ export const updateTenant = (options = {}) => {
   }
 
   return axios
-    .put(`/app/system-coordinator/api/v1/tenants/${slug}`, tenant, {
-      params: paramBuilder(options),
-      headers: headerBuilder(options),
-    })
+    .put(
+      `/app/system-coordinator/api/v1/tenants/${slug}`,
+      !multipart ? tenant : formDataBuilder(tenant),
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
     .then(response => ({ tenant: response.data.tenant }))
     .catch(handleErrors);
 };
 
 export const createTenant = (options = {}) => {
-  const { tenant } = options;
+  const { tenant, multipart } = options;
   if (!tenant) {
     throw new Error('createTenant failed! The option "tenant" is required.');
   }
 
   return axios
-    .post('/app/system-coordinator/api/v1/tenants', tenant, {
-      params: paramBuilder(options),
-      headers: headerBuilder(options),
-    })
+    .post(
+      '/app/system-coordinator/api/v1/tenants',
+      !multipart ? tenant : formDataBuilder(tenant),
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
     .then(response => ({ tenant: response.data.tenant }))
     .catch(handleErrors);
 };
@@ -134,13 +147,28 @@ export const updateSystemUser = (options = {}) => {
 };
 
 export const fetchSystemIngress = (options = {}) => {
-  // Build URL and fetch the space.
   return axios
     .get('/app/system-coordinator/api/v1/platform/ingress', {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ ingress: response.data }))
+    .then(response => ({ ingress: response.data.ingress }))
+    .catch(handleErrors);
+};
+
+export const updateSystemIngress = (options = {}) => {
+  const { ingress, multipart } = options;
+
+  return axios
+    .put(
+      '/app/system-coordinator/api/v1/platform/ingress',
+      !multipart ? ingress : formDataBuilder(ingress),
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({ ingress: response.data.ingress }))
     .catch(handleErrors);
 };
 
@@ -184,7 +212,7 @@ export const fetchSystemDefaultTaskDbAdapter = (options = {}) => {
 };
 
 export const updateSystemDefaultTaskDbAdapter = (options = {}) => {
-  const { adapter } = options;
+  const { adapter, multipart } = options;
   if (!adapter) {
     throw new Error(
       'updateSystemDefaultTaskDbAdapter failed! The option "adapter" is required.',
@@ -194,7 +222,7 @@ export const updateSystemDefaultTaskDbAdapter = (options = {}) => {
   return axios
     .put(
       `/app/system-coordinator/api/v1/platform/default-task-db-adapter`,
-      adapter,
+      !multipart ? adapter : formDataBuilder(adapter),
       {
         params: paramBuilder(options),
         headers: headerBuilder(options),
@@ -271,12 +299,7 @@ export const updateSystemFilestore = (options = {}) => {
     .catch(handleErrors);
 };
 
-const VALID_RESTARTABLE_COMPONENTS = [
-  'agent',
-  'core',
-  'loghub',
-  'indexer',
-];
+const VALID_RESTARTABLE_COMPONENTS = ['agent', 'core', 'loghub', 'indexer'];
 export const postPlatformComponentRestart = (options = {}) => {
   if (
     !options.component ||
@@ -340,11 +363,43 @@ export const fetchCassandraConfig = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const updateCassandraConfig = (options = {}) => {
+  const { adapter, multipart } = options;
+
+  return axios
+    .put(
+      '/app/system-coordinator/api/v1/platform/cassandra',
+      !multipart ? adapter : formDataBuilder(adapter),
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({ adapter: response.data.adapter }))
+    .catch(handleErrors);
+};
+
 export const fetchElasticSearchConfig = (options = {}) => {
   return axios
     .get(
       '/app/system-coordinator/api/v1/platform/elasticsearch',
       {},
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({ adapter: response.data.adapter }))
+    .catch(handleErrors);
+};
+
+export const updateElasticSearchConfig = (options = {}) => {
+  const { adapter, multipart } = options;
+
+  return axios
+    .put(
+      '/app/system-coordinator/api/v1/platform/elasticsearch',
+      !multipart ? adapter : formDataBuilder(adapter),
       {
         params: paramBuilder(options),
         headers: headerBuilder(options),
@@ -510,5 +565,73 @@ export const rotateEncryptionKey = (options = {}) => {
       },
     )
     .then(response => ({ system: response.data }))
+    .catch(handleErrors);
+};
+
+export const fetchTrustedCertificates = (options = {}) => {
+  const { spaceSlug } = options;
+
+  return axios
+    .get(
+      spaceSlug
+        ? `/app/system-coordinator/api/v1/tenants/${spaceSlug}/trusted`
+        : '/app/system-coordinator/api/v1/platform/ingress/trusted',
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({
+      trustedCertificates: response.data.trustedCertificates,
+    }))
+    .catch(handleErrors);
+};
+
+export const createTrustedCertificate = (options = {}) => {
+  const { spaceSlug, certificates } = options;
+  if (!certificates) {
+    throw new Error(
+      'createTenant failed! The option "certificates" is required.',
+    );
+  }
+
+  return axios
+    .post(
+      spaceSlug
+        ? `/app/system-coordinator/api/v1/tenants/${spaceSlug}/trusted`
+        : '/app/system-coordinator/api/v1/platform/ingress/trusted',
+      formDataBuilder({ certificates }),
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({
+      trustedCertificates: response.data.trustedCertificates,
+    }))
+    .catch(handleErrors);
+};
+
+export const deleteTrustedCertificate = (options = {}) => {
+  const { spaceSlug, fingerprint } = options;
+  if (!fingerprint) {
+    throw new Error(
+      'createTenant failed! The option "fingerprint" is required.',
+    );
+  }
+
+  return axios
+    .delete(
+      spaceSlug
+        ? `/app/system-coordinator/api/v1/tenants/${spaceSlug}/trusted/${fingerprint}`
+        : `/app/system-coordinator/api/v1/platform/ingress/trusted/${fingerprint}`,
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({
+      trustedCertificates: response.data.trustedCertificates,
+    }))
     .catch(handleErrors);
 };

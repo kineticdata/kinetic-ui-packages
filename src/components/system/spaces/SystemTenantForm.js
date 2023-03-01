@@ -29,9 +29,20 @@ const dataSources = ({ slug }) => ({
     params: [],
     transform: result => result.adapter,
   },
+  fileFields: {
+    fn: () => ({
+      mssql: ['sslrootcert', 'sslcert'],
+      oracle: ['serverCert', 'clientCert'],
+      postgres: ['sslrootcert', 'sslcert', 'sslkey'],
+    }),
+    params: [],
+  },
 });
 
-const handleSubmit = ({ slug }) => values => {
+const handleSubmit = ({ slug }) => (
+  values,
+  { fileFields, values: rawValues },
+) => {
   const authenticationSecret = values.get('authenticationSecret')
     ? { authenticationSecret: values.get('authenticationSecret') }
     : {};
@@ -43,6 +54,13 @@ const handleSubmit = ({ slug }) => values => {
         },
       }
     : {};
+  const type = values.get('task_databaseAdapter_type');
+  const fileFieldsForType = fileFields.get(type);
+  // Only include values for file fields if the toggle field is true
+  const filterFn = (value, key) =>
+    !fileFieldsForType.includes(key) ||
+    !!rawValues.get(`${type}_change_${key}`);
+
   const tenant = {
     ...authenticationSecret,
     space: {
@@ -55,20 +73,22 @@ const handleSubmit = ({ slug }) => values => {
         : 'false',
       ...deployment,
       databaseAdapter: {
-        type: values.get('task_databaseAdapter_type'),
-        properties: adapterProperties(
-          values,
-          values.get('task_databaseAdapter_type'),
-        ),
+        type: type,
+        properties: adapterProperties(values, type, filterFn),
       },
     },
     users: values.get('users'),
   };
+
+  const multipart = Object.entries(tenant.task.databaseAdapter.properties).some(
+    ([name, value]) => value instanceof File,
+  );
+
   return slug
-    ? updateTenant({ slug, tenant }).then(
+    ? updateTenant({ slug, tenant, multipart }).then(
         handleFormErrors('space', 'There was an error saving the Space.'),
       )
-    : createTenant({ tenant }).then(
+    : createTenant({ tenant, multipart }).then(
         handleFormErrors(null, 'There was an error saving the Space.'),
       );
 };

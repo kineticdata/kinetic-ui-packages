@@ -4,6 +4,7 @@ import {
   handleErrors,
   paramBuilder,
   operations,
+  formDataBuilder,
 } from './http';
 import { List } from 'immutable';
 
@@ -163,6 +164,111 @@ describe('http module', () => {
     test('in', () => {
       const op = operations.get('in');
       expect(op('field', List(['v1', 'v2']))).toEqual('field IN ("v1", "v2")');
+    });
+  });
+
+  // The `paramBuilder` only strips out unnecessary options.
+  describe('#formDataBuilder', () => {
+    test('simple values only', () => {
+      const data = {
+        name: 'foo',
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.getAll('name')).toContain('foo');
+    });
+    test('with array values', () => {
+      const data = {
+        name: ['foo', 'bar'],
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.getAll('name')).toContain('foo');
+      expect(formData.getAll('name')).toContain('bar');
+    });
+    test('with array of objects', () => {
+      const data = {
+        array: [{ name: 'foo' }, { name: 'bar' }],
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.getAll('array[0][name]')).toContain('foo');
+      expect(formData.getAll('array[1][name]')).toContain('bar');
+    });
+    test('with File', () => {
+      const data = {
+        file: new File(['test'], 'test'),
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.get('file') instanceof File).toBeTruthy();
+    });
+    test('with multiple Files', () => {
+      const data = {
+        files: [new File(['test'], 'test'), new File(['test2'], 'test2')],
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.getAll('files')[0] instanceof File).toBeTruthy();
+      expect(formData.getAll('files')[1] instanceof File).toBeTruthy();
+    });
+    test('nested values', () => {
+      const data = {
+        name: 'foo',
+        child: {
+          name: 'bar',
+        },
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.getAll('name')).toContain('foo');
+      expect(formData.get('child')).toBeNull();
+      expect(formData.getAll('child[name]')).toContain('bar');
+    });
+    test('nested values with array', () => {
+      const data = {
+        child: {
+          name: ['bar', 'baz'],
+        },
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.getAll('child[name]')).toContain('bar');
+      expect(formData.getAll('child[name]')).toContain('baz');
+    });
+    test('nested values with File', () => {
+      const data = {
+        child: {
+          file: new File(['test'], 'test'),
+        },
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.get('child[file]') instanceof File).toBeTruthy();
+    });
+    test('deeply nested data', () => {
+      const data = {
+        name: 'foo',
+        child: {
+          array: ['bar', 'baz'],
+          sub: {
+            file: new File(['test'], 'test'),
+            last: {
+              slug: 'foobar',
+            },
+          },
+        },
+      };
+      const formData = formDataBuilder(data);
+
+      expect(formData.getAll('name')).toContain('foo');
+      expect(formData.get('child')).toBeNull();
+      expect(formData.getAll('child[array]')).toContain('bar');
+      expect(formData.getAll('child[array]')).toContain('baz');
+      expect(formData.get('child[sub]')).toBeNull();
+      expect(formData.get('child[sub][file]') instanceof File).toBeTruthy();
+      expect(formData.get('child[sub][last]')).toBeNull();
+      expect(formData.getAll('child[sub][last][slug]')).toContain('foobar');
     });
   });
 });

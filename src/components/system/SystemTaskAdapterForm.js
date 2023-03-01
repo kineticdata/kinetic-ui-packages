@@ -19,16 +19,35 @@ const dataSources = () => ({
     params: [],
     transform: result => result.adapter,
   },
+  fileFields: {
+    fn: () => ({
+      mssql: ['sslrootcert', 'sslcert'],
+      oracle: ['serverCert', 'clientCert'],
+      postgres: ['sslrootcert', 'sslcert', 'sslkey'],
+    }),
+    params: [],
+  },
 });
 
-const handleSubmit = () => values => {
+const handleSubmit = () => (values, { fileFields, values: rawValues }) => {
   const type = values.get('type');
+  const fileFieldsForType = fileFields.get(type);
+  // Only include values for file fields if the toggle field is true
+  const filterFn = (value, key) =>
+    !fileFieldsForType.includes(key) ||
+    !!rawValues.get(`${type}_change_${key}`);
 
   const adapter = {
     type,
-    properties: adapterProperties(values, type),
+    properties: adapterProperties(values, type, filterFn),
   };
-  return updateSystemDefaultTaskDbAdapter({ adapter }).then(
+
+  return updateSystemDefaultTaskDbAdapter({
+    adapter,
+    multipart: Object.entries(adapter.properties).some(
+      ([name, value]) => value instanceof File,
+    ),
+  }).then(
     handleFormErrors('adapter', 'There was an error saving the Adapter.'),
   );
 };

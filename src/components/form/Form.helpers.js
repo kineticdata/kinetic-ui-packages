@@ -177,72 +177,133 @@ export const buildPropertyFields = ({
   isNew,
   properties,
   getName,
+  getLabel,
   getOptions,
   getRequired,
   getSensitive,
+  getCertificate,
+  getHelpText,
   getValue,
 }) => ({
   propertiesFields: properties
     .flatMap(property => {
       const name = getName(property);
+      const label = (isFunction(getLabel) && getLabel(property)) || name;
       const options = isFunction(getOptions) && getOptions(property);
       const required = isFunction(getRequired) && getRequired(property);
       const sensitive = isFunction(getSensitive) && getSensitive(property);
+      const certificate =
+        isFunction(getCertificate) && getCertificate(property);
+      const helpText = isFunction(getHelpText) && getHelpText(property);
       const value = getValue(property);
-      return !sensitive || isNew
+      return !!certificate
         ? [
             {
               name: `property_${name}`,
-              label: name,
-              type: sensitive ? 'password' : options ? 'select' : 'text',
+              label,
+              type: 'certificate',
               required: required,
               transient: true,
               options,
-              initialValue: value,
+              helpText,
+              initialValue: certificate,
+              visible: ({ values }) => !values.get(`changeProperty_${name}`),
             },
-          ]
-        : [
             {
-              name: `property_${name}`,
-              label: name,
-              type: 'password',
-              required: required
-                ? ({ values }) => values.get(`changeProperty_${name}`)
-                : false,
+              name: `property_new_${name}`,
+              label,
+              type: 'file',
+              required: required,
               transient: true,
-              initialValue: '',
+              helpText,
               visible: ({ values }) => values.get(`changeProperty_${name}`),
             },
             {
               name: `changeProperty_${name}`,
-              label: `Change ${name}`,
-              type: 'checkbox',
+              label: `Change ${label}`,
+              type: 'toggle',
               transient: true,
               initialValue: false,
               onChange: ({ values }, { setValue }) => {
-                if (values.get(`property_${name}`) !== '') {
-                  setValue(`property_${name}`, '');
+                if (
+                  !List.isList(values.get(`property_new_${name}`)) ||
+                  values.get(`property_new_${name}`).size > 0
+                ) {
+                  setValue(`property_new_${name}`, List());
                 }
               },
             },
-          ];
+          ]
+        : !sensitive || isNew
+          ? [
+              {
+                name: `property_${name}`,
+                label,
+                type: sensitive ? 'password' : options ? 'select' : 'text',
+                required: required,
+                transient: true,
+                options,
+                helpText,
+                initialValue: value,
+              },
+            ]
+          : [
+              {
+                name: `property_${name}`,
+                label,
+                type: 'secret',
+                required: required
+                  ? ({ values }) => values.get(`changeProperty_${name}`)
+                  : false,
+                transient: true,
+                helpText,
+                initialValue: '',
+                visible: ({ values }) => values.get(`changeProperty_${name}`),
+              },
+              {
+                name: `changeProperty_${name}`,
+                label: `Change ${label}`,
+                type: 'toggle',
+                transient: true,
+                initialValue: false,
+                onChange: ({ values }, { setValue }) => {
+                  if (values.get(`property_${name}`) !== '') {
+                    setValue(`property_${name}`, '');
+                  }
+                },
+              },
+            ];
     })
     .toArray(),
   propertiesSerialize: ({ values }) =>
     properties
-      .filter(
-        prop =>
-          isNew ||
-          !isFunction(getSensitive) ||
-          !getSensitive(prop) ||
-          values.get(`changeProperty_${getName(prop)}`),
-      )
-      .map(getName)
-      .reduce(
-        (reduction, propName) =>
-          reduction.set(propName, values.get(`property_${propName}`)),
-        Map(),
-      )
+      .reduce((reduction, property) => {
+        const name = getName(property);
+        const sensitive = isFunction(getSensitive) && getSensitive(property);
+        const certificate =
+          isFunction(getCertificate) && getCertificate(property);
+
+        if (certificate) {
+          // If certificate field, serialize value if the corresponding
+          // changeProperty field has a value. Set to the new uploaded file, or
+          // an empty string if no file uploaded.
+          if (values.get(`changeProperty_${name}`)) {
+            return reduction.set(
+              name,
+              values.getIn([`property_new_${name}`, 0]) || '',
+            );
+          }
+        } else if (sensitive) {
+          // If sensitive field, serialize value if the corresponding
+          // changeProperty field has a value. Set to the new provided value.
+          if (isNew || values.get(`changeProperty_${name}`)) {
+            return reduction.set(name, values.get(`property_${name}`));
+          }
+        } else {
+          return reduction.set(name, values.get(`property_${name}`));
+        }
+        return reduction;
+      }, Map())
       .toObject(),
 });
 

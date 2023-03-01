@@ -34,7 +34,9 @@ export const generateInitialValues = (
     );
     if (List.isList(properties)) {
       const property = properties.find(p => p.get('name') === key);
-      return property ? property.get('value') : defaultObjectValue;
+      return property
+        ? property.get('certificate') || property.get('value')
+        : defaultObjectValue;
     } else {
       return get(properties, key, defaultObjectValue);
     }
@@ -42,7 +44,11 @@ export const generateInitialValues = (
     const adapterProperty = get(defaultObject, 'properties', List()).find(
       property => property.get('name') === key,
     );
-    return get(adapterProperty, 'value', defaultObjectValue);
+    return get(
+      adapterProperty,
+      'certificate',
+      get(adapterProperty, 'value', defaultObjectValue),
+    );
   }
 
   return initialValue;
@@ -82,7 +88,7 @@ const generatePasswordFields = (
     {
       name: name,
       label,
-      type: 'password',
+      type: 'secret',
       transient: ({ values }) =>
         persistedObject
           ? !values.get(`${name}Change`)
@@ -93,7 +99,7 @@ const generatePasswordFields = (
     {
       name: `${name}Change`,
       label: `Change ${label}`,
-      type: 'checkbox',
+      type: 'toggle',
       visible: !!persistedObject,
       initialValue: !persistedObject,
       transient: true,
@@ -194,28 +200,78 @@ export const MSSQL_FIELDS = (
     },
     {
       name: 'mssql_sslProtocol',
-      description: 'Protocol to use with SSL encryption',
+      helpText: 'Protocol to use with SSL encryption',
       label: 'SSL Protocol',
       type: 'text',
-      required: false,
+      required: ({ values }) => values.get('mssql_sslEnabled') === 'true',
       visible: trueIfAdapter,
       initialValue: initialValues('sslProtocol', 'TLSv1.2'),
     },
     {
+      name: 'mssql_current_sslrootcert',
+      label: 'Root Certificate',
+      type: 'certificate',
+      transient: true,
+      required: ({ values }) =>
+        !values.get('mssql_change_sslrootcert') &&
+        values.get('mssql_sslEnabled') === 'true',
+      visible: trueIfAdapter,
+      initialValue: initialValues('sslrootcert', {}),
+    },
+    {
       name: 'mssql_sslrootcert',
       label: 'Root Certificate',
-      type: 'text-area',
+      type: 'file',
+      required: ({ values }) =>
+        !!values.get('mssql_change_sslrootcert') &&
+        values.get('mssql_sslEnabled') === 'true',
+      visible: trueIfAdapter,
+    },
+    {
+      name: 'mssql_change_sslrootcert',
+      label: 'Change Root Certificate',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (
+          !List.isList(values.get('mssql_sslrootcert')) ||
+          values.get('mssql_sslrootcert').size > 0
+        ) {
+          setValue('mssql_sslrootcert', List());
+        }
+      },
+    },
+    {
+      name: 'mssql_current_sslcert',
+      label: 'Client Certificate',
+      type: 'certificate',
+      transient: true,
       required: false,
       visible: trueIfAdapter,
-      initialValue: initialValues('sslrootcert', ''),
+      initialValue: initialValues('sslcert', ''),
     },
     {
       name: 'mssql_sslcert',
       label: 'Client Certificate',
-      type: 'text-area',
+      type: 'file',
       required: false,
       visible: trueIfAdapter,
-      initialValue: initialValues('sslcert', ''),
+    },
+    {
+      name: 'mssql_change_sslcert',
+      label: 'Change Client Certificate',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (
+          !List.isList(values.get('mssql_sslcert')) ||
+          values.get('mssql_sslcert').size > 0
+        ) {
+          setValue('mssql_sslcert', List());
+        }
+      },
     },
     ...generatePasswordFields(
       'mssql',
@@ -306,7 +362,7 @@ export const ORACLE_FIELDS = (
       name: 'oracle_sslVersion',
       label: 'TLS Version',
       type: 'text',
-      required: false,
+      required: ({ values }) => values.get('oracle_sslEnabled') === 'true',
       visible: trueIfAdapter,
       initialValue: initialValues('sslVersion', '1.2'),
     },
@@ -314,7 +370,7 @@ export const ORACLE_FIELDS = (
       name: 'oracle_sslServerDnMatch',
       label: 'Server DN Match',
       type: 'select',
-      required: false,
+      required: ({ values }) => values.get('oracle_sslEnabled') === 'true',
       visible: trueIfAdapter,
       options: [
         { label: 'True', value: 'true' },
@@ -331,20 +387,70 @@ export const ORACLE_FIELDS = (
       initialValue: initialValues('ciphersuites', ''),
     },
     {
-      name: 'oracle_serverCert',
+      name: 'oracle_current_serverCert',
       label: 'Server Certificate',
-      type: 'text-area',
-      required: false,
+      type: 'certificate',
+      transient: true,
+      required: ({ values }) =>
+        !values.get('oracle_change_serverCert') &&
+        values.get('oracle_sslEnabled') === 'true',
       visible: trueIfAdapter,
       initialValue: initialValues('serverCert', ''),
     },
     {
-      name: 'oracle_clientCert',
+      name: 'oracle_serverCert',
+      label: 'Server Certificate',
+      type: 'file',
+      required: ({ values }) =>
+        !!values.get('oracle_change_serverCert') &&
+        values.get('oracle_sslEnabled') === 'true',
+      visible: trueIfAdapter,
+    },
+    {
+      name: 'oracle_change_serverCert',
+      label: 'Change Server Certificate',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (
+          !List.isList(values.get('oracle_serverCert')) ||
+          values.get('oracle_serverCert').size > 0
+        ) {
+          setValue('oracle_serverCert', List());
+        }
+      },
+    },
+    {
+      name: 'oracle_current_clientCert',
       label: 'Client Certificate',
-      type: 'text-area',
+      type: 'certificate',
+      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('clientCert', ''),
+    },
+    {
+      name: 'oracle_clientCert',
+      label: 'Client Certificate',
+      type: 'file',
+      required: false,
+      visible: trueIfAdapter,
+    },
+    {
+      name: 'oracle_change_clientCert',
+      label: 'Change Client Certificate',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (
+          !List.isList(values.get('oracle_clientCert')) ||
+          values.get('oracle_clientCert').size > 0
+        ) {
+          setValue('oracle_clientCert', List());
+        }
+      },
     },
     ...generatePasswordFields(
       'oracle',
@@ -436,7 +542,7 @@ export const POSTGRES_FIELDS = (
       name: 'postgres_sslmode',
       label: 'SSL Mode',
       type: 'select',
-      required: false,
+      required: ({ values }) => values.get('postgres_sslEnabled') === 'true',
       visible: trueIfAdapter,
       options: [
         { label: 'Disable', value: 'disable' },
@@ -448,35 +554,110 @@ export const POSTGRES_FIELDS = (
       initialValue: initialValues('sslmode', 'disable'),
     },
     {
-      name: 'postgres_sslrootcert',
-      description:
-        'x509 certificate (PEM format) used for server authentication',
+      name: 'postgres_current_sslrootcert',
+      helpText: 'x509 certificate (PEM format) used for server authentication',
       label: 'Root Certificate',
-      type: 'text-area',
-      required: false,
+      type: 'certificate',
+      transient: true,
+      required: ({ values }) =>
+        !values.get('postgres_change_sslrootcert') &&
+        values.get('postgres_sslEnabled') === 'true' &&
+        values.get('postgres_sslmode') !== 'disable',
       visible: trueIfAdapter,
-      initialValue: initialValues('sslrootcert', ''),
+      initialValue: initialValues('sslrootcert', {}),
     },
     {
-      name: 'postgres_sslcert',
+      name: 'postgres_sslrootcert',
+      helpText: 'x509 certificate (PEM format) used for server authentication',
+      label: 'Root Certificate',
+      type: 'file',
+      required: ({ values }) =>
+        !!values.get('postgres_change_sslrootcert') &&
+        values.get('postgres_sslEnabled') === 'true' &&
+        values.get('postgres_sslmode') !== 'disable',
+      visible: trueIfAdapter,
+    },
+    {
+      name: 'postgres_change_sslrootcert',
+      label: 'Change Root Certificate',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (
+          !List.isList(values.get('postgres_sslrootcert')) ||
+          values.get('postgres_sslrootcert').size > 0
+        ) {
+          setValue('postgres_sslrootcert', List());
+        }
+      },
+    },
+    {
+      name: 'postgres_current_sslcert',
       label: 'Client Certificate',
-      type: 'text-area',
+      type: 'certificate',
+      transient: true,
       required: false,
       visible: trueIfAdapter,
       initialValue: initialValues('sslcert', ''),
     },
     {
-      name: 'postgres_sslkey',
-      label: 'Client Key',
-      type: 'text-area',
+      name: 'postgres_sslcert',
+      label: 'Client Certificate',
+      type: 'file',
       required: false,
       visible: trueIfAdapter,
-      initialValue: initialValues('sslkey', ''),
+    },
+    {
+      name: 'postgres_change_sslcert',
+      label: 'Change Client Certificate',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (
+          !List.isList(values.get('postgres_sslcert')) ||
+          values.get('postgres_sslcert').size > 0
+        ) {
+          setValue('postgres_sslcert', List());
+        }
+      },
+    },
+    {
+      name: 'postgres_current_sslkey',
+      label: 'Client Key',
+      type: 'secret',
+      transient: true,
+      required: false,
+      visible: false,
+      initialValue: '',
+    },
+    {
+      name: 'postgres_sslkey',
+      label: 'Client Key',
+      type: 'file',
+      required: false,
+      visible: trueIfAdapter,
+    },
+    {
+      name: 'postgres_change_sslkey',
+      label: 'Change Private Key',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (
+          !List.isList(values.get('postgres_sslkey')) ||
+          values.get('postgres_sslkey').size > 0
+        ) {
+          setValue('postgres_sslkey', List());
+        }
+      },
     },
   ];
 };
 
-export const adapterProperties = (values, adapter) => {
+export const adapterProperties = (values, adapter, filterFn = o => o) => {
   const adapterPrefix = `${adapter}_`;
 
   return (
@@ -485,6 +666,11 @@ export const adapterProperties = (values, adapter) => {
       .filter((_v, key) => key.startsWith(adapterPrefix))
       // Remove the adapter prefix from the property names.
       .mapKeys(key => key.replace(adapterPrefix, ''))
+      // Map values that are Lists to their first entry (used for File fields)
+      .map(value => (List.isList(value) ? value.get(0) || '' : value))
+      // Call the provided filter function in case we need to filter out values,
+      // such as for hidden file fields
+      .filter(filterFn)
       .toObject()
   );
 };

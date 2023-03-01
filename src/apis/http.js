@@ -75,6 +75,51 @@ export const headerBuilder = options => {
   return headers;
 };
 
+export const formDataBuilder = (data, prefix, formData = new FormData()) =>
+  Object.keys(data).reduce((result, property) => {
+    // Reduce the data object into a FormData object
+    if (Array.isArray(data[property])) {
+      // If value of property is an array of non-file objects, recursively add
+      // each object in the array
+      if (
+        data[property].some(
+          value => typeof value === 'object' && !(value instanceof File),
+        )
+      ) {
+        data[property].forEach((value, index) =>
+          formDataBuilder(
+            value,
+            prefix
+              ? `${prefix}[${property}][${index}]`
+              : `${property}[${index}]`,
+            result,
+          ),
+        );
+      }
+      // If it's an array of other types, add each value
+      else {
+        data[property].forEach(value =>
+          result.append(prefix ? `${prefix}[${property}]` : property, value),
+        );
+      }
+    } else if (
+      typeof data[property] === 'object' &&
+      !(data[property] instanceof File)
+    ) {
+      // If value of property is an object that's not a file, append the
+      // object's nested properties recursively
+      formDataBuilder(
+        data[property],
+        prefix ? `${prefix}[${property}]` : property,
+        result,
+      );
+    } else {
+      // Otherwise append the value
+      result.set(prefix ? `${prefix}[${property}]` : property, data[property]);
+    }
+    return result;
+  }, formData);
+
 export const validateOptions = (functionName, requiredOptions, options) => {
   const missing = requiredOptions.filter(
     requiredOption => !options[requiredOption],

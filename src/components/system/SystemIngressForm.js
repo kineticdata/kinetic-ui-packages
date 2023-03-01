@@ -1,49 +1,94 @@
-import { get } from 'immutable';
 import { generateForm } from '../form/Form';
-
-const fetchSystemIngress = () =>
-  Promise.resolve({
-    ingress: {
-      status: 'active',
-      cn: '*.acme.com',
-      createdAt: 'March 11, 2020 11:31 PM',
-      expiresAt: 'July 1, 2021 11:31 PM',
-      certificatePem: 'certificate pem',
-      privateKeyPem: 'private key pem',
-    },
-  });
-
-const updateSystemConfiguration = () => Promise.resolve();
+import { fetchSystemIngress, updateSystemIngress } from '../../apis/system';
+import { handleFormErrors } from '../form/Form.helpers';
+import { List } from 'immutable';
 
 const handleSubmit = () => values => {
-  return updateSystemConfiguration({ systemConfiguration: values });
+  return updateSystemIngress({
+    ingress: values
+      .map(value => (List.isList(value) ? value.get(0) : value))
+      .filter(Boolean)
+      .toObject(),
+    multipart: true,
+  }).then(handleFormErrors('ingress'));
 };
 
 const dataSources = () => ({
   ingress: {
     fn: fetchSystemIngress,
     params: [],
-    transform: result => {
-      console.log('xform', result);
-      return result.ingress;
-    },
+    transform: result => result.ingress,
   },
 });
 
 const fields = () => ({ ingress }) =>
   ingress && [
     {
-      name: 'certificatePem',
-      label: 'Certificate',
-      type: 'textarea',
-      required: true,
-      initialValue: get(ingress, 'certificatePem') || '',
+      name: 'current_key',
+      label: 'Private Key',
+      type: 'secret',
+      transient: true,
+      visible: false,
+      initialValue: '',
     },
     {
-      name: 'privateKeyPem',
+      name: 'key',
       label: 'Private Key',
-      type: 'textarea',
-      initialValue: '',
+      type: 'file',
+      required: ({ values }) => !!values.get('change_key'),
+    },
+    {
+      name: 'change_key',
+      label: 'Change Private Key',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (!List.isList(values.get('key')) || values.get('key').size > 0) {
+          setValue('key', List());
+        }
+      },
+    },
+    {
+      name: 'current_certificate',
+      label: 'Certificate',
+      type: 'certificate',
+      transient: true,
+      initialValue: ingress,
+    },
+    {
+      name: 'certificate',
+      label: 'Certificate',
+      type: 'file',
+      required: ({ values }) => !!values.get('change_certificate'),
+    },
+    {
+      name: 'ca-chain',
+      label: 'CA Chain',
+      type: 'file',
+      visible: ({ values }) => !!values.get('change_certificate'),
+      required: ({ values }) => !!values.get('change_certificate'),
+    },
+    {
+      name: 'change_certificate',
+      label: 'Change Certificate',
+      type: 'toggle',
+      transient: true,
+      initialValue: false,
+      onChange: ({ values }, { setValue }) => {
+        if (
+          !List.isList(values.get('certificate')) ||
+          values.get('certificate').size > 0
+        ) {
+          setValue('certificate', List());
+        }
+        if (
+          !List.isList(values.get('ca-chain')) ||
+          values.get('ca-chain').size > 0
+        ) {
+          setValue('ca-chain', List());
+        }
+      },
     },
   ];
 
