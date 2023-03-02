@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
+import t from 'prop-types';
 import { regHandlers, connect, dispatch } from '../../store';
 import { generateKey } from '@kineticdata/react';
-import { Toast } from '@kineticdata/ui';
-import { List, OrderedMap, Record } from 'immutable';
+import { get, List, OrderedMap, Record } from 'immutable';
+import { ComponentConfigContext } from './ComponentConfigContext';
 
 export const ToastState = Record({
   title: null,
@@ -76,7 +77,7 @@ const clearToasts = containerKey => {
   dispatch('CLEAR_TOASTS', containerKey);
 };
 
-const ToastWrapper = ({ show, toastKey, toast }) => {
+const ToastWrapper = ({ component: Toast, show, toastKey, toast }) => {
   const { autoHide, content, ...toastProps } = toast.toJS();
   const toggle = useCallback(() => hideToast(toastKey), [toastKey]);
 
@@ -93,27 +94,52 @@ const ToastWrapper = ({ show, toastKey, toast }) => {
   );
 };
 
-const ToastContainerComponent = ({ toasts, persistentToasts }) => {
+const ToastContainerComponent = ({ components, toasts, persistentToasts }) => {
   useEffect(() => {
     dispatch('INIT_TOASTS');
     return () => {};
   }, []);
 
   return (
-    <>
-      <div className="toast-container" aria-live="polite" aria-atomic="true">
-        {toasts.map(props => <ToastWrapper key={props.toastKey} {...props} />)}
-      </div>
-      <div
-        className="toast-container-persistent"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {persistentToasts.map(props => (
-          <ToastWrapper key={props.toastKey} {...props} />
-        ))}
-      </div>
-    </>
+    <ComponentConfigContext.Consumer>
+      {componentConfig => {
+        const component = get(
+          components,
+          'Toast',
+          componentConfig.get('Toast'),
+        );
+        return (
+          <>
+            <div
+              className="toast-container"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {toasts.map(props => (
+                <ToastWrapper
+                  key={props.toastKey}
+                  {...props}
+                  component={component}
+                />
+              ))}
+            </div>
+            <div
+              className="toast-container-persistent"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {persistentToasts.map(props => (
+                <ToastWrapper
+                  key={props.toastKey}
+                  {...props}
+                  component={component}
+                />
+              ))}
+            </div>
+          </>
+        );
+      }}
+    </ComponentConfigContext.Consumer>
   );
 };
 
@@ -141,3 +167,12 @@ const mapStateToProps = (state, props) => {
 const ToastContainer = connect(mapStateToProps)(ToastContainerComponent);
 
 export { ToastContainer, showToast, hideToast, clearToasts };
+
+ToastContainer.propTypes = {
+  /** A key used to scope toasts to this container */
+  containerKey: t.string,
+  components: t.shape({
+    /** Override the default Toast component */
+    Toast: t.func,
+  }),
+};

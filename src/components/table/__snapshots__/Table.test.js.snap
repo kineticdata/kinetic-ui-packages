@@ -105,6 +105,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                   "TextField": [Function],
                   "TextFilter": [Function],
                   "TextMultiField": [Function],
+                  "Toast": [Function],
                   "UserField": [Function],
                   "UserMultiField": [Function],
                 }
@@ -166,6 +167,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                     "TextField": [Function],
                     "TextFilter": [Function],
                     "TextMultiField": [Function],
+                    "Toast": [Function],
                     "UserField": [Function],
                     "UserMultiField": [Function],
                   }
@@ -257,6 +259,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                       "TextField": [Function],
                       "TextFilter": [Function],
                       "TextMultiField": [Function],
+                      "Toast": [Function],
                       "UserField": [Function],
                       "UserMultiField": [Function],
                     }
@@ -888,6 +891,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                   "TextField": [Function],
                   "TextFilter": [Function],
                   "TextMultiField": [Function],
+                  "Toast": [Function],
                   "UserField": [Function],
                   "UserMultiField": [Function],
                 }
@@ -1020,6 +1024,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                     "TextField": [Function],
                     "TextFilter": [Function],
                     "TextMultiField": [Function],
+                    "Toast": [Function],
                     "UserField": [Function],
                     "UserMultiField": [Function],
                   }
@@ -1206,6 +1211,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                       "TextField": [Function],
                       "TextFilter": [Function],
                       "TextMultiField": [Function],
+                      "Toast": [Function],
                       "UserField": [Function],
                       "UserMultiField": [Function],
                     }

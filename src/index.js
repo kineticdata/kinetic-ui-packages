@@ -6,6 +6,7 @@ import axios from 'axios';
 import { action, context, commitStore, store } from './store';
 import { I18nProvider } from './components';
 import { GlobalsProvider } from './components/core/core_form/globals';
+import { DefaultCommonConfig } from './components/common/defaults';
 import { DefaultFieldConfig } from './components/form/defaults';
 import { DefaultTableConfig } from './components/table/defaults';
 import { ComponentConfigContext } from './components/common/ComponentConfigContext';
@@ -39,7 +40,8 @@ export const KineticLib = props => (
     <I18nProvider locale={props.locale}>
       <GlobalsProvider globals={props.globals}>
         <ComponentConfigContext.Provider
-          value={DefaultFieldConfig.merge(DefaultTableConfig)
+          value={DefaultCommonConfig.merge(DefaultFieldConfig)
+            .merge(DefaultTableConfig)
             .merge(remove(props.components || {}, 'fields'))
             .merge(props.components && props.components.fields)}
         >
