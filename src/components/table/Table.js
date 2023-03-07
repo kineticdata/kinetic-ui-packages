@@ -20,7 +20,6 @@ const fromColumnSet = (columns, columnSet) =>
 const KeyWrapper = ({ children }) => children;
 
 const TableComponent = props => {
-  console.log('TableComponent', props.tableKey, props);
   if (props.configured) {
     const {
       children,
@@ -40,7 +39,6 @@ const TableComponent = props => {
       ? buildFilterForm(props)
       : buildFilterLayout(props);
     const pagination = buildPaginationControl(props);
-    const columnControl = null; //buildColumnControl(props);
 
     return children({
       tableKey,
@@ -49,7 +47,6 @@ const TableComponent = props => {
       filter,
       appliedFilters,
       pagination,
-      columnControl,
       initializing,
       loading,
       rows,
@@ -598,11 +595,6 @@ const onGotoPage = tableKey => pageNumber => () =>
 const onSortColumn = (tableKey, column) => () =>
   dispatch('SORT_COLUMN', { tableKey, column });
 
-const onToggleColumn = (tableKey, column) => () =>
-  dispatch('TOGGLE_COLUMN', { tableKey, column });
-
-window.onToggleColumn = onToggleColumn; // TODO remove
-
 const mapStateToProps = () => (state, props) =>
   state.getIn(['tables', props.tableKey], Map()).toObject();
 
@@ -627,8 +619,8 @@ const TableImpl = compose(
 )(TableComponent);
 
 export const generateColumns = (columns, addColumns = [], alterColumns = {}) =>
-  List(columns)
-    .concat(addColumns)
+  List(addColumns)
+    .concat(columns)
     .map(c => Map({ ...c, ...alterColumns[c.value], value: c.value }));
 
 export const extractColumnComponents = columns =>
@@ -742,7 +734,7 @@ export class Table extends Component {
       this.props.alterColumns,
     );
     const allColumns = columns.map(c => c.get('value'));
-    const initialColumnSet = List(
+    const columnSet = List(
       this.props.columnSet
         ? typeof this.props.columnSet === 'function'
           ? this.props.columnSet(allColumns)
@@ -759,7 +751,7 @@ export class Table extends Component {
             components={componentConfig.merge(this.props.components).toJS()}
             columnComponents={columnComponents}
             columns={columns}
-            initialColumnSet={initialColumnSet}
+            columnSet={columnSet}
             tableKey={this.tableKey}
             auto={this.auto}
           >
@@ -809,8 +801,6 @@ Table.propTypes = {
       options: PropTypes.func,
       /** Flag that determines if the column is sortable.*/
       sortable: PropTypes.bool,
-      /** Flag that determines if the column is toggleable.*/
-      toggleable: PropTypes.bool,
       /** Allows overriding the `HeaderCell`, `BodyCell`, and `FooterCell` for a given column. */
       components: PropTypes.shape({
         HeaderCell: PropTypes.func,

@@ -144,7 +144,6 @@ regHandlers({
         data,
         dataSource,
         columns,
-        initialColumnSet,
         pageSize = 25,
         defaultSortColumn = null,
         defaultSortDirection = 'asc',
@@ -168,7 +167,6 @@ regHandlers({
               tableOptions,
               columns,
               rows: List(),
-              columnSet: initialColumnSet,
 
               initializing: true,
               loading: true,
@@ -198,17 +196,7 @@ regHandlers({
               initialize: true,
             }),
           ),
-  // TODO how do we maintain order of columns? We probably don't want columns added to the right of the actions column?
-  // Do we need to define a full column order first? `columnSetOptions`?
-  // Or do we allow reordering of columns?
-  TOGGLE_COLUMN: (state, { payload: { tableKey, column } }) =>
-    state.updateIn(
-      ['tables', tableKey, 'columnSet'],
-      columnSet =>
-        columnSet.includes(column)
-          ? columnSet.filter(c => c !== column)
-          : columnSet.push(column),
-    ),
+
   SET_ROWS: (
     state,
     {

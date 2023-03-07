@@ -60,32 +60,6 @@ const handleSubmit = ({ slug }) => (
   const filterFn = (value, key) =>
     !fileFieldsForType.includes(key) ||
     !!rawValues.get(`${type}_change_${key}`);
-  // Get adapter properties to save
-  let properties = adapterProperties(values, type, filterFn);
-  // If creating new, pass in file values from default adapter if not uploaded
-  if (!slug) {
-    properties = fileFieldsForType.reduce((props, field) => {
-      if (
-        typeof props[field] === 'undefined' &&
-        !!rawValues.getIn([`${type}_current_${field}`, 'pem'])
-      ) {
-        return {
-          ...props,
-          // Set existing value as a File in case one of the other file fields
-          // had a file uploaded so that all the file fields have the same type
-          // of data
-          [field]: new File(
-            [rawValues.getIn([`${type}_current_${field}`, 'pem'])],
-            `${field}.crt`,
-            {
-              type: 'text/plain',
-            },
-          ),
-        };
-      }
-      return props;
-    }, properties);
-  }
 
   const tenant = {
     ...authenticationSecret,
@@ -98,7 +72,10 @@ const handleSubmit = ({ slug }) => (
         ? 'true'
         : 'false',
       ...deployment,
-      databaseAdapter: { type, properties },
+      databaseAdapter: {
+        type: type,
+        properties: adapterProperties(values, type, filterFn),
+      },
     },
     users: values.get('users'),
   };
