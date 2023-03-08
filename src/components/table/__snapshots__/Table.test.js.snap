@@ -79,6 +79,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                   "BooleanFilter": [Function],
                   "CheckboxField": [Function],
                   "CodeField": [Function],
+                  "ColumnControl": [Function],
                   "EmptyBodyRow": [Function],
                   "FilterForm": undefined,
                   "FilterLayout": [Function],
@@ -141,6 +142,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                     "BooleanFilter": [Function],
                     "CheckboxField": [Function],
                     "CodeField": [Function],
+                    "ColumnControl": [Function],
                     "EmptyBodyRow": [Function],
                     "FilterForm": undefined,
                     "FilterLayout": [Function],
@@ -233,6 +235,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                       "BooleanFilter": [Function],
                       "CheckboxField": [Function],
                       "CodeField": [Function],
+                      "ColumnControl": [Function],
                       "EmptyBodyRow": [Function],
                       "FilterForm": undefined,
                       "FilterLayout": [Function],
@@ -309,6 +312,14 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                 >
                   <TableViewMock
                     appliedFilters={Immutable.Map {}}
+                    columnControl={
+                      <ColumnControl
+                        columns={Immutable.List []}
+                        extraData={null}
+                        tableKey="mock-table-key"
+                        tableOptions={Object {}}
+                      />
+                    }
                     error={null}
                     extraData={null}
                     filter={
@@ -825,20 +836,13 @@ exports[`<Table /> render kitchen sink 1`] = `
               }
               columnSet={
                 Immutable.List [
-                  "_action",
                   "name",
                   "status",
+                  "_action",
                 ]
               }
               columns={
                 Immutable.List [
-                  Immutable.Map {
-                    "value": "_action",
-                    "label": "Actions",
-                    "components": Object {
-                      "BodyCell": [Function],
-                    },
-                  },
                   Immutable.Map {
                     "value": "name",
                     "title": "Name",
@@ -854,6 +858,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                     "type": "text",
                     "options": [Function],
                   },
+                  Immutable.Map {
+                    "value": "_action",
+                    "label": "Actions",
+                    "components": Object {
+                      "BodyCell": [Function],
+                    },
+                  },
                 ]
               }
               components={
@@ -865,6 +876,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                   "BooleanFilter": [Function],
                   "CheckboxField": [Function],
                   "CodeField": [Function],
+                  "ColumnControl": [Function],
                   "EmptyBodyRow": [Function],
                   "FilterForm": undefined,
                   "FilterLayout": [Function],
@@ -958,20 +970,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                 }
                 columnSet={
                   Immutable.List [
-                    "_action",
                     "name",
                     "status",
+                    "_action",
                   ]
                 }
                 columns={
                   Immutable.List [
-                    Immutable.Map {
-                      "value": "_action",
-                      "label": "Actions",
-                      "components": Object {
-                        "BodyCell": [Function],
-                      },
-                    },
                     Immutable.Map {
                       "value": "name",
                       "title": "Name",
@@ -987,6 +992,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                       "type": "text",
                       "options": [Function],
                     },
+                    Immutable.Map {
+                      "value": "_action",
+                      "label": "Actions",
+                      "components": Object {
+                        "BodyCell": [Function],
+                      },
+                    },
                   ]
                 }
                 components={
@@ -998,6 +1010,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                     "BooleanFilter": [Function],
                     "CheckboxField": [Function],
                     "CodeField": [Function],
+                    "ColumnControl": [Function],
                     "EmptyBodyRow": [Function],
                     "FilterForm": undefined,
                     "FilterLayout": [Function],
@@ -1145,20 +1158,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                   }
                   columnSet={
                     Immutable.List [
-                      "_action",
                       "name",
                       "status",
+                      "_action",
                     ]
                   }
                   columns={
                     Immutable.List [
-                      Immutable.Map {
-                        "value": "_action",
-                        "label": "Actions",
-                        "components": Object {
-                          "BodyCell": [Function],
-                        },
-                      },
                       Immutable.Map {
                         "value": "name",
                         "title": "Name",
@@ -1174,6 +1180,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                         "type": "text",
                         "options": [Function],
                       },
+                      Immutable.Map {
+                        "value": "_action",
+                        "label": "Actions",
+                        "components": Object {
+                          "BodyCell": [Function],
+                        },
+                      },
                     ]
                   }
                   components={
@@ -1185,6 +1198,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                       "BooleanFilter": [Function],
                       "CheckboxField": [Function],
                       "CodeField": [Function],
+                      "ColumnControl": [Function],
                       "EmptyBodyRow": [Function],
                       "FilterForm": undefined,
                       "FilterLayout": [Function],
@@ -1309,6 +1323,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                         },
                       }
                     }
+                    columnControl={
+                      <ColumnControl
+                        columns={
+                          Immutable.List [
+                            Immutable.Map {
+                              "value": "name",
+                              "label": "Name",
+                              "checked": true,
+                              "enabled": false,
+                              "toggle": undefined,
+                            },
+                            Immutable.Map {
+                              "value": "status",
+                              "label": "Status",
+                              "checked": true,
+                              "enabled": false,
+                              "toggle": undefined,
+                            },
+                          ]
+                        }
+                        extraData={null}
+                        tableKey="mock-table-key"
+                        tableOptions={Object {}}
+                      />
+                    }
                     error={null}
                     extraData={null}
                     filter={
@@ -1340,9 +1379,9 @@ exports[`<Table /> render kitchen sink 1`] = `
                         }
                         columnSet={
                           Immutable.List [
-                            "_action",
                             "name",
                             "status",
+                            "_action",
                           ]
                         }
                         filters={
@@ -1480,63 +1519,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                                     cells={
                                       Immutable.List [
                                         <KeyWrapper>
-                                          <ActionCell
-                                            column={
-                                              Immutable.Map {
-                                                "value": "_action",
-                                                "label": "Actions",
-                                                "components": Object {
-                                                  "BodyCell": [Function],
-                                                },
-                                              }
-                                            }
-                                            extraData={null}
-                                            filters={
-                                              Immutable.Map {
-                                                "name": Immutable.Map {
-                                                  "value": "",
-                                                  "column": Immutable.Map {
-                                                    "value": "name",
-                                                    "title": "Name",
-                                                    "sortable": true,
-                                                    "filter": "startsWith",
-                                                    "type": "text",
-                                                  },
-                                                },
-                                                "status": Immutable.Map {
-                                                  "value": "",
-                                                  "column": Immutable.Map {
-                                                    "value": "status",
-                                                    "title": "Status",
-                                                    "sortable": true,
-                                                    "filter": "equals",
-                                                    "type": "text",
-                                                    "options": [Function],
-                                                  },
-                                                },
-                                              }
-                                            }
-                                            index={0}
-                                            row={
-                                              Immutable.Map {
-                                                "name": "test",
-                                                "status": "active",
-                                              }
-                                            }
-                                            rowIndex={0}
-                                            rows={
-                                              Immutable.List [
-                                                Immutable.Map {
-                                                  "name": "test",
-                                                  "status": "active",
-                                                },
-                                              ]
-                                            }
-                                            tableKey="mock-table-key"
-                                            tableOptions={Object {}}
-                                          />
-                                        </KeyWrapper>,
-                                        <KeyWrapper>
                                           <BodyCell
                                             column={
                                               Immutable.Map {
@@ -1573,7 +1555,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                                 },
                                               }
                                             }
-                                            index={1}
+                                            index={0}
                                             row={
                                               Immutable.Map {
                                                 "name": "test",
@@ -1632,7 +1614,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                                 },
                                               }
                                             }
-                                            index={2}
+                                            index={1}
                                             row={
                                               Immutable.Map {
                                                 "name": "test",
@@ -1653,17 +1635,67 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             value="active"
                                           />
                                         </KeyWrapper>,
+                                        <KeyWrapper>
+                                          <ActionCell
+                                            column={
+                                              Immutable.Map {
+                                                "value": "_action",
+                                                "label": "Actions",
+                                                "components": Object {
+                                                  "BodyCell": [Function],
+                                                },
+                                              }
+                                            }
+                                            extraData={null}
+                                            filters={
+                                              Immutable.Map {
+                                                "name": Immutable.Map {
+                                                  "value": "",
+                                                  "column": Immutable.Map {
+                                                    "value": "name",
+                                                    "title": "Name",
+                                                    "sortable": true,
+                                                    "filter": "startsWith",
+                                                    "type": "text",
+                                                  },
+                                                },
+                                                "status": Immutable.Map {
+                                                  "value": "",
+                                                  "column": Immutable.Map {
+                                                    "value": "status",
+                                                    "title": "Status",
+                                                    "sortable": true,
+                                                    "filter": "equals",
+                                                    "type": "text",
+                                                    "options": [Function],
+                                                  },
+                                                },
+                                              }
+                                            }
+                                            index={2}
+                                            row={
+                                              Immutable.Map {
+                                                "name": "test",
+                                                "status": "active",
+                                              }
+                                            }
+                                            rowIndex={0}
+                                            rows={
+                                              Immutable.List [
+                                                Immutable.Map {
+                                                  "name": "test",
+                                                  "status": "active",
+                                                },
+                                              ]
+                                            }
+                                            tableKey="mock-table-key"
+                                            tableOptions={Object {}}
+                                          />
+                                        </KeyWrapper>,
                                       ]
                                     }
                                     columns={
                                       Immutable.List [
-                                        Immutable.Map {
-                                          "value": "_action",
-                                          "label": "Actions",
-                                          "components": Object {
-                                            "BodyCell": [Function],
-                                          },
-                                        },
                                         Immutable.Map {
                                           "value": "name",
                                           "title": "Name",
@@ -1678,6 +1710,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           "filter": "equals",
                                           "type": "text",
                                           "options": [Function],
+                                        },
+                                        Immutable.Map {
+                                          "value": "_action",
+                                          "label": "Actions",
+                                          "components": Object {
+                                            "BodyCell": [Function],
+                                          },
                                         },
                                       ]
                                     }
@@ -1706,38 +1745,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                               <HeaderRow
                                 columnHeaders={
                                   Immutable.List [
-                                    <KeyWrapper>
-                                      <HeaderCell
-                                        filters={
-                                          Immutable.Map {
-                                            "name": Immutable.Map {
-                                              "value": "",
-                                              "column": Immutable.Map {
-                                                "value": "name",
-                                                "title": "Name",
-                                                "sortable": true,
-                                                "filter": "startsWith",
-                                                "type": "text",
-                                              },
-                                            },
-                                            "status": Immutable.Map {
-                                              "value": "",
-                                              "column": Immutable.Map {
-                                                "value": "status",
-                                                "title": "Status",
-                                                "sortable": true,
-                                                "filter": "equals",
-                                                "type": "text",
-                                                "options": [Function],
-                                              },
-                                            },
-                                          }
-                                        }
-                                        onSortColumn={[Function]}
-                                        sorting={false}
-                                        tableOptions={Object {}}
-                                      />
-                                    </KeyWrapper>,
                                     <KeyWrapper>
                                       <HeaderCell
                                         filters={
@@ -1806,6 +1813,38 @@ exports[`<Table /> render kitchen sink 1`] = `
                                         title="Status"
                                       />
                                     </KeyWrapper>,
+                                    <KeyWrapper>
+                                      <HeaderCell
+                                        filters={
+                                          Immutable.Map {
+                                            "name": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "name",
+                                                "title": "Name",
+                                                "sortable": true,
+                                                "filter": "startsWith",
+                                                "type": "text",
+                                              },
+                                            },
+                                            "status": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "status",
+                                                "title": "Status",
+                                                "sortable": true,
+                                                "filter": "equals",
+                                                "type": "text",
+                                                "options": [Function],
+                                              },
+                                            },
+                                          }
+                                        }
+                                        onSortColumn={[Function]}
+                                        sorting={false}
+                                        tableOptions={Object {}}
+                                      />
+                                    </KeyWrapper>,
                                   ]
                                 }
                                 rows={
@@ -1854,63 +1893,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   cells={
                                     Immutable.List [
                                       <KeyWrapper>
-                                        <ActionCell
-                                          column={
-                                            Immutable.Map {
-                                              "value": "_action",
-                                              "label": "Actions",
-                                              "components": Object {
-                                                "BodyCell": [Function],
-                                              },
-                                            }
-                                          }
-                                          extraData={null}
-                                          filters={
-                                            Immutable.Map {
-                                              "name": Immutable.Map {
-                                                "value": "",
-                                                "column": Immutable.Map {
-                                                  "value": "name",
-                                                  "title": "Name",
-                                                  "sortable": true,
-                                                  "filter": "startsWith",
-                                                  "type": "text",
-                                                },
-                                              },
-                                              "status": Immutable.Map {
-                                                "value": "",
-                                                "column": Immutable.Map {
-                                                  "value": "status",
-                                                  "title": "Status",
-                                                  "sortable": true,
-                                                  "filter": "equals",
-                                                  "type": "text",
-                                                  "options": [Function],
-                                                },
-                                              },
-                                            }
-                                          }
-                                          index={0}
-                                          row={
-                                            Immutable.Map {
-                                              "name": "test",
-                                              "status": "active",
-                                            }
-                                          }
-                                          rowIndex={0}
-                                          rows={
-                                            Immutable.List [
-                                              Immutable.Map {
-                                                "name": "test",
-                                                "status": "active",
-                                              },
-                                            ]
-                                          }
-                                          tableKey="mock-table-key"
-                                          tableOptions={Object {}}
-                                        />
-                                      </KeyWrapper>,
-                                      <KeyWrapper>
                                         <BodyCell
                                           column={
                                             Immutable.Map {
@@ -1947,7 +1929,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               },
                                             }
                                           }
-                                          index={1}
+                                          index={0}
                                           row={
                                             Immutable.Map {
                                               "name": "test",
@@ -2006,7 +1988,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               },
                                             }
                                           }
-                                          index={2}
+                                          index={1}
                                           row={
                                             Immutable.Map {
                                               "name": "test",
@@ -2027,17 +2009,67 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           value="active"
                                         />
                                       </KeyWrapper>,
+                                      <KeyWrapper>
+                                        <ActionCell
+                                          column={
+                                            Immutable.Map {
+                                              "value": "_action",
+                                              "label": "Actions",
+                                              "components": Object {
+                                                "BodyCell": [Function],
+                                              },
+                                            }
+                                          }
+                                          extraData={null}
+                                          filters={
+                                            Immutable.Map {
+                                              "name": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "name",
+                                                  "title": "Name",
+                                                  "sortable": true,
+                                                  "filter": "startsWith",
+                                                  "type": "text",
+                                                },
+                                              },
+                                              "status": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "status",
+                                                  "title": "Status",
+                                                  "sortable": true,
+                                                  "filter": "equals",
+                                                  "type": "text",
+                                                  "options": [Function],
+                                                },
+                                              },
+                                            }
+                                          }
+                                          index={2}
+                                          row={
+                                            Immutable.Map {
+                                              "name": "test",
+                                              "status": "active",
+                                            }
+                                          }
+                                          rowIndex={0}
+                                          rows={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "name": "test",
+                                                "status": "active",
+                                              },
+                                            ]
+                                          }
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      </KeyWrapper>,
                                     ]
                                   }
                                   columns={
                                     Immutable.List [
-                                      Immutable.Map {
-                                        "value": "_action",
-                                        "label": "Actions",
-                                        "components": Object {
-                                          "BodyCell": [Function],
-                                        },
-                                      },
                                       Immutable.Map {
                                         "value": "name",
                                         "title": "Name",
@@ -2052,6 +2084,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                                         "filter": "equals",
                                         "type": "text",
                                         "options": [Function],
+                                      },
+                                      Immutable.Map {
+                                        "value": "_action",
+                                        "label": "Actions",
+                                        "components": Object {
+                                          "BodyCell": [Function],
+                                        },
                                       },
                                     ]
                                   }
@@ -2080,38 +2119,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                             <HeaderRow
                               columnHeaders={
                                 Immutable.List [
-                                  <KeyWrapper>
-                                    <HeaderCell
-                                      filters={
-                                        Immutable.Map {
-                                          "name": Immutable.Map {
-                                            "value": "",
-                                            "column": Immutable.Map {
-                                              "value": "name",
-                                              "title": "Name",
-                                              "sortable": true,
-                                              "filter": "startsWith",
-                                              "type": "text",
-                                            },
-                                          },
-                                          "status": Immutable.Map {
-                                            "value": "",
-                                            "column": Immutable.Map {
-                                              "value": "status",
-                                              "title": "Status",
-                                              "sortable": true,
-                                              "filter": "equals",
-                                              "type": "text",
-                                              "options": [Function],
-                                            },
-                                          },
-                                        }
-                                      }
-                                      onSortColumn={[Function]}
-                                      sorting={false}
-                                      tableOptions={Object {}}
-                                    />
-                                  </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
                                       filters={
@@ -2178,6 +2185,38 @@ exports[`<Table /> render kitchen sink 1`] = `
                                       sorting={false}
                                       tableOptions={Object {}}
                                       title="Status"
+                                    />
+                                  </KeyWrapper>,
+                                  <KeyWrapper>
+                                    <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
+                                      onSortColumn={[Function]}
+                                      sorting={false}
+                                      tableOptions={Object {}}
                                     />
                                   </KeyWrapper>,
                                 ]
@@ -2244,38 +2283,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                                         }
                                       }
                                       onSortColumn={[Function]}
-                                      sorting={false}
-                                      tableOptions={Object {}}
-                                    />
-                                  </KeyWrapper>,
-                                  <KeyWrapper>
-                                    <HeaderCell
-                                      filters={
-                                        Immutable.Map {
-                                          "name": Immutable.Map {
-                                            "value": "",
-                                            "column": Immutable.Map {
-                                              "value": "name",
-                                              "title": "Name",
-                                              "sortable": true,
-                                              "filter": "startsWith",
-                                              "type": "text",
-                                            },
-                                          },
-                                          "status": Immutable.Map {
-                                            "value": "",
-                                            "column": Immutable.Map {
-                                              "value": "status",
-                                              "title": "Status",
-                                              "sortable": true,
-                                              "filter": "equals",
-                                              "type": "text",
-                                              "options": [Function],
-                                            },
-                                          },
-                                        }
-                                      }
-                                      onSortColumn={[Function]}
                                       sortable={true}
                                       sorting={false}
                                       tableOptions={Object {}}
@@ -2314,6 +2321,38 @@ exports[`<Table /> render kitchen sink 1`] = `
                                       sorting={false}
                                       tableOptions={Object {}}
                                       title="Status"
+                                    />
+                                  </KeyWrapper>,
+                                  <KeyWrapper>
+                                    <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
+                                      onSortColumn={[Function]}
+                                      sorting={false}
+                                      tableOptions={Object {}}
                                     />
                                   </KeyWrapper>,
                                 ]
@@ -2372,38 +2411,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                                         }
                                       }
                                       onSortColumn={[Function]}
-                                      sorting={false}
-                                      tableOptions={Object {}}
-                                    />
-                                  </KeyWrapper>,
-                                  <KeyWrapper>
-                                    <HeaderCell
-                                      filters={
-                                        Immutable.Map {
-                                          "name": Immutable.Map {
-                                            "value": "",
-                                            "column": Immutable.Map {
-                                              "value": "name",
-                                              "title": "Name",
-                                              "sortable": true,
-                                              "filter": "startsWith",
-                                              "type": "text",
-                                            },
-                                          },
-                                          "status": Immutable.Map {
-                                            "value": "",
-                                            "column": Immutable.Map {
-                                              "value": "status",
-                                              "title": "Status",
-                                              "sortable": true,
-                                              "filter": "equals",
-                                              "type": "text",
-                                              "options": [Function],
-                                            },
-                                          },
-                                        }
-                                      }
-                                      onSortColumn={[Function]}
                                       sortable={true}
                                       sorting={false}
                                       tableOptions={Object {}}
@@ -2444,6 +2451,38 @@ exports[`<Table /> render kitchen sink 1`] = `
                                       title="Status"
                                     />
                                   </KeyWrapper>,
+                                  <KeyWrapper>
+                                    <HeaderCell
+                                      filters={
+                                        Immutable.Map {
+                                          "name": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "name",
+                                              "title": "Name",
+                                              "sortable": true,
+                                              "filter": "startsWith",
+                                              "type": "text",
+                                            },
+                                          },
+                                          "status": Immutable.Map {
+                                            "value": "",
+                                            "column": Immutable.Map {
+                                              "value": "status",
+                                              "title": "Status",
+                                              "sortable": true,
+                                              "filter": "equals",
+                                              "type": "text",
+                                              "options": [Function],
+                                            },
+                                          },
+                                        }
+                                      }
+                                      onSortColumn={[Function]}
+                                      sorting={false}
+                                      tableOptions={Object {}}
+                                    />
+                                  </KeyWrapper>,
                                 ]
                               }
                               rows={
@@ -2459,54 +2498,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                               <tr>
                                 <KeyWrapper
                                   key="column-0"
-                                >
-                                  <HeaderCell
-                                    filters={
-                                      Immutable.Map {
-                                        "name": Immutable.Map {
-                                          "value": "",
-                                          "column": Immutable.Map {
-                                            "value": "name",
-                                            "title": "Name",
-                                            "sortable": true,
-                                            "filter": "startsWith",
-                                            "type": "text",
-                                          },
-                                        },
-                                        "status": Immutable.Map {
-                                          "value": "",
-                                          "column": Immutable.Map {
-                                            "value": "status",
-                                            "title": "Status",
-                                            "sortable": true,
-                                            "filter": "equals",
-                                            "type": "text",
-                                            "options": [Function],
-                                          },
-                                        },
-                                      }
-                                    }
-                                    onSortColumn={[Function]}
-                                    sorting={false}
-                                    tableOptions={Object {}}
-                                  >
-                                    <th>
-                                      <span>
-                                        <I18n />
-                                        <button
-                                          onClick={[Function]}
-                                          type="button"
-                                        >
-                                          <span>
-                                            –
-                                          </span>
-                                        </button>
-                                      </span>
-                                    </th>
-                                  </HeaderCell>
-                                </KeyWrapper>
-                                <KeyWrapper
-                                  key="column-1"
                                 >
                                   <HeaderCell
                                     filters={
@@ -2567,7 +2558,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </HeaderCell>
                                 </KeyWrapper>
                                 <KeyWrapper
-                                  key="column-2"
+                                  key="column-1"
                                 >
                                   <HeaderCell
                                     filters={
@@ -2627,6 +2618,54 @@ exports[`<Table /> render kitchen sink 1`] = `
                                     </th>
                                   </HeaderCell>
                                 </KeyWrapper>
+                                <KeyWrapper
+                                  key="column-2"
+                                >
+                                  <HeaderCell
+                                    filters={
+                                      Immutable.Map {
+                                        "name": Immutable.Map {
+                                          "value": "",
+                                          "column": Immutable.Map {
+                                            "value": "name",
+                                            "title": "Name",
+                                            "sortable": true,
+                                            "filter": "startsWith",
+                                            "type": "text",
+                                          },
+                                        },
+                                        "status": Immutable.Map {
+                                          "value": "",
+                                          "column": Immutable.Map {
+                                            "value": "status",
+                                            "title": "Status",
+                                            "sortable": true,
+                                            "filter": "equals",
+                                            "type": "text",
+                                            "options": [Function],
+                                          },
+                                        },
+                                      }
+                                    }
+                                    onSortColumn={[Function]}
+                                    sorting={false}
+                                    tableOptions={Object {}}
+                                  >
+                                    <th>
+                                      <span>
+                                        <I18n />
+                                        <button
+                                          onClick={[Function]}
+                                          type="button"
+                                        >
+                                          <span>
+                                            –
+                                          </span>
+                                        </button>
+                                      </span>
+                                    </th>
+                                  </HeaderCell>
+                                </KeyWrapper>
                               </tr>
                             </HeaderRow>
                           </thead>
@@ -2643,63 +2682,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                                 <BodyRow
                                   cells={
                                     Immutable.List [
-                                      <KeyWrapper>
-                                        <ActionCell
-                                          column={
-                                            Immutable.Map {
-                                              "value": "_action",
-                                              "label": "Actions",
-                                              "components": Object {
-                                                "BodyCell": [Function],
-                                              },
-                                            }
-                                          }
-                                          extraData={null}
-                                          filters={
-                                            Immutable.Map {
-                                              "name": Immutable.Map {
-                                                "value": "",
-                                                "column": Immutable.Map {
-                                                  "value": "name",
-                                                  "title": "Name",
-                                                  "sortable": true,
-                                                  "filter": "startsWith",
-                                                  "type": "text",
-                                                },
-                                              },
-                                              "status": Immutable.Map {
-                                                "value": "",
-                                                "column": Immutable.Map {
-                                                  "value": "status",
-                                                  "title": "Status",
-                                                  "sortable": true,
-                                                  "filter": "equals",
-                                                  "type": "text",
-                                                  "options": [Function],
-                                                },
-                                              },
-                                            }
-                                          }
-                                          index={0}
-                                          row={
-                                            Immutable.Map {
-                                              "name": "test",
-                                              "status": "active",
-                                            }
-                                          }
-                                          rowIndex={0}
-                                          rows={
-                                            Immutable.List [
-                                              Immutable.Map {
-                                                "name": "test",
-                                                "status": "active",
-                                              },
-                                            ]
-                                          }
-                                          tableKey="mock-table-key"
-                                          tableOptions={Object {}}
-                                        />
-                                      </KeyWrapper>,
                                       <KeyWrapper>
                                         <BodyCell
                                           column={
@@ -2737,7 +2719,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               },
                                             }
                                           }
-                                          index={1}
+                                          index={0}
                                           row={
                                             Immutable.Map {
                                               "name": "test",
@@ -2796,7 +2778,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                               },
                                             }
                                           }
-                                          index={2}
+                                          index={1}
                                           row={
                                             Immutable.Map {
                                               "name": "test",
@@ -2817,17 +2799,67 @@ exports[`<Table /> render kitchen sink 1`] = `
                                           value="active"
                                         />
                                       </KeyWrapper>,
+                                      <KeyWrapper>
+                                        <ActionCell
+                                          column={
+                                            Immutable.Map {
+                                              "value": "_action",
+                                              "label": "Actions",
+                                              "components": Object {
+                                                "BodyCell": [Function],
+                                              },
+                                            }
+                                          }
+                                          extraData={null}
+                                          filters={
+                                            Immutable.Map {
+                                              "name": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "name",
+                                                  "title": "Name",
+                                                  "sortable": true,
+                                                  "filter": "startsWith",
+                                                  "type": "text",
+                                                },
+                                              },
+                                              "status": Immutable.Map {
+                                                "value": "",
+                                                "column": Immutable.Map {
+                                                  "value": "status",
+                                                  "title": "Status",
+                                                  "sortable": true,
+                                                  "filter": "equals",
+                                                  "type": "text",
+                                                  "options": [Function],
+                                                },
+                                              },
+                                            }
+                                          }
+                                          index={2}
+                                          row={
+                                            Immutable.Map {
+                                              "name": "test",
+                                              "status": "active",
+                                            }
+                                          }
+                                          rowIndex={0}
+                                          rows={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "name": "test",
+                                                "status": "active",
+                                              },
+                                            ]
+                                          }
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      </KeyWrapper>,
                                     ]
                                   }
                                   columns={
                                     Immutable.List [
-                                      Immutable.Map {
-                                        "value": "_action",
-                                        "label": "Actions",
-                                        "components": Object {
-                                          "BodyCell": [Function],
-                                        },
-                                      },
                                       Immutable.Map {
                                         "value": "name",
                                         "title": "Name",
@@ -2842,6 +2874,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                                         "filter": "equals",
                                         "type": "text",
                                         "options": [Function],
+                                      },
+                                      Immutable.Map {
+                                        "value": "_action",
+                                        "label": "Actions",
+                                        "components": Object {
+                                          "BodyCell": [Function],
+                                        },
                                       },
                                     ]
                                   }
@@ -2865,63 +2904,6 @@ exports[`<Table /> render kitchen sink 1`] = `
                               <BodyRow
                                 cells={
                                   Immutable.List [
-                                    <KeyWrapper>
-                                      <ActionCell
-                                        column={
-                                          Immutable.Map {
-                                            "value": "_action",
-                                            "label": "Actions",
-                                            "components": Object {
-                                              "BodyCell": [Function],
-                                            },
-                                          }
-                                        }
-                                        extraData={null}
-                                        filters={
-                                          Immutable.Map {
-                                            "name": Immutable.Map {
-                                              "value": "",
-                                              "column": Immutable.Map {
-                                                "value": "name",
-                                                "title": "Name",
-                                                "sortable": true,
-                                                "filter": "startsWith",
-                                                "type": "text",
-                                              },
-                                            },
-                                            "status": Immutable.Map {
-                                              "value": "",
-                                              "column": Immutable.Map {
-                                                "value": "status",
-                                                "title": "Status",
-                                                "sortable": true,
-                                                "filter": "equals",
-                                                "type": "text",
-                                                "options": [Function],
-                                              },
-                                            },
-                                          }
-                                        }
-                                        index={0}
-                                        row={
-                                          Immutable.Map {
-                                            "name": "test",
-                                            "status": "active",
-                                          }
-                                        }
-                                        rowIndex={0}
-                                        rows={
-                                          Immutable.List [
-                                            Immutable.Map {
-                                              "name": "test",
-                                              "status": "active",
-                                            },
-                                          ]
-                                        }
-                                        tableKey="mock-table-key"
-                                        tableOptions={Object {}}
-                                      />
-                                    </KeyWrapper>,
                                     <KeyWrapper>
                                       <BodyCell
                                         column={
@@ -2959,7 +2941,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             },
                                           }
                                         }
-                                        index={1}
+                                        index={0}
                                         row={
                                           Immutable.Map {
                                             "name": "test",
@@ -3018,7 +3000,7 @@ exports[`<Table /> render kitchen sink 1`] = `
                                             },
                                           }
                                         }
-                                        index={2}
+                                        index={1}
                                         row={
                                           Immutable.Map {
                                             "name": "test",
@@ -3039,17 +3021,67 @@ exports[`<Table /> render kitchen sink 1`] = `
                                         value="active"
                                       />
                                     </KeyWrapper>,
+                                    <KeyWrapper>
+                                      <ActionCell
+                                        column={
+                                          Immutable.Map {
+                                            "value": "_action",
+                                            "label": "Actions",
+                                            "components": Object {
+                                              "BodyCell": [Function],
+                                            },
+                                          }
+                                        }
+                                        extraData={null}
+                                        filters={
+                                          Immutable.Map {
+                                            "name": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "name",
+                                                "title": "Name",
+                                                "sortable": true,
+                                                "filter": "startsWith",
+                                                "type": "text",
+                                              },
+                                            },
+                                            "status": Immutable.Map {
+                                              "value": "",
+                                              "column": Immutable.Map {
+                                                "value": "status",
+                                                "title": "Status",
+                                                "sortable": true,
+                                                "filter": "equals",
+                                                "type": "text",
+                                                "options": [Function],
+                                              },
+                                            },
+                                          }
+                                        }
+                                        index={2}
+                                        row={
+                                          Immutable.Map {
+                                            "name": "test",
+                                            "status": "active",
+                                          }
+                                        }
+                                        rowIndex={0}
+                                        rows={
+                                          Immutable.List [
+                                            Immutable.Map {
+                                              "name": "test",
+                                              "status": "active",
+                                            },
+                                          ]
+                                        }
+                                        tableKey="mock-table-key"
+                                        tableOptions={Object {}}
+                                      />
+                                    </KeyWrapper>,
                                   ]
                                 }
                                 columns={
                                   Immutable.List [
-                                    Immutable.Map {
-                                      "value": "_action",
-                                      "label": "Actions",
-                                      "components": Object {
-                                        "BodyCell": [Function],
-                                      },
-                                    },
                                     Immutable.Map {
                                       "value": "name",
                                       "title": "Name",
@@ -3064,6 +3096,13 @@ exports[`<Table /> render kitchen sink 1`] = `
                                       "filter": "equals",
                                       "type": "text",
                                       "options": [Function],
+                                    },
+                                    Immutable.Map {
+                                      "value": "_action",
+                                      "label": "Actions",
+                                      "components": Object {
+                                        "BodyCell": [Function],
+                                      },
                                     },
                                   ]
                                 }
@@ -3080,14 +3119,14 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   <KeyWrapper
                                     key="column-0"
                                   >
-                                    <ActionCell
+                                    <BodyCell
                                       column={
                                         Immutable.Map {
-                                          "value": "_action",
-                                          "label": "Actions",
-                                          "components": Object {
-                                            "BodyCell": [Function],
-                                          },
+                                          "value": "name",
+                                          "title": "Name",
+                                          "sortable": true,
+                                          "filter": "startsWith",
+                                          "type": "text",
                                         }
                                       }
                                       extraData={null}
@@ -3134,9 +3173,14 @@ exports[`<Table /> render kitchen sink 1`] = `
                                       }
                                       tableKey="mock-table-key"
                                       tableOptions={Object {}}
+                                      value="test"
                                     >
-                                      <td />
-                                    </ActionCell>
+                                      <td
+                                        scope="row"
+                                      >
+                                        test
+                                      </td>
+                                    </BodyCell>
                                   </KeyWrapper>
                                   <KeyWrapper
                                     key="column-1"
@@ -3144,11 +3188,12 @@ exports[`<Table /> render kitchen sink 1`] = `
                                     <BodyCell
                                       column={
                                         Immutable.Map {
-                                          "value": "name",
-                                          "title": "Name",
+                                          "value": "status",
+                                          "title": "Status",
                                           "sortable": true,
-                                          "filter": "startsWith",
+                                          "filter": "equals",
                                           "type": "text",
+                                          "options": [Function],
                                         }
                                       }
                                       extraData={null}
@@ -3195,25 +3240,24 @@ exports[`<Table /> render kitchen sink 1`] = `
                                       }
                                       tableKey="mock-table-key"
                                       tableOptions={Object {}}
-                                      value="test"
+                                      value="active"
                                     >
                                       <td>
-                                        test
+                                        active
                                       </td>
                                     </BodyCell>
                                   </KeyWrapper>
                                   <KeyWrapper
                                     key="column-2"
                                   >
-                                    <BodyCell
+                                    <ActionCell
                                       column={
                                         Immutable.Map {
-                                          "value": "status",
-                                          "title": "Status",
-                                          "sortable": true,
-                                          "filter": "equals",
-                                          "type": "text",
-                                          "options": [Function],
+                                          "value": "_action",
+                                          "label": "Actions",
+                                          "components": Object {
+                                            "BodyCell": [Function],
+                                          },
                                         }
                                       }
                                       extraData={null}
@@ -3260,12 +3304,9 @@ exports[`<Table /> render kitchen sink 1`] = `
                                       }
                                       tableKey="mock-table-key"
                                       tableOptions={Object {}}
-                                      value="active"
                                     >
-                                      <td>
-                                        active
-                                      </td>
-                                    </BodyCell>
+                                      <td />
+                                    </ActionCell>
                                   </KeyWrapper>
                                 </tr>
                               </BodyRow>
@@ -3347,9 +3388,9 @@ exports[`<Table /> render kitchen sink 1`] = `
                       }
                       columnSet={
                         Immutable.List [
-                          "_action",
                           "name",
                           "status",
+                          "_action",
                         ]
                       }
                       filters={

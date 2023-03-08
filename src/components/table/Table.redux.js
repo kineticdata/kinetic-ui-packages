@@ -144,6 +144,7 @@ regHandlers({
         data,
         dataSource,
         columns,
+        columnSet,
         pageSize = 25,
         defaultSortColumn = null,
         defaultSortDirection = 'asc',
@@ -167,6 +168,7 @@ regHandlers({
               tableOptions,
               columns,
               rows: List(),
+              columnSet,
 
               initializing: true,
               loading: true,
@@ -196,7 +198,24 @@ regHandlers({
               initialize: true,
             }),
           ),
-
+  TOGGLE_COLUMN: (state, { payload: { tableKey, column } }) =>
+    state.updateIn(['tables', tableKey, 'columnSet'], columnSet =>
+      state
+        // Get all columns
+        .getIn(['tables', tableKey, 'columns'])
+        // Filter to only columns that are toggleable or in the current
+        // columnSet, while toggling the current column if it's toggleable
+        .filter(
+          c =>
+            !c.get('toggleable')
+              ? columnSet.includes(c.get('value'))
+              : columnSet.includes(c.get('value'))
+                ? c.get('value') !== column
+                : c.get('value') === column,
+        )
+        // Map to columns values to get the new columnSet
+        .map(c => c.get('value')),
+    ),
   SET_ROWS: (
     state,
     {

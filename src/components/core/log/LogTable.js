@@ -135,6 +135,7 @@ const columns = [
     value: 'timestamp',
     title: 'Timestamp',
     sortable: false,
+    toggleable: false,
   },
   {
     value: 'message',
@@ -274,7 +275,7 @@ const columns = [
     title: 'Pod',
     sortable: false,
   },
-];
+].map(column => ({ toggleable: true, ...column }));
 
 export const LogTable = generateTable({ columns, dataSource, filters });
 

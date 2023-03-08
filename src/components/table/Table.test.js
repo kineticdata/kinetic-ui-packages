@@ -18,7 +18,9 @@ import {
   buildTableFooterCells,
   extractColumnComponents,
   generateColumns,
+  sortColumns,
   generateTable,
+  getToggleableColumns,
 } from './Table';
 
 const buildProps = props => {
@@ -711,6 +713,43 @@ describe('<Table />', () => {
         const columnConfig = generateColumns(columns, addColumns, alterColumns);
         const column = columnConfig.find(c => c.get('value') === 'a');
         expect(column).not.toBeUndefined();
+      });
+    });
+
+    describe('#sortColumns', () => {
+      test('sort columns returns expected sort order', () => {
+        const columns = List([
+          Map({ value: 'a', title: 'A' }),
+          Map({ value: 'b', title: 'B' }),
+          Map({ value: 'c', title: 'C' }),
+        ]);
+        const columnSet = List(['b', 'a']);
+
+        expect(
+          sortColumns(columns, columnSet)
+            .toJS()
+            .map(c => c.value)
+            .join(''),
+        ).toBe('bca');
+      });
+    });
+
+    describe('#getToggleableColumns', () => {
+      test('toggleable columns list is correct', () => {
+        const columns = List([
+          Map({ value: 'a', title: 'A', toggleable: true }),
+          Map({ value: 'b', title: 'B' }),
+          Map({ value: 'c', title: 'C' }),
+          Map({ value: 'd' }),
+        ]);
+        const columnSet = List(['a', 'b', 'd']);
+
+        expect(
+          getToggleableColumns(columns, columnSet, 'table-key')
+            .toJS()
+            .map(c => c.value)
+            .join(''),
+        ).toBe('ab');
       });
     });
 

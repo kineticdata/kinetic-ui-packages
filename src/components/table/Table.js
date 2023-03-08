@@ -39,6 +39,7 @@ const TableComponent = props => {
       ? buildFilterForm(props)
       : buildFilterLayout(props);
     const pagination = buildPaginationControl(props);
+    const columnControl = buildColumnControl(props);
 
     return children({
       tableKey,
@@ -47,6 +48,7 @@ const TableComponent = props => {
       filter,
       appliedFilters,
       pagination,
+      columnControl,
       initializing,
       loading,
       rows,
@@ -335,6 +337,58 @@ const buildPaginationControl = props => {
   );
 };
 
+export const getToggleableColumns = (columns, columnSet, tableKey) =>
+  columns.reduce((list, column) => {
+    const label =
+      (column.get('columnLabel') && column.get('columnLabel').trim()) ||
+      (column.get('title') && column.get('title').trim());
+    // Include all columns that have a columnLabel or title, and are toggleable
+    // or are in the initial columnSet
+    if (
+      label &&
+      (column.get('toggleable') || columnSet.includes(column.get('value')))
+    ) {
+      return list.push(
+        Map({
+          value: column.get('value'),
+          label,
+          checked: columnSet.includes(column.get('value')),
+          // Only enable the column toggle if it's toggleable, so that any
+          // non-toggleable columns that are in the initial column set will be
+          // shown but disabled in the control
+          enabled: !!column.get('toggleable'),
+          toggle: !!column.get('toggleable')
+            ? onToggleColumn(tableKey, column.get('value'))
+            : undefined,
+        }),
+      );
+    }
+    return list;
+  }, List());
+
+const buildColumnControl = props => {
+  const {
+    tableKey,
+    columns,
+    columnSet,
+    components,
+    renderOptions,
+    tableOptions,
+    extraData,
+  } = props;
+  const ColumnControl = components.ColumnControl;
+
+  return (
+    <ColumnControl
+      tableKey={tableKey}
+      columns={getToggleableColumns(columns, columnSet, tableKey)}
+      renderOptions={renderOptions}
+      tableOptions={tableOptions}
+      extraData={extraData}
+    />
+  );
+};
+
 export const buildTable = props => {
   const TableLayout = props.components.TableLayout;
   const header = buildTableHeader(props);
@@ -595,6 +649,9 @@ const onGotoPage = tableKey => pageNumber => () =>
 const onSortColumn = (tableKey, column) => () =>
   dispatch('SORT_COLUMN', { tableKey, column });
 
+const onToggleColumn = (tableKey, column) => () =>
+  dispatch('TOGGLE_COLUMN', { tableKey, column });
+
 const mapStateToProps = () => (state, props) =>
   state.getIn(['tables', props.tableKey], Map()).toObject();
 
@@ -619,9 +676,46 @@ const TableImpl = compose(
 )(TableComponent);
 
 export const generateColumns = (columns, addColumns = [], alterColumns = {}) =>
-  List(addColumns)
-    .concat(columns)
+  List(columns)
+    .concat(addColumns)
     .map(c => Map({ ...c, ...alterColumns[c.value], value: c.value }));
+
+export const sortColumns = (columns, columnSet) =>
+  columns
+    // First sort columns by the columnOrder value if provided
+    .sortBy(
+      column =>
+        column.get('columnOrder') === 'first'
+          ? -1
+          : column.get('columnOrder') === 'last'
+            ? 1
+            : 0,
+    )
+    // Next reduce the columns list into a list of groups, starting a new group
+    // each time we get to a column that's in the columnSet. This will result in
+    // each group having at most one columnSet column, and that column will be
+    // the first one in the group.
+    .reduce(
+      (list, column) =>
+        columnSet.includes(column.get('value'))
+          ? list.push(List([column]))
+          : list.update(
+              -1,
+              group => (group ? group.push(column) : List([column])),
+            ),
+      List(),
+    )
+    // Then sort the groups, taking the first column from each group, finding
+    // its index in the column set, and using that index as a sort value. Any
+    // groups without a columnSet column will be sorted to the end.
+    .sortBy(group => {
+      const columnSetIndex = columnSet.findIndex(
+        c => c === group.getIn([0, 'value']),
+      );
+      return columnSetIndex >= 0 ? columnSetIndex : columnSet.size + 1;
+    })
+    // Lastly flatten the groups back to a list of columns
+    .flatten(true);
 
 export const extractColumnComponents = columns =>
   columns
@@ -686,6 +780,7 @@ export const generateTable = ({
     filterSet: props.filterSet,
     filterAutoFocus: props.filterAutoFocus,
     columnSet: props.columnSet,
+    columnSetOrder: props.columnSetOrder,
     pageSize: props.pageSize,
     defaultSortColumn: props.defaultSortColumn,
     defaultSortDirection: props.defaultSortDirection,
@@ -734,13 +829,14 @@ export class Table extends Component {
       this.props.alterColumns,
     );
     const allColumns = columns.map(c => c.get('value'));
-    const columnSet = List(
+    const initialColumnSet = List(
       this.props.columnSet
         ? typeof this.props.columnSet === 'function'
           ? this.props.columnSet(allColumns)
           : this.props.columnSet
         : allColumns,
     ).filter(c => columns.find(c2 => c2.get('value') === c));
+
     const columnComponents = extractColumnComponents(columns);
 
     return (
@@ -750,8 +846,8 @@ export class Table extends Component {
             {...this.props}
             components={componentConfig.merge(this.props.components).toJS()}
             columnComponents={columnComponents}
-            columns={columns}
-            columnSet={columnSet}
+            columns={sortColumns(columns, initialColumnSet)}
+            columnSet={initialColumnSet}
             tableKey={this.tableKey}
             auto={this.auto}
           >
@@ -821,6 +917,12 @@ Table.propTypes = {
       filterable: PropTypes.bool,
       /** Flag that determines if the column is sortable.*/
       sortable: PropTypes.bool,
+      /** Flag that determines if the column is toggleable.*/
+      toggleable: PropTypes.bool,
+      /** Label used for displaying the column in the column control. Defaults to `title`. */
+      columnLabel: PropTypes.string,
+      /** Defines whether a certain column should always be first or last. */
+      columnOrder: PropTypes.oneOf(['first', 'last']),
       /** Allows overriding the `HeaderCell`, `BodyCell`, and `FooterCell` for a given column. */
       components: PropTypes.shape({
         HeaderCell: PropTypes.func,
