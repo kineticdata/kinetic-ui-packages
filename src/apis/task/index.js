@@ -887,6 +887,26 @@ export const fetchTaskRun = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const fetchTaskRunViaDeferralToken = (options = {}) => {
+  validateOptions('fetchTaskRunViaDeferralToken', ['deferralToken'], options);
+
+  return axios
+    .get(
+      `${bundle.spaceLocation()}/app/components/task/app/api/v2/runs/task/${
+        options.deferralToken
+      }`,
+      {
+        params: {
+          include: options.include,
+        },
+      },
+    )
+    .then(response => ({
+      run: response.data,
+    }))
+    .catch(handleErrors);
+};
+
 export const updateTaskRun = (options = {}) => {
   validateOptions('updateTaskRun', ['runId', 'run'], options);
 
