@@ -32,24 +32,16 @@ const defaultProxyLogger = ({
       const proxyData = getProxyData(proxyRequest);
       const originalData = getRequestData(originalRequest);
       console.log(
-        `[proxy] [original] -> ${originalData.method}\t${
-          originalData.scheme
-        }\t${originalData.host}\t${originalData.path}`,
+        `[proxy] [original] -> ${originalData.method}\t${originalData.scheme}\t${originalData.host}\t${originalData.path}`,
       );
       console.log(
-        `[proxy] [proxied]  -> ${proxyData.method}\t${proxyData.scheme}\t${
-          proxyData.host
-        }\t${proxyData.path}`,
+        `[proxy] [proxied]  -> ${proxyData.method}\t${proxyData.scheme}\t${proxyData.host}\t${proxyData.path}`,
       );
     } else if (proxyResponse) {
       const responseData = getResponseData(proxyResponse);
       const requestData = getRequestData(originalRequest);
       console.log(
-        `[proxy] [original] <- ${responseData.statusCode}\t${
-          requestData.method
-        }\t${requestData.scheme}\t${requestData.host} (${responseData.host})\t${
-          requestData.path
-        }`,
+        `[proxy] [original] <- ${responseData.statusCode}\t${requestData.method}\t${requestData.scheme}\t${requestData.host} (${responseData.host})\t${requestData.path}`,
       );
     }
   } catch (e) {
@@ -119,6 +111,7 @@ const getProxyConfig = (
   {
     mainTarget = process.env.REACT_APP_PROXY_HOST,
     loghubTarget = process.env.REACT_APP_LOGHUB_PROXY_HOST,
+    systemCoordinatorTarget = process.env.REACT_APP_SYS_COORDINATOR_PROXY_HOST,
     proxyLogger,
   } = {},
 ) => {
@@ -152,6 +145,19 @@ const getProxyConfig = (
       },
     });
     finalConfigs.push({ paths: ['/app/loghub/**'], options });
+  }
+
+  if (systemCoordinatorTarget) {
+    // If we're overriding the underlying Loghub host, bypass it in the main.
+    mainPaths.push('!/app/system-coordinator/**');
+    const options = setupProxy({
+      target: systemCoordinatorTarget,
+      proxyLogger,
+      pathRewrite: {
+        '^/app/system-coordinator': '/app',
+      },
+    });
+    finalConfigs.push({ paths: ['/app/system-coordinator/**'], options });
   }
 
   return finalConfigs.map(config => {
