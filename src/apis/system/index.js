@@ -13,7 +13,7 @@ export const fetchTenants = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({
+    .then((response) => ({
       tenants: response.data.tenants,
       nextPageToken: response.data.nextPageToken,
     }))
@@ -31,7 +31,7 @@ export const fetchTenant = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ tenant: response.data.tenant }))
+    .then((response) => ({ tenant: response.data.tenant }))
     .catch(handleErrors);
 };
 
@@ -53,7 +53,7 @@ export const updateTenant = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ tenant: response.data.tenant }))
+    .then((response) => ({ tenant: response.data.tenant }))
     .catch(handleErrors);
 };
 
@@ -72,7 +72,7 @@ export const createTenant = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ tenant: response.data.tenant }))
+    .then((response) => ({ tenant: response.data.tenant }))
     .catch(handleErrors);
 };
 
@@ -90,7 +90,7 @@ export const deleteTenant = (options = {}) => {
       },
       headers: headerBuilder(options),
     })
-    .then(response => ({ tenant: response.data.tenant }))
+    .then((response) => ({ tenant: response.data.tenant }))
     .catch(handleErrors);
 };
 
@@ -101,7 +101,7 @@ export const fetchSystem = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -116,7 +116,7 @@ export const updateSystem = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -127,7 +127,7 @@ export const fetchSystemUser = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ user: response.data }))
+    .then((response) => ({ user: response.data }))
     .catch(handleErrors);
 };
 
@@ -142,7 +142,7 @@ export const updateSystemUser = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ user: response.data }))
+    .then((response) => ({ user: response.data }))
     .catch(handleErrors);
 };
 
@@ -152,7 +152,7 @@ export const fetchSystemIngress = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ ingress: response.data.ingress }))
+    .then((response) => ({ ingress: response.data.ingress }))
     .catch(handleErrors);
 };
 
@@ -168,7 +168,7 @@ export const updateSystemIngress = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ ingress: response.data.ingress }))
+    .then((response) => ({ ingress: response.data.ingress }))
     .catch(handleErrors);
 };
 
@@ -180,7 +180,7 @@ export const fetchTaskDbAdapters = (options = {}) => {
         params: paramBuilder(options),
         headers: headerBuilder(options),
       })
-      .then(response => response.data)
+      .then((response) => response.data)
       // .then(response => ({ space: response.data.space }))
       .catch(handleErrors)
   );
@@ -196,7 +196,7 @@ export const fetchTaskDbAdapter = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -207,7 +207,7 @@ export const fetchSystemDefaultTaskDbAdapter = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -228,7 +228,7 @@ export const updateSystemDefaultTaskDbAdapter = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -239,7 +239,7 @@ export const fetchSystemDefaultSmtpAdapter = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -260,7 +260,7 @@ export const updateSystemDefaultSmtpAdapter = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -274,7 +274,7 @@ export const fetchSystemFilestore = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => response.data)
+    .then((response) => response.data)
     .catch(handleErrors);
 };
 
@@ -295,7 +295,7 @@ export const updateSystemFilestore = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ filestore: response.data.filestore }))
+    .then((response) => ({ filestore: response.data.filestore }))
     .catch(handleErrors);
 };
 
@@ -312,9 +312,7 @@ export const postPlatformComponentRestart = (options = {}) => {
 
   return axios
     .post(
-      `/app/system-coordinator/api/v1/platform/components/${
-        options.component
-      }/restart`,
+      `/app/system-coordinator/api/v1/platform/components/${options.component}/restart`,
     )
     .then(({ data }) => ({ component: data.component, message: data.message }))
     .catch(handleErrors);
@@ -331,7 +329,7 @@ export const systemLogin = (options = {}) => {
 
   return axios
     .post('/app/system-coordinator/login', { username, password }, {})
-    .then(response => response.data)
+    .then((response) => response.data)
     .catch(handleErrors);
 };
 
@@ -345,7 +343,7 @@ export const refreshSystemToken = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => response.data)
+    .then((response) => response.data)
     .catch(handleErrors);
 };
 
@@ -359,7 +357,7 @@ export const fetchCassandraConfig = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -375,7 +373,7 @@ export const updateCassandraConfig = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -389,7 +387,7 @@ export const fetchElasticSearchConfig = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -405,7 +403,7 @@ export const updateElasticSearchConfig = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ adapter: response.data.adapter }))
+    .then((response) => ({ adapter: response.data.adapter }))
     .catch(handleErrors);
 };
 
@@ -419,7 +417,7 @@ export const fetchSystemSecurity = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ systemSecurity: response.data }))
+    .then((response) => ({ systemSecurity: response.data }))
     .catch(handleErrors);
 };
 
@@ -437,7 +435,7 @@ export const updateSystemSecurity = (options = {}) => {
       systemSecurity,
       { params: paramBuilder(options), headers: headerBuilder(options) },
     )
-    .then(response => ({ systemSecurity: response.data }))
+    .then((response) => ({ systemSecurity: response.data }))
     .catch(handleErrors);
 };
 
@@ -447,7 +445,7 @@ export const fetchSystemLicense = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -457,7 +455,7 @@ export const deleteSystemLicense = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -467,7 +465,7 @@ export const resetSystemLicense = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -482,7 +480,7 @@ export const importSystemLicense = (options = {}) => {
     .post('/app/system-coordinator/components/core/app/api/v1/license', data, {
       headers,
     })
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -495,7 +493,7 @@ export const fetchSystemLicenseStats = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -505,7 +503,7 @@ export const fetchSystemLicenseCheck = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -515,7 +513,7 @@ export const fetchSystemBackgroundTasks = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ backgroundTasks: response.data.backgroundTasks }))
+    .then((response) => ({ backgroundTasks: response.data.backgroundTasks }))
     .catch(handleErrors);
 };
 
@@ -531,7 +529,7 @@ export const fetchSystemBackgroundTask = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ backgroundTask: response.data.backgroundTask }))
+    .then((response) => ({ backgroundTask: response.data.backgroundTask }))
     .catch(handleErrors);
 };
 
@@ -547,7 +545,7 @@ export const deleteSystemBackgroundTask = (options = {}) => {
       params: paramBuilder(options),
       headers: headerBuilder(options),
     })
-    .then(response => ({ backgroundTask: response.data.backgroundTask }))
+    .then((response) => ({ backgroundTask: response.data.backgroundTask }))
     .catch(handleErrors);
 };
 
@@ -564,7 +562,7 @@ export const rotateEncryptionKey = (options = {}) => {
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({ system: response.data }))
+    .then((response) => ({ system: response.data }))
     .catch(handleErrors);
 };
 
@@ -575,13 +573,13 @@ export const fetchTrustedCertificates = (options = {}) => {
     .get(
       spaceSlug
         ? `/app/system-coordinator/api/v1/tenants/${spaceSlug}/trusted`
-        : '/app/system-coordinator/api/v1/platform/ingress/trusted',
+        : '/app/system-coordinator/api/v1/platform/trusted',
       {
         params: paramBuilder(options),
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({
+    .then((response) => ({
       trustedCertificates: response.data.trustedCertificates,
     }))
     .catch(handleErrors);
@@ -599,14 +597,14 @@ export const createTrustedCertificate = (options = {}) => {
     .post(
       spaceSlug
         ? `/app/system-coordinator/api/v1/tenants/${spaceSlug}/trusted`
-        : '/app/system-coordinator/api/v1/platform/ingress/trusted',
+        : '/app/system-coordinator/api/v1/platform/trusted',
       formDataBuilder({ certificates }),
       {
         params: paramBuilder(options),
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({
+    .then((response) => ({
       trustedCertificates: response.data.trustedCertificates,
     }))
     .catch(handleErrors);
@@ -624,13 +622,13 @@ export const deleteTrustedCertificate = (options = {}) => {
     .delete(
       spaceSlug
         ? `/app/system-coordinator/api/v1/tenants/${spaceSlug}/trusted/${fingerprint}`
-        : `/app/system-coordinator/api/v1/platform/ingress/trusted/${fingerprint}`,
+        : `/app/system-coordinator/api/v1/platform/trusted/${fingerprint}`,
       {
         params: paramBuilder(options),
         headers: headerBuilder(options),
       },
     )
-    .then(response => ({
+    .then((response) => ({
       trustedCertificates: response.data.trustedCertificates,
     }))
     .catch(handleErrors);
