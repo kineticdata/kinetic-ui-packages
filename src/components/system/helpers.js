@@ -7,52 +7,49 @@ export const VALIDATE_DB_ADAPTERS = [
 ];
 
 const getValueFromList = (properties, key, initialValue) => {
-  const property = properties.find(p => p.get('name') === key);
+  const property = properties.find((p) => p.get('name') === key);
   return property ? property.get('value') : initialValue;
 };
 
-export const generateInitialValues = (
-  persistedObject,
-  persistedPath,
-  defaultObject,
-  adapter,
-) => (key, initialValue = '') => {
-  const sameAsTenant =
-    getIn(persistedObject, persistedPath.concat(['type']), '') === adapter;
-  const defaultObjectValue = getValueFromList(
-    get(defaultObject, 'properties', List()),
-    key,
-    initialValue,
-  );
-
-  if (sameAsTenant) {
-    // Get the properties from the persisted object.
-    const properties = getIn(
-      persistedObject,
-      persistedPath.concat(['properties']),
-      List(),
+export const generateInitialValues =
+  (persistedObject, persistedPath, defaultObject, adapter) =>
+  (key, initialValue = '') => {
+    const sameAsTenant =
+      getIn(persistedObject, persistedPath.concat(['type']), '') === adapter;
+    const defaultObjectValue = getValueFromList(
+      get(defaultObject, 'properties', List()),
+      key,
+      initialValue,
     );
-    if (List.isList(properties)) {
-      const property = properties.find(p => p.get('name') === key);
-      return property
-        ? property.get('certificate') || property.get('value')
-        : defaultObjectValue;
-    } else {
-      return get(properties, key, defaultObjectValue);
+
+    if (sameAsTenant) {
+      // Get the properties from the persisted object.
+      const properties = getIn(
+        persistedObject,
+        persistedPath.concat(['properties']),
+        List(),
+      );
+      if (List.isList(properties)) {
+        const property = properties.find((p) => p.get('name') === key);
+        return property
+          ? property.get('certificate') || property.get('value')
+          : defaultObjectValue;
+      } else {
+        return get(properties, key, defaultObjectValue);
+      }
+    } else if (get(defaultObject, 'type') === adapter) {
+      const adapterProperty = get(defaultObject, 'properties', List()).find(
+        (property) => property.get('name') === key,
+      );
+      return get(
+        adapterProperty,
+        'certificate',
+        get(adapterProperty, 'value', defaultObjectValue),
+      );
     }
-  } else if (get(defaultObject, 'type') === adapter) {
-    const adapterProperty = get(defaultObject, 'properties', List()).find(
-      property => property.get('name') === key,
-    );
-    return get(
-      adapterProperty,
-      'certificate',
-      get(adapterProperty, 'value', defaultObjectValue),
-    );
-  }
 
-  return initialValue;
-};
+    return initialValue;
+  };
 
 const generatePasswordFields = (
   adapterName,
@@ -280,7 +277,7 @@ export const MSSQL_FIELDS = (
       defaultAdapter,
       'Truststore Password',
       'trustStorePassword',
-      values => values.get('mssql_sslrootcert', '') !== '',
+      (values) => values.get('mssql_sslrootcert', '') !== '',
     ),
     ...generatePasswordFields(
       'mssql',
@@ -289,7 +286,7 @@ export const MSSQL_FIELDS = (
       defaultAdapter,
       'Keystore Password',
       'keyStoreSecret',
-      values => values.get('mssql_sslcert', '') !== '',
+      (values) => values.get('mssql_sslcert', '') !== '',
     ),
   ];
 };
@@ -459,7 +456,7 @@ export const ORACLE_FIELDS = (
       defaultAdapter,
       'Truststore Password',
       'trustStorePassword',
-      values => values.get('oracle_serverCert', '') !== '',
+      (values) => values.get('oracle_serverCert', '') !== '',
     ),
     ...generatePasswordFields(
       'oracle',
@@ -468,7 +465,7 @@ export const ORACLE_FIELDS = (
       defaultAdapter,
       'Keystore Password',
       'keyStorePassword',
-      values => values.get('oracle_clientCert', '') !== '',
+      (values) => values.get('oracle_clientCert', '') !== '',
     ),
   ];
 };
@@ -657,7 +654,7 @@ export const POSTGRES_FIELDS = (
   ];
 };
 
-export const adapterProperties = (values, adapter, filterFn = o => o) => {
+export const adapterProperties = (values, adapter, filterFn = (o) => o) => {
   const adapterPrefix = `${adapter}_`;
 
   return (
@@ -665,9 +662,9 @@ export const adapterProperties = (values, adapter, filterFn = o => o) => {
       // Remove the other adapters properties.
       .filter((_v, key) => key.startsWith(adapterPrefix))
       // Remove the adapter prefix from the property names.
-      .mapKeys(key => key.replace(adapterPrefix, ''))
+      .mapKeys((key) => key.replace(adapterPrefix, ''))
       // Map values that are Lists to their first entry (used for File fields)
-      .map(value => (List.isList(value) ? value.get(0) || '' : value))
+      .map((value) => (List.isList(value) ? value.get(0) || '' : value))
       // Call the provided filter function in case we need to filter out values,
       // such as for hidden file fields
       .filter(filterFn)
@@ -679,10 +676,10 @@ export const propertiesFromAdapters = (
   taskDbAdapters = List(),
   typeKey = 'type',
 ) =>
-  taskDbAdapters.flatMap(adapter =>
+  taskDbAdapters.flatMap((adapter) =>
     adapter
       .get('properties', List())
-      .map(property => property.set('type', adapter.get(typeKey))),
+      .map((property) => property.set('type', adapter.get(typeKey))),
   );
 
 export const propertiesFromValues = (
@@ -698,11 +695,11 @@ export const propertiesFromValues = (
   );
   return values
     .filter((value, name) => name.startsWith(propertiesType))
-    .mapKeys(name => name.replace(`${propertiesType}_`, ''));
+    .mapKeys((name) => name.replace(`${propertiesType}_`, ''));
 };
 
 export const formPropertyName = (...names) =>
-  names.filter(n => n !== '').join('_');
+  names.filter((n) => n !== '').join('_');
 
 const getPropertyValue = (property, adapter, adapterType) => {
   const defaultType = get(adapter, adapterType, null);
@@ -727,7 +724,7 @@ export const adapterPropertiesFields = ({
   prefix = '',
   adapterType = 'type',
 }) =>
-  adapterProperties.map(property => {
+  adapterProperties.map((property) => {
     return {
       name: formPropertyName(
         prefix,
@@ -742,10 +739,11 @@ export const adapterPropertiesFields = ({
       type: property.get('sensitive')
         ? 'password'
         : property.has('options')
-          ? 'select'
-          : 'text',
+        ? 'select'
+        : 'text',
       placeholder:
         property.get('sensitive') &&
+        defaultAdapter &&
         defaultAdapter.get('adapterClass') === property.get('type')
           ? '•••••••'
           : undefined,

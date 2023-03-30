@@ -16,12 +16,13 @@ const dataSources = () => ({
   filestoreAdapters: {
     fn: fetchAdapters,
     params: [{ slug: 'SYSTEM', type: 'filestore' }],
-    transform: result => result.adapters,
+    transform: (result) => result.adapters,
   },
   filestore: {
     fn: fetchSystemFilestore,
     params: [],
-    transform: result => result.filestore,
+    transform: (result) =>
+      result.filestore ? { filestore: result.filestore } : { filestore: null },
   },
   adapterProperties: {
     fn: propertiesFromAdapters,
@@ -31,36 +32,38 @@ const dataSources = () => ({
   },
 });
 
-const handleSubmit = () => values =>
+const handleSubmit = () => (values) =>
   updateSystemFilestore({
     filestore: values.toJS(),
   }).then(
     handleFormErrors('filestore', 'There was an error saving the Filestore.'),
   );
 
-const fields = () => ({ filestoreAdapters, filestore, adapterProperties }) => {
-  if (filestore && filestoreAdapters && adapterProperties) {
-    const properties = adapterPropertiesFields({
-      adapterProperties,
-      defaultAdapter: filestore,
-      adapterType: 'adapterClass',
-    });
-    return (
-      filestoreAdapters &&
-      filestore && [
+const fields =
+  () =>
+  ({ filestoreAdapters, filestore: filestoreObj, adapterProperties }) => {
+    if (filestoreObj && filestoreAdapters && adapterProperties) {
+      const filestore = filestoreObj.get('filestore');
+
+      const properties = adapterPropertiesFields({
+        adapterProperties,
+        defaultAdapter: filestore,
+        adapterType: 'adapterClass',
+      });
+      return [
         {
           name: 'slug',
           label: 'Slug',
           type: 'text',
           enabled: false,
-          initialValue: get(filestore, 'slug', ''),
+          initialValue: get(filestore, 'slug', 'system'),
         },
         {
           name: 'adapterClass',
           label: 'Filestore Adapter',
           type: 'select',
           required: true,
-          options: filestoreAdapters.map(adapter =>
+          options: filestoreAdapters.map((adapter) =>
             Map({
               label: adapter.get('name'),
               value: adapter.get('class'),
@@ -78,10 +81,9 @@ const fields = () => ({ filestoreAdapters, filestore, adapterProperties }) => {
             propertiesFromValues(values, 'adapterClass'),
         },
         ...properties,
-      ]
-    );
-  }
-};
+      ];
+    }
+  };
 
 export const SystemFilestoreForm = generateForm({
   formOptions: ['slug'],
