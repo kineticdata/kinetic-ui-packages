@@ -29,7 +29,7 @@
     "query-string": "^5.1.1",
     "react-beautiful-dnd": "^11.0.5",
     "react-redux": "^6.0.1",
-    "react-sortable-tree": "^2.6.2",
+    "react-sortable-tree": "^2.8.0",
     "reactstrap": "^7.1.0",
     "recompose": "^0.30.0",
     "redux": "^3.7.2",
@@ -38,8 +38,8 @@
     "rudy-match-path": "^0.3.0"
   },
   "peerDependencies": {
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "babel": {
     "presets": [
