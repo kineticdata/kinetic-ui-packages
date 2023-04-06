@@ -43,7 +43,7 @@
     "redux-saga": "^1.0.1"
   },
   "peerDependencies": {
-    "react": "16.x"
+    "react": "^17.0.2"
   },
   "author": "Kinetic Data, Inc",
   "homepage": "https://kineticdata.github.io/react-kinetic-lib",

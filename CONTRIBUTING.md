@@ -97,9 +97,9 @@ check.
 ##### testing
 
 ```javascript static
-"enzyme": "^3.9.0",
-"enzyme-adapter-react-16": "^1.9.1",
-"enzyme-to-json": "^3.3.5",
+"@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
+"enzyme": "^3.11.0",
+"enzyme-to-json": "^3.6.2",
 "react-addons-test-utils": "^15.6.2",
 ```
 
