@@ -633,3 +633,39 @@ export const deleteTrustedCertificate = (options = {}) => {
     }))
     .catch(handleErrors);
 };
+
+export const fetchNotifications = (options = {}) => {
+  return axios
+    .get('/app/system-coordinator/api/v1/platform/notifications', {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then((response) => ({ notifications: response.data }))
+    .catch(handleErrors);
+};
+
+export const fetchNotificationLabels = (options = {}) => {
+  return axios
+    .get('/app/system-coordinator/api/v1/platform/notifications/labels', {
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+    .then((response) => ({ notifications: response.data }))
+    .catch(handleErrors);
+};
+
+export const restartResources = ({ options = {}, notification }) => {
+  return axios
+    .post(
+      '/app/system-coordinator/api/v1/platform/restartResources',
+      { ...notification },
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then((response) => ({
+      trustedCertificates: response.data.trustedCertificates,
+    }))
+    .catch(handleErrors);
+};
