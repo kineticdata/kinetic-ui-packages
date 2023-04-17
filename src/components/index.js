@@ -35,6 +35,7 @@ export {
   generateForm,
 } from './form/Form';
 export { FormState } from './form/FormState';
+export { SimpleForm } from './form/SimpleForm';
 
 export { KitchenSinkForm } from './form/KitchenSinkForm';
 
