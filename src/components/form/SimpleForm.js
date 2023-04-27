@@ -77,6 +77,17 @@ regSaga(
   }),
 );
 
+regSaga(
+  takeEvery('SIMPLE_FORM_BLUR_FIELD', function*({
+    payload: { formKey, name, value },
+  }) {
+    const { onBlur } = yield select(selectField(formKey, name));
+    if (typeof onBlur === 'function') {
+      onBlur(value);
+    }
+  }),
+);
+
 export const onFocus = ({ formKey, name }) => () => {
   dispatch('SIMPLE_FORM_FOCUS_FIELD', { formKey, name });
 };

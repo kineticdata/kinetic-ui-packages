@@ -1,5 +1,9 @@
 import { getIn, fromJS, isImmutable, List, Map, OrderedMap } from 'immutable';
-import { onBlur, onChange as onChangeHandler, onFocus } from './SimpleForm';
+import {
+  onBlur as onBlurHandler,
+  onChange as onChangeHandler,
+  onFocus as onFocusHandler,
+} from './SimpleForm';
 import {
   SimpleFormState,
   SimpleFieldState,
@@ -7,14 +11,15 @@ import {
 } from './SimpleForm.models';
 import { FIELD_DEFAULT_VALUES } from './Form.models';
 
-// If value is null for a text field, change it to the default value to prevent
-// HTML errors
+// If value is null for a text or select field, change it to the default value
+// to prevent HTML errors
 const correctRenderValue = (
   type,
   value = FIELD_DEFAULT_VALUES.get(type, ''),
 ) => {
   switch (type) {
     case 'text':
+    case 'select':
       return value !== null ? value : FIELD_DEFAULT_VALUES.get(type, '');
     default:
       return value;
@@ -34,7 +39,9 @@ export const createFieldState = formKey => ({
   label,
   language,
   name,
+  onFocus,
   onChange,
+  onBlur,
   options,
   pattern,
   patternMessage,
@@ -73,13 +80,13 @@ export const createFieldState = formKey => ({
     }),
     // Event handlers
     eventHandlers: Map({
-      onBlur: onBlur({ formKey, name }),
+      onBlur: onBlurHandler({ formKey, name }),
       onChange: onChangeHandler({
         formKey,
         type,
         name,
       }),
-      onFocus: onFocus({ formKey, name }),
+      onFocus: onFocusHandler({ formKey, name }),
     }),
     // Pass-through options
     constraint,
@@ -88,7 +95,9 @@ export const createFieldState = formKey => ({
     helpText,
     language,
     name,
+    onFocus,
     onChange,
+    onBlur,
     pattern,
     patternMessage,
     requiredMessage,
