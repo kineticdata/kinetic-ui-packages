@@ -39,46 +39,58 @@ const columns = [
   {
     title: 'ID',
     value: 'id',
+    toggleable: true,
   },
   {
     title: 'Name',
     value: 'name',
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     title: 'Status',
     value: 'status',
+    toggleable: true,
   },
   {
     title: 'Definition ID',
     value: 'definitionId',
+    toggleable: true,
   },
   {
     title: 'Definition Name',
     value: 'definitionName',
+    toggleable: true,
   },
   {
     title: 'Definition Version',
     value: 'definitionVersion',
+    toggleable: true,
   },
   {
     title: 'Description',
     value: 'description',
+    toggleable: true,
   },
   {
     title: 'Created',
     value: 'createdAt',
+    toggleable: true,
   },
   {
     title: 'Created By',
     value: 'createdBy',
+    toggleable: true,
   },
   {
     title: 'Updated',
     value: 'updatedAt',
+    toggleable: true,
   },
   {
     title: 'Updated By',
     value: 'updatedBy',
+    toggleable: true,
   },
 ];
 

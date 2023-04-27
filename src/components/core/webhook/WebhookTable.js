@@ -70,15 +70,52 @@ const filters = () => ({ events, values }) =>
   ];
 
 const columns = [
-  { value: 'createdAt', title: 'Created' },
-  { value: 'createdBy', title: 'Created By' },
-  { value: 'event', title: 'Event' },
-  { value: 'filter', title: 'Filter' },
-  { value: 'name', title: 'Name' },
-  { value: 'type', title: 'Type' },
-  { value: 'updatedAt', title: 'Updated' },
-  { value: 'updatedBy', title: 'Updated By' },
-  { value: 'url', title: 'URL' },
+  {
+    value: 'createdAt',
+    title: 'Created',
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
+    toggleable: true,
+  },
+  {
+    value: 'event',
+    title: 'Event',
+    toggleable: true,
+  },
+  {
+    value: 'filter',
+    title: 'Filter',
+    toggleable: true,
+  },
+  {
+    value: 'name',
+    title: 'Name',
+    toggleable: false,
+    columnOrder: 'first',
+  },
+  {
+    value: 'type',
+    title: 'Type',
+    toggleable: true,
+  },
+  {
+    value: 'updatedAt',
+    title: 'Updated',
+    toggleable: true,
+  },
+  {
+    value: 'updatedBy',
+    title: 'Updated By',
+    toggleable: true,
+  },
+  {
+    value: 'url',
+    title: 'URL',
+    toggleable: true,
+  },
 ];
 
 export const WebhookTable = generateTable({

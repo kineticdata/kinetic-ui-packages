@@ -18,11 +18,18 @@ const dataSource = ({ agentSlug }) => ({
 const filters = () => () => [{ name: 'slug', label: 'Slug', type: 'text' }];
 
 const columns = [
-  { value: 'slug', title: 'Slug', sortable: true },
+  {
+    value: 'slug',
+    title: 'Slug',
+    sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
+  },
   {
     value: 'adapterClass',
     title: 'Adapter',
     sortable: true,
+    toggleable: true,
     valueTransform: _value =>
       _value
         .split('.')

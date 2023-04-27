@@ -36,29 +36,36 @@ const columns = [
     value: 'slug',
     title: 'Slug',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'method',
     title: 'Method',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdAt',
     title: 'Created',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdBy',
     title: 'Created By',
+    toggleable: true,
   },
   {
     value: 'updatedAt',
     title: 'Updated',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'updatedBy',
     title: 'Updated By',
+    toggleable: true,
   },
 ];
 

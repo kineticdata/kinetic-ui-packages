@@ -58,6 +58,8 @@ const columns = [
     value: 'username',
     title: 'Username',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'email',

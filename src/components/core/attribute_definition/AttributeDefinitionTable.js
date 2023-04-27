@@ -31,16 +31,20 @@ const columns = [
     value: 'name',
     title: 'Name',
     sortable: false,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'description',
     title: 'Description',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'allowsMultiple',
     title: 'Allows Multiple',
     sortable: false,
+    toggleable: true,
   },
 ];
 

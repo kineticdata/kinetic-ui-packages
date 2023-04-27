@@ -39,11 +39,14 @@ const columns = [
     value: 'slug',
     title: 'Slug',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'definitionId',
     title: 'Handler Adapter',
     sortable: true,
+    toggleable: true,
   },
 ];
 

@@ -49,21 +49,26 @@ const columns = [
     value: 'message',
     title: 'Message',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'name',
     title: 'Name',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'rule',
     title: 'Rule',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'type',
     title: 'Type',
     sortable: true,
+    toggleable: true,
   },
 ];
 

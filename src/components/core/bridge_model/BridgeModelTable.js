@@ -42,11 +42,14 @@ const columns = [
     value: 'name',
     title: 'Model Name',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'status',
     title: 'Status',
     sortable: true,
+    toggleable: true,
   },
 ];
 

@@ -48,25 +48,102 @@ const filters = () => ({ values, definitions }) =>
   ];
 
 const columns = [
-  { value: 'createdAt', title: 'Created' },
-  { value: 'createdBy', title: 'Created By' },
-  { value: 'event', title: 'Event' },
-  { value: 'id', title: 'ID' },
-  { value: 'name', title: 'Name' },
-  { value: 'parentId', title: 'Parent ID' },
-  { value: 'requestContent', title: 'Request Content' },
-  { value: 'responseContent', title: 'Response Content' },
-  { value: 'retryCount', title: 'Retry Count' },
-  { value: 'scheduledAt', title: 'Scheduled At' },
-  { value: 'scopeId', title: 'Scope ID' },
-  { value: 'scopeType', title: 'Scope Type' },
-  { value: 'status', title: 'Status' },
-  { value: 'summary', title: 'Summary' },
-  { value: 'type', title: 'Type' },
-  { value: 'updatedAt', title: 'Updated' },
-  { value: 'updatedBy', title: 'Updated By' },
-  { value: 'url', title: 'URL' },
-  { value: 'webhookId', title: 'Webhook ID' },
+  {
+    value: 'createdAt',
+    title: 'Created',
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
+    toggleable: true,
+  },
+  {
+    value: 'event',
+    title: 'Event',
+    toggleable: true,
+  },
+  {
+    value: 'id',
+    title: 'ID',
+    toggleable: true,
+  },
+  {
+    value: 'name',
+    title: 'Name',
+    toggleable: true,
+  },
+  {
+    value: 'parentId',
+    title: 'Parent ID',
+    toggleable: true,
+  },
+  {
+    value: 'requestContent',
+    title: 'Request Content',
+    toggleable: true,
+  },
+  {
+    value: 'responseContent',
+    title: 'Response Content',
+    toggleable: true,
+  },
+  {
+    value: 'retryCount',
+    title: 'Retry Count',
+    toggleable: true,
+  },
+  {
+    value: 'scheduledAt',
+    title: 'Scheduled At',
+    toggleable: false,
+    columnOrder: 'first',
+  },
+  {
+    value: 'scopeId',
+    title: 'Scope ID',
+    toggleable: true,
+  },
+  {
+    value: 'scopeType',
+    title: 'Scope Type',
+    toggleable: true,
+  },
+  {
+    value: 'status',
+    title: 'Status',
+    toggleable: true,
+  },
+  {
+    value: 'summary',
+    title: 'Summary',
+    toggleable: true,
+  },
+  {
+    value: 'type',
+    title: 'Type',
+    toggleable: true,
+  },
+  {
+    value: 'updatedAt',
+    title: 'Updated',
+    toggleable: true,
+  },
+  {
+    value: 'updatedBy',
+    title: 'Updated By',
+    toggleable: true,
+  },
+  {
+    value: 'url',
+    title: 'URL',
+    toggleable: true,
+  },
+  {
+    value: 'webhookId',
+    title: 'Webhook ID',
+    toggleable: true,
+  },
 ];
 
 export const WebhookJobTable = generateTable({
