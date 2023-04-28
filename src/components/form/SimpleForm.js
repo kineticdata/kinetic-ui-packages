@@ -29,13 +29,17 @@ regHandlers({
     state.setIn(['forms', formKey, 'fields', name, 'focused'], true),
   SIMPLE_FORM_BLUR_FIELD: (state, { payload: { formKey, name } }) =>
     state.mergeIn(['forms', formKey, 'fields', name], {
+      changed: false,
       focused: false,
       touched: true,
     }),
   SIMPLE_FORM_CHANGE_FIELD: (state, { payload: { formKey, name } }) =>
-    state.setIn(['forms', formKey, 'fields', name, 'touched'], true),
+    state.mergeIn(['forms', formKey, 'fields', name], {
+      changed: true,
+      touched: true,
+    }),
   SIMPLE_FORM_RESET: (state, { payload: { formKey, values } }) =>
-    state.hasIn(['forms', formKey])
+    !!state.getIn(['forms', formKey])
       ? state
           .updateIn(['forms', formKey, 'fields'], resetFields)
           .updateIn(
@@ -50,9 +54,7 @@ const selectField = (formKey, fieldName) => state =>
   state.getIn(['forms', formKey, 'fields', fieldName]);
 
 regSaga(
-  takeEvery('CONFIGURE_SIMPLE_FORM', function*({
-    payload: { formKey, name, value },
-  }) {
+  takeEvery('CONFIGURE_SIMPLE_FORM', function*({ payload: { formKey } }) {
     const formState = yield select(selectForm(formKey));
     if (
       formState &&
@@ -65,12 +67,23 @@ regSaga(
 );
 
 regSaga(
+  takeEvery('SIMPLE_FORM_FOCUS_FIELD', function*({
+    payload: { formKey, name, bindings },
+  }) {
+    const { onFocus } = yield select(selectField(formKey, name));
+    if (typeof onFocus === 'function') {
+      onFocus(bindings);
+    }
+  }),
+);
+
+regSaga(
   takeEvery('SIMPLE_FORM_CHANGE_FIELD', function*({
-    payload: { formKey, name, value },
+    payload: { formKey, name, value, bindings },
   }) {
     const { onChange } = yield select(selectField(formKey, name));
     if (typeof onChange === 'function') {
-      onChange(value);
+      onChange(value, bindings);
     } else {
       console.error('Field is missing onChange event:', name);
     }
@@ -79,24 +92,24 @@ regSaga(
 
 regSaga(
   takeEvery('SIMPLE_FORM_BLUR_FIELD', function*({
-    payload: { formKey, name, value },
+    payload: { formKey, name, bindings },
   }) {
     const { onBlur } = yield select(selectField(formKey, name));
     if (typeof onBlur === 'function') {
-      onBlur(value);
+      onBlur(bindings);
     }
   }),
 );
 
-export const onFocus = ({ formKey, name }) => () => {
-  dispatch('SIMPLE_FORM_FOCUS_FIELD', { formKey, name });
+export const onFocus = ({ formKey, name }) => bindings => () => {
+  dispatch('SIMPLE_FORM_FOCUS_FIELD', { formKey, name, bindings });
 };
 
-export const onBlur = ({ formKey, name }) => () => {
-  dispatch('SIMPLE_FORM_BLUR_FIELD', { formKey, name });
+export const onBlur = ({ formKey, name }) => bindings => () => {
+  dispatch('SIMPLE_FORM_BLUR_FIELD', { formKey, name, bindings });
 };
 
-export const onChange = ({ formKey, type, name }) => event => {
+export const onChange = ({ formKey, type, name }) => bindings => event => {
   let value;
   if (type === 'checkbox' && event && event.target) {
     value = event.target.checked;
@@ -117,7 +130,7 @@ export const onChange = ({ formKey, type, name }) => event => {
     value = event;
   }
 
-  dispatch('SIMPLE_FORM_CHANGE_FIELD', { formKey, name, value });
+  dispatch('SIMPLE_FORM_CHANGE_FIELD', { formKey, name, value, bindings });
 };
 
 export const mountSimpleForm = formKey =>
@@ -244,6 +257,7 @@ class SimpleFormImplComponent extends Component {
       formKey,
       formState,
       readOnly,
+      validateOnLoad,
       values,
     } = this.props;
     const initialized = formState ? !!formState.fields : false;
@@ -252,7 +266,7 @@ class SimpleFormImplComponent extends Component {
       const { FormButtons, FormError, FormLayout } = components.toObject();
       const { fields, initialValues } = formState;
       const bindings = { ...passThroughBindings, values, initialValues };
-      const evaluatedFields = evaluateFields(fields, bindings);
+      const evaluatedFields = evaluateFields(fields, bindings, validateOnLoad);
       const dirty = evaluatedFields.some(field => field.dirty);
       const fieldComponents = getFieldComponents(fieldsOrig);
       form = (

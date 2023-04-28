@@ -226,7 +226,7 @@ regHandlers({
       )
       .updateIn(['forms', formKey], digest),
   RESET: (state, { payload: { formKey } }) =>
-    state.hasIn(['forms', formKey])
+    !!state.getIn(['forms', formKey])
       ? state
           .updateIn(['forms', formKey, 'fields'], resetValues)
           .updateIn(['forms', formKey], digest)

@@ -11,12 +11,14 @@ export const SimpleFormState = Record({
 });
 
 export const SimpleFieldState = Record({
+  changed: false,
   constraint: null,
   constraintMessage: 'Invalid',
   dirty: undefined,
   enabled: true,
   errors: undefined,
   eventHandlers: Map(),
+  eventHandlerFunctions: Map(),
   focused: false,
   form: null,
   functions: Map(),
@@ -44,6 +46,7 @@ export const SimpleFieldState = Record({
 });
 
 export const SimpleFieldBinding = Record({
+  changed: false,
   dirty: undefined,
   errors: undefined,
   focused: false,

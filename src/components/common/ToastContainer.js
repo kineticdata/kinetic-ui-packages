@@ -26,9 +26,13 @@ regHandlers({
   ADD_TOAST: (state, action) =>
     state.setIn(['toasts', action.payload.toastKey], action.payload),
   SHOW_TOAST: (state, action) =>
-    state.setIn(['toasts', action.payload, 'show'], true),
+    state.hasIn(['toasts', action.payload])
+      ? state.setIn(['toasts', action.payload, 'show'], true)
+      : state,
   HIDE_TOAST: (state, action) =>
-    state.setIn(['toasts', action.payload, 'show'], false),
+    state.hasIn(['toasts', action.payload])
+      ? state.setIn(['toasts', action.payload, 'show'], false)
+      : state,
   REMOVE_TOAST: (state, action) => state.removeIn(['toasts', action.payload]),
   CLEAR_TOASTS: (state, action) =>
     state.update(

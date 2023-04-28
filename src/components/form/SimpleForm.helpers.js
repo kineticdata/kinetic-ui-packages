@@ -80,6 +80,11 @@ export const createFieldState = formKey => ({
     }),
     // Event handlers
     eventHandlers: Map({
+      onBlur: null,
+      onChange: null,
+      onFocus: null,
+    }),
+    eventHandlerFunctions: Map({
       onBlur: onBlurHandler({ formKey, name }),
       onChange: onChangeHandler({
         formKey,
@@ -134,11 +139,18 @@ const checkRequired = field =>
     ? List([field.requiredMessage])
     : List();
 
-const checkPattern = field =>
+const checkPattern = bindings => field =>
   field.pattern &&
   field.type === 'text' &&
   field.value !== '' &&
-  !field.value.match(field.pattern)
+  !field.value.match(
+    typeof field.pattern === 'function'
+      ? field.pattern({
+          ...bindings,
+          field: SimpleFieldBinding(field),
+        })
+      : field.pattern,
+  )
     ? List([field.patternMessage])
     : List();
 
@@ -160,15 +172,22 @@ const checkConstraint = bindings => field => {
 };
 
 // Validate the field
-const validateField = bindings => (field, name, fields) => {
+const validateField = (bindings, validateOnLoad = false) => (
+  field,
+  name,
+  fields,
+) => {
   const errors = List([
     checkRequired,
-    checkPattern,
+    checkPattern({ ...bindings, fields: fields.map(SimpleFieldBinding) }),
     checkConstraint({ ...bindings, fields: fields.map(SimpleFieldBinding) }),
   ]).flatMap(fn => fn(field));
-  return field
-    .set('errors', errors)
-    .update('touched', touched => (errors.isEmpty() ? touched : true));
+  return field.set('errors', errors).update(
+    'touched',
+    // Set touched to true if there are errors and the validateOnLoad flag is
+    // true to allow for showing errors on load of the form
+    touched => (errors.isEmpty() ? touched : touched || validateOnLoad),
+  );
 };
 
 // Resolve function props of the field
@@ -179,6 +198,18 @@ const evaluateFieldProps = bindings => (field, name, fields) =>
       (reduction, fn, prop) =>
         reduction.set(
           prop,
+          fromJS(fn({ ...bindings, fields: fields.map(SimpleFieldBinding) })),
+        ),
+      field,
+    );
+
+const evaluateFieldHandlers = bindings => (field, name, fields) =>
+  field.eventHandlerFunctions
+    .filter(fn => !!fn)
+    .reduce(
+      (reduction, fn, prop) =>
+        reduction.setIn(
+          ['eventHandlers', prop],
           fromJS(fn({ ...bindings, fields: fields.map(SimpleFieldBinding) })),
         ),
       field,
@@ -198,12 +229,13 @@ const evaluateFieldValue = bindings => field => {
     );
 };
 
-export const evaluateFields = (fields, bindings) =>
+export const evaluateFields = (fields, bindings, validateOnLoad) =>
   fields
     ? fields
         .map(evaluateFieldValue(bindings))
         .map(evaluateFieldProps(bindings))
-        .map(validateField(bindings))
+        .map(evaluateFieldHandlers(bindings))
+        .map(validateField(bindings, validateOnLoad))
     : fields;
 
 export const getComponentName = field =>
