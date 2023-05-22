@@ -184,7 +184,7 @@ const fields = ({ slug }) => ({ tenant, defaultTaskDbAdapter }) =>
       label: 'Task Replica Count',
       type: 'text',
       required: !!slug,
-      initialValue: getIn(tenant, ['task', 'deployment', 'replicas'], 1),
+      initialValue: getIn(tenant, ['task', 'deployment', 'specReplicas'], 1),
       // pattern: /^\d+$/,
       // patternMessage:
       //   'You must provide a number of replicas desired.',
