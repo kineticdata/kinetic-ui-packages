@@ -143,6 +143,7 @@ const checkPattern = bindings => field =>
   field.pattern &&
   field.type === 'text' &&
   field.value !== '' &&
+  field.value !== null &&
   !field.value.match(
     typeof field.pattern === 'function'
       ? field.pattern({
