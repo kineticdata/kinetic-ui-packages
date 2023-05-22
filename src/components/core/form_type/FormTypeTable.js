@@ -24,6 +24,8 @@ const columns = [
     value: 'name',
     title: 'Form Type',
     sortable: false,
+    toggleable: false,
+    columnOrder: 'first',
   },
 ];
 

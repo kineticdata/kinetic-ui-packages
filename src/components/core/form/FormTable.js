@@ -82,39 +82,48 @@ const columns = [
     value: 'name',
     title: 'Name',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'slug',
     title: 'Slug',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdAt',
     title: 'Created',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdBy',
     title: 'Created By',
+    toggleable: true,
   },
   {
     value: 'updatedAt',
     title: 'Updated At',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'updatedBy',
     title: 'Updated By',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'notes',
     title: 'Notes',
+    toggleable: true,
   },
   {
     value: 'status',
     title: 'Status',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'type',
@@ -122,8 +131,13 @@ const columns = [
     sortable: true,
     filter: 'startsWith',
     type: 'text',
+    toggleable: true,
   },
-  { value: 'submissionLabelExpression', title: 'Submission Label' },
+  {
+    value: 'submissionLabelExpression',
+    title: 'Submission Label',
+    toggleable: true,
+  },
 ];
 
 export const FormTable = generateTable({

@@ -36,22 +36,28 @@ const columns = [
   {
     value: 'name',
     title: 'Name',
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'renderType',
     title: 'Render Type',
+    toggleable: true,
   },
   {
     value: 'dataType',
     title: 'Data Type',
+    toggleable: true,
   },
   {
     value: 'updatedAt',
     title: 'Updated At',
+    toggleable: true,
   },
   {
     value: 'updatedBy',
     title: 'Updated By',
+    toggleable: true,
   },
 ];
 

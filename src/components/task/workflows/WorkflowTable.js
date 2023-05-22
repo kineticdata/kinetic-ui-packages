@@ -51,12 +51,10 @@ const filterDataSources = () => ({
     fn: fetchSources,
     params: [],
     transform: result =>
-      result.sources
-        .filter(s => s.name !== '-')
-        .map(s => ({
-          label: s.name,
-          value: s.name,
-        })),
+      result.sources.filter(s => s.name !== '-').map(s => ({
+        label: s.name,
+        value: s.name,
+      })),
   },
 });
 
@@ -86,50 +84,89 @@ const columns = [
     value: 'id',
     title: 'ID',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'name',
     title: 'Name',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'notes',
     title: 'Notes',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'definitionId',
     title: 'Definition ID',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'ownerEmail',
     title: 'Owner EMail',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'sourceGroup',
     title: 'Source Group',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'sourceName',
     title: 'Source Name',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'status',
     title: 'Status',
     sortable: true,
+    toggleable: true,
 
     options: () => STATUS_OPTIONS,
   },
-  { value: 'title', title: 'Title', sortable: false },
-  { value: 'type', title: 'type', sortable: false },
-  { value: 'createdAt', title: 'Created', sortable: false },
-  { value: 'createdBy', title: 'Created By', sortable: false },
-  { value: 'updatedAt', title: 'Updated', sortable: true },
-  { value: 'updatedBy', title: 'Updated By', sortable: false },
+  {
+    value: 'title',
+    title: 'Title',
+    sortable: false,
+    toggleable: true,
+  },
+  {
+    value: 'type',
+    title: 'type',
+    sortable: false,
+    toggleable: true,
+  },
+  {
+    value: 'createdAt',
+    title: 'Created',
+    sortable: false,
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
+    sortable: false,
+    toggleable: true,
+  },
+  {
+    value: 'updatedAt',
+    title: 'Updated',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'updatedBy',
+    title: 'Updated By',
+    sortable: false,
+    toggleable: true,
+  },
 ];
 
 export const WorkflowTable = generateTable({
