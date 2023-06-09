@@ -34,12 +34,13 @@ const TableComponent = props => {
       count,
       extraData,
     } = props;
-    const table = buildTable(props);
+
+    const columnControl = buildColumnControl(props);
+    const table = buildTable({ ...props, columnControl });
     const filter = components.FilterForm
       ? buildFilterForm(props)
       : buildFilterLayout(props);
     const pagination = buildPaginationControl(props);
-    const columnControl = buildColumnControl(props);
 
     return children({
       tableKey,
@@ -452,6 +453,7 @@ export const buildTableHeaderCell = props => (column, index) => {
     renderOptions,
     tableOptions,
     appliedFilters,
+    columnControl,
   } = props;
   const HeaderCell = columnComponents.getIn(
     [column.get('value'), 'HeaderCell'],
@@ -464,6 +466,7 @@ export const buildTableHeaderCell = props => (column, index) => {
   return (
     <KeyWrapper key={`column-${index}`}>
       <HeaderCell
+        columnControl={columnControl}
         onSortColumn={onSortColumn(tableKey, column)}
         title={column.get('title')}
         renderOptions={renderOptions}
