@@ -1747,6 +1747,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   Immutable.List [
                                     <KeyWrapper>
                                       <HeaderCell
+                                        columnControl={
+                                          <ColumnControl
+                                            columns={
+                                              Immutable.List [
+                                                Immutable.Map {
+                                                  "value": "name",
+                                                  "label": "Name",
+                                                  "checked": true,
+                                                  "enabled": false,
+                                                  "toggle": undefined,
+                                                },
+                                                Immutable.Map {
+                                                  "value": "status",
+                                                  "label": "Status",
+                                                  "checked": true,
+                                                  "enabled": false,
+                                                  "toggle": undefined,
+                                                },
+                                              ]
+                                            }
+                                            extraData={null}
+                                            tableKey="mock-table-key"
+                                            tableOptions={Object {}}
+                                          />
+                                        }
                                         filters={
                                           Immutable.Map {
                                             "name": Immutable.Map {
@@ -1781,6 +1806,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                     </KeyWrapper>,
                                     <KeyWrapper>
                                       <HeaderCell
+                                        columnControl={
+                                          <ColumnControl
+                                            columns={
+                                              Immutable.List [
+                                                Immutable.Map {
+                                                  "value": "name",
+                                                  "label": "Name",
+                                                  "checked": true,
+                                                  "enabled": false,
+                                                  "toggle": undefined,
+                                                },
+                                                Immutable.Map {
+                                                  "value": "status",
+                                                  "label": "Status",
+                                                  "checked": true,
+                                                  "enabled": false,
+                                                  "toggle": undefined,
+                                                },
+                                              ]
+                                            }
+                                            extraData={null}
+                                            tableKey="mock-table-key"
+                                            tableOptions={Object {}}
+                                          />
+                                        }
                                         filters={
                                           Immutable.Map {
                                             "name": Immutable.Map {
@@ -1815,6 +1865,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                     </KeyWrapper>,
                                     <KeyWrapper>
                                       <HeaderCell
+                                        columnControl={
+                                          <ColumnControl
+                                            columns={
+                                              Immutable.List [
+                                                Immutable.Map {
+                                                  "value": "name",
+                                                  "label": "Name",
+                                                  "checked": true,
+                                                  "enabled": false,
+                                                  "toggle": undefined,
+                                                },
+                                                Immutable.Map {
+                                                  "value": "status",
+                                                  "label": "Status",
+                                                  "checked": true,
+                                                  "enabled": false,
+                                                  "toggle": undefined,
+                                                },
+                                              ]
+                                            }
+                                            extraData={null}
+                                            tableKey="mock-table-key"
+                                            tableOptions={Object {}}
+                                          />
+                                        }
                                         filters={
                                           Immutable.Map {
                                             "name": Immutable.Map {
@@ -2121,6 +2196,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                 Immutable.List [
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2155,6 +2255,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2189,6 +2314,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2257,6 +2407,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                 Immutable.List [
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2291,6 +2466,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2325,6 +2525,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2385,6 +2610,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                 Immutable.List [
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2419,6 +2669,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2453,6 +2728,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   </KeyWrapper>,
                                   <KeyWrapper>
                                     <HeaderCell
+                                      columnControl={
+                                        <ColumnControl
+                                          columns={
+                                            Immutable.List [
+                                              Immutable.Map {
+                                                "value": "name",
+                                                "label": "Name",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                              Immutable.Map {
+                                                "value": "status",
+                                                "label": "Status",
+                                                "checked": true,
+                                                "enabled": false,
+                                                "toggle": undefined,
+                                              },
+                                            ]
+                                          }
+                                          extraData={null}
+                                          tableKey="mock-table-key"
+                                          tableOptions={Object {}}
+                                        />
+                                      }
                                       filters={
                                         Immutable.Map {
                                           "name": Immutable.Map {
@@ -2500,6 +2800,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   key="column-0"
                                 >
                                   <HeaderCell
+                                    columnControl={
+                                      <ColumnControl
+                                        columns={
+                                          Immutable.List [
+                                            Immutable.Map {
+                                              "value": "name",
+                                              "label": "Name",
+                                              "checked": true,
+                                              "enabled": false,
+                                              "toggle": undefined,
+                                            },
+                                            Immutable.Map {
+                                              "value": "status",
+                                              "label": "Status",
+                                              "checked": true,
+                                              "enabled": false,
+                                              "toggle": undefined,
+                                            },
+                                          ]
+                                        }
+                                        extraData={null}
+                                        tableKey="mock-table-key"
+                                        tableOptions={Object {}}
+                                      />
+                                    }
                                     filters={
                                       Immutable.Map {
                                         "name": Immutable.Map {
@@ -2561,6 +2886,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   key="column-1"
                                 >
                                   <HeaderCell
+                                    columnControl={
+                                      <ColumnControl
+                                        columns={
+                                          Immutable.List [
+                                            Immutable.Map {
+                                              "value": "name",
+                                              "label": "Name",
+                                              "checked": true,
+                                              "enabled": false,
+                                              "toggle": undefined,
+                                            },
+                                            Immutable.Map {
+                                              "value": "status",
+                                              "label": "Status",
+                                              "checked": true,
+                                              "enabled": false,
+                                              "toggle": undefined,
+                                            },
+                                          ]
+                                        }
+                                        extraData={null}
+                                        tableKey="mock-table-key"
+                                        tableOptions={Object {}}
+                                      />
+                                    }
                                     filters={
                                       Immutable.Map {
                                         "name": Immutable.Map {
@@ -2622,6 +2972,31 @@ exports[`<Table /> render kitchen sink 1`] = `
                                   key="column-2"
                                 >
                                   <HeaderCell
+                                    columnControl={
+                                      <ColumnControl
+                                        columns={
+                                          Immutable.List [
+                                            Immutable.Map {
+                                              "value": "name",
+                                              "label": "Name",
+                                              "checked": true,
+                                              "enabled": false,
+                                              "toggle": undefined,
+                                            },
+                                            Immutable.Map {
+                                              "value": "status",
+                                              "label": "Status",
+                                              "checked": true,
+                                              "enabled": false,
+                                              "toggle": undefined,
+                                            },
+                                          ]
+                                        }
+                                        extraData={null}
+                                        tableKey="mock-table-key"
+                                        tableOptions={Object {}}
+                                      />
+                                    }
                                     filters={
                                       Immutable.Map {
                                         "name": Immutable.Map {
