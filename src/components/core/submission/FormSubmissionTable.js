@@ -23,8 +23,8 @@ const dataSource = ({ kappSlug, formSlug, include, count }) => ({
             ...(typeof include === 'string'
               ? include.split(',')
               : Array.isArray(include)
-              ? include
-              : []),
+                ? include
+                : []),
             'details',
           ]).toJS(),
           // need to pass undefined instead of null so the `q` parameter is not
@@ -43,13 +43,13 @@ const dataSource = ({ kappSlug, formSlug, include, count }) => ({
 const columns = [
   {
     value: 'closedAt',
-    title: 'Closed At',
+    title: 'Closed',
     sortable: true,
     toggleable: true,
   },
   {
     value: 'closedBy',
-    title: 'closedBy',
+    title: 'Closed By',
     sortable: false,
     toggleable: true,
   },

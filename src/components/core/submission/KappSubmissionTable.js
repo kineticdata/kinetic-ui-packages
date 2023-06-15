@@ -150,13 +150,13 @@ const filters = ({ kappSlug, formSlug }) => ({ coreStateOptions }) =>
 const columns = [
   {
     value: 'closedAt',
-    title: 'Closed At',
+    title: 'Closed',
     sortable: true,
     toggleable: true,
   },
   {
     value: 'closedBy',
-    title: 'closedBy',
+    title: 'Closed By',
     sortable: false,
     toggleable: true,
   },

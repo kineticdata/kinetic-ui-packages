@@ -104,7 +104,7 @@ const columns = [
   },
   {
     value: 'updatedAt',
-    title: 'Updated At',
+    title: 'Updated',
     sortable: true,
     toggleable: true,
   },

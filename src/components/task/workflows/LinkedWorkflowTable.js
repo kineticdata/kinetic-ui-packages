@@ -86,7 +86,7 @@ const columns = [
   },
   {
     value: 'ownerEmail',
-    title: 'Owner EMail',
+    title: 'Owner Email',
     sortable: false,
     toggleable: true,
   },
@@ -118,7 +118,7 @@ const columns = [
   },
   {
     value: 'type',
-    title: 'type',
+    title: 'Type',
     sortable: false,
     toggleable: true,
   },
