@@ -68,6 +68,7 @@ export const createFieldState = formKey => ({
     search: typeof search === 'function' ? Map() : fromJS(search),
     transient: typeof transient === 'function' ? false : transient,
     visible: typeof visible === 'function' ? false : visible,
+    language: typeof language === 'function' ? null : language,
     functions: Map({
       enabled: typeof enabled === 'function' ? enabled : null,
       label: typeof label === 'function' ? label : null,
@@ -77,6 +78,7 @@ export const createFieldState = formKey => ({
       search: typeof search === 'function' ? search : null,
       transient: typeof transient === 'function' ? transient : null,
       visible: typeof visible === 'function' ? visible : null,
+      language: typeof language === 'function' ? language : null,
     }),
     // Event handlers
     eventHandlers: Map({
@@ -98,7 +100,6 @@ export const createFieldState = formKey => ({
     constraintMessage,
     form,
     helpText,
-    language,
     name,
     onFocus,
     onChange,

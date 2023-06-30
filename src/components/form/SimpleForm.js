@@ -307,6 +307,7 @@ class SimpleFormImplComponent extends Component {
           }
           meta={evaluatedFields.map(field =>
             Map({
+              value: field.value,
               visible: field.visible,
             }),
           )}
@@ -341,7 +342,7 @@ SimpleForm.propTypes = {
     t.shape({
       // Name of field that corresponds to a property of the values object.
       name: t.string,
-      label: t.string,
+      label: t.oneOfType([t.string, t.func]),
       type: t.string,
       onChange: t.func.isRequired,
       // TODO add more valid props
