@@ -229,11 +229,13 @@ export const TableInput = props => {
                   ? provided.dragHandleProps
                   : {
                       ...fieldProps,
+                      name,
                       onBlur,
                       onChange: fieldOnChange,
                       onFocus,
                       value,
                       form,
+                      row,
                     };
               return <Field {...props} />;
             });
@@ -244,6 +246,7 @@ export const TableInput = props => {
               draggableProps={provided.draggableProps}
               dragging={snapshot.isDragging}
               index={index}
+              rowCount={props.rows.size}
               fields={fields}
               options={options}
               onDelete={!disabled ? handleDeleteRow : undefined}
