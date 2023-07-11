@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { useState, Fragment } from 'react';
 import { Map } from 'immutable';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
@@ -15,6 +15,25 @@ const TextInput = props => (
     onFocus={props.onFocus}
     form={props.form}
   />
+);
+
+const SelectInput = props => (
+  <select
+    id={props.id}
+    name={props.name}
+    value={props.value || ''}
+    onBlur={props.onBlur}
+    onChange={props.onChange}
+    onFocus={props.onFocus}
+    form={props.form}
+  >
+    <option value="" />
+    {props.options.map(option => (
+      <option value={option.get('value')} key={option.get('value')}>
+        {option.get('label')}
+      </option>
+    ))}
+  </select>
 );
 
 const CheckboxInput = props => (
@@ -40,6 +59,7 @@ export const TableLayout = ({ droppableRef, rows, onAdd, options }) => (
           {options
             .toIndexedSeq()
             .toList()
+            .filter(config => config.get('visible') !== false)
             .map(config => (
               <th key={config.get('name')}>{config.get('label')}</th>
             ))}
@@ -86,19 +106,21 @@ const RowLayout = ({
 );
 
 const typeToComponent = {
-  display: 'TextDisplay',
   drag: 'DragHandle',
-  text: 'TextInput',
+  display: 'TextDisplay',
   checkbox: 'CheckboxInput',
+  select: 'SelectInput',
+  text: 'TextInput',
 };
 
 const defaultComponents = {
   TableLayout,
   RowLayout,
-  TextInput,
-  CheckboxInput,
   DragHandle,
   TextDisplay,
+  CheckboxInput,
+  SelectInput,
+  TextInput,
 };
 
 const fieldFromConfig = (config, components = {}) => {
@@ -109,20 +131,70 @@ const fieldFromConfig = (config, components = {}) => {
   );
 };
 
+const getEmptyRowValues = options =>
+  options
+    // Exclude drag columns from data object
+    .filter(config => config.get('type') !== 'drag')
+    // Reduce list of options to a map ov values
+    .reduce(
+      (row, config) =>
+        row.set(
+          config.get('name'),
+          typeof config.get('initialValue') !== 'undefined'
+            ? config.get('initialValue')
+            : config.get('type') === 'checkbox'
+              ? false
+              : '',
+        ),
+      Map(),
+    );
+
 export const TableInput = props => {
   const {
     components = {},
     options,
     rows,
     onChange,
-    onBlur,
-    onFocus,
     onAdd,
-    onEdit,
+    omitAdd,
+    autoAdd,
     onDelete,
+    omitDelete,
+    onEdit,
     disabled,
     form,
   } = props;
+  // State for new order row
+  const [newRow, setNewRow] = useState(getEmptyRowValues(options));
+  // Change event for new row
+  const newFieldChangeHandler =
+    !disabled && autoAdd
+      ? (name, type) => e => {
+          // Update the new row value
+          const updatedValues = newRow.set(
+            name,
+            e && e.target
+              ? type === 'checkbox'
+                ? e.target.checked
+                : e.target.value
+              : e,
+          );
+          // Check if all required values in the new row have data, and if they
+          // do, add that row and reset the newRow to initial values
+          if (
+            options
+              .filter(option => option.get('required'))
+              .every(option => !!updatedValues.get(option.get('name')))
+          ) {
+            onChange(rows.push(updatedValues));
+            setNewRow(getEmptyRowValues(options));
+          } else {
+            // Otherwise just update the current field in the new row
+            setNewRow(updatedValues);
+          }
+        }
+      : undefined;
+
   // Create a list of components, overriding any defualts by those provided
   const appliedComponents = {
     ...defaultComponents,
@@ -130,33 +202,8 @@ export const TableInput = props => {
   };
   const { RowLayout, TableLayout } = appliedComponents;
 
-  // Create add handler for adding new rows to the table
-  const handleAddRow = e => {
-    e.preventDefault();
-    // If an onAdd function was provided, call it
-    if (typeof onAdd === 'function') {
-      return onAdd({ rows, options, onChange });
-    }
-    // Otherwise add an empty new row
-    else {
-      onChange(
-        rows.push(
-          options
-            // Exclude drag columns from data object
-            .filter(config => config.get('type') !== 'drag')
-            .reduce(
-              (row, config) =>
-                row.set(
-                  config.get('name'),
-                  config.get('type') === 'checkbox' ? false : '',
-                ),
-              Map(),
-            ),
-        ),
-      );
-    }
-  };
-
+  // Disable drag if there are no columns of type drag
+  const isDragDisabled = !options.some(option => option.get('type') === 'drag');
   // Handler for moving rows via dragging
   const onDragEnd = e => {
     if (e.source && e.destination) {
@@ -168,95 +215,120 @@ export const TableInput = props => {
     }
   };
 
-  // Disable drag if there are no columns of type drag
-  const isDragDisabled = !options.some(option => option.get('type') === 'drag');
+  // Create add handler for adding new rows to the table
+  const handleAddRow =
+    !disabled && !omitAdd && !autoAdd
+      ? typeof onAdd === 'function'
+        ? // If onAdd is provided, us it as the handler, and pass the data it
+          // may need and the onChange function
+          event => onAdd(event, { rows, options, onChange })
+        : // Otherwise, add a blank row
+          () => onChange(rows.push(getEmptyRowValues(options)))
+      : undefined;
 
-  const fieldRows = props.rows.map((row, index) => {
-    const handleDeleteRow = e => {
-      e.preventDefault();
-      // If an onDelete function was provided, call it
-      if (typeof onDelete === 'function') {
-        return onDelete({ index, rows, options, onChange });
-      }
-      // Otherwise remove the row
-      else {
-        onChange(rows.delete(index));
-      }
-    };
+  const rowCount = rows.size;
+  const fieldRows = rows
+    // Add new row if autoAdd is enabled
+    .push(!disabled && autoAdd && newRow)
+    .filter(Boolean)
+    .map((row, index) => {
+      // Create delete handler for a row
+      const handleDeleteRow =
+        !disabled && !omitDelete
+          ? typeof onDelete === 'function'
+            ? // If onDelete is provided, us it as the handler, and pass the data
+              // it may need and the onChange function
+              event => onDelete(event, { index, rows, options, onChange })
+            : // Otherwise, delete the row
+              () => onChange(rows.delete(index))
+          : undefined;
 
-    const handleEditRow =
-      typeof onEdit === 'function'
-        ? e => {
-            e.preventDefault();
-            return onEdit({ index, rows, options, onChange });
-          }
-        : undefined;
+      // Create edit handler for a row, but only if onEdit was provided
+      const handleEditRow =
+        !disabled && typeof onEdit === 'function'
+          ? event => onEdit(event, { index, rows, options, onChange })
+          : undefined;
 
-    return (
-      <Draggable
-        draggableId={`draggable${index}`}
-        index={index}
-        key={index}
-        isDragDisabled={isDragDisabled}
-      >
-        {(provided, snapshot) => {
-          // For each of the options specified for the field, we render a table
-          // cell with a field in it. The field type is determined by the type
-          // of the option.
-          const fields = options
-            .toOrderedMap()
-            .mapKeys((_, config) => config.get('name'))
-            .filter(config => config.get('visible') !== false)
-            .map(config => {
-              const Field = fieldFromConfig(config, appliedComponents);
-              const {
-                name,
-                type,
-                // Extract component because we don't want it as a field prop
-                component,
-                ...fieldProps
-              } = config.toObject();
-              const fieldOnChange = e =>
-                onChange(
-                  rows.setIn(
-                    [index, name],
-                    type === 'checkbox' ? e.target.checked : e.target.value,
-                  ),
-                );
-              const value = row.get(name);
-              const props =
-                type === 'drag'
-                  ? provided.dragHandleProps
-                  : {
-                      ...fieldProps,
-                      name,
-                      onBlur,
-                      onChange: fieldOnChange,
-                      onFocus,
-                      value,
-                      form,
-                      row,
-                    };
-              return <Field {...props} />;
-            });
+      return (
+        <Draggable
+          draggableId={`draggable${index}`}
+          index={index}
+          key={index}
+          isDragDisabled={isDragDisabled}
+        >
+          {(provided, snapshot) => {
+            // Check if we're on a new row (not one that's saved in the table)
+            const isNewRow = index >= rowCount;
+            // For each of the options specified for the field, we render a table
+            // cell with a field in it. The field type is determined by the type
+            // of the option.
+            const fields = options
+              .toOrderedMap()
+              .mapKeys((_, config) => config.get('name'))
+              .filter(config => config.get('visible') !== false)
+              .map(config => {
+                const Field = fieldFromConfig(config, appliedComponents);
+                const {
+                  name,
+                  type,
+                  options: optionsOrig,
+                  // Extract component because we don't want it as a field prop
+                  component,
+                  ...fieldProps
+                } = config.toObject();
+                const fieldChangeHandler = e =>
+                  onChange(
+                    rows.setIn(
+                      [index, name],
+                      e && e.target
+                        ? type === 'checkbox'
+                          ? e.target.checked
+                          : e.target.value
+                        : e,
+                    ),
+                  );
+                const props =
+                  type === 'drag'
+                    ? provided.dragHandleProps
+                    : {
+                        visible: true,
+                        ...fieldProps,
+                        name,
+                        value: row.get(name),
+                        onChange: !isNewRow
+                          ? fieldChangeHandler
+                          : newFieldChangeHandler(name, type),
+                        // If options is a function, pass it the current value
+                        // so we can do things like only allow each value to be
+                        // selected once
+                        options:
+                          typeof optionsOrig === 'function'
+                            ? optionsOrig({ value: row.get(name) })
+                            : optionsOrig,
+                        enabled: !disabled,
+                        form,
+                        row,
+                      };
+                return <Field {...props} />;
+              });
 
-          return (
-            <RowLayout
-              draggableRef={provided.innerRef}
-              draggableProps={provided.draggableProps}
-              dragging={snapshot.isDragging}
-              index={index}
-              rowCount={props.rows.size}
-              fields={fields}
-              options={options}
-              onDelete={!disabled ? handleDeleteRow : undefined}
-              onEdit={!disabled ? handleEditRow : undefined}
-            />
-          );
-        }}
-      </Draggable>
-    );
-  });
+            return (
+              <RowLayout
+                draggableRef={provided.innerRef}
+                draggableProps={provided.draggableProps}
+                dragging={snapshot.isDragging}
+                index={index}
+                rowCount={rowCount}
+                fields={fields}
+                options={options}
+                onDelete={!isNewRow ? handleDeleteRow : undefined}
+                onEdit={!isNewRow ? handleEditRow : undefined}
+              />
+            );
+          }}
+        </Draggable>
+      );
+    });
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -265,7 +337,7 @@ export const TableInput = props => {
           <TableLayout
             droppableRef={provided.innerRef}
             rows={fieldRows}
-            onAdd={!disabled ? handleAddRow : undefined}
+            onAdd={handleAddRow}
             options={options}
             placeholder={provided.placeholder}
           />
