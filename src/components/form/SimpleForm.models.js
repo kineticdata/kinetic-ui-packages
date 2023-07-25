@@ -11,6 +11,7 @@ export const SimpleFormState = Record({
 });
 
 export const SimpleFieldState = Record({
+  bindings: Map(),
   changed: false,
   constraint: null,
   constraintMessage: 'Invalid',

@@ -49,7 +49,8 @@ const CheckboxInput = props => (
   />
 );
 
-const DragHandle = props => <span {...props}>&#8597;</span>;
+const DragHandle = ({ newRow, ...props }) =>
+  !newRow && <span {...props}>&#8597;</span>;
 
 export const TableLayout = ({ droppableRef, rows, onAdd, options }) => (
   <Fragment>
@@ -248,17 +249,17 @@ export const TableInput = props => {
         !disabled && typeof onEdit === 'function'
           ? event => onEdit(event, { index, rows, options, onChange })
           : undefined;
+      // Check if we're on a new row (not one that's saved in the table)
+      const isNewRow = autoAdd && index >= rowCount;
 
       return (
         <Draggable
           draggableId={`draggable${index}`}
           index={index}
           key={index}
-          isDragDisabled={isDragDisabled}
+          isDragDisabled={!isNewRow ? isDragDisabled : true}
         >
           {(provided, snapshot) => {
-            // Check if we're on a new row (not one that's saved in the table)
-            const isNewRow = index >= rowCount;
             // For each of the options specified for the field, we render a table
             // cell with a field in it. The field type is determined by the type
             // of the option.
@@ -289,7 +290,10 @@ export const TableInput = props => {
                   );
                 const props =
                   type === 'drag'
-                    ? provided.dragHandleProps
+                    ? {
+                        ...provided.dragHandleProps,
+                        newRow: isNewRow,
+                      }
                     : {
                         visible: true,
                         ...fieldProps,
@@ -308,6 +312,7 @@ export const TableInput = props => {
                         enabled: !disabled,
                         form,
                         row,
+                        newRow: isNewRow,
                       };
                 return <Field {...props} />;
               });

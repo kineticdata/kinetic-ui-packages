@@ -31,6 +31,7 @@ const convertFieldsToMap = fields =>
   OrderedMap(fields.filter(Boolean).map(field => [field.name, field]));
 
 export const createFieldState = formKey => ({
+  bindings,
   constraint,
   constraintMessage,
   enabled,
@@ -69,6 +70,7 @@ export const createFieldState = formKey => ({
     transient: typeof transient === 'function' ? false : transient,
     visible: typeof visible === 'function' ? false : visible,
     language: typeof language === 'function' ? null : language,
+    bindings: typeof bindings === 'function' ? null : bindings,
     functions: Map({
       enabled: typeof enabled === 'function' ? enabled : null,
       label: typeof label === 'function' ? label : null,
@@ -79,6 +81,7 @@ export const createFieldState = formKey => ({
       transient: typeof transient === 'function' ? transient : null,
       visible: typeof visible === 'function' ? visible : null,
       language: typeof language === 'function' ? language : null,
+      bindings: typeof bindings === 'function' ? bindings : null,
     }),
     // Event handlers
     eventHandlers: Map({
@@ -254,6 +257,7 @@ export const getFieldComponents = fields =>
     .map(fieldConfig => fieldConfig.component);
 
 export const getFieldComponentProps = (field, readOnly) => ({
+  bindings: field.bindings,
   dirty: field.dirty,
   enabled: readOnly ? false : field.enabled,
   errors: field.errors,
@@ -273,6 +277,7 @@ export const getFieldComponentProps = (field, readOnly) => ({
     'code',
     'form',
     'form-multi',
+    'list',
     'map',
     'radio',
     'select',
