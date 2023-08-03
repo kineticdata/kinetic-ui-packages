@@ -78,6 +78,7 @@ export const TableLayout = ({ droppableRef, rows, onAdd, options }) => (
 );
 
 const RowLayout = ({
+  rowProps,
   dragging,
   draggableRef,
   draggableProps,
@@ -86,6 +87,7 @@ const RowLayout = ({
   onEdit,
 }) => (
   <tr
+    {...rowProps}
     ref={draggableRef}
     {...draggableProps}
     className={dragging ? 'dragging' : ''}
@@ -134,9 +136,9 @@ const fieldFromConfig = (config, components = {}) => {
 
 const getEmptyRowValues = options =>
   options
-    // Exclude drag columns from data object
-    .filter(config => config.get('type') !== 'drag')
-    // Reduce list of options to a map ov values
+    // Exclude drag columns from data object and any transient columns
+    .filter(config => config.get('type') !== 'drag' && !config.get('transient'))
+    // Reduce list of options to a map of values
     .reduce(
       (row, config) =>
         row.set(
@@ -195,6 +197,13 @@ export const TableInput = props => {
           }
         }
       : undefined;
+  // State to track if we need to focus one of the new row fields, This is used
+  // when mirroring is used to focus the next row on press of enter.
+  const [mirrorFocusField, setMirrorFocusField] = useState(null);
+  const mirrorFocusRef = node => {
+    if (node) node.focus();
+    setMirrorFocusField(null);
+  };
 
   // Create a list of components, overriding any defualts by those provided
   const appliedComponents = {
@@ -251,6 +260,14 @@ export const TableInput = props => {
           : undefined;
       // Check if we're on a new row (not one that's saved in the table)
       const isNewRow = autoAdd && index >= rowCount;
+      // Filter the options to the fields that are visible
+      const fieldOptions = options
+        .toOrderedMap()
+        .mapKeys((_, config) => config.get('name'))
+        .filter(config => config.get('visible') !== false);
+      // Check if any of the fields have the mirror property, which specifies
+      // that the field should mirror (copy) the value of the configured field
+      const hasMirroring = !!fieldOptions.find(c => !!c.get('mirror'));
 
       return (
         <Draggable
@@ -263,59 +280,88 @@ export const TableInput = props => {
             // For each of the options specified for the field, we render a table
             // cell with a field in it. The field type is determined by the type
             // of the option.
-            const fields = options
-              .toOrderedMap()
-              .mapKeys((_, config) => config.get('name'))
-              .filter(config => config.get('visible') !== false)
-              .map(config => {
-                const Field = fieldFromConfig(config, appliedComponents);
-                const {
-                  name,
-                  type,
-                  options: optionsOrig,
-                  // Extract component because we don't want it as a field prop
-                  component,
-                  ...fieldProps
-                } = config.toObject();
-                const fieldChangeHandler = e =>
-                  onChange(
-                    rows.setIn(
-                      [index, name],
-                      e && e.target
-                        ? type === 'checkbox'
-                          ? e.target.checked
-                          : e.target.value
-                        : e,
-                    ),
-                  );
-                const props =
-                  type === 'drag'
-                    ? {
-                        ...provided.dragHandleProps,
-                        newRow: isNewRow,
-                      }
-                    : {
-                        visible: true,
-                        ...fieldProps,
-                        name,
-                        value: row.get(name),
-                        onChange: !isNewRow
-                          ? fieldChangeHandler
-                          : newFieldChangeHandler(name, type),
-                        // If options is a function, pass it the current value
-                        // so we can do things like only allow each value to be
-                        // selected once
-                        options:
-                          typeof optionsOrig === 'function'
-                            ? optionsOrig({ value: row.get(name) })
-                            : optionsOrig,
-                        enabled: !disabled,
-                        form,
-                        row,
-                        newRow: isNewRow,
-                      };
-                return <Field {...props} />;
-              });
+            const fields = fieldOptions.map(config => {
+              const Field = fieldFromConfig(config, appliedComponents);
+              const {
+                name,
+                type,
+                options: optionsOrig,
+                // Extract component because we don't want it as a field prop
+                component,
+                ...fieldProps
+              } = config.toObject();
+              const fieldChangeHandler = e =>
+                onChange(
+                  rows.setIn(
+                    [index, name],
+                    e && e.target
+                      ? type === 'checkbox'
+                        ? e.target.checked
+                        : e.target.value
+                      : e,
+                  ),
+                );
+              const props =
+                type === 'drag'
+                  ? {
+                      ...provided.dragHandleProps,
+                      newRow: isNewRow,
+                    }
+                  : {
+                      visible: true,
+                      ...fieldProps,
+                      name,
+                      // If this field is mirroring another field, show the
+                      // mirrored value when there is no value
+                      value:
+                        row.get(name) ||
+                        (isNewRow && config.has('mirror')
+                          ? row.get(config.get('mirror'))
+                          : row.get(name)),
+                      onChange: !isNewRow
+                        ? fieldChangeHandler
+                        : newFieldChangeHandler(name, type),
+                      // If this field is being mirrored, set the value of the
+                      // mirroring field on blur of this field
+                      onBlur:
+                        isNewRow &&
+                        !!fieldOptions.find(c => c.get('mirror') === name)
+                          ? e => {
+                              // Find the mirroring field (there should only be one)
+                              const mirroringConfig = fieldOptions.find(
+                                c => c.get('mirror') === name,
+                              );
+                              // If the mirroring field's value is empty,
+                              // update its value to match this field's value
+                              if (!row.get(mirroringConfig.get('name'))) {
+                                newFieldChangeHandler(
+                                  mirroringConfig.get('name'),
+                                  type,
+                                )(row.get(name));
+                              }
+                              // Trigger the original onBlur event if any
+                              if (typeof fieldProps.onBlur === 'function')
+                                fieldProps.onBlur(e);
+                            }
+                          : fieldProps.onFocus,
+                      // If options is a function, pass it the current value
+                      // so we can do things like only allow each value to be
+                      // selected once
+                      options:
+                        typeof optionsOrig === 'function'
+                          ? optionsOrig({ value: row.get(name) })
+                          : optionsOrig,
+                      enabled: !disabled,
+                      form,
+                      row,
+                      newRow: isNewRow,
+                      focusRef:
+                        isNewRow && mirrorFocusField === name
+                          ? mirrorFocusRef
+                          : fieldProps.focusRef,
+                    };
+              return <Field {...props} />;
+            });
 
             return (
               <RowLayout
@@ -328,6 +374,42 @@ export const TableInput = props => {
                 options={options}
                 onDelete={!isNewRow ? handleDeleteRow : undefined}
                 onEdit={!isNewRow ? handleEditRow : undefined}
+                rowProps={{
+                  // If mirroring is used, add a keyDown event to the new row
+                  // to capture a press of Enter in the mirrored field that
+                  // should trigger the update of the mirroring field's value
+                  onKeyDown:
+                    isNewRow && hasMirroring
+                      ? e => {
+                          if (e.key === 'Enter') {
+                            // Find the mirroring field and mirrored field
+                            const mirroringConfig = fieldOptions.find(
+                              c => !!c.get('mirror'),
+                            );
+                            const mirroredConfig = fieldOptions.find(
+                              c =>
+                                mirroringConfig.get('mirror') === c.get('name'),
+                            );
+
+                            // If we're in the mirrored field, the mirroring
+                            // field is empty, and the mirrored field is not
+                            // empty, set the mirroring field's value
+                            if (
+                              mirroredConfig.get('name') === e.target.name &&
+                              !!newRow.get(mirroredConfig.get('name')) &&
+                              !newRow.get(mirroringConfig.get('name'))
+                            ) {
+                              newFieldChangeHandler(
+                                mirroringConfig.get('name'),
+                              )(newRow.get(mirroredConfig.get('name')));
+
+                              // TODO how to move focus to new row?
+                              setMirrorFocusField(e.target.name);
+                            }
+                          }
+                        }
+                      : undefined,
+                }}
               />
             );
           }}
