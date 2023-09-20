@@ -230,6 +230,7 @@ const SurveyAdminListComponent = ({
           'actions',
         ]}
         filterSet={['name', 'status']}
+        filterAutoFocus={0}
         alterFilters={{
           status: {
             options: ['Active', 'Inactive'].map(s => ({
