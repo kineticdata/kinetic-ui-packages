@@ -124,6 +124,7 @@ export const FormListComponent = ({
         },
       }}
       filterSet={['name', 'status']}
+      filterAutoFocus={0}
       onSearch={() => () => setFilterOpen(false)}
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (
