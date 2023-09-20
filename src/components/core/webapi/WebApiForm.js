@@ -7,6 +7,7 @@ import {
   createTree,
   updateTree,
   fetchSpace,
+  fetchTree,
 } from '../../../apis';
 
 export const WEB_API_METHODS = ['GET', 'POST', 'PUT', 'DELETE'];
@@ -19,18 +20,37 @@ const securityEndpoints = {
   },
 };
 
-const dataSources = ({ kappSlug, webApi }) => ({
-  securityPolicyDefinitions: {
-    fn: fetchSecurityPolicyDefinitions,
-    params:
-      kappSlug || (webApi && webApi.get('kappSlug'))
-        ? [{ kappSlug: kappSlug || (webApi && webApi.get('kappSlug')) }]
-        : [],
-    transform: result => result.securityPolicyDefinitions,
-  },
-});
+const dataSources = ({ kappSlug, webApi, cloneParams }) => {
+  const { cloneWebApi, sourceGroup, sourceName } = cloneParams || {};
+  return {
+    securityPolicyDefinitions: {
+      fn: fetchSecurityPolicyDefinitions,
+      params:
+        kappSlug || (webApi && webApi.get('kappSlug'))
+          ? [{ kappSlug: kappSlug || (webApi && webApi.get('kappSlug')) }]
+          : [],
+      transform: result => result.securityPolicyDefinitions,
+    },
+    tree: {
+      // if cloneWebApi is falsy fetchTree will not run
+      fn: fetchTree,
+      params: cloneWebApi && [
+        {
+          name: cloneWebApi.get('slug'),
+          sourceGroup,
+          sourceName,
+          include: 'details,treeJson',
+        },
+      ],
+      transform: results => results.tree,
+    },
+  };
+};
 
-const handleSubmit = ({ slug, kappSlug, webApi }) => async values => {
+const handleSubmit = ({ slug, kappSlug, webApi }) => async (
+  values,
+  bindings,
+) => {
   if (!webApi) {
     const { space } = await fetchSpace({ include: 'platformComponents' });
     const sourceName = space.platformComponents.task.config.platformSourceName;
@@ -61,7 +81,12 @@ const handleSubmit = ({ slug, kappSlug, webApi }) => async values => {
           tree: { sourceName, sourceGroup, name: values.get('slug') },
         })
       : await createTree({
-          tree: { sourceGroup, sourceName, name: values.get('slug') },
+          tree: {
+            sourceGroup,
+            sourceName,
+            name: values.get('slug'),
+            treeJson: bindings.tree && bindings.tree.get('treeJson'), // used when the tree is cloned
+          },
         });
     if (error2) {
       throw (error2.statusCode === 400 && error2.message) ||
@@ -153,7 +178,7 @@ const fields = ({ webApi, tree }) => ({ securityPolicyDefinitions }) =>
   ];
 
 export const WebApiForm = generateForm({
-  formOptions: ['kappSlug', 'slug', 'webApi', 'tree'],
+  formOptions: ['kappSlug', 'slug', 'webApi', 'tree', 'cloneParams'],
   dataSources,
   fields,
   handleSubmit,

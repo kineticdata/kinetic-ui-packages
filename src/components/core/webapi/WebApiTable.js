@@ -11,7 +11,7 @@ const clientSide = defineFilter(true)
 const dataSource = ({ kappSlug }) => ({
   fn: fetchWebApis,
   clientSide,
-  params: () => [{ kappSlug, include: 'details' }],
+  params: () => [{ kappSlug, include: 'details,securityPolicies' }],
   transform: result => ({
     data: result.webApis,
   }),
