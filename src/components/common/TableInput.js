@@ -52,23 +52,31 @@ const CheckboxInput = props => (
 const DragHandle = ({ newRow, ...props }) =>
   !newRow && <span {...props}>&#8597;</span>;
 
-export const TableLayout = ({ droppableRef, rows, onAdd, options }) => (
+export const TableLayout = ({
+  droppableRef,
+  focusRef,
+  rows,
+  onAdd,
+  options,
+}) => (
   <Fragment>
-    <table>
-      <thead>
-        <tr>
-          {options
-            .toIndexedSeq()
-            .toList()
-            .filter(config => config.get('visible') !== false)
-            .map(config => (
-              <th key={config.get('name')}>{config.get('label')}</th>
-            ))}
-          <th>&nbsp;</th>
-        </tr>
-      </thead>
-      <tbody ref={droppableRef}>{rows}</tbody>
-    </table>
+    <div className="table-responsive" ref={focusRef} tabIndex="-1">
+      <table>
+        <thead>
+          <tr>
+            {options
+              .toIndexedSeq()
+              .toList()
+              .filter(config => config.get('visible') !== false)
+              .map(config => (
+                <th key={config.get('name')}>{config.get('label')}</th>
+              ))}
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody ref={droppableRef}>{rows}</tbody>
+      </table>
+    </div>
     {onAdd && (
       <button type="button" onClick={onAdd}>
         Add
@@ -166,6 +174,7 @@ export const TableInput = props => {
     onEdit,
     disabled,
     form,
+    focusRef,
   } = props;
   // State for new order row
   const [newRow, setNewRow] = useState(getEmptyRowValues(options));
@@ -403,7 +412,6 @@ export const TableInput = props => {
                                 mirroringConfig.get('name'),
                               )(newRow.get(mirroredConfig.get('name')));
 
-                              // TODO how to move focus to new row?
                               setMirrorFocusField(e.target.name);
                             }
                           }
@@ -423,6 +431,7 @@ export const TableInput = props => {
         {provided => (
           <TableLayout
             droppableRef={provided.innerRef}
+            focusRef={focusRef}
             rows={fieldRows}
             onAdd={handleAddRow}
             options={options}
