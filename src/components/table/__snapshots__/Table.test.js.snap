@@ -62,7 +62,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
             tableOptions={Object {}}
             uncontrolled={true}
           >
-            <Connect(lifecycle(TableComponent))
+            <Connect(TableImplComponent)
               addColumns={Array []}
               alterColumns={Object {}}
               alterFilters={Object {}}
@@ -124,7 +124,7 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
               tableOptions={Object {}}
               uncontrolled={true}
             >
-              <lifecycle(TableComponent)
+              <TableImplComponent
                 addColumns={Array []}
                 alterColumns={Object {}}
                 alterFilters={Object {}}
@@ -666,8 +666,8 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
                     </FilterLayout>
                   </TableViewMock>
                 </TableComponent>
-              </lifecycle(TableComponent)>
-            </Connect(lifecycle(TableComponent))>
+              </TableImplComponent>
+            </Connect(TableImplComponent)>
           </Table>
         </Component>
       </GlobalsProvider>
@@ -812,7 +812,7 @@ exports[`<Table /> render kitchen sink 1`] = `
             tableOptions={Object {}}
             uncontrolled={true}
           >
-            <Connect(lifecycle(TableComponent))
+            <Connect(TableImplComponent)
               addColumns={
                 Array [
                   Object {
@@ -921,7 +921,7 @@ exports[`<Table /> render kitchen sink 1`] = `
               tableOptions={Object {}}
               uncontrolled={true}
             >
-              <lifecycle(TableComponent)
+              <TableImplComponent
                 addColumns={
                   Array [
                     Object {
@@ -4002,8 +4002,8 @@ exports[`<Table /> render kitchen sink 1`] = `
                     </FilterLayout>
                   </TableViewMock>
                 </TableComponent>
-              </lifecycle(TableComponent)>
-            </Connect(lifecycle(TableComponent))>
+              </TableImplComponent>
+            </Connect(TableImplComponent)>
           </Table>
         </Component>
       </GlobalsProvider>

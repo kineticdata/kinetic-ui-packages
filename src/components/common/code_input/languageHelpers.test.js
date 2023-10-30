@@ -13,7 +13,7 @@ describe('processErbTemplate', () => {
       [' ', 'erb'],
       ['@results', 'variable', 'erb'],
       ['[', 'punctuation', 'erb'],
-      ["'Person'", 'string', 'erb'],
+      ["'Person'", 'string', 'string-literal', 'erb'],
       [']', 'punctuation', 'erb'],
       [' ', 'erb'],
       ['%>', 'closing-tag', 'erb'],
@@ -26,7 +26,7 @@ describe('processErbTemplate', () => {
       ['Hello '],
       ['<%=', 'opening-tag', 'erb'],
       [' ', 'erb'],
-      ["'%>'", 'string', 'erb'],
+      ["'%>'", 'string', 'string-literal', 'erb'],
       [' ', 'erb'],
       ['%>', 'closing-tag', 'erb'],
       [''],
@@ -192,10 +192,10 @@ describe('processJavaScriptTemplate', () => {
       ['Hello '],
       ['${', 'opening-interpolation', 'js-template'],
       ['{', 'punctuation', 'js-template'],
-      ['foo', 'js-template'],
+      ['foo', 'literal-property', 'js-template'],
       [':', 'operator', 'js-template'],
       ['{', 'punctuation', 'js-template'],
-      ['"bar"', 'string', 'js-template'],
+      ['"bar"', 'string-property', 'js-template'],
       [':', 'operator', 'js-template'],
       ['2', 'number', 'js-template'],
       ['}', 'punctuation', 'js-template'],
@@ -224,40 +224,46 @@ describe('processJavaScriptTemplate', () => {
 describe('processRuby', () => {
   test('simple tokens', () => {
     expect(processRuby("'Hello ' + @results['Person']")).toEqual([
-      ["'Hello '", 'string'],
+      ["'Hello '", 'string', 'string-literal'],
       [' '],
       ['+', 'operator'],
       [' '],
       ['@results', 'variable'],
       ['[', 'punctuation'],
-      ["'Person'", 'string'],
+      ["'Person'", 'string', 'string-literal'],
       [']', 'punctuation'],
     ]);
   });
 
   test('string with interpolation', () => {
     expect(processRuby("%^Hello #{ @results['Person'] }^")).toEqual([
-      ['%^Hello ', 'string'],
-      ['#{', 'delimiter', 'interpolation', 'string'],
-      [' ', 'interpolation', 'string'],
-      ['@results', 'variable', 'interpolation', 'string'],
-      ['[', 'punctuation', 'interpolation', 'string'],
-      ["'Person'", 'string', 'interpolation', 'string'],
-      [']', 'punctuation', 'interpolation', 'string'],
-      [' ', 'interpolation', 'string'],
-      ['}', 'delimiter', 'interpolation', 'string'],
-      ['^', 'string'],
+      ['%^Hello ', 'string', 'string-literal'],
+      ['#{', 'delimiter', 'interpolation', 'string-literal'],
+      [' ', 'content', 'interpolation', 'string-literal'],
+      ['@results', 'variable', 'content', 'interpolation', 'string-literal'],
+      ['[', 'punctuation', 'content', 'interpolation', 'string-literal'],
+      [
+        "'Person'",
+        'string',
+        'string-literal',
+        'content',
+        'interpolation',
+        'string-literal',
+      ],
+      [']', 'punctuation', 'content', 'interpolation', 'string-literal'],
+      [' ', 'content', 'interpolation', 'string-literal'],
+      ['}', 'delimiter', 'interpolation', 'string-literal'],
+      ['^', 'string', 'string-literal'],
     ]);
   });
 
   test('nested interpolation', () => {
     expect(processRuby('"#{"#{2}"}"')).toEqual([
-      ['"', 'string'],
-      ['#{', 'delimiter', 'interpolation', 'string'],
-
       // prism's ruby parser does not support nested interpolation (thinks its a
       // comment) the commented code below is what it should be if it did
       // support that properly
+      // ['"', 'string'],
+      // ['#{', 'delimiter', 'interpolation', 'string'],
       // ['"', 'string', 'interpolation', 'string'],
       // ['#{', 'delimiter', 'interpolation', 'string', 'interpolation', 'string'],
       // ['2', 'number', 'interpolation', 'string', 'interpolation', 'string'],
@@ -266,11 +272,12 @@ describe('processRuby', () => {
       // ['}', 'delimiter', 'interpolation', 'string'],
       // ['"', 'string'],
 
-      // the following is the resulting remainder due to the prism issue
-      ['"', 'interpolation', 'string'],
-      ['#{2', 'comment', 'interpolation', 'string'],
-      ['}', 'delimiter', 'interpolation', 'string'],
-      ['"', 'string'],
+      // the following is the result due to the prism issue
+      ['"#{"', 'string', 'string-literal'],
+      ['#{', 'delimiter', 'interpolation', 'string-literal'],
+      ['2', 'number', 'content', 'interpolation', 'string-literal'],
+      ['}', 'delimiter', 'interpolation', 'string-literal'],
+      ['"', 'string', 'string-literal'],
       ['}', 'punctuation'],
       ['"'],
     ]);

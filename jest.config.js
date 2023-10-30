@@ -12,6 +12,7 @@ module.exports = {
     '@kineticdata/react': '<rootDir>/src/index',
     "^[./a-zA-Z0-9$_-]+\\.(png|svg)$": "<rootDir>/tests/utils/fileMock.js",
     "\\.(css|less)$": "<rootDir>/tests/utils/styleMock.js",
-    "^lodash-es$": "lodash"
+    "^lodash-es$": "lodash",
+    "^axios$": "axios/dist/node/axios.cjs"
   },
 };

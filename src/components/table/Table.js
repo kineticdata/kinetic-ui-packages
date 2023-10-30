@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { compose, lifecycle } from 'recompose';
 import { List, Map, mergeDeep } from 'immutable';
 import { ComponentConfigContext } from '../common/ComponentConfigContext';
 import { connect, dispatch } from '../../store';
@@ -658,25 +657,28 @@ const onToggleColumn = (tableKey, column) => () =>
 const mapStateToProps = () => (state, props) =>
   state.getIn(['tables', props.tableKey], Map()).toObject();
 
-/**
- * @component
- */
-const TableImpl = compose(
-  connect(mapStateToProps),
-  lifecycle({
-    componentDidMount() {
-      if (this.props.mounted && !this.props.configured) {
-        configureTable(this.props);
-      }
-    },
+class TableImplComponent extends Component {
+  constructor(props) {
+    super(props);
+  }
 
-    componentDidUpdate() {
-      if (this.props.mounted && !this.props.configured) {
-        configureTable(this.props);
-      }
-    },
-  }),
-)(TableComponent);
+  componentDidMount() {
+    if (this.props.mounted && !this.props.configured) {
+      configureTable(this.props);
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.props.mounted && !this.props.configured) {
+      configureTable(this.props);
+    }
+  }
+
+  render() {
+    return <TableComponent {...this.props} />;
+  }
+}
+const TableImpl = connect(mapStateToProps)(TableImplComponent);
 
 export const generateColumns = (columns, addColumns = [], alterColumns = {}) =>
   List(columns)
