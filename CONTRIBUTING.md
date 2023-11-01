@@ -76,7 +76,7 @@ to transpile our React/ES6 code into browser-friendly code. These should likely
 be upgraded together.
 
 ```javascript static
-"@babel/cli": "^7.19.3",
+"@babel/cli": "^7.23.0",
 "babel-preset-react-app": "^10.0.1",
 ```
 
