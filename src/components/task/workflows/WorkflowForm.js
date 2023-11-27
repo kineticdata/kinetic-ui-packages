@@ -112,6 +112,15 @@ const fields = ({ name, workflow, workflowType }) => ({ categories }) =>
       enabled: false,
     },
     {
+      name: 'filter',
+      label: 'Filter',
+      type: 'text',
+      initialValue: workflow ? workflow.get('filter') : '',
+      required: false,
+      // use event to show filter on linked workflows
+      visible: workflow && !!workflow.get('event'),
+    },
+    {
       name: 'name',
       label: 'Name',
       type: 'text',

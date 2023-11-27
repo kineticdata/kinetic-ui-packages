@@ -11,6 +11,7 @@ import {
 } from './models';
 import {
   createWorkflow,
+  updateWorkflow,
   createTree,
   fetchPlatformItem,
   fetchTaskCategories,
@@ -18,6 +19,7 @@ import {
   fetchWebApi,
   updateTree,
   updateWebApi,
+  fetchWorkflow,
 } from '../../../apis';
 import { renameDependencies, treeReturnTask } from './helpers';
 
@@ -44,7 +46,7 @@ regSaga(
       const { name, sourceGroup, sourceName, treeKey } = payload;
       const webApiProps = getWebApiProps(payload);
 
-      const [{ tree }, { categories }, { webApi }] = yield all([
+      const [{ tree }, { categories }, { workflow }, { webApi }] = yield all([
         call(fetchTree, {
           name,
           sourceGroup,
@@ -55,6 +57,7 @@ regSaga(
           include:
             'handlers.results,handlers.parameters,trees.parameters,trees.inputs,trees.outputs',
         }),
+        call(fetchWorkflow, { workflowId: sourceGroup }),
         webApiProps
           ? call(fetchWebApi, {
               ...webApiProps,
@@ -62,6 +65,10 @@ regSaga(
             })
           : {},
       ]);
+      // Add workflow filter from core to the tree to be used in the Settings > WorkflowForm
+      if (tree && workflow) {
+        tree['filter'] = workflow ? workflow.filter : '';
+      }
 
       let platformItem = null;
       if (tree.event) {
@@ -131,12 +138,18 @@ regSaga(
                 name: newName,
               },
             })
-        : call(updateTree, {
-            name,
-            sourceGroup,
-            sourceName,
-            tree: serializeTree(tree, overwrite),
-          });
+        : tree.event
+          ? call(updateWorkflow, {
+              workflowId: sourceGroup,
+              workflow: serializeTree(tree, overwrite),
+              ...getPlatformItemSlugs(platformItem),
+            })
+          : call(updateTree, {
+              name,
+              sourceGroup,
+              sourceName,
+              tree: serializeTree(tree, overwrite),
+            });
 
       const { error: error2 } = yield webApi && !error1
         ? call(updateWebApi, {
