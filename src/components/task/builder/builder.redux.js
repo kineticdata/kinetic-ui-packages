@@ -57,7 +57,9 @@ regSaga(
           include:
             'handlers.results,handlers.parameters,trees.parameters,trees.inputs,trees.outputs',
         }),
-        call(fetchWorkflow, { workflowId: sourceGroup }),
+        call(fetchWorkflow, {
+          workflowId: sourceGroup,
+        }),
         webApiProps
           ? call(fetchWebApi, {
               ...webApiProps,
@@ -65,10 +67,6 @@ regSaga(
             })
           : {},
       ]);
-      // Add workflow filter from core to the tree to be used in the Settings > WorkflowForm
-      if (tree && workflow) {
-        tree['filter'] = workflow ? workflow.filter : '';
-      }
 
       let platformItem = null;
       if (tree.event) {
@@ -77,6 +75,14 @@ regSaga(
           id: tree.platformItemId,
         });
         platformItem = result.platformItem;
+
+        const { workflow } = yield call(fetchWorkflow, {
+          workflowId: sourceGroup,
+          ...getPlatformItemSlugs(platformItem),
+        });
+
+        // Add workflow filter from core to the tree to be used in the Settings > WorkflowForm
+        tree['filter'] = workflow ? workflow.filter : '';
       }
 
       yield put(
