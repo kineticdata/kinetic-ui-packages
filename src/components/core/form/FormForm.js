@@ -119,8 +119,9 @@ const securityEndpoints = {
   },
 };
 
-const fields = ({ formSlug, kappSlug }) => ({ form }) =>
-  (!formSlug || form) && [
+const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
+  (!formSlug || form) &&
+  (!kappSlug || kapp) && [
     !!kappSlug && {
       name: 'anonymous',
       label: 'Anonymous',
