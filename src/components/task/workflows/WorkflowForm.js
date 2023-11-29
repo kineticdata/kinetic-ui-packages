@@ -247,6 +247,7 @@ export const WorkflowForm = ({
   children,
   workflow,
   workflowType,
+  uncontrolled,
 }) => (
   <Form
     addFields={addFields}
@@ -260,6 +261,7 @@ export const WorkflowForm = ({
     dataSources={dataSources}
     fields={fields}
     formOptions={{ workflow, workflowType }}
+    uncontrolled={uncontrolled}
   >
     {children}
   </Form>

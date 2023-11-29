@@ -1,7 +1,7 @@
 import { connect } from '../../store';
 
 const selectFormState = formState => ({
-  dirty: formState.fields.some(field => field.dirty),
+  dirty: formState.fields?.some(field => field.dirty),
   error: formState.error,
 });
 
