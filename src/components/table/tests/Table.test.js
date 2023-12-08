@@ -1,10 +1,10 @@
 import React from 'react';
-import { KineticLib } from '../../index';
-import { store } from '../../store';
-import { render, mount } from 'enzyme';
+import { create, act } from 'react-test-renderer';
+import { KineticLib } from '../../../index';
+import { store } from '../../../store';
 import { List, Map } from 'immutable';
-import { users } from '../../../tests/fixtures';
-import { DefaultTableConfig } from './defaults';
+import { users } from '../../../../tests/fixtures';
+import { DefaultTableConfig } from '../defaults';
 import {
   buildTable,
   buildTableHeader,
@@ -21,7 +21,8 @@ import {
   sortColumns,
   generateTable,
   getToggleableColumns,
-} from './Table';
+} from '../Table';
+import { mockTableConfig, TableViewMock } from './components';
 
 const buildProps = props => {
   props.columnComponents = extractColumnComponents(props.columns);
@@ -32,14 +33,6 @@ const buildProps = props => {
 // tableOptions, columns, dataSource, sortable
 
 const TABLE_KEY = 'mock-table-key';
-
-const TableViewMock = props => (
-  <>
-    {props.table}
-    {props.pagination}
-    {props.filter}
-  </>
-);
 
 const mountTable = ({
   dataSource,
@@ -59,41 +52,57 @@ const mountTable = ({
     filterDataSources,
     tableOptions: Object.keys(tableOptions),
   });
+  return act(
+    () =>
+      new Promise(resolve => {
+        const result = create(
+          <KineticLib components={mockTableConfig}>
+            <Table
+              tableKey={tableKey}
+              uncontrolled
+              {...tableProps}
+              {...tableOptions}
+            >
+              {props => <TableView {...props} />}
+            </Table>
+          </KineticLib>,
+        );
 
-  return new Promise(resolve => {
-    const result = mount(
-      <KineticLib>
-        <Table
-          tableKey={tableKey}
-          uncontrolled
-          {...tableProps}
-          {...tableOptions}
-        >
-          {props => <TableView {...props} />}
-        </Table>
-      </KineticLib>,
-    );
+        const ready = () =>
+          !(
+            store.getState().getIn(['tables', tableKey, 'loading'], true) ||
+            store.getState().getIn(['tables', tableKey, 'initializing'], true)
+          );
 
-    const ready = () =>
-      !(
-        store.getState().getIn(['tables', tableKey, 'loading'], true) ||
-        store.getState().getIn(['tables', tableKey, 'initializing'], true)
-      );
-
-    if (ready()) {
-      result.update();
-      resolve(result);
-    } else {
-      const unsub = store.subscribe(() => {
         if (ready()) {
-          result.update();
           resolve(result);
-          // Remove the store listener since we're done.
-          unsub();
+        } else {
+          const unsub = store.subscribe(() => {
+            if (ready()) {
+              resolve(result);
+              // Remove the store listener since we're done.
+              unsub();
+            }
+          });
         }
-      });
-    }
-  });
+      }),
+  );
+};
+
+// Helper function to find an element within the rendered component
+const getByTestId = (json, id, depth = 0) => {
+  if (json?.props?.['data-testid'] === id) {
+    return json;
+  }
+  if (Array.isArray(json?.children)) {
+    return json.children
+      .map(child => getByTestId(child, id, depth + 1))
+      .find(Boolean);
+  }
+  if (depth === 0) {
+    throw new Error(`Cannot find element with test id: '${id}'`);
+  }
+  return undefined;
 };
 
 /*
@@ -155,12 +164,10 @@ describe('<Table />', () => {
     });
 
     test('kitchen sink', async () => {
-      const ActionCell = props => <td>{props.value}</td>;
       const addColumns = [
         {
           value: '_action',
-          label: 'Actions',
-          components: { BodyCell: ActionCell },
+          title: 'Actions',
         },
       ];
       wrapper = await mountTable({
@@ -172,7 +179,7 @@ describe('<Table />', () => {
           transform: result => ({ data: result.mockData }),
         }),
       });
-      expect(wrapper).toMatchSnapshot();
+      expect(getByTestId(wrapper.toJSON(), 'TableViewMock')).toMatchSnapshot();
     });
 
     describe('filters', () => {
@@ -185,7 +192,7 @@ describe('<Table />', () => {
           }),
         });
 
-        const filterLayout = wrapper.find('FilterLayout');
+        const filterLayout = getByTestId(wrapper.toJSON(), 'FilterLayoutMock');
         expect(filterLayout).toBeDefined();
         expect(filterLayout).toMatchSnapshot();
       });
@@ -203,7 +210,7 @@ describe('<Table />', () => {
           }),
         });
 
-        const filterForm = wrapper.find('FilterForm');
+        const filterForm = getByTestId(wrapper.toJSON(), 'FormLayoutMock');
         expect(filterForm).toBeDefined();
         expect(filterForm).toMatchSnapshot();
       });
@@ -219,16 +226,20 @@ describe('<Table />', () => {
           }),
         });
 
-        expect(wrapper).toMatchSnapshot();
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableViewMock'),
+        ).toMatchSnapshot();
         expect(dataSourceFn.mock.calls).toMatchSnapshot();
       });
     });
   });
+
   describe('build methods', () => {
     let props;
     let data = [];
     let columns = List([]);
     let columnSet = List([]);
+    let wrapper;
 
     beforeEach(() => {
       data = users(2);
@@ -245,107 +256,112 @@ describe('<Table />', () => {
         rows: List(data).map(r => Map(r)),
       };
     });
+    afterEach(() => {
+      if (wrapper) {
+        wrapper.unmount();
+      }
+    });
 
     describe('#buildTable', () => {
       test('it renders normally', () => {
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTable(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('table')).toBeTruthy();
-        expect(wrapper.is('table.custom-table')).toBeFalsy();
+        expect(wrapper.toJSON().type).toEqual('table');
+        expect(wrapper.toJSON().props.className).not.toEqual('custom-table');
       });
 
       test('it renders a custom table', () => {
         const TableLayout = () => <table className="custom-table" />;
-
         props.components.TableLayout = TableLayout;
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTable(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('table.custom-table')).toBeTruthy();
+        expect(wrapper.toJSON().type).toEqual('table');
+        expect(wrapper.toJSON().props.className).toEqual('custom-table');
       });
     });
 
     describe('#buildTableHeader', () => {
       test('it renders normally', () => {
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableHeader(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('thead')).toBeTruthy();
-        expect(wrapper.is('thead.custom-thead')).toBeFalsy();
+        expect(wrapper.toJSON().type).toEqual('thead');
+        expect(wrapper.toJSON().props.className).not.toEqual('custom-thead');
       });
 
       test('it does not render when omitHeader is set', () => {
         props.omitHeader = true;
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableHeader(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('thead')).toBeFalsy();
+        expect(wrapper.toJSON()).toBeNull();
       });
 
       test('it renders a custom thead', () => {
         const Header = () => <thead className="custom-thead" />;
-
         props.components.Header = Header;
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableHeader(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('thead.custom-thead')).toBeTruthy();
+        expect(wrapper.toJSON().type).toEqual('thead');
+        expect(wrapper.toJSON().props.className).toEqual('custom-thead');
       });
     });
 
     describe('#buildTableHeaderRow', () => {
       test('it renders normally', () => {
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableHeaderRow(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tr')).toBeTruthy();
-        expect(wrapper.is('tr.custom-tr')).toBeFalsy();
+        expect(wrapper.toJSON().type).toEqual('tr');
+        expect(wrapper.toJSON().props.className).not.toEqual('custom-tr');
       });
 
       test('it renders a custom thead', () => {
         const HeaderRow = () => <tr className="custom-tr" />;
-
         props.components.HeaderRow = HeaderRow;
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableHeaderRow(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tr.custom-tr')).toBeTruthy();
+        expect(wrapper.toJSON().type).toEqual('tr');
+        expect(wrapper.toJSON().props.className).toEqual('custom-tr');
       });
     });
 
     describe('#buildTableHeaderCell', () => {
       test('it renders normally', () => {
         const column = columns.first();
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             {buildTableHeaderCell(buildProps(props))(column, 0)}
           </KineticLib>,
         );
 
-        expect(wrapper.is('th')).toBeTruthy();
-        expect(wrapper.is('td.custom-td')).toBeFalsy();
+        expect(wrapper.toJSON().type).toEqual('th');
+        expect(wrapper.toJSON().props.className).not.toEqual('custom-th');
       });
 
       test('it renders a custom th', () => {
         const column = columns.first();
         const HeaderCell = () => <th className="custom-th" />;
         props.components.HeaderCell = HeaderCell;
-
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             {buildTableHeaderCell(buildProps(props))(column, 0)}
           </KineticLib>,
         );
 
-        expect(wrapper.is('th.custom-th')).toBeTruthy();
+        expect(wrapper.toJSON().type).toEqual('th');
+        expect(wrapper.toJSON().props.className).toEqual('custom-th');
       });
 
       test('it renders a custom th for a specific column', () => {
@@ -358,125 +374,147 @@ describe('<Table />', () => {
           }),
         );
         props.columnSet = props.columnSet.push('displayName');
-
         const column = props.columns.last();
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             {buildTableHeaderCell(buildProps(props))(column, 0)}
           </KineticLib>,
         );
 
-        expect(wrapper.hasClass('custom-cell-th')).toBeTruthy();
+        expect(wrapper.toJSON().type).toEqual('th');
+        expect(wrapper.toJSON().props.className).toEqual('custom-cell-th');
       });
     });
 
     describe('#buildTableBody', () => {
       test('it renders normally', () => {
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableBody(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tbody')).toBeTruthy();
-        expect(wrapper.is('tbody.custom-tbody')).toBeFalsy();
+        expect(wrapper.toJSON().type).toEqual('tbody');
+        expect(wrapper.toJSON().props.className).not.toEqual('custom-tbody');
       });
 
       test('it renders a custom tbody', () => {
         const Header = () => <tbody className="custom-tbody" />;
-
         props.components.Header = Header;
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableHeader(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tbody.custom-tbody')).toBeTruthy();
+        expect(wrapper.toJSON().type).toEqual('tbody');
+        expect(wrapper.toJSON().props.className).toEqual('custom-tbody');
       });
     });
 
     describe('#buildTableBodyRows', () => {
       test('it renders rows normally', () => {
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             <table>
-              <tbody>{buildTableBodyRows(buildProps(props))}</tbody>
+              <tbody data-testid="TableBodyMock">
+                {buildTableBodyRows(buildProps(props))}
+              </tbody>
             </table>
           </KineticLib>,
         );
 
-        expect(wrapper.find('tr')).toHaveLength(props.rows.size);
         expect(
-          wrapper
-            .find('tr')
-            .first()
-            .hasClass('custom-tr'),
-        ).toBeFalsy();
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children,
+        ).toHaveLength(props.rows.size);
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children?.[0]?.type,
+        ).toEqual('tr');
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children?.[0]?.props
+            ?.className,
+        ).not.toEqual('custom-tr');
       });
 
       test('it renders custom rows', () => {
         const BodyRow = () => <tr className="custom-tr" />;
         props.components.BodyRow = BodyRow;
-
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             <table>
-              <tbody>{buildTableBodyRows(buildProps(props))}</tbody>
+              <tbody data-testid="TableBodyMock">
+                {buildTableBodyRows(buildProps(props))}
+              </tbody>
             </table>
           </KineticLib>,
         );
 
-        expect(wrapper.find('tr')).toHaveLength(props.rows.size);
         expect(
-          wrapper
-            .find('tr')
-            .first()
-            .hasClass('custom-tr'),
-        ).toBeTruthy();
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children,
+        ).toHaveLength(props.rows.size);
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children?.[0]?.type,
+        ).toEqual('tr');
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children?.[0]?.props
+            ?.className,
+        ).toEqual('custom-tr');
       });
 
       test('it renders default empty row', () => {
         props.rows = List([]);
-
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             <table>
-              <tbody>{buildTableBodyRows(buildProps(props))}</tbody>
+              <tbody data-testid="TableBodyMock">
+                {buildTableBodyRows(buildProps(props))}
+              </tbody>
             </table>
           </KineticLib>,
         );
 
-        expect(wrapper.find('tr')).toHaveLength(1);
         expect(
-          wrapper
-            .find('tr')
-            .first()
-            .hasClass('custom-empty-tr'),
-        ).toBeFalsy();
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children,
+        ).toHaveLength(1);
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children?.[0]?.type,
+        ).toEqual('tr');
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children?.[0]?.props
+            ?.className,
+        ).not.toEqual('custom-empty-tr');
       });
 
       test('it renders custom empty row', () => {
         const EmptyBodyRow = () => <tr className="custom-empty-tr" />;
         props.rows = List([]);
         props.components.EmptyBodyRow = EmptyBodyRow;
-
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             <table>
-              <tbody>{buildTableBodyRows(buildProps(props))}</tbody>
+              <tbody data-testid="TableBodyMock">
+                {buildTableBodyRows(buildProps(props))}
+              </tbody>
             </table>
           </KineticLib>,
         );
 
-        expect(wrapper.find('tr')).toHaveLength(1);
-        expect(wrapper.find('tr').hasClass('custom-empty-tr')).toBeTruthy();
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children,
+        ).toHaveLength(1);
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children?.[0]?.type,
+        ).toEqual('tr');
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyMock')?.children?.[0]?.props
+            ?.className,
+        ).toEqual('custom-empty-tr');
       });
     });
 
     describe('#buildTableBodyCells', () => {
       test('it renders cells normally', () => {
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             <table>
               <tbody>
-                <tr>
+                <tr data-testid="TableBodyRowMock">
                   {buildTableBodyCells(
                     buildProps(props),
                     props.rows.first(),
@@ -488,24 +526,27 @@ describe('<Table />', () => {
           </KineticLib>,
         );
 
-        expect(wrapper.find('tr td')).toHaveLength(1);
         expect(
-          wrapper
-            .find('tr td')
-            .first()
-            .hasClass('custom-td'),
-        ).toBeFalsy();
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children,
+        ).toHaveLength(props.columnSet.size);
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children?.[0]
+            ?.type,
+        ).toEqual('td');
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children?.[0]
+            ?.props?.className,
+        ).not.toEqual('custom-td');
       });
 
       test('it renders custom cells', () => {
         const BodyCell = () => <td className="custom-td" />;
         props.components.BodyCell = BodyCell;
-
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             <table>
               <tbody>
-                <tr>
+                <tr data-testid="TableBodyRowMock">
                   {buildTableBodyCells(
                     buildProps(props),
                     props.rows.first(),
@@ -517,13 +558,17 @@ describe('<Table />', () => {
           </KineticLib>,
         );
 
-        expect(wrapper.find('tr td')).toHaveLength(props.columnSet.size);
         expect(
-          wrapper
-            .find('tr td')
-            .first()
-            .hasClass('custom-td'),
-        ).toBeTruthy();
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children,
+        ).toHaveLength(props.columnSet.size);
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children?.[0]
+            ?.type,
+        ).toEqual('td');
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children?.[0]
+            ?.props?.className,
+        ).toEqual('custom-td');
       });
 
       test('it renders custom column cells', () => {
@@ -536,12 +581,11 @@ describe('<Table />', () => {
           }),
         );
         props.columnSet = props.columnSet.push('displayName');
-
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             <table>
               <tbody>
-                <tr>
+                <tr data-testid="TableBodyRowMock">
                   {buildTableBodyCells(
                     buildProps(props),
                     props.rows.first(),
@@ -553,95 +597,126 @@ describe('<Table />', () => {
           </KineticLib>,
         );
 
-        expect(wrapper.find('tr td')).toHaveLength(props.columns.size);
         expect(
-          wrapper
-            .find('tr td')
-            .first()
-            .hasClass('custom-td'),
-        ).toBeFalsy();
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children,
+        ).toHaveLength(props.columnSet.size);
         expect(
-          wrapper
-            .find('tr td')
-            .last()
-            .hasClass('custom-td'),
-        ).toBeTruthy();
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children?.[0]
+            ?.type,
+        ).toEqual('td');
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children?.[0]
+            ?.props?.className,
+        ).not.toEqual('custom-td');
+        expect(
+          getByTestId(wrapper.toJSON(), 'TableBodyRowMock')?.children?.[
+            props.columnSet.size - 1
+          ]?.props?.className,
+        ).toEqual('custom-td');
       });
     });
 
     describe('#buildTableFooter', () => {
       test('it does not render normally', () => {
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableFooter(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tfoot')).toBeFalsy();
+        expect(wrapper.toJSON()).toBeNull();
       });
 
       test('it renders with includeFooter', () => {
         props.includeFooter = true;
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableFooter(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tfoot')).toBeTruthy();
-        expect(wrapper.is('tfoot.custom-tfoot')).toBeFalsy();
+        expect(wrapper.toJSON().type).toEqual('tfoot');
+        expect(wrapper.toJSON().props.className).not.toEqual('custom-tfoot');
       });
 
       test('it renders a custom tfoot', () => {
         const Footer = () => <tfoot className="custom-tfoot" />;
         props.includeFooter = true;
         props.components.Footer = Footer;
-
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableFooter(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tfoot.custom-tfoot')).toBeTruthy();
+        expect(wrapper.toJSON().type).toEqual('tfoot');
+        expect(wrapper.toJSON().props.className).toEqual('custom-tfoot');
       });
     });
 
     describe('#buildTableFooterRow', () => {
       test('it renders normally', () => {
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableFooterRow(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tr')).toBeTruthy();
-        expect(wrapper.is('tr.custom-tr')).toBeFalsy();
+        expect(wrapper.toJSON().type).toEqual('tr');
+        expect(wrapper.toJSON().props.className).not.toEqual('custom-tr');
       });
 
       test('it renders a custom tr', () => {
         const FooterRow = () => <tr className="custom-tr" />;
-
         props.components.FooterRow = FooterRow;
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>{buildTableFooterRow(buildProps(props))}</KineticLib>,
         );
 
-        expect(wrapper.is('tr.custom-tr')).toBeTruthy();
+        expect(wrapper.toJSON().type).toEqual('tr');
+        expect(wrapper.toJSON().props.className).toEqual('custom-tr');
       });
     });
 
     describe('#buildTableFooterCells', () => {
       test('it renders normally', () => {
-        const wrapper = render(
-          <KineticLib>{buildTableFooterCells(buildProps(props))}</KineticLib>,
+        wrapper = create(
+          <KineticLib>
+            <tfoot>
+              <tr data-testid="FooterRowMock">
+                {buildTableFooterCells(buildProps(props))}
+              </tr>
+            </tfoot>
+          </KineticLib>,
         );
 
-        expect(wrapper.first().is('td')).toBeTruthy();
-        expect(wrapper.first().is('td.custom-td')).toBeFalsy();
+        expect(
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children,
+        ).toHaveLength(props.columnSet.size);
+        expect(
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children?.[0]?.type,
+        ).toEqual('td');
+        expect(
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children?.[0]?.props
+            ?.className,
+        ).not.toEqual('custom-td');
       });
 
       test('it renders a custom td', () => {
         const FooterCell = () => <td className="custom-td" />;
         props.components.FooterCell = FooterCell;
-
-        const wrapper = render(
-          <KineticLib>{buildTableFooterCells(buildProps(props))}</KineticLib>,
+        wrapper = create(
+          <KineticLib>
+            <tfoot>
+              <tr data-testid="FooterRowMock">
+                {buildTableFooterCells(buildProps(props))}
+              </tr>
+            </tfoot>
+          </KineticLib>,
         );
 
-        expect(wrapper.is('td.custom-td')).toBeTruthy();
+        expect(
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children,
+        ).toHaveLength(props.columnSet.size);
+        expect(
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children?.[0]?.type,
+        ).toEqual('td');
+        expect(
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children?.[0]?.props
+            ?.className,
+        ).toEqual('custom-td');
       });
 
       test('it renders a custom td for a specific column', () => {
@@ -654,28 +729,31 @@ describe('<Table />', () => {
           }),
         );
         props.columnSet = props.columnSet.push('displayName');
-
-        const wrapper = render(
+        wrapper = create(
           <KineticLib>
             <tfoot>
-              <tr>{buildTableFooterCells(buildProps(props))}</tr>
+              <tr data-testid="FooterRowMock">
+                {buildTableFooterCells(buildProps(props))}
+              </tr>
             </tfoot>
           </KineticLib>,
         );
 
-        expect(wrapper.find('td')).toHaveLength(props.columns.size);
         expect(
-          wrapper
-            .find('td')
-            .first()
-            .hasClass('custom-td'),
-        ).toBeFalsy();
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children,
+        ).toHaveLength(props.columnSet.size);
         expect(
-          wrapper
-            .find('td')
-            .last()
-            .hasClass('custom-td'),
-        ).toBeTruthy();
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children?.[0]?.type,
+        ).toEqual('td');
+        expect(
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children?.[0]?.props
+            ?.className,
+        ).not.toEqual('custom-td');
+        expect(
+          getByTestId(wrapper.toJSON(), 'FooterRowMock')?.children?.[
+            props.columnSet.size - 1
+          ]?.props?.className,
+        ).toEqual('custom-td');
       });
     });
   });

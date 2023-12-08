@@ -1,6 +1,5 @@
 import React from 'react';
-import { Map, fromJS } from 'immutable';
-import { mount } from 'enzyme';
+import { create, act } from 'react-test-renderer';
 import { KineticLib } from '../../../index';
 import { store } from '../../../store';
 import { generateForm, setValue, submitForm } from '../Form';
@@ -23,29 +22,71 @@ const mountForm = ({
     formOptions: Object.keys(formOptions),
     handleSubmit,
   });
-  // Wrap the enyzme mount call with a promise that will be resolved when the
-  // form is initialized (most of the test cases need to wait for this).
-  return new Promise(resolve => {
-    const result = mount(
-      <KineticLib components={{ fields: mockFieldConfig }}>
-        <Form formKey={FORM_KEY} uncontrolled {...formProps} {...formOptions} />
-      </KineticLib>,
-    );
-    const ready = () => !!store.getState().getIn(['forms', FORM_KEY, 'fields']);
-    if (ready()) {
-      result.update();
-      resolve(result);
-    } else {
-      const unsub = store.subscribe(() => {
+  return act(
+    () =>
+      // Wrap the render call with a promise that will be resolved when the
+      // form is initialized (most of the test cases need to wait for this).
+      new Promise(resolve => {
+        const result = create(
+          <KineticLib components={{ fields: mockFieldConfig }}>
+            <Form
+              formKey={FORM_KEY}
+              uncontrolled
+              {...formProps}
+              {...formOptions}
+            />
+          </KineticLib>,
+        );
+        const ready = () =>
+          !!store.getState().getIn(['forms', FORM_KEY, 'fields']);
         if (ready()) {
-          result.update();
           resolve(result);
-          // Remove the store listener since we're done.
-          unsub();
+        } else {
+          const unsub = store.subscribe(() => {
+            if (ready()) {
+              resolve(result);
+              // Remove the store listener since we're done.
+              unsub();
+            }
+          });
         }
-      });
-    }
-  });
+      }),
+  );
+};
+
+// Helper function to find an element within the rendered component
+const getByTestId = (json, id, depth = 0) => {
+  if (json?.props?.['data-testid'] === id) {
+    return json;
+  }
+  if (Array.isArray(json?.children)) {
+    return json.children
+      .map(child => getByTestId(child, id, depth + 1))
+      .find(Boolean);
+  }
+  if (depth === 0) {
+    throw new Error(`Cannot find element with test id: '${id}'`);
+  }
+  return undefined;
+};
+
+// Helper function to get the props of an element within the rendered component
+const getPropsByTestId = (json, id) => {
+  const element = getByTestId(json, id);
+  if (element?.props['data-props']) {
+    return JSON.parse(element?.props['data-props']);
+  }
+  return undefined;
+};
+
+// Helper function to get the immutable types of the props of an element within
+// the rendered component
+const getImmutablePropTypesByTestId = (json, id) => {
+  const element = getByTestId(json, id);
+  if (element?.props['data-immutable-props']) {
+    return JSON.parse(element?.props['data-immutable-props']);
+  }
+  return undefined;
 };
 
 describe('dataSources', () => {
@@ -75,7 +116,7 @@ describe('dataSources', () => {
           },
         ],
     });
-    expect(result.find('FormLayout')).toMatchSnapshot();
+    expect(getByTestId(result.toJSON(), 'FormLayout')).toMatchSnapshot();
     // should be called once
     expect(dependencyFn.mock.calls).toMatchSnapshot();
     // should be called once with the result dependencyFn
@@ -116,7 +157,7 @@ describe('dataSources', () => {
     expect(dataFn.mock.calls.length).toBe(1);
     expect(dataFn.mock.calls[0][0]).toBe('One');
     // trigger change event that changes the paramField
-    setValue(FORM_KEY, 'mainField', 'n/a');
+    act(() => setValue(FORM_KEY, 'mainField', 'n/a'));
     // dataFn should be called again with the updated value of paramField
     expect(dataFn.mock.calls.length).toBe(2);
     expect(dataFn.mock.calls[1][0]).toBe('Two');
@@ -134,24 +175,26 @@ describe('dataSources', () => {
         },
       }),
       fields: () => () => [
-        { initialValue: true, name: 'enabled', type: 'checkbox' },
+        {
+          initialValue: true,
+          name: 'enabled',
+          type: 'checkbox',
+        },
       ],
     });
-    // Update the component because we want to test the bindings prop passed to
-    // FormLayout.
-    result.update();
     expect(dataFn.mock.calls.length).toBe(1);
-    expect(result.find('FormLayout').prop('bindings').data).toEqual(
-      Map({ arg: 'Test' }),
-    );
+    expect(
+      getPropsByTestId(result.toJSON(), 'FormLayout')?.bindings?.data,
+    ).toMatchObject({
+      arg: 'Test',
+    });
     // Uncheck enabled which should cause paramFn to return false, which should
     // result in clearing the datasource.
-    setValue(FORM_KEY, 'enabled', false);
-    // Update the component because we want to test the bindings prop passed to
-    // FormLayout.
-    result.update();
+    act(() => setValue(FORM_KEY, 'enabled', false));
     expect(dataFn.mock.calls.length).toBe(1);
-    expect(result.find('FormLayout').prop('bindings').data).toBe(null);
+    expect(
+      getPropsByTestId(result.toJSON(), 'FormLayout')?.bindings?.data,
+    ).toBe(null);
     result.unmount();
   });
 });
@@ -168,9 +211,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -181,9 +225,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns true', async () => {
       const constraintFn = jest.fn(bindings => true);
       const result = await mountForm({
@@ -195,10 +240,11 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       expect(constraintFn.mock.calls).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -209,9 +255,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -222,9 +269,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns a string', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -235,7 +283,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -252,9 +300,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given constraint false and constraintMessage string', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -266,9 +315,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given constraint with string and constraintMessage string', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -280,9 +330,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given constraint true and constraintMessage null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -294,9 +345,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given constraint true and constraintMessage function that returns string', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -308,9 +360,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given constraint true and constraintMessage function that returns null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -322,7 +375,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -338,9 +391,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -351,9 +405,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a string value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -364,9 +419,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a null value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -377,9 +433,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a function that returns a boolean', async () => {
       const enabledFn = jest.fn(bindings => false);
       const result = await mountForm({
@@ -391,7 +448,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       expect(enabledFn.mock.calls).toMatchSnapshot();
       result.unmount();
     });
@@ -414,10 +471,16 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('AttributesFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('AttributesFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'AttributesFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'AttributesFieldMock')
+            ?.value,
+        ).toEqual('Immutable.Map');
+        expect(
+          getByTestId(result.toJSON(), 'AttributesFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -428,10 +491,16 @@ describe('fields', () => {
             { name: 'test', type: 'checkbox', initialValue: initial },
           ],
         });
-        expect(result.find('CheckboxFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('CheckboxFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'CheckboxFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'CheckboxFieldMock')
+            ?.value,
+        ).toEqual(undefined);
+        expect(
+          getByTestId(result.toJSON(), 'CheckboxFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -446,10 +515,14 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('CodeFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('CodeFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'CodeFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'CodeFieldMock')
+            ?.value,
+        ).toEqual(undefined);
+        expect(getByTestId(result.toJSON(), 'CodeFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -464,10 +537,14 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('FormFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('FormFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'FormFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'FormFieldMock')
+            ?.value,
+        ).toEqual('Immutable.Map');
+        expect(getByTestId(result.toJSON(), 'FormFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -485,10 +562,16 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('FormMultiFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('FormMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'FormMultiFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'FormMultiFieldMock')
+            ?.value,
+        ).toEqual('Immutable.List');
+        expect(
+          getByTestId(result.toJSON(), 'FormMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -499,10 +582,16 @@ describe('fields', () => {
             { name: 'test', type: 'password', initialValue: initial },
           ],
         });
-        expect(result.find('PasswordFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('PasswordFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'PasswordFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'PasswordFieldMock')
+            ?.value,
+        ).toEqual(undefined);
+        expect(
+          getByTestId(result.toJSON(), 'PasswordFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -517,10 +606,16 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('RadioFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('RadioFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'RadioFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'RadioFieldMock')
+            ?.value,
+        ).toEqual('Immutable.Map');
+        expect(
+          getByTestId(result.toJSON(), 'RadioFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -535,10 +630,16 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('SelectFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('SelectFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'SelectFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'SelectFieldMock')
+            ?.value,
+        ).toEqual('Immutable.Map');
+        expect(
+          getByTestId(result.toJSON(), 'SelectFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -556,10 +657,16 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('SelectMultiFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('SelectMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'SelectMultiFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'SelectMultiFieldMock')
+            ?.value,
+        ).toEqual('Immutable.List');
+        expect(
+          getByTestId(result.toJSON(), 'SelectMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -574,11 +681,14 @@ describe('fields', () => {
             },
           ],
         });
-        // value should be immutable version of initialValue passed in
-        expect(result.find('TeamFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('TeamFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'TeamFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'TeamFieldMock')
+            ?.value,
+        ).toEqual('Immutable.Map');
+        expect(getByTestId(result.toJSON(), 'TeamFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -596,11 +706,16 @@ describe('fields', () => {
             },
           ],
         });
-        // value should be immutable version of initialValue passed in
-        expect(result.find('TeamMultiFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('TeamMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'TeamMultiFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'TeamMultiFieldMock')
+            ?.value,
+        ).toEqual('Immutable.List');
+        expect(
+          getByTestId(result.toJSON(), 'TeamMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -611,10 +726,14 @@ describe('fields', () => {
             { name: 'test', type: 'text', initialValue: initial },
           ],
         });
-        expect(result.find('TextFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('TextFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'TextFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'TextFieldMock')
+            ?.value,
+        ).toEqual(undefined);
+        expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -629,10 +748,16 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('TextMultiFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('TextMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'TextMultiFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'TextMultiFieldMock')
+            ?.value,
+        ).toEqual('Immutable.List');
+        expect(
+          getByTestId(result.toJSON(), 'TextMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -647,10 +772,14 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('UserFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('UserFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'UserFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'UserFieldMock')
+            ?.value,
+        ).toEqual('Immutable.Map');
+        expect(getByTestId(result.toJSON(), 'UserFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -668,10 +797,16 @@ describe('fields', () => {
             },
           ],
         });
-        expect(result.find('UserMultiFieldMock').prop('value')).toEqual(
-          fromJS(initial),
-        );
-        expect(result.find('UserMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getPropsByTestId(result.toJSON(), 'UserMultiFieldMock')?.value,
+        ).toEqual(initial);
+        expect(
+          getImmutablePropTypesByTestId(result.toJSON(), 'UserMultiFieldMock')
+            ?.value,
+        ).toEqual('Immutable.List');
+        expect(
+          getByTestId(result.toJSON(), 'UserMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
     });
@@ -688,7 +823,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -702,7 +837,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -718,7 +853,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       expect(labelFn.mock.calls).toMatchSnapshot();
       result.unmount();
     });
@@ -752,23 +887,25 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
-    // test('given null', async () => {
-    //   const result = await mountForm({
-    //     fields: () => () => [
-    //       {
-    //         name: 'test',
-    //         type: 'text',
-    //         initialValue: '314159',
-    //         pattern: null,
-    //       },
-    //     ],
-    //   });
-    //   expect(result.find('TextFieldMock')).toMatchSnapshot();
-    //   result.unmount();
-    // });
+
+    test('given null', async () => {
+      const result = await mountForm({
+        fields: () => () => [
+          {
+            name: 'test',
+            type: 'text',
+            initialValue: '314159',
+            pattern: null,
+          },
+        ],
+      });
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
+      result.unmount();
+    });
+
     test('given function that returns regex and matching initialValue', async () => {
       const patternFn = jest.fn(bindings => /^\d+$/);
       const result = await mountForm({
@@ -781,10 +918,11 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       expect(patternFn.mock.calls).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -796,7 +934,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -814,9 +952,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given trigger and null message', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -829,9 +968,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given trigger and message function that returns string', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -844,9 +984,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given trigger and message function that returns null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -859,9 +1000,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given no trigger', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -874,7 +1016,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -890,9 +1032,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a null value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -903,9 +1046,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a function that returns a string value', async () => {
       const placeholderFn = jest.fn(bindings => 'Test ABC');
       const result = await mountForm({
@@ -917,10 +1061,11 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       expect(placeholderFn.mock.calls).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a function that returns a null value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -931,7 +1076,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -951,9 +1096,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -964,9 +1110,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('has value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -978,9 +1125,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns true', async () => {
       const requiredFn = jest.fn(bindings => true);
       const result = await mountForm({
@@ -992,11 +1140,11 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
-      expect(requiredFn.mock.calls).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       expect(requiredFn.mock.calls).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1007,9 +1155,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1020,7 +1169,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -1038,9 +1187,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given trigger and null message', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1053,9 +1203,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given trigger and message function that returns string', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1068,9 +1219,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given trigger and message function that returns null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1083,9 +1235,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given no trigger', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1098,7 +1251,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -1122,9 +1275,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1135,9 +1289,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a string value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1148,9 +1303,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a null value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1161,9 +1317,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns true', async () => {
       const transientFn = jest.fn(bindings => true);
       const result = await mountForm({
@@ -1175,10 +1332,11 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       expect(transientFn.mock.calls).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1189,9 +1347,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1202,7 +1361,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -1220,7 +1379,9 @@ describe('fields', () => {
         });
         // options should default to an empty list
         // value should default to empty map
-        expect(result.find('AttributesFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'AttributesFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1240,7 +1401,9 @@ describe('fields', () => {
           ],
         });
         // value should default to false
-        expect(result.find('CheckboxFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'CheckboxFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1259,7 +1422,7 @@ describe('fields', () => {
         });
         // options should default to an empty list and language should be passed
         // value should default to empty string
-        expect(result.find('CodeFieldMock')).toMatchSnapshot();
+        expect(getByTestId(result.toJSON(), 'CodeFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1283,7 +1446,7 @@ describe('fields', () => {
       //   // options should default to an empty list
       //   // search should default to an empty map
       //   // value should default to empty string
-      //   expect(result.find('FormFieldMock')).toMatchSnapshot();
+      //   expect(getByTestId(result.toJSON(), 'FormFieldMock')).toMatchSnapshot();
       //   result.unmount();
       // });
 
@@ -1307,7 +1470,7 @@ describe('fields', () => {
       //   // options should default to an empty list
       //   // search should default to an empty map
       //   // value should default to empty array, (but doesn't right now)
-      //   expect(result.find('FormMultiFieldMock')).toMatchSnapshot();
+      //   expect(getByTestId(result.toJSON(), 'FormMultiFieldMock')).toMatchSnapshot();
       //   result.unmount();
       // });
 
@@ -1329,7 +1492,9 @@ describe('fields', () => {
           ],
         });
         // value should default to empty string
-        expect(result.find('PasswordFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'PasswordFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1348,7 +1513,9 @@ describe('fields', () => {
         });
         // options should default to an empty list
         // value should default to empty string
-        expect(result.find('RadioFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'RadioFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1373,7 +1540,9 @@ describe('fields', () => {
         });
         // options should default to an empty list
         // value should default to empty string
-        expect(result.find('SelectFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'SelectFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1394,7 +1563,9 @@ describe('fields', () => {
         });
         // options should default to an empty list
         // value should default to empty array
-        expect(result.find('SelectMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'SelectMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1415,7 +1586,7 @@ describe('fields', () => {
         });
         // options is not passed right now
         // value should default to null
-        expect(result.find('TeamFieldMock')).toMatchSnapshot();
+        expect(getByTestId(result.toJSON(), 'TeamFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1436,7 +1607,9 @@ describe('fields', () => {
         });
         // options is not passed right now
         // value should default to empty array
-        expect(result.find('TeamMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'TeamMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1457,7 +1630,7 @@ describe('fields', () => {
         });
         // options should default to an empty list
         // value should default to empty string
-        expect(result.find('TextFieldMock')).toMatchSnapshot();
+        expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1478,7 +1651,9 @@ describe('fields', () => {
         });
         // options should default to an empty list
         // value should default to empty list
-        expect(result.find('TextMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'TextMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1499,7 +1674,7 @@ describe('fields', () => {
         });
         // options is not passed right now
         // value should default to null
-        expect(result.find('UserFieldMock')).toMatchSnapshot();
+        expect(getByTestId(result.toJSON(), 'UserFieldMock')).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1520,7 +1695,9 @@ describe('fields', () => {
         });
         // options is not passed right now
         // value should default to null
-        expect(result.find('UserMultiFieldMock')).toMatchSnapshot();
+        expect(
+          getByTestId(result.toJSON(), 'UserMultiFieldMock'),
+        ).toMatchSnapshot();
         result.unmount();
       });
 
@@ -1541,9 +1718,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1554,9 +1732,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a string value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1567,9 +1746,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given a null value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1580,9 +1760,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns true', async () => {
       const visibleFn = jest.fn(bindings => true);
       const result = await mountForm({
@@ -1594,10 +1775,11 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       expect(visibleFn.mock.calls).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1608,9 +1790,10 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
+
     test('given function that returns null', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1621,7 +1804,7 @@ describe('fields', () => {
           },
         ],
       });
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -1641,10 +1824,9 @@ describe('setValue', function() {
         { name: 'test', type: 'text', onChange: onChangeMock },
       ],
     });
-    setValue(FORM_KEY, 'test', 'Hello World!');
-    result.update();
+    act(() => setValue(FORM_KEY, 'test', 'Hello World!'));
     // The Field should be dirty and the value should be updated.
-    expect(result.find('TextFieldMock')).toMatchSnapshot();
+    expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
     // onChange should be called with the current bindings
     // (values and dataSources).
     expect(onChangeMock.mock.calls).toMatchSnapshot();
@@ -1658,10 +1840,9 @@ describe('setValue', function() {
         { name: 'test', type: 'text', onChange: onChangeMock },
       ],
     });
-    setValue(FORM_KEY, 'test', 'Hello World!', false);
-    result.update();
+    act(() => setValue(FORM_KEY, 'test', 'Hello World!', false));
     // The Field should be dirty and the value should be updated.
-    expect(result.find('TextFieldMock')).toMatchSnapshot();
+    expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
     // onChange should not have been called
     expect(onChangeMock.mock.calls.length).toBe(0);
     result.unmount();
@@ -1678,12 +1859,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('AttributesFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('attributes'),
-      );
-      expect(result.find('AttributesFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'AttributesFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('attributes').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'AttributesFieldMock')
+          ?.value,
+      ).toEqual('Immutable.Map');
+      expect(
+        getByTestId(result.toJSON(), 'AttributesFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1693,12 +1879,13 @@ describe('setValue', function() {
           { name: 'test', type: 'checkbox', initialValue: true },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('CheckboxFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('checkbox'),
-      );
-      expect(result.find('CheckboxFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'CheckboxFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('checkbox'));
+      expect(
+        getByTestId(result.toJSON(), 'CheckboxFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1708,10 +1895,11 @@ describe('setValue', function() {
           { name: 'test', type: 'code', initialValue: `<div>code test</div>` },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('CodeFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('CodeFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(getPropsByTestId(result.toJSON(), 'CodeFieldMock')?.value).toEqual(
+        '',
+      ); // no default
+      expect(getByTestId(result.toJSON(), 'CodeFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1725,12 +1913,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('FormFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(getPropsByTestId(result.toJSON(), 'FormFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('form'),
       );
-      expect(result.find('FormFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'FormFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1747,12 +1934,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('FormMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('form-multi'),
-      );
-      expect(result.find('FormMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'FormMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('form-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'FormMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'FormMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1762,10 +1954,13 @@ describe('setValue', function() {
           { name: 'test', type: 'password', initialValue: 'test-password' },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('PasswordFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('PasswordFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'PasswordFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(
+        getByTestId(result.toJSON(), 'PasswordFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1779,10 +1974,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('RadioFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('RadioFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'RadioFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(getByTestId(result.toJSON(), 'RadioFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1796,10 +1992,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('SelectFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('SelectFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'SelectFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(getByTestId(result.toJSON(), 'SelectFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1816,12 +2013,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('SelectMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('select-multi'),
-      );
-      expect(result.find('SelectMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'SelectMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('select-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'SelectMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'SelectMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1835,12 +2037,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('TeamFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(getPropsByTestId(result.toJSON(), 'TeamFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('team'),
       );
-      expect(result.find('TeamFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TeamFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1857,12 +2058,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('TeamMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('team-multi'),
-      );
-      expect(result.find('TeamMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'TeamMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('team-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'TeamMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'TeamMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1872,10 +2078,11 @@ describe('setValue', function() {
           { name: 'test', type: 'text', initialValue: 'Hello World!' },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('TextFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(getPropsByTestId(result.toJSON(), 'TextFieldMock')?.value).toEqual(
+        '',
+      ); // no default
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1889,12 +2096,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('TextMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('text-multi'),
-      );
-      expect(result.find('TextMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'TextMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('text-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'TextMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'TextMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1908,12 +2120,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('UserFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(getPropsByTestId(result.toJSON(), 'UserFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('user'),
       );
-      expect(result.find('UserFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'UserFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1930,12 +2141,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', '');
-      result.update();
-      expect(result.find('UserMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('user-multi'),
-      );
-      expect(result.find('UserMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', ''));
+      expect(
+        getPropsByTestId(result.toJSON(), 'UserMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('user-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'UserMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'UserMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -1951,12 +2167,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('AttributesFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('attributes'),
-      );
-      expect(result.find('AttributesFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'AttributesFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('attributes').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'AttributesFieldMock')
+          ?.value,
+      ).toEqual('Immutable.Map');
+      expect(
+        getByTestId(result.toJSON(), 'AttributesFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1966,12 +2187,13 @@ describe('setValue', function() {
           { name: 'test', type: 'checkbox', initialValue: true },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('CheckboxFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('checkbox'),
-      );
-      expect(result.find('CheckboxFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'CheckboxFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('checkbox'));
+      expect(
+        getByTestId(result.toJSON(), 'CheckboxFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1981,10 +2203,11 @@ describe('setValue', function() {
           { name: 'test', type: 'code', initialValue: `<div>code test</div>` },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('CodeFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('CodeFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(getPropsByTestId(result.toJSON(), 'CodeFieldMock')?.value).toEqual(
+        '',
+      ); // no default
+      expect(getByTestId(result.toJSON(), 'CodeFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -1998,12 +2221,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('FormFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(getPropsByTestId(result.toJSON(), 'FormFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('form'),
       );
-      expect(result.find('FormFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'FormFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2020,12 +2242,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('FormMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('form-multi'),
-      );
-      expect(result.find('FormMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'FormMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('form-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'FormMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'FormMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2035,10 +2262,13 @@ describe('setValue', function() {
           { name: 'test', type: 'password', initialValue: 'test-password' },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('PasswordFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('PasswordFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'PasswordFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(
+        getByTestId(result.toJSON(), 'PasswordFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2052,10 +2282,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('RadioFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('RadioFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'RadioFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(getByTestId(result.toJSON(), 'RadioFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2069,10 +2300,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('SelectFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('SelectFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'SelectFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(getByTestId(result.toJSON(), 'SelectFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2089,12 +2321,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('SelectMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('select-multi'),
-      );
-      expect(result.find('SelectMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'SelectMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('select-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'SelectMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'SelectMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2108,12 +2345,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('TeamFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(getPropsByTestId(result.toJSON(), 'TeamFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('team'),
       );
-      expect(result.find('TeamFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TeamFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2130,12 +2366,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('TeamMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('team-multi'),
-      );
-      expect(result.find('TeamMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'TeamMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('team-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'TeamMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'TeamMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2145,10 +2386,11 @@ describe('setValue', function() {
           { name: 'test', type: 'text', initialValue: 'Hello World!' },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('TextFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(getPropsByTestId(result.toJSON(), 'TextFieldMock')?.value).toEqual(
+        '',
+      ); // no default
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2162,12 +2404,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('TextMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('text-multi'),
-      );
-      expect(result.find('TextMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'TextMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('text-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'TextMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'TextMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2181,12 +2428,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('UserFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(getPropsByTestId(result.toJSON(), 'UserFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('user'),
       );
-      expect(result.find('UserFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'UserFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2203,12 +2449,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', null);
-      result.update();
-      expect(result.find('UserMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('user-multi'),
-      );
-      expect(result.find('UserMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', null));
+      expect(
+        getPropsByTestId(result.toJSON(), 'UserMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('user-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'UserMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'UserMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -2224,12 +2475,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('AttributesFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('attributes'),
-      );
-      expect(result.find('AttributesFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'AttributesFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('attributes').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'AttributesFieldMock')
+          ?.value,
+      ).toEqual('Immutable.Map');
+      expect(
+        getByTestId(result.toJSON(), 'AttributesFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2239,12 +2495,13 @@ describe('setValue', function() {
           { name: 'test', type: 'checkbox', initialValue: true },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('CheckboxFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('checkbox'),
-      );
-      expect(result.find('CheckboxFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'CheckboxFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('checkbox'));
+      expect(
+        getByTestId(result.toJSON(), 'CheckboxFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2254,10 +2511,11 @@ describe('setValue', function() {
           { name: 'test', type: 'code', initialValue: `<div>code test</div>` },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('CodeFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('CodeFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(getPropsByTestId(result.toJSON(), 'CodeFieldMock')?.value).toEqual(
+        '',
+      ); // no default
+      expect(getByTestId(result.toJSON(), 'CodeFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2271,12 +2529,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('FormFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(getPropsByTestId(result.toJSON(), 'FormFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('form'),
       );
-      expect(result.find('FormFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'FormFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2293,12 +2550,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('FormMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('form-multi'),
-      );
-      expect(result.find('FormMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'FormMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('form-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'FormMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'FormMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2308,10 +2570,13 @@ describe('setValue', function() {
           { name: 'test', type: 'password', initialValue: 'test-password' },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('PasswordFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('PasswordFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'PasswordFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(
+        getByTestId(result.toJSON(), 'PasswordFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2325,10 +2590,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('RadioFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('RadioFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'RadioFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(getByTestId(result.toJSON(), 'RadioFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2342,10 +2608,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('SelectFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('SelectFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'SelectFieldMock')?.value,
+      ).toEqual(''); // no default
+      expect(getByTestId(result.toJSON(), 'SelectFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2362,12 +2629,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('SelectMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('select-multi'),
-      );
-      expect(result.find('SelectMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'SelectMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('select-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'SelectMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'SelectMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2381,12 +2653,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('TeamFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(getPropsByTestId(result.toJSON(), 'TeamFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('team'),
       );
-      expect(result.find('TeamFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'TeamFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2403,12 +2674,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('TeamMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('team-multi'),
-      );
-      expect(result.find('TeamMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'TeamMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('team-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'TeamMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'TeamMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2418,10 +2694,11 @@ describe('setValue', function() {
           { name: 'test', type: 'text', initialValue: 'Hello World!' },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('TextFieldMock').prop('value')).toBe(''); // no default
-      expect(result.find('TextFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(getPropsByTestId(result.toJSON(), 'TextFieldMock')?.value).toEqual(
+        '',
+      ); // no default
+      expect(getByTestId(result.toJSON(), 'TextFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2435,12 +2712,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('TextMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('text-multi'),
-      );
-      expect(result.find('TextMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'TextMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('text-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'TextMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'TextMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2454,12 +2736,11 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('UserFieldMock').prop('value')).toBe(
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(getPropsByTestId(result.toJSON(), 'UserFieldMock')?.value).toEqual(
         FIELD_DEFAULT_VALUES.get('user'),
       );
-      expect(result.find('UserFieldMock')).toMatchSnapshot();
+      expect(getByTestId(result.toJSON(), 'UserFieldMock')).toMatchSnapshot();
       result.unmount();
     });
 
@@ -2476,12 +2757,17 @@ describe('setValue', function() {
           },
         ],
       });
-      setValue(FORM_KEY, 'test', undefined);
-      result.update();
-      expect(result.find('UserMultiFieldMock').prop('value')).toBe(
-        FIELD_DEFAULT_VALUES.get('user-multi'),
-      );
-      expect(result.find('UserMultiFieldMock')).toMatchSnapshot();
+      act(() => setValue(FORM_KEY, 'test', undefined));
+      expect(
+        getPropsByTestId(result.toJSON(), 'UserMultiFieldMock')?.value,
+      ).toEqual(FIELD_DEFAULT_VALUES.get('user-multi').toJS());
+      expect(
+        getImmutablePropTypesByTestId(result.toJSON(), 'UserMultiFieldMock')
+          ?.value,
+      ).toEqual('Immutable.List');
+      expect(
+        getByTestId(result.toJSON(), 'UserMultiFieldMock'),
+      ).toMatchSnapshot();
       result.unmount();
     });
   });
@@ -2501,17 +2787,17 @@ describe('handleSubmit', () => {
       onSave,
     });
 
-    submitForm(FORM_KEY, {});
+    act(() => submitForm(FORM_KEY, {}));
 
     // FormButtons submitting prop should be set to true
-    result.update();
-    expect(result.find('FormLayout')).toMatchSnapshot();
+    expect(getByTestId(result.toJSON(), 'FormLayout')).toMatchSnapshot();
 
-    await submitFn();
+    await act(async () => {
+      await submitFn();
+    });
 
     // FormButtons submitting prop should be false
-    result.update();
-    expect(result.find('FormLayout')).toMatchSnapshot();
+    expect(getByTestId(result.toJSON(), 'FormLayout')).toMatchSnapshot();
 
     // check mocks
     //
@@ -2532,10 +2818,11 @@ describe('handleSubmit', () => {
     const submitFn = jest.fn(() => Promise.reject('This is a test error'));
     const handleSubmit = jest.fn(() => submitFn);
     const result = await mountForm({ handleSubmit });
-    submitForm('test', {});
-    await submitFn().catch(e => e);
-    result.update();
-    expect(result.find('FormLayout')).toMatchSnapshot();
+    act(() => submitForm('test', {}));
+    await act(async () => {
+      await submitFn().catch(e => e);
+    });
+    expect(getByTestId(result.toJSON(), 'FormLayout')).toMatchSnapshot();
     result.unmount();
   });
 
@@ -2543,10 +2830,11 @@ describe('handleSubmit', () => {
     const submitFn = jest.fn(() => Promise.reject({}));
     const handleSubmit = jest.fn(() => submitFn);
     const result = await mountForm({ handleSubmit });
-    submitForm('test', {});
-    await submitFn().catch(e => e);
-    result.update();
-    expect(result.find('FormLayout')).toMatchSnapshot();
+    act(() => submitForm('test', {}));
+    await act(async () => {
+      await submitFn().catch(e => e);
+    });
+    expect(getByTestId(result.toJSON(), 'FormLayout')).toMatchSnapshot();
     result.unmount();
   });
 
@@ -2562,8 +2850,10 @@ describe('handleSubmit', () => {
       handleSubmit,
       onError,
     });
-    submitForm('test', {});
-    await submitFn().catch(e => e);
+    act(() => submitForm('test', {}));
+    await act(async () => {
+      await submitFn().catch(e => e);
+    });
     expect(onError.mock.calls).toMatchSnapshot();
     expect(errorFn.mock.calls).toMatchSnapshot();
     result.unmount();
@@ -2583,16 +2873,19 @@ describe('submitForm', () => {
       formOptions: { testOption: 'Foo' },
       handleSubmit,
     });
-    submitForm(FORM_KEY, {
-      fieldSet: ['firstName', 'lastName'],
-      values: {
-        firstName: 'Matt',
-        lastName: null,
-      },
-    });
-    result.update();
+    act(() =>
+      submitForm(FORM_KEY, {
+        fieldSet: ['firstName', 'lastName'],
+        values: {
+          firstName: 'Matt',
+          lastName: null,
+        },
+      }),
+    );
     expect(onSubmit.mock.calls).toMatchSnapshot();
-    expect(result.find('FormLayout').prop('bindings')).toMatchSnapshot();
+    expect(
+      getPropsByTestId(result.toJSON(), 'FormLayout')?.bindings,
+    ).toMatchSnapshot();
     result.unmount();
   });
 });

@@ -24,10 +24,10 @@
 
 ## Publishing
 
-
 ### Prereleases
+
 - `npm version prerelease --preid=alpha` will create a new pre-release with the tag "alpha" and increment the number after.
-    For example, if the current version is 0.1.0-alpha.1, running this command will bump the version to 0.1.0-alpha.2
+  For example, if the current version is 0.1.0-alpha.1, running this command will bump the version to 0.1.0-alpha.2
 
 # Code Style
 
@@ -97,10 +97,8 @@ check.
 ##### testing
 
 ```javascript static
-"@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
-"enzyme": "^3.11.0",
-"enzyme-to-json": "^3.6.2",
 "react-addons-test-utils": "^15.6.2",
+"react-test-renderer": "^18.2.0",
 ```
 
 ##### scripting

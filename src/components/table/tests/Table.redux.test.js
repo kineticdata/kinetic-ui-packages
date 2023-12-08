@@ -3,7 +3,7 @@ import {
   isValueEmpty,
   clientSideGotoPage,
   serverSideGotoPage,
-} from './Table.redux';
+} from '../Table.redux';
 import { List, Range, Map } from 'immutable';
 
 describe('<Table /> redux', () => {

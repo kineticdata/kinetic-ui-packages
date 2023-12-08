@@ -1,0 +1,756 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Table /> render dataSource dataSource resolves 1`] = `
+<div
+  data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"filterFormKey\\": \\"mock-table-key.filter-form\\",
+  \\"appliedFilters\\": {},
+  \\"initializing\\": false,
+  \\"loading\\": false,
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"error\\": null,
+  \\"extraData\\": null
+}"
+  data-testid="TableViewMock"
+>
+  <table
+    data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"filterFormKey\\": \\"mock-table-key.filter-form\\",
+  \\"initializing\\": false,
+  \\"loading\\": false,
+  \\"error\\": null,
+  \\"empty\\": false,
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+    data-testid="TableLayoutMock"
+  >
+    <thead
+      data-props="{
+  \\"sortable\\": true,
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"tableOptions\\": {}
+}"
+      data-testid="HeaderMock"
+    >
+      <tr
+        data-props="{
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"tableOptions\\": {}
+}"
+        data-testid="HeaderRowMock"
+      />
+    </thead>
+    <tbody
+      data-props="{
+  \\"loading\\": false,
+  \\"initializing\\": false,
+  \\"tableOptions\\": {},
+  \\"error\\": null,
+  \\"empty\\": false
+}"
+      data-testid="BodyMock"
+    >
+      <tr
+        data-props="{
+  \\"columns\\": [],
+  \\"row\\": {
+    \\"name\\": \\"test\\",
+    \\"status\\": \\"active\\"
+  },
+  \\"index\\": 0,
+  \\"tableOptions\\": {}
+}"
+        data-testid="BodyRowMock"
+      />
+    </tbody>
+  </table>
+  <div
+    data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"filterFormKey\\": \\"mock-table-key.filter-form\\",
+  \\"prevPage\\": null,
+  \\"nextPage\\": null,
+  \\"gotoPage\\": \\"() => {}\\",
+  \\"loading\\": false,
+  \\"startIndex\\": 1,
+  \\"endIndex\\": 1,
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+    data-testid="PaginationControlMock"
+  >
+    <button>
+      Previous
+    </button>
+    <button>
+      Next
+    </button>
+  </div>
+  <form
+    data-props="{
+  \\"appliedFilters\\": {},
+  \\"validFilters\\": true,
+  \\"onSearch\\": \\"() => {}\\",
+  \\"onReset\\": \\"() => {}\\",
+  \\"onClear\\": \\"() => {}\\",
+  \\"onChangeFilter\\": \\"() => {}\\",
+  \\"columnSet\\": [],
+  \\"loading\\": false,
+  \\"initializing\\": false,
+  \\"tableOptions\\": {},
+  \\"tableKey\\": \\"mock-table-key\\"
+}"
+    data-testid="FilterLayoutMock"
+  >
+    <button
+      type="submit"
+    >
+      Search
+    </button>
+  </form>
+  <div
+    data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"columns\\": [],
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+    data-testid="ColumnControlMock"
+  />
+</div>
+`;
+
+exports[`<Table /> render dataSource dataSource resolves 2`] = `
+Array [
+  Array [],
+]
+`;
+
+exports[`<Table /> render filters filter form 1`] = `
+<form
+  data-props="{
+  \\"formKey\\": \\"mock-table-key.filter-form\\",
+  \\"formOptions\\": {
+    \\"tableKey\\": \\"mock-table-key\\"
+  },
+  \\"dirty\\": false,
+  \\"bindings\\": {
+    \\"values\\": {
+      \\"name\\": \\"\\",
+      \\"status\\": \\"\\"
+    }
+  },
+  \\"meta\\": {
+    \\"name\\": {
+      \\"visible\\": true
+    },
+    \\"status\\": {
+      \\"visible\\": true
+    }
+  }
+}"
+  data-testid="FormLayoutMock"
+/>
+`;
+
+exports[`<Table /> render filters legacy filters 1`] = `
+<form
+  data-props="{
+  \\"appliedFilters\\": {},
+  \\"validFilters\\": true,
+  \\"onSearch\\": \\"() => {}\\",
+  \\"onReset\\": \\"() => {}\\",
+  \\"onClear\\": \\"() => {}\\",
+  \\"onChangeFilter\\": \\"() => {}\\",
+  \\"columnSet\\": [],
+  \\"loading\\": false,
+  \\"initializing\\": false,
+  \\"tableOptions\\": {},
+  \\"tableKey\\": \\"mock-table-key\\"
+}"
+  data-testid="FilterLayoutMock"
+>
+  <button
+    type="submit"
+  >
+    Search
+  </button>
+</form>
+`;
+
+exports[`<Table /> render kitchen sink 1`] = `
+<div
+  data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"filterFormKey\\": \\"mock-table-key.filter-form\\",
+  \\"appliedFilters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  },
+  \\"initializing\\": false,
+  \\"loading\\": false,
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"error\\": null,
+  \\"extraData\\": null
+}"
+  data-testid="TableViewMock"
+>
+  <table
+    data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"filterFormKey\\": \\"mock-table-key.filter-form\\",
+  \\"initializing\\": false,
+  \\"loading\\": false,
+  \\"error\\": null,
+  \\"empty\\": false,
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+    data-testid="TableLayoutMock"
+  >
+    <thead
+      data-props="{
+  \\"sortable\\": true,
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"tableOptions\\": {}
+}"
+      data-testid="HeaderMock"
+    >
+      <tr
+        data-props="{
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"tableOptions\\": {}
+}"
+        data-testid="HeaderRowMock"
+      >
+        <th
+          data-props="{
+  \\"onSortColumn\\": \\"() => {}\\",
+  \\"sorting\\": false,
+  \\"sortable\\": true,
+  \\"tableOptions\\": {},
+  \\"filters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  }
+}"
+          data-testid="HeaderCellMock"
+        >
+          Name
+        </th>
+        <th
+          data-props="{
+  \\"onSortColumn\\": \\"() => {}\\",
+  \\"sorting\\": false,
+  \\"sortable\\": true,
+  \\"tableOptions\\": {},
+  \\"filters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  }
+}"
+          data-testid="HeaderCellMock"
+        >
+          Status
+        </th>
+        <th
+          data-props="{
+  \\"onSortColumn\\": \\"() => {}\\",
+  \\"sorting\\": false,
+  \\"tableOptions\\": {},
+  \\"filters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  }
+}"
+          data-testid="HeaderCellMock"
+        >
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody
+      data-props="{
+  \\"loading\\": false,
+  \\"initializing\\": false,
+  \\"tableOptions\\": {},
+  \\"error\\": null,
+  \\"empty\\": false
+}"
+      data-testid="BodyMock"
+    >
+      <tr
+        data-props="{
+  \\"columns\\": [
+    {
+      \\"value\\": \\"name\\",
+      \\"title\\": \\"Name\\",
+      \\"sortable\\": true,
+      \\"filter\\": \\"startsWith\\",
+      \\"type\\": \\"text\\"
+    },
+    {
+      \\"value\\": \\"status\\",
+      \\"title\\": \\"Status\\",
+      \\"sortable\\": true,
+      \\"filter\\": \\"equals\\",
+      \\"type\\": \\"text\\",
+      \\"options\\": \\"() => {}\\"
+    },
+    {
+      \\"value\\": \\"_action\\",
+      \\"title\\": \\"Actions\\"
+    }
+  ],
+  \\"row\\": {
+    \\"name\\": \\"test\\",
+    \\"status\\": \\"active\\"
+  },
+  \\"index\\": 0,
+  \\"tableOptions\\": {}
+}"
+        data-testid="BodyRowMock"
+      >
+        <td
+          data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"row\\": {
+    \\"name\\": \\"test\\",
+    \\"status\\": \\"active\\"
+  },
+  \\"rowIndex\\": 0,
+  \\"index\\": 0,
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"column\\": {
+    \\"value\\": \\"name\\",
+    \\"title\\": \\"Name\\",
+    \\"sortable\\": true,
+    \\"filter\\": \\"startsWith\\",
+    \\"type\\": \\"text\\"
+  },
+  \\"filters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  },
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+          data-testid="BodyCellMock"
+        >
+          test
+        </td>
+        <td
+          data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"row\\": {
+    \\"name\\": \\"test\\",
+    \\"status\\": \\"active\\"
+  },
+  \\"rowIndex\\": 0,
+  \\"index\\": 1,
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"column\\": {
+    \\"value\\": \\"status\\",
+    \\"title\\": \\"Status\\",
+    \\"sortable\\": true,
+    \\"filter\\": \\"equals\\",
+    \\"type\\": \\"text\\",
+    \\"options\\": \\"() => {}\\"
+  },
+  \\"filters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  },
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+          data-testid="BodyCellMock"
+        >
+          active
+        </td>
+        <td
+          data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"row\\": {
+    \\"name\\": \\"test\\",
+    \\"status\\": \\"active\\"
+  },
+  \\"rowIndex\\": 0,
+  \\"index\\": 2,
+  \\"rows\\": [
+    {
+      \\"name\\": \\"test\\",
+      \\"status\\": \\"active\\"
+    }
+  ],
+  \\"column\\": {
+    \\"value\\": \\"_action\\",
+    \\"title\\": \\"Actions\\"
+  },
+  \\"filters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  },
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+          data-testid="BodyCellMock"
+        />
+      </tr>
+    </tbody>
+  </table>
+  <div
+    data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"filterFormKey\\": \\"mock-table-key.filter-form\\",
+  \\"prevPage\\": null,
+  \\"nextPage\\": null,
+  \\"gotoPage\\": \\"() => {}\\",
+  \\"loading\\": false,
+  \\"startIndex\\": 1,
+  \\"endIndex\\": 1,
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+    data-testid="PaginationControlMock"
+  >
+    <button>
+      Previous
+    </button>
+    <button>
+      Next
+    </button>
+  </div>
+  <form
+    data-props="{
+  \\"appliedFilters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  },
+  \\"validFilters\\": true,
+  \\"onSearch\\": \\"() => {}\\",
+  \\"onReset\\": \\"() => {}\\",
+  \\"onClear\\": \\"() => {}\\",
+  \\"onChangeFilter\\": \\"() => {}\\",
+  \\"columnSet\\": [
+    \\"name\\",
+    \\"status\\",
+    \\"_action\\"
+  ],
+  \\"loading\\": false,
+  \\"initializing\\": false,
+  \\"tableOptions\\": {},
+  \\"tableKey\\": \\"mock-table-key\\"
+}"
+    data-testid="FilterLayoutMock"
+  >
+    <div
+      data-props="{
+  \\"value\\": \\"\\",
+  \\"name\\": \\"name\\",
+  \\"title\\": \\"Name\\",
+  \\"onChange\\": \\"() => {}\\",
+  \\"options\\": [],
+  \\"tableOptions\\": {},
+  \\"filters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  },
+  \\"visible\\": true
+}"
+      data-testid="TextFilterMock"
+    />
+    <div
+      data-props="{
+  \\"value\\": \\"\\",
+  \\"name\\": \\"status\\",
+  \\"title\\": \\"Status\\",
+  \\"onChange\\": \\"() => {}\\",
+  \\"options\\": [
+    {
+      \\"label\\": \\"Active\\",
+      \\"value\\": \\"active\\"
+    },
+    {
+      \\"label\\": \\"Inactive\\",
+      \\"value\\": \\"inactive\\"
+    }
+  ],
+  \\"tableOptions\\": {},
+  \\"filters\\": {
+    \\"name\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"name\\",
+        \\"title\\": \\"Name\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"startsWith\\",
+        \\"type\\": \\"text\\"
+      }
+    },
+    \\"status\\": {
+      \\"value\\": \\"\\",
+      \\"column\\": {
+        \\"value\\": \\"status\\",
+        \\"title\\": \\"Status\\",
+        \\"sortable\\": true,
+        \\"filter\\": \\"equals\\",
+        \\"type\\": \\"text\\",
+        \\"options\\": \\"() => {}\\"
+      }
+    }
+  },
+  \\"visible\\": true
+}"
+      data-testid="TextFilterMock"
+    />
+    <button
+      type="submit"
+    >
+      Search
+    </button>
+  </form>
+  <div
+    data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"columns\\": [
+    {
+      \\"value\\": \\"name\\",
+      \\"label\\": \\"Name\\",
+      \\"checked\\": true,
+      \\"enabled\\": false
+    },
+    {
+      \\"value\\": \\"status\\",
+      \\"label\\": \\"Status\\",
+      \\"checked\\": true,
+      \\"enabled\\": false
+    },
+    {
+      \\"value\\": \\"_action\\",
+      \\"label\\": \\"Actions\\",
+      \\"checked\\": true,
+      \\"enabled\\": false
+    }
+  ],
+  \\"tableOptions\\": {},
+  \\"extraData\\": null
+}"
+    data-testid="ColumnControlMock"
+  />
+</div>
+`;
