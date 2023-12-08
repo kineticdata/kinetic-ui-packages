@@ -46,7 +46,7 @@ regSaga(
       const { name, sourceGroup, sourceName, treeKey } = payload;
       const webApiProps = getWebApiProps(payload);
 
-      const [{ tree }, { categories }, { workflow }, { webApi }] = yield all([
+      const [{ tree }, { categories }, { webApi }] = yield all([
         call(fetchTree, {
           name,
           sourceGroup,
@@ -56,9 +56,6 @@ regSaga(
         call(fetchTaskCategories, {
           include:
             'handlers.results,handlers.parameters,trees.parameters,trees.inputs,trees.outputs',
-        }),
-        call(fetchWorkflow, {
-          workflowId: sourceGroup,
         }),
         webApiProps
           ? call(fetchWebApi, {
@@ -88,7 +85,9 @@ regSaga(
       yield put(
         action('TREE_LOADED', {
           categories,
-          kappSlug: webApiProps && webApiProps.kappSlug,
+          kappSlug:
+            (webApiProps && webApiProps.kappSlug) ||
+            getPlatformItemSlugs(platformItem)?.kappSlug,
           platformItem,
           treeKey,
           tree: deserializeTree(tree),
@@ -103,9 +102,9 @@ regSaga(
 );
 
 const getPlatformItemSlugs = platformItem =>
-  platformItem.kapp
+  platformItem?.kapp
     ? { formSlug: platformItem.slug, kappSlug: platformItem.kapp.slug }
-    : platformItem.space
+    : platformItem?.space
       ? { kappSlug: platformItem.slug }
       : {};
 

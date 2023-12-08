@@ -246,6 +246,7 @@ export class TreeBuilderComponent extends Component {
         saving,
         tasks,
         tree,
+        kappSlug,
         undoStack,
         webApi,
       } = treeBuilderState;
@@ -293,6 +294,7 @@ export class TreeBuilderComponent extends Component {
         sidebarRef: this.sidebarRef,
         tasks,
         tree,
+        kappSlug,
         treeBuilder: tree && (
           <Fragment>
             <SvgCanvas ref={this.canvasRef}>
@@ -367,5 +369,6 @@ export class TreeBuilderComponent extends Component {
 const mapStateToProps = (state, props) => ({
   treeBuilderState: state.getIn(['trees', props.treeKey]),
   tree: state.getIn(['trees', props.treeKey, 'tree']),
+  kappSlug: state.getIn(['trees', props.treeKey, 'kappSlug']),
 });
 export const TreeBuilder = connect(mapStateToProps)(TreeBuilderComponent);
