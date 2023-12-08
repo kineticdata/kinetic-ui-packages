@@ -608,7 +608,7 @@ export const importSubmissions = options => {
     onUploadProgress,
     file,
     mode = MODE_IMPORT,
-    cancelToken,
+    signal,
   } = options;
 
   if (!kappSlug) {
@@ -629,7 +629,7 @@ export const importSubmissions = options => {
 
   const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions?import`;
   return axios[modeToFn(mode)](path, file, {
-    cancelToken,
+    signal,
     data: file,
     params: paramBuilder(options),
     headers: {
