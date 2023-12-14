@@ -21,17 +21,17 @@ const dataSources = ({ categoryName }) => ({
   },
   handlers: {
     fn: fetchHandlers,
-    params: [{ include: 'details' }],
+    params: [{ include: 'details', limit: 0 }],
     transform: result => result.handlers,
   },
   routines: {
     fn: fetchTrees,
-    params: [{ type: 'Global Routine', include: 'details' }],
+    params: [{ type: 'Global Routine', include: 'details', limit: 0 }],
     transform: result => result.trees,
   },
   policyRules: {
     fn: fetchPolicyRules,
-    params: [{ type: 'Category Access', include: 'details' }],
+    params: [{ type: 'Category Access', include: 'details', limit: 0 }],
     transform: result => result.policyRules,
   },
 });

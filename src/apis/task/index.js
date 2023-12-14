@@ -445,6 +445,7 @@ export const fetchPolicyRules = (options = {}) => {
         params: {
           include: options.include,
           type: options.type,
+          limit: options.limit,
         },
       },
     )
@@ -584,6 +585,7 @@ export const fetchHandlers = (options = {}) =>
     .get(`${bundle.spaceLocation()}/app/components/task/app/api/v2/handlers`, {
       params: {
         include: options.include,
+        limit: options.limit,
       },
     })
     .then(response => ({
