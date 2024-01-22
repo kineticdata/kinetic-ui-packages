@@ -20,8 +20,8 @@ export const login = ({ username, password }) =>
 export const logoutDirect = isSaml =>
   axios.get(
     isSaml === true
-      ? `${bundle.spaceLocation()}/app/logout`
-      : `${bundle.spaceLocation()}/app/saml/logout`,
+      ? `${bundle.spaceLocation()}/app/saml/logout`
+      : `${bundle.spaceLocation()}/app/logout`,
   );
 
 const checkedOrigin = process.env.REACT_APP_API_HOST
