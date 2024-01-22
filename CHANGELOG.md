@@ -4,6 +4,14 @@ When upgrading `@kineticdata/react` to a newer version, remember that all `@kine
 
 Remember to always run `yarn install` after upgrading any dependency versions.
 
+## 6.0.4 (January 22, 2024)
+
+- Fixed bug with SAML logout options
+
+## 6.0.3 (December 11, 2023)
+
+_No relevant changes._
+
 ## 6.0.2 (November 6, 2023)
 
 - Removed XSRF header setting from Request Interceptor
