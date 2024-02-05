@@ -219,3 +219,9 @@ export { TaskCategoryForm } from './task/category/TaskCategoryForm';
 export { PolicyRuleTable } from './task/policy_rule/PolicyRuleTable';
 export { PolicyRuleForm } from './task/policy_rule/PolicyRuleForm';
 export { EngineSettingsForm } from './task/engine/EngineSettingsForm';
+
+// Integrator
+export { ConnectionTable } from './integrator/connection/ConnectionTable';
+export { ConnectionForm } from './integrator/connection/ConnectionForm';
+export { OperationTable } from './integrator/operation/OperationTable';
+export { OperationForm } from './integrator/operation/OperationForm';

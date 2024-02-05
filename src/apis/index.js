@@ -39,6 +39,9 @@ export * from './core/workflows';
 // Http
 export { generateCESearchParams } from './http';
 
+// Integrator
+export * from './integrator';
+
 // Task
 export * from './task';
 

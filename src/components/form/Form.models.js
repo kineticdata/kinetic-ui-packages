@@ -46,6 +46,7 @@ export const FIELD_DEFAULT_VALUES = Map({
   form: null,
   'form-multi': List(),
   map: OrderedMap(),
+  nullable: null,
   'select-multi': List(),
   team: null,
   'team-multi': List(),

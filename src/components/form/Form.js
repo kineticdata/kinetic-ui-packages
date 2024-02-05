@@ -708,10 +708,11 @@ class FormImplComponent extends Component {
       ? formState.dataSources.map(ds => ds.error).filter(Boolean)
       : Map();
     let form = null;
+    let dirty = false;
     const { FormButtons, FormError, FormLayout } = components.toObject();
     if (initialized) {
       const { error, fields, formOptions, submitting } = formState;
-      const dirty = fields.some(field => field.dirty);
+      dirty = fields.some(field => field.dirty);
       // Build a map of components by field, merging the fields, addFields, and
       // alterFields options. Note that we get those from the parent props not
       // redux store because we want to see new components on HMR updates.
@@ -780,7 +781,7 @@ class FormImplComponent extends Component {
       );
     }
     return typeof this.props.children === 'function'
-      ? this.props.children({ bindings, form, initialized, errors })
+      ? this.props.children({ bindings, form, initialized, errors, dirty })
       : form;
   }
 }
