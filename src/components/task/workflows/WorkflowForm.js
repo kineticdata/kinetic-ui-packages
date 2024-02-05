@@ -134,7 +134,7 @@ const fields = ({ name, workflow, workflowType }) => ({ categories }) =>
       label: 'Filter',
       type: 'code',
       language: 'js',
-      initialValue: workflow ? workflow.get('filter') : '',
+      initialValue: (workflow && workflow.get('filter')) || '',
       required: false,
       // use event to show filter on linked workflows
       visible: workflow && !!workflow.get('event'),
@@ -146,7 +146,7 @@ const fields = ({ name, workflow, workflowType }) => ({ categories }) =>
           'Submission',
           'Team',
           'User',
-        ].find(scope => values.get('event').includes(scope));
+        ].find(scope => values.get('event')?.includes(scope));
 
         return buildBindings({ space, kapp, scope: type });
       },

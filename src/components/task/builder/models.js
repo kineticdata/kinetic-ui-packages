@@ -18,7 +18,7 @@ export const WebApi = Record({
 });
 
 export const Tree = Record({
-  bindings: OrderedMap(),
+  bindings: {},
   categories: List(),
   connectors: OrderedMap(),
   definitionId: null,
@@ -82,11 +82,11 @@ export const Connector = Record({
 export const TreeBuilderState = Record({
   categories: OrderedMap(),
   error: null,
+  formSlug: null,
   kappSlug: null,
   lastSave: null,
   lastWebApi: null,
   loading: true,
-  platformItem: null,
   redoStack: List(),
   saving: false,
   tasks: OrderedMap(),
@@ -173,6 +173,7 @@ export const deserializeTree = ({
   event,
   filter,
   guid,
+  id,
   inputs,
   name,
   notes,
@@ -196,7 +197,7 @@ export const deserializeTree = ({
     definitionId,
     event,
     filter,
-    guid,
+    guid: guid || id,
     inputs: List(inputs).map(Map),
     name,
     notes,

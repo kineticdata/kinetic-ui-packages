@@ -50,20 +50,19 @@ export class TreeBuilderComponent extends Component {
     // placeholder then we will call configureTreeBuilder with the component's
     // props at that time
     if (this.props.treeBuilderState === null) {
-      configureTreeBuilder(
-        pick(this.props, [
-          'treeKey',
-          'sourceName',
-          'sourceGroup',
-          'name',
-          'platformSourceName',
-        ]),
-      );
+      configureTreeBuilder({
+        ...this.props.configParams,
+        treeKey: this.props.treeKey,
+      });
     }
   }
 
   checkHighlight(prevProps = {}) {
-    if (this.props.treeBuilderState && !this.props.treeBuilderState.loading) {
+    if (
+      this.props.treeBuilderState &&
+      !this.props.treeBuilderState.loading &&
+      this.props.tree
+    ) {
       // one the first "real" render of the tree builder check for the highlight
       // node and focus if one is specified
       if (
@@ -240,6 +239,7 @@ export class TreeBuilderComponent extends Component {
     const [highlightType, highlightId] = highlight || [];
     if (treeBuilderState) {
       const {
+        error,
         lastSave,
         lastWebApi,
         redoStack,
@@ -247,6 +247,7 @@ export class TreeBuilderComponent extends Component {
         tasks,
         tree,
         kappSlug,
+        formSlug,
         undoStack,
         webApi,
       } = treeBuilderState;
@@ -287,6 +288,7 @@ export class TreeBuilderComponent extends Component {
           zoomOut: () => this.canvasRef.current.zoomOut(),
         },
         dirty: this.isDirty(treeBuilderState),
+        error,
         lastTree: lastSave,
         lastWebApi,
         name: tree ? tree.name : null,
@@ -295,6 +297,7 @@ export class TreeBuilderComponent extends Component {
         tasks,
         tree,
         kappSlug,
+        formSlug,
         treeBuilder: tree && (
           <Fragment>
             <SvgCanvas ref={this.canvasRef}>
