@@ -10,6 +10,7 @@ export { TableInput } from './common/TableInput';
 export { FormSelect } from './common/FormSelect';
 export { Scroller } from './common/Scroller';
 export { StaticSelect } from './common/StaticSelect';
+export { ConnectionSelect } from './common/ConnectionSelect';
 export {
   getCsrfToken,
   getToken,
@@ -221,6 +222,7 @@ export { PolicyRuleForm } from './task/policy_rule/PolicyRuleForm';
 export { EngineSettingsForm } from './task/engine/EngineSettingsForm';
 
 // Integrator
+export { integrationTypes } from './integrator/integrationTypes';
 export { ConnectionTable } from './integrator/connection/ConnectionTable';
 export { ConnectionForm } from './integrator/connection/ConnectionForm';
 export { OperationTable } from './integrator/operation/OperationTable';

@@ -122,6 +122,17 @@ export const deleteOperation = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const inspectOperation = (options = {}) => {
+  validateOptions('inspectOperation', ['operation'], options);
+  const { operation, ...params } = options;
+  return axios
+    .post(`${bundle.spaceLocation()}/app/integrator/api/inspect`, operation, {
+      params,
+    })
+    .then(response => ({ detectedInputs: response.data.detectedInputs }))
+    .catch(handleErrors);
+};
+
 /******************************************************************************
  * EXECUTIONS
  ******************************************************************************/
@@ -135,6 +146,6 @@ export const runExecution = (options = {}) => {
       { connection, operation, type, parameters },
       { params },
     )
-    .then(response => response.data)
+    .then(response => ({ execution: response.data }))
     .catch(handleErrors);
 };

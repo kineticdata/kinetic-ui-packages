@@ -5,7 +5,7 @@ import {
   createOperation,
   updateOperation,
 } from '../../../apis';
-
+import integrationTypes from '../integrationTypes';
 import {
   generateHttpOperationConfigFields,
   serializeHttpOperationConfigFields,
@@ -52,10 +52,7 @@ const fields = ({ id, type }) => ({ operation }) => {
         name: 'type',
         label: 'Type',
         type: 'select',
-        options: [
-          { value: 'http', label: 'HTTP' },
-          { value: 'smtp', label: 'SMTP' },
-        ],
+        options: integrationTypes,
         initialValue: typeValue,
         required: true,
         enabled: false,
@@ -72,6 +69,7 @@ const fields = ({ id, type }) => ({ operation }) => {
         name: 'transform',
         label: 'Transform',
         type: 'code',
+        transient: true, // TODO remove and replace with output fields when ready
         initialValue: get(operation, 'transform') || '',
         serialize: ({ values }) => values.get('transform') || null,
       },

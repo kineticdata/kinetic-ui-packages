@@ -265,6 +265,7 @@ const generateHttpConnectionConfigAuthFields = auth => [
     label: 'Transform',
     type: 'code',
     initialValue: get(auth, 'transform') || '',
+    transient: true, // TODO remove and replace with output fields when ready
     visible: ({ values }) => values.get('auth.type') === 'bearer_token',
   },
 ];

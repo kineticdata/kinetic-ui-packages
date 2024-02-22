@@ -5,7 +5,7 @@ import {
   createConnection,
   updateConnection,
 } from '../../../apis';
-
+import integrationTypes from '../integrationTypes';
 import {
   generateHttpConnectionConfigFields,
   serializeHttpConnectionConfigFields,
@@ -52,10 +52,7 @@ const fields = ({ id, type }) => ({ connection }) => {
         name: 'type',
         label: 'Type',
         type: 'select',
-        options: [
-          { value: 'http', label: 'HTTP' },
-          { value: 'smtp', label: 'SMTP' },
-        ],
+        options: integrationTypes,
         initialValue: typeValue,
         required: true,
         enabled: false,

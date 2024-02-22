@@ -42,6 +42,7 @@ export const generateHttpOperationConfigFields = config => [
     type: 'text',
     initialValue: get(config, 'path'),
     required: true,
+    helpText: 'Use {{ variables }} for dynamic content',
   },
   {
     name: 'params',

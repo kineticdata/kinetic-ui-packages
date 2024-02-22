@@ -4,17 +4,14 @@ import {
   generateSortParams,
 } from '../../../apis/http';
 import { generateTable } from '../../table/Table';
+import integrationTypes from '../integrationTypes';
 
 const filters = () => () => [
   {
     name: 'type',
     label: 'Type',
     type: 'select',
-    options: [
-      { label: 'HTTP', value: 'http' },
-      { label: 'SMTP', value: 'smtp' },
-      { label: 'SQL', value: 'sql' },
-    ],
+    options: integrationTypes,
   },
 ];
 
