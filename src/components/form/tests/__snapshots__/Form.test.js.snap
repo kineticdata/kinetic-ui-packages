@@ -18,7 +18,8 @@ exports[`dataSources simple 1`] = `
   },
   \\"meta\\": {
     \\"test\\": {
-      \\"visible\\": true
+      \\"visible\\": true,
+      \\"hasErrors\\": false
     }
   }
 }"
@@ -3273,7 +3274,8 @@ exports[`handleSubmit happy path 1`] = `
   },
   \\"meta\\": {
     \\"test2\\": {
-      \\"visible\\": true
+      \\"visible\\": true,
+      \\"hasErrors\\": false
     }
   }
 }"
@@ -3399,7 +3401,8 @@ exports[`handleSubmit happy path 2`] = `
   },
   \\"meta\\": {
     \\"test2\\": {
-      \\"visible\\": true
+      \\"visible\\": true,
+      \\"hasErrors\\": false
     }
   }
 }"

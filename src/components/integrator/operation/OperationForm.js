@@ -66,12 +66,13 @@ const fields = ({ id, type }) => ({ operation }) => {
         transient: true, // TODO remove when property exists
       },
       {
-        name: 'transform',
-        label: 'Transform',
-        type: 'code',
-        transient: true, // TODO remove and replace with output fields when ready
-        initialValue: get(operation, 'transform') || '',
-        serialize: ({ values }) => values.get('transform') || null,
+        name: 'outputs',
+        label: 'Outputs',
+        type: 'map',
+        initialValue: get(operation, 'outputs') || {},
+        required: true,
+        placeholder: 'Add Output',
+        serialize: ({ values }) => values.get('outputs'),
       },
       {
         name: 'config',

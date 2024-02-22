@@ -775,6 +775,7 @@ class FormImplComponent extends Component {
           meta={fields.map(field =>
             Map({
               visible: field.visible,
+              hasErrors: field.errors?.size > 0,
             }),
           )}
         />

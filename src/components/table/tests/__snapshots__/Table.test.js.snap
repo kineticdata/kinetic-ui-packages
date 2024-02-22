@@ -160,10 +160,12 @@ exports[`<Table /> render filters filter form 1`] = `
   },
   \\"meta\\": {
     \\"name\\": {
-      \\"visible\\": true
+      \\"visible\\": true,
+      \\"hasErrors\\": false
     },
     \\"status\\": {
-      \\"visible\\": true
+      \\"visible\\": true,
+      \\"hasErrors\\": false
     }
   }
 }"
