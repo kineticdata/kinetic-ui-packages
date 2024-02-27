@@ -265,9 +265,13 @@ const generateHttpConnectionConfigAuthFields = auth => [
     label: 'Outputs',
     type: 'map',
     initialValue: get(auth, 'outputs') || {},
-    required: true,
+    required: ({ values }) =>
+      values.get('auth.type') === 'bearer_token' &&
+      values.get('auth.tokenType') === 'http',
     placeholder: 'Add Output',
-    visible: ({ values }) => values.get('auth.type') === 'bearer_token',
+    visible: ({ values }) =>
+      values.get('auth.type') === 'bearer_token' &&
+      values.get('auth.tokenType') === 'http',
   },
 ];
 
