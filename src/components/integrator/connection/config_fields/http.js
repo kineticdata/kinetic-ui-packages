@@ -268,7 +268,7 @@ const generateHttpConnectionConfigAuthFields = auth => [
     required: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
-    placeholder: 'Add Output',
+    placeholder: 'Output Key',
     visible: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
@@ -314,7 +314,7 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     visible: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
-    placeholder: 'Add Parameter',
+    placeholder: 'Parameter Key',
   },
   {
     name: 'auth.token.operation.headers',
@@ -324,7 +324,7 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     visible: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
-    placeholder: 'Add Header',
+    placeholder: 'Header Key',
   },
   {
     name: 'auth.token.operation.followRedirect',

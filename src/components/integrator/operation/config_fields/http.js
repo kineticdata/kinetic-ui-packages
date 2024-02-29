@@ -49,14 +49,16 @@ export const generateHttpOperationConfigFields = config => [
     label: 'URL Parameters',
     type: 'map',
     initialValue: get(config, 'params'),
-    placeholder: 'Add Parameter',
+    placeholder: 'Parameter Key',
+    helpText: 'Use {{ variables }} for dynamic content',
   },
   {
     name: 'headers',
     label: 'Headers',
     type: 'map',
     initialValue: get(config, 'headers'),
-    placeholder: 'Add Header',
+    placeholder: 'Header Key',
+    helpText: 'Use {{ variables }} for dynamic content',
   },
   {
     name: 'followRedirect',

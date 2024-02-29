@@ -71,7 +71,7 @@ const fields = ({ id, type }) => ({ operation }) => {
         type: 'map',
         initialValue: get(operation, 'outputs') || {},
         required: true,
-        placeholder: 'Add Output',
+        placeholder: 'Output Key',
         serialize: ({ values }) => values.get('outputs'),
       },
       {
