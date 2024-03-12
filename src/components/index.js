@@ -28,6 +28,7 @@ export {
   mountForm,
   resetForm,
   reloadDataSource,
+  reloadDataSources,
   serializeForm,
   submitForm,
   unmountForm,

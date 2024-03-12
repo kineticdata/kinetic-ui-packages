@@ -307,6 +307,26 @@ regSaga(
   }),
 );
 
+regSaga(
+  takeEvery('RELOAD_DATA_SOURCES', function*(action) {
+    const { formKey, dataSourceNames } = action.payload;
+    const formState = yield select(selectForm(formKey));
+    // If form state exists, re-fetch the necessary dataSources
+    if (formState?.dataSources) {
+      yield all(
+        formState.dataSources
+          .filter(
+            (ds, name) =>
+              !dataSourceNames?.length || dataSourceNames.includes(name),
+          )
+          .map((ds, name) => fork(runDataSource, formKey, name, ds))
+          .valueSeq()
+          .toArray(),
+      );
+    }
+  }),
+);
+
 // Create a process that represents a datasource, it listens for form events
 // and checks to see if its parameters have changed, if it detects parameter
 // changes it should trigger a call to the datasource function. Finally, it
@@ -322,6 +342,7 @@ function* runDataSource(formKey, name, dataSource) {
       const [checkAction, unmountAction] = yield race([
         take([
           'CONFIGURE_FORM',
+          'RELOAD_DATA_SOURCES',
           'REJECT_DATA_SOURCE',
           'RESET',
           'RESOLVE_DATA_SOURCE',
@@ -525,6 +546,9 @@ export const mountForm = formKey => dispatch('MOUNT_FORM', { formKey });
 export const unmountForm = formKey => dispatch('UNMOUNT_FORM', { formKey });
 
 export const resetForm = formKey => dispatch('RESET', { formKey });
+
+export const reloadDataSources = (formKey, ...dataSourceNames) =>
+  dispatch('RELOAD_DATA_SOURCES', { formKey, dataSourceNames });
 
 export const reloadDataSource = (formKey, name) =>
   dispatch('CALL_DATA_SOURCE', { formKey, name });
