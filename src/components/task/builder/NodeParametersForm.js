@@ -46,12 +46,17 @@ const fields = ({ node, task, tasks, tree }) => ({ bindings, parameters }) =>
         type: parameter.menu ? 'select' : 'code',
         language: parameter.menu ? null : 'erb',
         helpText: parameter.description,
-        initialValue: matchingParameter
-          ? matchingParameter.value
-          : parameter.defaultValue,
+        // If this parameter will be omitted, keep its value. Otherwise, set to
+        // the matchingParameter's value or the default
+        initialValue: !checkOmittedParameters(task, parameter)
+          ? parameter.value || parameter.defaultValue
+          : matchingParameter
+            ? matchingParameter.value
+            : parameter.defaultValue,
         options: parameter.menu ? getOptions(parameter.menu) : bindings,
         transient: true,
-        visible: checkOmittedParameters(node, parameter),
+        // Use the task variable as the node since this is the new node
+        visible: checkOmittedParameters(task, parameter),
       };
     }),
     {
