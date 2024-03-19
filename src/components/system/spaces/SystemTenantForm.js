@@ -53,7 +53,7 @@ const handleSubmit = ({ slug }) => (
           replicas: parseInt(values.get('replicas')),
         },
       }
-    : {};
+    : { image: values.get('image') };
   const type = values.get('task_databaseAdapter_type');
   const fileFieldsForType = fileFields.get(type);
   // Only include values for file fields if the toggle field is true
