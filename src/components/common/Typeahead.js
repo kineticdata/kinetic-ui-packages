@@ -79,6 +79,7 @@ export class Typeahead extends React.Component {
             !this.props.multiple ||
             !mappedValues.includes(this.props.getSuggestionValue(suggestion)),
         );
+
       const customSuggestion =
         this.props.custom &&
         // if the current searchValue matches an existing suggestion we do not
@@ -89,13 +90,20 @@ export class Typeahead extends React.Component {
             this.state.searchValue,
         ).length === 0 &&
         fromJS(this.props.custom(this.state.searchValue));
+
+      // If an action object was provided, create a suggestion that will be
+      // used to trigger this action
+      const actionSuggestion =
+        typeof this.props.action?.fn === 'function' &&
+        fromJS({ ...this.props.action, __isAction: true });
+
       this.setState({
         result: {
           error,
           nextPageToken,
-          suggestions: customSuggestion
-            ? [...filtered, customSuggestion]
-            : filtered,
+          suggestions: [...filtered, customSuggestion, actionSuggestion].filter(
+            Boolean,
+          ),
           customSuggestion,
         },
       });
@@ -114,7 +122,7 @@ export class Typeahead extends React.Component {
       this.setState(initialState);
     } else if (reason !== 'suggestion-selected') {
       this.setState({ editing: true, searchValue });
-    } else if (!this.props.multiple) {
+    } else if (!this.props.multiple && !!searchValue) {
       this.setState({ refocus: true });
     }
   };
@@ -146,9 +154,15 @@ export class Typeahead extends React.Component {
     ) {
       this.setState(this.props.multiple ? { searchValue: '' } : initialState);
     }
-    this.props.onChange(
-      this.props.multiple ? this.props.value.push(suggestion) : suggestion,
-    );
+    // If this is an action suggestion, trigger the action and skip triggering
+    // the on change event
+    if (suggestion.get('__isAction')) {
+      suggestion.get('fn')();
+    } else {
+      this.props.onChange(
+        this.props.multiple ? this.props.value.push(suggestion) : suggestion,
+      );
+    }
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -245,6 +259,7 @@ export class Typeahead extends React.Component {
 function renderSuggestionsContainer({ containerProps, children }) {
   const {
     props: {
+      action,
       components: {
         Status = StatusDefault,
         SuggestionsContainer = SuggestionsContainerDefault,
@@ -264,11 +279,16 @@ function renderSuggestionsContainer({ containerProps, children }) {
           setSearchField,
           error: state.result && state.result.error,
           value: state.searchValue,
-          empty: state.result && state.result.suggestions.length === 0,
+          empty:
+            state.result &&
+            !state.result.suggestions.some(
+              suggestion => !suggestion.get('__isAction'),
+            ),
           more: state.result && !!state.result.nextPageToken,
           short: minSearchLength && state.searchValue.length < minSearchLength,
           pending: !state.result,
           custom: !!custom,
+          action: !!action,
         })}
       />
       {children}
@@ -280,19 +300,34 @@ function renderSuggestionsContainer({ containerProps, children }) {
 function renderSuggestion(suggestion, { isHighlighted }) {
   const {
     props: {
-      components: { Suggestion = SuggestionDefault },
+      components: {
+        Suggestion = SuggestionDefault,
+        SuggestionAction = SuggestionDefault,
+      },
       getSuggestionValue,
     },
   } = this;
   const custom =
     this.state.result && this.state.result.customSuggestion === suggestion;
-  return (
+  const action = !!suggestion.get('__isAction');
+
+  return !action ? (
     <Suggestion
       active={isHighlighted}
       custom={custom}
       suggestion={suggestion}
       suggestionValue={getSuggestionValue(suggestion)}
     />
+  ) : (
+    <>
+      <hr />
+      <SuggestionAction
+        active={isHighlighted}
+        custom={custom}
+        suggestion={suggestion}
+        suggestionValue={suggestion.get('label')}
+      />
+    </>
   );
 }
 
