@@ -111,6 +111,11 @@ const getStatusProps = ({
       : null,
 });
 
+const actionOptions = props =>
+  props.onNew
+    ? { label: props.onNewLabel || 'Add New Option', fn: props.onNew }
+    : undefined;
+
 export const StaticSelect = props => (
   <Typeahead
     components={props.components || {}}
@@ -128,5 +133,6 @@ export const StaticSelect = props => (
     placeholder={props.placeholder}
     id={props.id}
     form={props.form}
+    action={actionOptions(props)}
   />
 );

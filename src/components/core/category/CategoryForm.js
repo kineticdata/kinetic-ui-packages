@@ -55,7 +55,7 @@ const fields = ({ kappSlug, categorySlug }) => ({ category }) =>
       name: 'slug',
       label: 'Slug',
       type: 'text',
-      required: false,
+      required: true,
       initialValue: category ? category.get('slug') : '',
       onChange: (_bindings, { setValue }) => {
         setValue('linked', false);
