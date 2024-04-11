@@ -132,7 +132,12 @@ const buildBindings = formState =>
   formState.set(
     'bindings',
     formState.dataSources
-      .filter(dataSource => dataSource.status === DATA_SOURCE_STATUS.RESOLVED)
+      .filter(dataSource =>
+        [
+          DATA_SOURCE_STATUS.RESOLVED,
+          DATA_SOURCE_STATUS.PENDING_RELOAD,
+        ].includes(dataSource.status),
+      )
       .map(dataSource => dataSource.data)
       .merge(
         formState.fields
@@ -210,9 +215,13 @@ regHandlers({
       touched: true,
     }),
   CALL_DATA_SOURCE: (state, { payload: { formKey, name } }) =>
-    state.mergeIn(['forms', formKey, 'dataSources', name], {
-      status: DATA_SOURCE_STATUS.PENDING,
-    }),
+    state.updateIn(
+      ['forms', formKey, 'dataSources', name, 'status'],
+      status =>
+        status === DATA_SOURCE_STATUS.RESOLVED
+          ? DATA_SOURCE_STATUS.PENDING_RELOAD
+          : DATA_SOURCE_STATUS.PENDING,
+    ),
   RESOLVE_DATA_SOURCE: (state, { payload: { formKey, name, data } }) =>
     state
       .updateIn(
@@ -695,8 +704,8 @@ class FormImplComponent extends Component {
     if (initialized) {
       const { FormButtons, FormError, FormLayout } = components.toObject();
       const { error, fields, formOptions, submitting } = formState;
-      // Build a map of components by field, merging the fields, addFields, and
       const dirty = fields.some(field => field.dirty);
+      // Build a map of components by field, merging the fields, addFields, and
       // alterFields options. Note that we get those from the parent props not
       // redux store because we want to see new components on HMR updates.
       const fieldComponents = resolveFieldConfig(

@@ -21,6 +21,7 @@ export const FormState = Record({
 
 export const DATA_SOURCE_STATUS = {
   PENDING: 'PENDING',
+  PENDING_RELOAD: 'PENDING_RELOAD',
   RESOLVED: 'RESOLVED',
   REJECTED: 'REJECTED',
 };
