@@ -54,6 +54,7 @@ export const FIELD_DEFAULT_VALUES = Map({
 });
 
 export const Field = Record({
+  bindings: {},
   constraint: null,
   constraintMessage: 'Invalid',
   dirty: false,

@@ -239,6 +239,7 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
                       Map({
                         value: definition.get('name'),
                         label: definition.get('name'),
+                        type: definition.get('type'),
                       }),
                     )
                 : [],
