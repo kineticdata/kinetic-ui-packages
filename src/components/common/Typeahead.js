@@ -336,9 +336,10 @@ function renderInputComponent(inputProps) {
   const {
     props: {
       components: { Input = TypeaheadInputDefault },
+      invalid,
     },
   } = this;
-  return <Input inputProps={inputProps} />;
+  return <Input inputProps={inputProps} invalid={invalid} />;
 }
 
 // Another render helper like the ones above but not actually for Autosuggest,
@@ -356,6 +357,7 @@ function renderSelections() {
       placeholder,
       id,
       form,
+      invalid,
     },
     remove,
   } = this;
@@ -372,6 +374,7 @@ function renderSelections() {
         suggestionValue={suggestionValue}
         placeholder={!multiple ? placeholder : null}
         id={!multiple ? id : null}
+        invalid={invalid}
         form={form}
       />
     );

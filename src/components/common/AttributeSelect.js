@@ -52,6 +52,7 @@ export const AttributeSelect = props => (
     placeholder={props.placeholder}
     id={props.id}
     form={props.form}
+    invalid={props.invalid}
     action={actionOptions(props)}
   />
 );
