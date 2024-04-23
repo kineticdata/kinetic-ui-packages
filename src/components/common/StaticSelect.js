@@ -30,7 +30,7 @@ const buildFilter = searchFields => {
   };
 };
 
-const searchOptions = ({ allowNew, options, search = Map() }) => (
+const searchOptions = ({ allowNew, options, search = Map(), messages }) => (
   field,
   value,
   callback,
@@ -58,9 +58,9 @@ const searchOptions = ({ allowNew, options, search = Map() }) => (
       nextPageToken: suggestions.length > limit,
     });
   } else {
-    // If no options provided, return error message
+    // If no options provided, return empty message
     return callback({
-      error: 'No options provided.',
+      error: messages.empty || 'No options found.',
       suggestions: [],
     });
   }
@@ -86,9 +86,9 @@ const getStatusProps = ({
     // Not enough characters have been typed in to trigger a search.
     short = 'Type to find an option.',
     // No results found; custom options not allowed.
-    empty = 'No matches found.',
+    empty = 'No options found.',
     // No results found; custom options allowed.
-    custom = 'No matches found. Type to enter a custom option.',
+    custom = 'No options found. Type to enter a custom option.',
     // Searching in progress.
     pending = 'Searching...',
     // Too many results to show all.

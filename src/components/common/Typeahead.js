@@ -337,9 +337,16 @@ function renderInputComponent(inputProps) {
     props: {
       components: { Input = TypeaheadInputDefault },
       invalid,
+      minSearchLength,
     },
   } = this;
-  return <Input inputProps={inputProps} invalid={invalid} />;
+  return (
+    <Input
+      inputProps={inputProps}
+      invalid={invalid}
+      minSearchLength={minSearchLength}
+    />
+  );
 }
 
 // Another render helper like the ones above but not actually for Autosuggest,
@@ -358,6 +365,7 @@ function renderSelections() {
       id,
       form,
       invalid,
+      minSearchLength,
     },
     remove,
   } = this;
@@ -376,6 +384,7 @@ function renderSelections() {
         id={!multiple ? id : null}
         invalid={invalid}
         form={form}
+        minSearchLength={minSearchLength}
       />
     );
   });
