@@ -139,12 +139,13 @@ export const createField = formKey => ({
     type,
   });
 
-export const createDataSource = ({ fn, params, transform }) => {
+export const createDataSource = ({ fn, params, transform, errorTransform }) => {
   const paramProp = typeof params === 'function' ? 'paramsFn' : 'params';
   return DataSource({
     fn,
     [paramProp]: params,
     transform,
+    errorTransform,
   });
 };
 

@@ -28,11 +28,13 @@ export const DATA_SOURCE_STATUS = {
 
 export const DataSource = Record({
   data: null,
+  error: null,
   fn: null,
   params: null,
   paramsFn: null,
   status: DATA_SOURCE_STATUS.PENDING,
   transform: null,
+  errorTransform: null,
 });
 
 export const FIELD_DEFAULT_VALUES = Map({

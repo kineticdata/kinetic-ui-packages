@@ -15,6 +15,7 @@ const dataSources = ({ kappSlug, categorySlug }) => ({
       { kappSlug, categorySlug, include: 'attributesMap' },
     ],
     transform: result => result.category,
+    errorTransform: result => result.error,
   },
   attributeDefinitions: {
     fn: fetchAttributeDefinitions,

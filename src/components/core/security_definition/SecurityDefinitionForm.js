@@ -39,6 +39,7 @@ const dataSources = ({ securityPolicyName, kappSlug }) => ({
     fn: fetchSecurityPolicyDefinition,
     params: securityPolicyName && [{ securityPolicyName, kappSlug }],
     transform: result => result.securityPolicyDefinition,
+    errorTransform: result => result.error,
   },
   profile: {
     fn: fetchProfile,
