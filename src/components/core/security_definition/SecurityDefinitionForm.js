@@ -15,8 +15,19 @@ export const SPACE_SECURITY_DEFINITION_TYPES = [
   'Team',
   'User',
 ];
+const SPACE_SECURITY_DEFINITION_TYPES_MAP = {
+  Space: ['Space'],
+  'File Resource': ['Space', 'File Resource'],
+  Team: ['Space', 'Team'],
+  User: ['Space', 'User'],
+};
 
 export const KAPP_SECURITY_DEFINITION_TYPES = ['Kapp', 'Form', 'Submission'];
+const KAPP_SECURITY_DEFINITION_TYPES_MAP = {
+  Kapp: ['Kapp'],
+  Form: ['Kapp', 'Form'],
+  Submission: ['Kapp', 'Form', 'Submission'],
+};
 
 const SPACE_INCLUDES =
   'datastoreFormAttributeDefinitions,spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
@@ -63,7 +74,9 @@ const handleSubmit = ({ securityPolicyName, kappSlug }) => values =>
     return securityPolicyDefinition;
   });
 
-const fields = ({ securityPolicyName, kappSlug }) => ({ securityPolicy }) =>
+const fields = ({ securityPolicyName, securityPolicyType, kappSlug }) => ({
+  securityPolicy,
+}) =>
   (!securityPolicyName || securityPolicy) && [
     {
       name: 'name',
@@ -79,8 +92,14 @@ const fields = ({ securityPolicyName, kappSlug }) => ({ securityPolicy }) =>
       type: 'select',
       required: true,
       options: (kappSlug
-        ? KAPP_SECURITY_DEFINITION_TYPES
-        : SPACE_SECURITY_DEFINITION_TYPES
+        ? securityPolicyType &&
+          KAPP_SECURITY_DEFINITION_TYPES.includes(securityPolicyType)
+          ? KAPP_SECURITY_DEFINITION_TYPES_MAP[securityPolicyType]
+          : KAPP_SECURITY_DEFINITION_TYPES
+        : securityPolicyType &&
+          SPACE_SECURITY_DEFINITION_TYPES.includes(securityPolicyType)
+          ? SPACE_SECURITY_DEFINITION_TYPES_MAP[securityPolicyType]
+          : SPACE_SECURITY_DEFINITION_TYPES
       ).map(ele => ({
         value: ele,
         label: ele,
@@ -115,7 +134,7 @@ const fields = ({ securityPolicyName, kappSlug }) => ({ securityPolicy }) =>
   ];
 
 export const SecurityDefinitionForm = generateForm({
-  formOptions: ['kappSlug', 'securityPolicyName'],
+  formOptions: ['kappSlug', 'securityPolicyName', 'securityPolicyType'],
   dataSources,
   fields,
   handleSubmit,

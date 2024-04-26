@@ -103,22 +103,22 @@ const securityEndpoints = {
   formDisplay: {
     endpoint: 'Display',
     label: 'Form Display',
-    types: ['Space', 'Kapp', 'Form'],
+    types: ['Kapp', 'Form'],
   },
   formModification: {
     endpoint: 'Modification',
     label: 'Form Modification',
-    types: ['Space', 'Kapp', 'Form'],
+    types: ['Kapp', 'Form'],
   },
   submissionAccess: {
     endpoint: 'Submission Access',
     label: 'Submission Access',
-    types: ['Space', 'Kapp', 'Form', 'Submission'],
+    types: ['Kapp', 'Form', 'Submission'],
   },
   submissionModification: {
     endpoint: 'Submission Modification',
     label: 'Submission Modification',
-    types: ['Space', 'Kapp', 'Form', 'Submission'],
+    types: ['Kapp', 'Form', 'Submission'],
   },
 };
 
