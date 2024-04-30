@@ -134,6 +134,7 @@ const fields = ({ webApi, tree }) => ({ securityPolicyDefinitions }) =>
                   Map({
                     value: definition.get('name'),
                     label: definition.get('name'),
+                    type: definition.get('type'),
                   }),
                 )
             : [],

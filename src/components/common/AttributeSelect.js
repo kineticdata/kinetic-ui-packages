@@ -28,10 +28,15 @@ const getStatusProps = props => ({
         : props.more
           ? 'Too many results, first 50 shown. Please refine your search.'
           : props.empty
-            ? 'No matches found.'
+            ? 'No matching attributes found.'
             : null
       : null,
 });
+
+const actionOptions = props =>
+  props.onNew
+    ? { label: 'Add New Attribute Definition', fn: props.onNew }
+    : undefined;
 
 export const AttributeSelect = props => (
   <Typeahead
@@ -47,5 +52,7 @@ export const AttributeSelect = props => (
     placeholder={props.placeholder}
     id={props.id}
     form={props.form}
+    invalid={props.invalid}
+    action={actionOptions(props)}
   />
 );

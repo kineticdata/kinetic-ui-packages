@@ -67,6 +67,7 @@ export const initializeValue = (
     : fromJS(value);
 
 export const createField = formKey => ({
+  bindings,
   constraint,
   constraintMessage,
   enabled,
@@ -97,6 +98,7 @@ export const createField = formKey => ({
     renderAttributes: fromJS(renderAttributes),
     value: initializeValue(type, initialValue),
     // Options supporting conditional expressions,
+    bindings: typeof bindings === 'function' ? {} : bindings,
     enabled: typeof enabled === 'function' ? false : enabled,
     label: typeof label === 'function' ? '' : label,
     options: typeof options === 'function' ? List() : fromJS(options),
@@ -106,6 +108,7 @@ export const createField = formKey => ({
     transient: typeof transient === 'function' ? false : transient,
     visible: typeof visible === 'function' ? false : visible,
     functions: Map({
+      bindings: typeof bindings === 'function' ? bindings : null,
       enabled: typeof enabled === 'function' ? enabled : null,
       label: typeof label === 'function' ? label : null,
       options: typeof options === 'function' ? options : null,
@@ -136,12 +139,13 @@ export const createField = formKey => ({
     type,
   });
 
-export const createDataSource = ({ fn, params, transform }) => {
+export const createDataSource = ({ fn, params, transform, errorTransform }) => {
   const paramProp = typeof params === 'function' ? 'paramsFn' : 'params';
   return DataSource({
     fn,
     [paramProp]: params,
     transform,
+    errorTransform,
   });
 };
 
@@ -316,6 +320,7 @@ export const getComponentName = field =>
     : null;
 
 export const getFieldComponentProps = (field, readOnly) => ({
+  bindings: field.bindings,
   dirty: field.dirty,
   enabled: readOnly ? false : field.enabled,
   errors: field.errors,

@@ -45,7 +45,24 @@ regHandlers({
 });
 
 // Adds toast to state and shows it after 100ms delay to trigger animation
-const showToast = toast => {
+const showToast = (toast, presetType) => {
+  // If presetType is provided, add some default toast properties
+  if (presetType)
+    return showToast({
+      ...(presetType === 'success'
+        ? {
+            color: 'success',
+            icon: 'check-circle',
+          }
+        : presetType === 'error'
+          ? {
+              color: 'danger',
+              icon: 'alert-circle',
+            }
+          : {}),
+      ...toast,
+    });
+
   const toastKey = generateKey();
   dispatch('ADD_TOAST', {
     containerKey: toast.containerKey,

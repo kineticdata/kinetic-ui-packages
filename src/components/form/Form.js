@@ -132,7 +132,12 @@ const buildBindings = formState =>
   formState.set(
     'bindings',
     formState.dataSources
-      .filter(dataSource => dataSource.status === DATA_SOURCE_STATUS.RESOLVED)
+      .filter(dataSource =>
+        [
+          DATA_SOURCE_STATUS.RESOLVED,
+          DATA_SOURCE_STATUS.PENDING_RELOAD,
+        ].includes(dataSource.status),
+      )
       .map(dataSource => dataSource.data)
       .merge(
         formState.fields
@@ -210,10 +215,14 @@ regHandlers({
       touched: true,
     }),
   CALL_DATA_SOURCE: (state, { payload: { formKey, name } }) =>
-    state.mergeIn(['forms', formKey, 'dataSources', name], {
-      status: DATA_SOURCE_STATUS.PENDING,
-    }),
-  RESOLVE_DATA_SOURCE: (state, { payload: { formKey, name, data } }) =>
+    state.updateIn(
+      ['forms', formKey, 'dataSources', name, 'status'],
+      status =>
+        status === DATA_SOURCE_STATUS.RESOLVED
+          ? DATA_SOURCE_STATUS.PENDING_RELOAD
+          : DATA_SOURCE_STATUS.PENDING,
+    ),
+  RESOLVE_DATA_SOURCE: (state, { payload: { formKey, name, data, error } }) =>
     state
       .updateIn(
         ['forms', formKey, 'dataSources', name],
@@ -221,6 +230,7 @@ regHandlers({
           dataSource &&
           dataSource.merge({
             data: fromJS(data),
+            error,
             status: DATA_SOURCE_STATUS.RESOLVED,
           }),
       )
@@ -381,7 +391,9 @@ regSaga(
     payload: { formKey, name, params },
   }) {
     try {
-      const { fn, transform } = yield select(selectDataSource(formKey, name));
+      const { fn, transform, errorTransform } = yield select(
+        selectDataSource(formKey, name),
+      );
       const data = yield call(fn, ...params);
       const timestamp = yield call(getTimestamp);
       yield put(
@@ -389,6 +401,7 @@ regSaga(
           formKey,
           name,
           data: transform ? transform(data) : data,
+          error: errorTransform ? errorTransform(data) : null,
           timestamp,
         }),
       );
@@ -691,12 +704,15 @@ class FormImplComponent extends Component {
     } = this.props;
     const bindings = formState ? formState.bindings : {};
     const initialized = formState ? !!formState.fields : false;
+    const errors = formState
+      ? formState.dataSources.map(ds => ds.error).filter(Boolean)
+      : Map();
     let form = null;
+    const { FormButtons, FormError, FormLayout } = components.toObject();
     if (initialized) {
-      const { FormButtons, FormError, FormLayout } = components.toObject();
       const { error, fields, formOptions, submitting } = formState;
-      // Build a map of components by field, merging the fields, addFields, and
       const dirty = fields.some(field => field.dirty);
+      // Build a map of components by field, merging the fields, addFields, and
       // alterFields options. Note that we get those from the parent props not
       // redux store because we want to see new components on HMR updates.
       const fieldComponents = resolveFieldConfig(
@@ -764,7 +780,7 @@ class FormImplComponent extends Component {
       );
     }
     return typeof this.props.children === 'function'
-      ? this.props.children({ bindings, form, initialized })
+      ? this.props.children({ bindings, form, initialized, errors })
       : form;
   }
 }

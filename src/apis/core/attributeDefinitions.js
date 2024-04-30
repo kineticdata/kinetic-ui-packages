@@ -2,17 +2,8 @@ import axios from 'axios';
 import { bundle } from '../../helpers';
 import { handleErrors, headerBuilder, paramBuilder } from '../http';
 
-// The API returns the singular name of the attribute type, so we remove the "s",
-// except for userProfileAttributeDefinitions and datastoreFormAttributeDefinitions
-// TODO: KCORE-2982
-// TODO: Remove datastoreFormAttributeDefinitions when fully deprecated. See b4a24c6
-const responseEnvelope = attributeType =>
-  [
-    'userProfileAttributeDefinitions',
-    'datastoreFormAttributeDefinitions',
-  ].includes(attributeType)
-    ? attributeType
-    : attributeType.replace(/s$/, '');
+// The API returns the singular name of the attribute type, so we remove the "s"
+const responseEnvelope = attributeType => attributeType.replace(/s$/, '');
 
 const validateOptions = (functionName, requiredOptions, options) => {
   const validAttributes = [
@@ -97,7 +88,17 @@ export const fetchAttributeDefinition = (options = {}) => {
       headers: headerBuilder(options),
     })
     .then(response => ({
-      attributeDefinition: response.data[responseEnvelope(attributeType)],
+      // The userProfileAttributeDefinition fetch returns a pluralized name
+      // instead of the singular name as it should, so we want to check both
+      // the singular and plural versions in that case to be backwards
+      // compatible when this gets fixed on the server.
+      // TODO Remove this check and only keep the responseEvelope once the
+      //  server side code is fixed.
+      attributeDefinition:
+        attributeType !== 'userProfileAttributeDefinitions'
+          ? response.data[responseEnvelope(attributeType)]
+          : response.data[responseEnvelope(attributeType)] ||
+            response.data[attributeType],
     }))
     .catch(handleErrors);
 };

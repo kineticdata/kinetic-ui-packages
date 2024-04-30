@@ -104,26 +104,6 @@ const securityEndpoints = {
     label: 'User Modification',
     types: ['Space', 'User'],
   },
-  defaultFormDisplay: {
-    endpoint: 'Default Form Display',
-    label: 'Default Form Display',
-    types: ['Form'],
-  },
-  defaultFormModification: {
-    endpoint: 'Default Form Modification',
-    label: 'Default Form Modification',
-    types: ['Form'],
-  },
-  defaultSubmissionAccess: {
-    endpoint: 'Default Submission Access',
-    label: 'Default Submission Access',
-    types: ['Form', 'Submission'],
-  },
-  defaultSubmissionModification: {
-    endpoint: 'Default Submission Modification',
-    label: 'Default Submission Modification',
-    types: ['Form', 'Submission'],
-  },
 };
 
 const fields = () => ({
@@ -406,6 +386,7 @@ const fields = () => ({
               Map({
                 value: definition.get('name'),
                 label: definition.get('name'),
+                type: definition.get('type'),
               }),
             ),
         initialValue: space

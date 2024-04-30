@@ -13,6 +13,7 @@ const dataSources = ({ kappSlug, attributeType, attributeName }) => ({
       { kappSlug, attributeType, attributeName, include: 'details' },
     ],
     transform: result => result.attributeDefinition,
+    errorTransform: result => result.error,
   },
 });
 
