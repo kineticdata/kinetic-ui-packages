@@ -96,7 +96,7 @@ const filters = () => ({ sourceTypes }) =>
 const columns = [
   {
     value: 'id',
-    title: 'Id',
+    title: 'ID',
     sortable: true,
     toggleable: false,
     columnOrder: 'first',
@@ -149,7 +149,7 @@ const columns = [
   },
   {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     sortable: true,
     toggleable: true,
   },
@@ -161,7 +161,7 @@ const columns = [
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     sortable: true,
     toggleable: true,
   },

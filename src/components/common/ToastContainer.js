@@ -44,7 +44,12 @@ regHandlers({
     ),
 });
 
-// Adds toast to state and shows it after 100ms delay to trigger animation
+/**
+ * Adds toast to state and shows it after 100ms delay to trigger animation
+ *
+ * @param {object} toast Options for the toast
+ * @param {'success'|'error'} [presetType] Preset for styles
+ */
 const showToast = (toast, presetType) => {
   // If presetType is provided, add some default toast properties
   if (presetType)
@@ -72,7 +77,7 @@ const showToast = (toast, presetType) => {
       duration =>
         typeof duration === 'number'
           ? Math.max(duration, 4000)
-          : toast.content
+          : toast.title && toast.content
             ? 7000
             : 4000,
     ),

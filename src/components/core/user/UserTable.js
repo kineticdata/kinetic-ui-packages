@@ -74,8 +74,22 @@ const columns = [
     toggleable: true,
   },
   {
+    value: 'enabled',
+    title: 'Enabled?',
+    sortable: false,
+    toggleable: true,
+    components: { BodyCell: BooleanYesNoCell },
+  },
+  {
+    value: 'spaceAdmin',
+    title: 'Space Admin?',
+    sortable: false,
+    toggleable: true,
+    components: { BodyCell: BooleanYesNoCell },
+  },
+  {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     sortable: true,
     toggleable: true,
   },
@@ -87,7 +101,7 @@ const columns = [
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     sortable: true,
     toggleable: true,
   },
@@ -96,24 +110,6 @@ const columns = [
     title: 'Updated By',
     sortable: true,
     toggleable: true,
-  },
-  {
-    value: 'enabled',
-    title: 'Enabled?',
-    sortable: false,
-    toggleable: true,
-    components: {
-      BodyCell: BooleanYesNoCell,
-    },
-  },
-  {
-    value: 'spaceAdmin',
-    title: 'Space Admin?',
-    sortable: false,
-    toggleable: true,
-    components: {
-      BodyCell: BooleanYesNoCell,
-    },
   },
 ];
 

@@ -35,34 +35,41 @@ const columns = [
     value: 'slug',
     title: 'Slug',
     sortable: true,
+    toggleable: false,
   },
   {
     value: 'agentSlug',
     title: 'Agent Slug',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'filestoreSlug',
-    title: 'File Store Slug',
+    title: 'Filestore Slug',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdBy',
     title: 'Created By',
+    toggleable: true,
   },
   {
     value: 'updatedAt',
     title: 'Updated At',
+    toggleable: true,
     sortable: true,
   },
   {
     value: 'updatedBy',
     title: 'Updated By',
+    toggleable: true,
     sortable: true,
   },
 ];

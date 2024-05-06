@@ -92,8 +92,22 @@ const columns = [
     toggleable: true,
   },
   {
+    value: 'type',
+    title: 'Type',
+    sortable: true,
+    filter: 'startsWith',
+    type: 'text',
+    toggleable: true,
+  },
+  {
+    value: 'status',
+    title: 'Status',
+    sortable: true,
+    toggleable: true,
+  },
+  {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     sortable: true,
     toggleable: true,
   },
@@ -104,7 +118,7 @@ const columns = [
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     sortable: true,
     toggleable: true,
   },
@@ -117,20 +131,6 @@ const columns = [
   {
     value: 'notes',
     title: 'Notes',
-    toggleable: true,
-  },
-  {
-    value: 'status',
-    title: 'Status',
-    sortable: true,
-    toggleable: true,
-  },
-  {
-    value: 'type',
-    title: 'Type',
-    sortable: true,
-    filter: 'startsWith',
-    type: 'text',
     toggleable: true,
   },
   {

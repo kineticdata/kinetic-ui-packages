@@ -71,13 +71,14 @@ const filters = () => ({ events, values }) =>
 
 const columns = [
   {
-    value: 'createdAt',
-    title: 'Created',
-    toggleable: true,
+    value: 'name',
+    title: 'Name',
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
-    value: 'createdBy',
-    title: 'Created By',
+    value: 'type',
+    title: 'Type',
     toggleable: true,
   },
   {
@@ -91,29 +92,28 @@ const columns = [
     toggleable: true,
   },
   {
-    value: 'name',
-    title: 'Name',
-    toggleable: false,
-    columnOrder: 'first',
+    value: 'url',
+    title: 'URL',
+    toggleable: true,
   },
   {
-    value: 'type',
-    title: 'Type',
+    value: 'createdAt',
+    title: 'Created At',
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
     toggleable: true,
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     toggleable: true,
   },
   {
     value: 'updatedBy',
     title: 'Updated By',
-    toggleable: true,
-  },
-  {
-    value: 'url',
-    title: 'URL',
     toggleable: true,
   },
 ];

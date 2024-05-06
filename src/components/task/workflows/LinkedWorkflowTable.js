@@ -107,7 +107,6 @@ const columns = [
     title: 'Status',
     sortable: true,
     toggleable: true,
-
     options: () => STATUS_OPTIONS,
   },
   {
@@ -124,7 +123,7 @@ const columns = [
   },
   {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     sortable: false,
     toggleable: true,
   },
@@ -136,7 +135,7 @@ const columns = [
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     sortable: true,
     toggleable: true,
   },

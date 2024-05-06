@@ -37,34 +37,34 @@ const filters = () => () => [
 
 const columns = [
   {
-    title: 'ID',
-    value: 'id',
-    toggleable: true,
-  },
-  {
     title: 'Name',
     value: 'name',
+    sortable: true,
     toggleable: false,
     columnOrder: 'first',
   },
   {
-    title: 'Status',
-    value: 'status',
-    toggleable: true,
-  },
-  {
     title: 'Definition ID',
     value: 'definitionId',
+    sortable: true,
     toggleable: true,
   },
   {
     title: 'Definition Name',
     value: 'definitionName',
+    sortable: true,
     toggleable: true,
   },
   {
     title: 'Definition Version',
     value: 'definitionVersion',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    title: 'Status',
+    value: 'status',
+    sortable: true,
     toggleable: true,
   },
   {
@@ -73,23 +73,33 @@ const columns = [
     toggleable: true,
   },
   {
-    title: 'Created',
+    title: 'Created At',
     value: 'createdAt',
+    sortable: true,
     toggleable: true,
   },
   {
     title: 'Created By',
     value: 'createdBy',
+    sortable: true,
     toggleable: true,
   },
   {
-    title: 'Updated',
+    title: 'Updated At',
     value: 'updatedAt',
+    sortable: true,
     toggleable: true,
   },
   {
     title: 'Updated By',
     value: 'updatedBy',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    title: 'ID',
+    value: 'id',
+    sortable: true,
     toggleable: true,
   },
 ];

@@ -56,7 +56,7 @@ const columns = [
     toggleable: true,
   },
   {
-    title: 'Created',
+    title: 'Created At',
     value: 'createdAt',
     toggleable: true,
   },
@@ -66,7 +66,7 @@ const columns = [
     toggleable: true,
   },
   {
-    title: 'Updated',
+    title: 'Updated At',
     value: 'updatedAt',
     toggleable: true,
   },

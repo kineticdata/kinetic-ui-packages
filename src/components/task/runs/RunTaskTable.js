@@ -26,7 +26,7 @@ const columns = [
   },
   { value: 'nodeId', title: 'Node ID', sortable: true },
   { value: 'status', title: 'Status', sortable: true },
-  { value: 'createdAt', title: 'Created', sortable: true },
+  { value: 'createdAt', title: 'Created At', sortable: true },
 ];
 
 export const RunTaskTable = generateTable({

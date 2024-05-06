@@ -51,6 +51,29 @@ const columns = [
     sortable: true,
     toggleable: true,
   },
+  {
+    value: 'createdAt',
+    title: 'Created At',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
+    toggleable: true,
+  },
+  {
+    value: 'updatedAt',
+    title: 'Updated At',
+    toggleable: true,
+    sortable: true,
+  },
+  {
+    value: 'updatedBy',
+    title: 'Updated By',
+    toggleable: true,
+    sortable: true,
+  },
 ];
 
 export const BridgeModelTable = generateTable({

@@ -41,8 +41,6 @@ const dataSource = ({ modelName }) => ({
   transform,
 });
 
-// const filters = () => () => [{ name: 'name', label: 'Name', type: 'text' }];
-
 const columns = [
   {
     value: 'name',
@@ -58,7 +56,6 @@ const columns = [
 
 export const BridgeModelAttributeTable = generateTable({
   columns,
-  // filters,
   dataSource,
   tableOptions: ['modelName'],
 });

@@ -50,7 +50,7 @@ const filters = () => ({ values, definitions }) =>
 const columns = [
   {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     toggleable: true,
   },
   {
@@ -126,7 +126,7 @@ const columns = [
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     toggleable: true,
   },
   {
