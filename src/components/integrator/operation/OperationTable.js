@@ -1,30 +1,23 @@
 import { fetchOperations } from '../../../apis';
-import {
-  generatePaginationParams,
-  generateSortParams,
-} from '../../../apis/http';
 import { generateTable } from '../../table/Table';
-import integrationTypes from '../integrationTypes';
+import { defineFilter } from '../../../helpers';
 
-const filters = () => () => [
-  {
-    name: 'type',
-    label: 'Type',
-    type: 'select',
-    options: integrationTypes,
-  },
-];
+const filters = () => () => [{ name: 'name', label: 'Name', type: 'text' }];
 
-const dataSource = () => ({
+const clientSide = defineFilter(true)
+  .matches('name', 'name')
+  .end();
+
+const dataSource = ({ connectionId }) => ({
   fn: fetchOperations,
-  params: paramData => [
-    {
-      // TODO implement when sorting and pagination are supported
-      // ...generateSortParams(paramData),
-      // ...generatePaginationParams(paramData),
-      ...paramData.filters.filter(Boolean).toJS(),
-    },
-  ],
+  clientSide,
+  params: paramData =>
+    connectionId && [
+      {
+        connectionId,
+        ...paramData.filters.filter(Boolean).toJS(),
+      },
+    ],
   transform: result => ({
     data: result.operations,
   }),
@@ -34,12 +27,11 @@ const columns = [
   {
     value: 'name',
     title: 'Name',
-    // sortable: true,
+    sortable: true,
   },
   {
     value: 'type',
     title: 'Type',
-    // sortable: true,
     toggleable: true,
   },
   {
@@ -49,20 +41,20 @@ const columns = [
   },
   {
     value: 'insertedAt',
-    title: 'Created',
-    // sortable: true,
+    title: 'Created At',
+    sortable: true,
     toggleable: true,
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
-    // sortable: true,
+    title: 'Updated At',
+    sortable: true,
     toggleable: true,
   },
 ];
 
 export const OperationTable = generateTable({
-  tableOptions: [],
+  tableOptions: ['connectionId'],
   columns,
   filters,
   dataSource,

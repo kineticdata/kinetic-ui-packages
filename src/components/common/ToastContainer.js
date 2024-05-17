@@ -45,8 +45,6 @@ regHandlers({
 });
 
 /**
- * Adds toast to state and shows it after 100ms delay to trigger animation
- *
  * @param {object} toast Options for the toast
  * @param {'success'|'error'} [presetType] Preset for styles
  */
@@ -69,7 +67,7 @@ const showToast = (toast, presetType) => {
     });
 
   const toastKey = generateKey();
-  dispatch('ADD_TOAST', {
+  const payload = {
     containerKey: toast.containerKey,
     toast: ToastState(toast).update(
       // Make sure duration is a number, or set to a default numeric value
@@ -83,10 +81,17 @@ const showToast = (toast, presetType) => {
     ),
     toastKey,
     show: false,
-  });
+  };
+  // Use set timeout so that if we're redirecting and showing a toast, the
+  // toast is added second so that it's not immediately cleared by the redirect
   setTimeout(() => {
-    dispatch('SHOW_TOAST', toastKey);
-  }, 100);
+    dispatch('ADD_TOAST', payload);
+    // Use set timeout to delay showing the toast by 100ms so that it renders
+    // into the dom before being shown so it animates correctly
+    setTimeout(() => {
+      dispatch('SHOW_TOAST', toastKey);
+    }, 100);
+  }, 0);
   return toastKey;
 };
 
@@ -120,10 +125,19 @@ const ToastWrapper = ({ component: Toast, show, toastKey, toast }) => {
   );
 };
 
-const ToastContainerComponent = ({ components, toasts, persistentToasts }) => {
+const ToastContainerComponent = ({
+  containerKey,
+  components,
+  toasts,
+  persistentToasts,
+}) => {
   useEffect(() => {
     dispatch('INIT_TOASTS');
-    return () => {};
+    return () => {
+      if (containerKey) {
+        dispatch('CLEAR_TOASTS', containerKey);
+      }
+    };
   }, []);
 
   return (

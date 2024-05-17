@@ -280,6 +280,13 @@ regHandlers({
               : field,
         ),
       ),
+  VALIDATION_FIELD_ERRORS: (state, { payload: { formKey, fieldNames } }) =>
+    state.updateIn(['forms', formKey, 'fields'], fields =>
+      fields.map(
+        field =>
+          fieldNames.includes(field.name) ? field.set('touched', true) : field,
+      ),
+    ),
 });
 
 const selectForm = formKey => state => state.getIn(['forms', formKey]);
@@ -579,6 +586,22 @@ const serializeImpl = ({ bindings, fields }, fieldSet) => {
   return fields
     .filter(field => !field.transient && computedFieldSet.contains(field.name))
     .map(field => (field.serialize ? field.serialize(bindings) : field.value));
+};
+export const validateForm = (formKey, { fieldSet } = {}) => {
+  const { fields } = selectForm(formKey)(store.getState());
+  const computedFieldSet = computeFieldSet(fields, fieldSet);
+  const errors = fields
+    .filter(field => computedFieldSet.contains(field.name))
+    .map(field => field.errors)
+    .filter(errors => !errors.isEmpty());
+  if (!errors.isEmpty()) {
+    dispatch('VALIDATION_FIELD_ERRORS', {
+      formKey,
+      fieldNames: errors.keySeq(),
+    });
+    return false;
+  }
+  return true;
 };
 
 // Wraps the FormImpl to handle the formKey behavior. If this is passed a

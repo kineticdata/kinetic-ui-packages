@@ -1,6 +1,7 @@
 import { get } from 'immutable';
 import { generateForm } from '../../form/Form';
 import {
+  fetchConnection,
   fetchOperation,
   createOperation,
   updateOperation,
@@ -11,17 +12,23 @@ import {
   serializeHttpOperationConfigFields,
 } from './config_fields/http';
 
-const dataSources = ({ id }) => ({
+const dataSources = ({ id, connectionId }) => ({
+  connection: {
+    fn: fetchConnection,
+    params: connectionId && [{ id: connectionId }],
+    transform: result => result.connection,
+  },
   operation: {
     fn: fetchOperation,
-    params: id && [{ id }],
+    params: id && connectionId && [{ id, connectionId }],
     transform: result => result.operation,
   },
 });
 
-const handleSubmit = ({ id }) => values =>
+const handleSubmit = ({ id, connectionId }) => values =>
   (id ? updateOperation : createOperation)({
     id,
+    connectionId,
     operation: values.toJS(),
   }).then(({ operation, error }) => {
     if (error) {
@@ -31,10 +38,10 @@ const handleSubmit = ({ id }) => values =>
     return operation;
   });
 
-const fields = ({ id, type }) => ({ operation }) => {
-  // Must provide an id of an existing operation, or a type
-  if (id ? operation : type) {
-    const typeValue = get(operation, 'type') || type;
+const fields = ({ id }) => ({ operation, connection }) => {
+  if (connection && (!id || operation)) {
+    // Set type from the operation if it exists, or from the connection
+    const typeValue = id ? get(operation, 'type') : get(connection, 'type');
     const configFields =
       typeValue === 'http'
         ? generateHttpOperationConfigFields(get(operation, 'config'))
@@ -70,7 +77,6 @@ const fields = ({ id, type }) => ({ operation }) => {
         label: 'Outputs',
         type: 'map',
         initialValue: get(operation, 'outputs') || {},
-        required: true,
         placeholder: 'Output Key',
         serialize: ({ values }) => values.get('outputs'),
       },
@@ -90,7 +96,7 @@ const fields = ({ id, type }) => ({ operation }) => {
 };
 
 export const OperationForm = generateForm({
-  formOptions: ['id', 'type'],
+  formOptions: ['id', 'connectionId'],
   dataSources,
   fields,
   handleSubmit,

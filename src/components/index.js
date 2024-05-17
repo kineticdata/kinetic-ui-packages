@@ -33,6 +33,7 @@ export {
   serializeForm,
   submitForm,
   unmountForm,
+  validateForm,
   // Don't keep.
   generateForm,
 } from './form/Form';

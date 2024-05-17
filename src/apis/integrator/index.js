@@ -66,31 +66,42 @@ export const deleteConnection = (options = {}) => {
  * OPERATIONS
  ******************************************************************************/
 
-export const fetchOperations = (options = {}) =>
-  axios
-    .get(`${bundle.spaceLocation()}/app/integrator/api/operations`, {
-      params: options,
-    })
+export const fetchOperations = (options = {}) => {
+  validateOptions('fetchOperation', ['connectionId'], options);
+  const { connectionId, ...params } = options;
+  return axios
+    .get(
+      `${bundle.spaceLocation()}/app/integrator/api/connections/${connectionId}/operations`,
+      { params },
+    )
     .then(response => ({ operations: response.data }))
     .catch(handleErrors);
+};
 
 export const fetchOperation = (options = {}) => {
-  validateOptions('fetchOperation', ['id'], options);
-  const { id, ...params } = options;
+  validateOptions('fetchOperation', ['connectionId', 'id'], options);
+  const { connectionId, id, ...params } = options;
   return axios
-    .get(`${bundle.spaceLocation()}/app/integrator/api/operations/${id}`, {
-      params,
-    })
+    .get(
+      `${bundle.spaceLocation()}/app/integrator/api/connections/${connectionId}/operations/${id}`,
+      {
+        params,
+      },
+    )
     .then(response => ({ operation: response.data }))
     .catch(handleErrors);
 };
 
 export const updateOperation = (options = {}) => {
-  validateOptions('updateOperation', ['id', 'operation'], options);
-  const { id, operation, ...params } = options;
+  validateOptions(
+    'updateOperation',
+    ['connectionId', 'id', 'operation'],
+    options,
+  );
+  const { connectionId, id, operation, ...params } = options;
   return axios
     .put(
-      `${bundle.spaceLocation()}/app/integrator/api/operations/${id}`,
+      `${bundle.spaceLocation()}/app/integrator/api/connections/${connectionId}/operations/${id}`,
       operation,
       { params },
     )
@@ -99,11 +110,11 @@ export const updateOperation = (options = {}) => {
 };
 
 export const createOperation = (options = {}) => {
-  validateOptions('createOperation', ['operation'], options);
-  const { operation, ...params } = options;
+  validateOptions('createOperation', ['connectionId', 'operation'], options);
+  const { connectionId, operation, ...params } = options;
   return axios
     .post(
-      `${bundle.spaceLocation()}/app/integrator/api/operations`,
+      `${bundle.spaceLocation()}/app/integrator/api/connections/${connectionId}/operations`,
       operation,
       { params },
     )
@@ -112,12 +123,15 @@ export const createOperation = (options = {}) => {
 };
 
 export const deleteOperation = (options = {}) => {
-  validateOptions('deleteOperation', ['id'], options);
-  const { id, ...params } = options;
+  validateOptions('deleteOperation', ['connectionId', 'id'], options);
+  const { connectionId, id, ...params } = options;
   return axios
-    .delete(`${bundle.spaceLocation()}/app/integrator/api/operations/${id}`, {
-      params,
-    })
+    .delete(
+      `${bundle.spaceLocation()}/app/integrator/api/connections/${connectionId}/operations/${id}`,
+      {
+        params,
+      },
+    )
     .then(response => ({ operation: response.data }))
     .catch(handleErrors);
 };

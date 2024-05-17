@@ -1,27 +1,23 @@
 import { fetchConnections } from '../../../apis';
-import {
-  generatePaginationParams,
-  generateSortParams,
-} from '../../../apis/http';
 import { generateTable } from '../../table/Table';
 import integrationTypes from '../integrationTypes';
+import { defineFilter } from '../../../helpers';
 
 const filters = () => () => [
-  {
-    name: 'type',
-    label: 'Type',
-    type: 'select',
-    options: integrationTypes,
-  },
+  { name: 'name', label: 'Name', type: 'text' },
+  { name: 'type', label: 'Type', type: 'select', options: integrationTypes },
 ];
+
+const clientSide = defineFilter(true)
+  .matches('name', 'name')
+  .equals('type', 'type')
+  .end();
 
 const dataSource = () => ({
   fn: fetchConnections,
+  clientSide,
   params: paramData => [
     {
-      // TODO implement when sorting and pagination are supported
-      // ...generateSortParams(paramData),
-      // ...generatePaginationParams(paramData),
       ...paramData.filters.filter(Boolean).toJS(),
     },
   ],
@@ -34,12 +30,12 @@ const columns = [
   {
     value: 'name',
     title: 'Name',
-    // sortable: true,
+    sortable: true,
   },
   {
     value: 'type',
     title: 'Type',
-    // sortable: true,
+    sortable: true,
     toggleable: true,
   },
   {
@@ -49,14 +45,14 @@ const columns = [
   },
   {
     value: 'insertedAt',
-    title: 'Created',
-    // sortable: true,
+    title: 'Created At',
+    sortable: true,
     toggleable: true,
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
-    // sortable: true,
+    title: 'Updated At',
+    sortable: true,
     toggleable: true,
   },
 ];
