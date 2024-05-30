@@ -4,4 +4,8 @@ export const integrationTypes = [
   { label: 'SQL', value: 'sql' },
 ];
 
+// Helper function for getting the label for a given type value
+integrationTypes.getLabel = value =>
+  integrationTypes.find(t => t.value === value)?.label || value;
+
 export default integrationTypes;
