@@ -98,7 +98,7 @@ export const createField = formKey => ({
     renderAttributes: fromJS(renderAttributes),
     value: initializeValue(type, initialValue),
     // Options supporting conditional expressions,
-    bindings: typeof bindings === 'function' ? {} : bindings,
+    bindings: typeof bindings === 'function' ? Map() : fromJS(bindings),
     enabled: typeof enabled === 'function' ? false : enabled,
     label: typeof label === 'function' ? '' : label,
     options: typeof options === 'function' ? List() : fromJS(options),

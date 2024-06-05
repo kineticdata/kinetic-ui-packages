@@ -342,7 +342,7 @@ SimpleForm.propTypes = {
     t.shape({
       // Name of field that corresponds to a property of the values object.
       name: t.string,
-      label: t.oneOfType([t.string, t.func]),
+      label: t.oneOfType([t.string, t.func, t.element]),
       type: t.string,
       onChange: t.func.isRequired,
       // TODO add more valid props

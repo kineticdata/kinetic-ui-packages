@@ -1,4 +1,4 @@
-import { get, Map } from 'immutable';
+import { get, List, Map } from 'immutable';
 import { generateForm } from '../../form/Form';
 import {
   fetchKapp,
@@ -7,15 +7,18 @@ import {
   fetchSecurityPolicyDefinitions,
   createKapp,
   updateKapp,
+  fetchConnections,
+  fetchBulkOperations,
 } from '../../../apis';
 
 import { buildBindings, slugify } from '../../../helpers';
 
 const DISPLAY_TYPES = ['Redirect'];
 
-const SPACE_INCLUDES = 'details,spaceAttributeDefinitions';
+const SPACE_INCLUDES =
+  'details,spaceAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
 const KAPP_INCLUDES =
-  'attributesMap,securityPolicies,details,fields.details,formAttributeDefinitions';
+  'attributesMap,securityPolicies,details,fields.details,formAttributeDefinitions,integrations';
 
 const dataSources = ({ kappSlug }) => ({
   space: {
@@ -39,6 +42,31 @@ const dataSources = ({ kappSlug }) => ({
     fn: fetchSecurityPolicyDefinitions,
     params: kappSlug && [{ kappSlug }],
     transform: result => result.securityPolicyDefinitions,
+  },
+  connections: {
+    fn: fetchConnections,
+    params: [],
+    transform: result => result.connections,
+  },
+  operations: {
+    fn: fetchBulkOperations,
+    // TODO [i] update to pass operationIds when fetchBulkOperations is implemented server side
+    params: ({ kapp }) =>
+      kapp &&
+      kapp.get('integrations').size > 0 && [
+        {
+          connectionIds: kapp
+            .get('integrations')
+            .reduce(
+              (ids, resource) =>
+                ids.includes(resource.get('connectionId'))
+                  ? ids
+                  : [...ids, resource.get('connectionId')],
+              [],
+            ),
+        },
+      ],
+    transform: result => result.operations,
   },
 });
 
@@ -96,8 +124,8 @@ const securityEndpoints = {
   },
 };
 
-const fields = ({ kappSlug }) => ({ kapp }) =>
-  (!kappSlug || kapp) && [
+const fields = ({ kappSlug }) => ({ kapp, connections }) =>
+  (!kappSlug || (kapp && connections)) && [
     {
       name: 'afterLogoutPath',
       label: 'After Logout Path',
@@ -269,6 +297,17 @@ const fields = ({ kappSlug }) => ({ kapp }) =>
       required: false,
       options: ({ attributeDefinitions }) => attributeDefinitions,
       initialValue: get(kapp, 'attributesMap'),
+    },
+    {
+      name: 'integrations',
+      label: 'Integration Resources',
+      type: 'table',
+      options: [
+        { name: 'name', label: 'Name', type: 'text' },
+        { name: 'connectionId', label: 'Connection', type: 'text' },
+        { name: 'operationId', label: 'Operation', type: 'text' },
+      ],
+      initialValue: get(kapp, 'integrations', List()),
     },
   ];
 

@@ -136,6 +136,28 @@ export const deleteOperation = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const fetchBulkOperations = (options = {}) => {
+  validateOptions('fetchOperation', ['connectionIds'], options);
+  const { connectionIds, ...params } = options;
+  // TODO [i] update when bulk operation fetch api exists
+  return Promise.all(
+    connectionIds.map(connectionId =>
+      axios
+        .get(
+          `${bundle.spaceLocation()}/app/integrator/api/connections/${connectionId}/operations`,
+          { params },
+        )
+        .then(response => ({ operations: response.data }))
+        .catch(handleErrors),
+    ),
+  ).then(response => ({
+    operations: response.reduce(
+      (list, { operations }) => [...list, ...(operations || [])],
+      [],
+    ),
+  }));
+};
+
 export const inspectOperation = (options = {}) => {
   validateOptions('inspectOperation', ['operation'], options);
   const { operation, ...params } = options;
