@@ -25,8 +25,8 @@ const dataSources = ({ id, connectionId }) => ({
   },
 });
 
-const handleSubmit = ({ id, connectionId }) => values =>
-  (id ? updateOperation : createOperation)({
+const handleSubmit = ({ id, connectionId, clone }) => values =>
+  (id && !clone ? updateOperation : createOperation)({
     id,
     connectionId,
     operation: values.toJS(),
@@ -38,7 +38,7 @@ const handleSubmit = ({ id, connectionId }) => values =>
     return operation;
   });
 
-const fields = ({ id }) => ({ operation, connection }) => {
+const fields = ({ id, clone }) => ({ operation, connection }) => {
   if (connection && (!id || operation)) {
     // Set type from the operation if it exists, or from the connection
     const typeValue = id ? get(operation, 'type') : get(connection, 'type');
@@ -51,9 +51,11 @@ const fields = ({ id }) => ({ operation, connection }) => {
         name: 'name',
         label: 'Operation Name',
         type: 'text',
-        initialValue: get(operation, 'name'),
+        initialValue: !clone ? get(operation, 'name') : '',
         required: true,
-        placeholder: 'Enter a name to find your operation easily',
+        placeholder: !clone
+          ? 'Enter a name to find your operation easily'
+          : `Clone of ${get(operation, 'name')}`,
       },
       {
         name: 'type',
@@ -65,10 +67,10 @@ const fields = ({ id }) => ({ operation, connection }) => {
         enabled: false,
       },
       {
-        name: 'docsLink',
+        name: 'documentationLink',
         label: 'Operation Documentation Link',
         type: 'text',
-        initialValue: get(operation, 'docsLink'),
+        initialValue: get(operation, 'documentationLink'),
         placeholder: 'Optional (but recommended)',
         transient: true, // TODO remove when property exists
       },
@@ -96,7 +98,7 @@ const fields = ({ id }) => ({ operation, connection }) => {
 };
 
 export const OperationForm = generateForm({
-  formOptions: ['id', 'connectionId'],
+  formOptions: ['id', 'connectionId', 'clone'],
   dataSources,
   fields,
   handleSubmit,

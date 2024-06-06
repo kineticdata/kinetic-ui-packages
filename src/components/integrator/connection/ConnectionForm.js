@@ -19,8 +19,8 @@ const dataSources = ({ id }) => ({
   },
 });
 
-const handleSubmit = ({ id }) => values =>
-  (id ? updateConnection : createConnection)({
+const handleSubmit = ({ id, clone }) => values =>
+  (id && !clone ? updateConnection : createConnection)({
     id,
     connection: values.toJS(),
   }).then(({ connection, error }) => {
@@ -31,7 +31,7 @@ const handleSubmit = ({ id }) => values =>
     return connection;
   });
 
-const fields = ({ id, type }) => ({ connection }) => {
+const fields = ({ id, type, clone }) => ({ connection }) => {
   // Must provide an id of an existing connection, or a type
   if (id ? connection : type) {
     const typeValue = get(connection, 'type') || type;
@@ -44,9 +44,11 @@ const fields = ({ id, type }) => ({ connection }) => {
         name: 'name',
         label: 'Connection Name',
         type: 'text',
-        initialValue: get(connection, 'name'),
+        initialValue: !clone ? get(connection, 'name') : '',
         required: true,
-        placeholder: 'Enter a name to find your connection easily',
+        placeholder: !clone
+          ? 'Enter a name to find your connection easily'
+          : `Clone of ${get(connection, 'name')}`,
       },
       {
         name: 'type',
@@ -58,10 +60,10 @@ const fields = ({ id, type }) => ({ connection }) => {
         enabled: false,
       },
       {
-        name: 'docsLink',
+        name: 'documentationLink',
         label: 'API Documentation Link',
         type: 'text',
-        initialValue: get(connection, 'docsLink'),
+        initialValue: get(connection, 'documentationLink'),
         placeholder: 'Optional (but recommended)',
         transient: true, // TODO remove when property exists
       },
@@ -89,7 +91,7 @@ const fields = ({ id, type }) => ({ connection }) => {
 };
 
 export const ConnectionForm = generateForm({
-  formOptions: ['id', 'type'],
+  formOptions: ['id', 'type', 'clone'],
   dataSources,
   fields,
   handleSubmit,
