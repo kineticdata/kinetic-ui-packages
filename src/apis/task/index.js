@@ -11,6 +11,7 @@ export const buildTreeId = options =>
       : options.name;
 
 const generateNextPageToken = data => {
+  // debugger;
   const { offset, limit, count, more } = data;
   const nextPageToken = data.limit + data.offset;
 
@@ -586,13 +587,17 @@ export const fetchHandlers = (options = {}) =>
       params: {
         include: options.include,
         limit: options.limit,
+        offset: options.offset,
+        name: options.name || undefined,
+        status: options.status || undefined,
       },
     })
     .then(response => ({
       handlers: response.data.handlers,
+      count: response.data.count,
+      nextPageToken: generateNextPageToken(response.data),
     }))
     .catch(handleErrors);
-
 export const fetchHandler = (options = {}) => {
   validateOptions('fetchHandler', ['definitionId'], options);
   return axios

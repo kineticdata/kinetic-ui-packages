@@ -1,21 +1,22 @@
 import { generateTable } from '../../table/Table';
 import { fetchHandlers } from '../../../apis';
-import { defineFilter } from '../../../helpers';
-
-const clientSide = defineFilter(true)
-  .equals('id', 'id')
-  .startsWith('name', 'name')
-  .equals('status', 'status')
-  .equals('definitionId', 'definitionId')
-  .startsWith('definitionName', 'definitionName')
-  .equals('definitionVersion', 'definitionVersion')
-  .end();
 
 const dataSource = () => ({
   fn: fetchHandlers,
-  params: () => [{ include: 'details' }],
-  transform: result => ({ data: result.handlers }),
-  clientSide,
+  params: paramData => [
+    {
+      include: 'details',
+      limit: paramData.pageSize,
+      offset: paramData.nextPageToken,
+      status: status ? status : paramData.filters.get('status'),
+      name: name ? name : paramData.filters.get('name'),
+    },
+  ],
+  transform: result => ({
+    data: result.handlers,
+    nextPageToken: result.nextPageToken,
+    count: result.count,
+  }),
 });
 
 const filters = () => () => [
