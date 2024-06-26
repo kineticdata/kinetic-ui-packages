@@ -41,7 +41,7 @@ const handleSubmit = ({ id, connectionId, clone }) => values =>
 const fields = ({ id, clone }) => ({ operation, connection }) => {
   if (connection && (!id || operation)) {
     // Set type from the operation if it exists, or from the connection
-    const typeValue = id ? get(operation, 'type') : get(connection, 'type');
+    const typeValue = get(connection, 'type');
     const configFields =
       typeValue === 'http'
         ? generateHttpOperationConfigFields(get(operation, 'config'))
@@ -56,15 +56,6 @@ const fields = ({ id, clone }) => ({ operation, connection }) => {
         placeholder: !clone
           ? 'Enter a name to find your operation easily'
           : `Clone of ${get(operation, 'name')}`,
-      },
-      {
-        name: 'type',
-        label: 'Type',
-        type: 'select',
-        options: integrationTypes,
-        initialValue: typeValue,
-        required: true,
-        enabled: false,
       },
       {
         name: 'documentationLink',

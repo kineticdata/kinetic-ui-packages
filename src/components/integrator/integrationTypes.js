@@ -1,7 +1,7 @@
 export const integrationTypes = [
   { label: 'HTTP', value: 'http' },
-  { label: 'SMTP', value: 'smtp' },
-  { label: 'SQL', value: 'sql' },
+  // { label: 'SMTP', value: 'smtp' },
+  // { label: 'SQL', value: 'sql' },
 ];
 
 // Helper function for getting the label for a given type value

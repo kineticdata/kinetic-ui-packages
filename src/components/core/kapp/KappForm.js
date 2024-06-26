@@ -300,7 +300,7 @@ const fields = ({ kappSlug }) => ({ kapp, connections }) =>
     },
     {
       name: 'integrations',
-      label: 'Integration Resources',
+      label: 'Integrations',
       type: 'table',
       options: [
         { name: 'name', label: 'Name', type: 'text' },
