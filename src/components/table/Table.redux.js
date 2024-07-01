@@ -283,6 +283,9 @@ regHandlers({
         t
           // When sorting changes, reset pagination.
           .set('pageOffset', 0)
+          .set('currentPageToken', null)
+          .set('nextPageToken', null)
+          .set('pageTokens', List())
           // Update the sort column / direction.
           .set(
             'sortDirection',
