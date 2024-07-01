@@ -1,5 +1,6 @@
 import { generateTable } from '../../table/Table';
 import { fetchHandlers } from '../../../apis';
+import { generateSortParams } from '../../../apis/http';
 
 const dataSource = () => ({
   fn: fetchHandlers,
@@ -10,6 +11,7 @@ const dataSource = () => ({
       offset: paramData.nextPageToken,
       status: status ? status : paramData.filters.get('status'),
       name: name ? name : paramData.filters.get('name'),
+      ...generateSortParams(paramData),
     },
   ],
   transform: result => ({

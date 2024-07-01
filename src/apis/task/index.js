@@ -11,7 +11,6 @@ export const buildTreeId = options =>
       : options.name;
 
 const generateNextPageToken = data => {
-  // debugger;
   const { offset, limit, count, more } = data;
   const nextPageToken = data.limit + data.offset;
 
@@ -590,6 +589,8 @@ export const fetchHandlers = (options = {}) =>
         offset: options.offset,
         name: options.name || undefined,
         status: options.status || undefined,
+        direction: options.direction || undefined,
+        orderBy: options.orderBy || undefined,
       },
     })
     .then(response => ({
