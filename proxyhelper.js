@@ -32,16 +32,24 @@ const defaultProxyLogger = ({
       const proxyData = getProxyData(proxyRequest);
       const originalData = getRequestData(originalRequest);
       console.log(
-        `[proxy] [original] -> ${originalData.method}\t${originalData.scheme}\t${originalData.host}\t${originalData.path}`,
+        `[proxy] [original] -> ${originalData.method}\t${
+          originalData.scheme
+        }\t${originalData.host}\t${originalData.path}`,
       );
       console.log(
-        `[proxy] [proxied]  -> ${proxyData.method}\t${proxyData.scheme}\t${proxyData.host}\t${proxyData.path}`,
+        `[proxy] [proxied]  -> ${proxyData.method}\t${proxyData.scheme}\t${
+          proxyData.host
+        }\t${proxyData.path}`,
       );
     } else if (proxyResponse) {
       const responseData = getResponseData(proxyResponse);
       const requestData = getRequestData(originalRequest);
       console.log(
-        `[proxy] [original] <- ${responseData.statusCode}\t${requestData.method}\t${requestData.scheme}\t${requestData.host} (${responseData.host})\t${requestData.path}`,
+        `[proxy] [original] <- ${responseData.statusCode}\t${
+          requestData.method
+        }\t${requestData.scheme}\t${requestData.host} (${responseData.host})\t${
+          requestData.path
+        }`,
       );
     }
   } catch (e) {
@@ -56,6 +64,7 @@ const setupProxy = ({
   target = process.env.REACT_APP_PROXY_HOST,
   proxyLogger,
   pathRewrite,
+  onlyTenant = false,
 } = {}) => {
   return {
     target,
@@ -71,6 +80,7 @@ const setupProxy = ({
       }
 
       if (
+        !onlyTenant &&
         process.env.REACT_APP_PROXY_SUBDOMAIN &&
         !proxyRequest.path.endsWith('pack') &&
         !proxyRequest.path.endsWith('favicon.ico')
@@ -112,6 +122,7 @@ const getProxyConfig = (
     mainTarget = process.env.REACT_APP_PROXY_HOST,
     loghubTarget = process.env.REACT_APP_LOGHUB_PROXY_HOST,
     systemCoordinatorTarget = process.env.REACT_APP_SYS_COORDINATOR_PROXY_HOST,
+    integratorTarget = process.env.REACT_APP_INTEGRATOR_PROXY_HOST,
     proxyLogger,
   } = {},
 ) => {
@@ -158,6 +169,20 @@ const getProxyConfig = (
       },
     });
     finalConfigs.push({ paths: ['/app/system-coordinator/**'], options });
+  }
+
+  if (integratorTarget) {
+    // If we're overriding the underlying Integrator host, bypass it in the main.
+    mainPaths.push('!/app/integrator/**');
+    const options = setupProxy({
+      target: integratorTarget,
+      proxyLogger,
+      pathRewrite: {
+        '^/app/integrator/': '/',
+      },
+      onlyTenant: true,
+    });
+    finalConfigs.push({ paths: ['/app/integrator/**'], options });
   }
 
   return finalConfigs.map(config => {
