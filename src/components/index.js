@@ -136,6 +136,8 @@ export {
   IndexDefinitionTable,
 } from './core/index_definition/IndexDefinitionTable';
 export { IndexJobTable } from './core/index_job/IndexJobTable';
+export { IntegrationForm } from './core/integration/IntegrationForm';
+export { IntegrationTable } from './core/integration/IntegrationTable';
 export { KappForm } from './core/kapp/KappForm';
 export { KappTable } from './core/kapp/KappTable';
 export { LocaleForm } from './core/translation/LocaleForm';

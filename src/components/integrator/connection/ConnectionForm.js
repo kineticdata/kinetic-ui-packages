@@ -63,17 +63,15 @@ const fields = ({ id, type, clone }) => ({ connection }) => {
         name: 'documentationLink',
         label: 'API Documentation Link',
         type: 'text',
-        initialValue: get(connection, 'documentationLink'),
+        initialValue: get(connection, 'documentationLink') || '',
         placeholder: 'Optional (but recommended)',
-        transient: true, // TODO remove when property exists
       },
       {
         name: 'description',
         label: 'Description',
         type: 'text',
-        initialValue: get(connection, 'description'),
+        initialValue: get(connection, 'description') || '',
         placeholder: 'Enter a short description for the connection',
-        transient: true, // TODO remove when property exists
       },
       {
         name: 'config',

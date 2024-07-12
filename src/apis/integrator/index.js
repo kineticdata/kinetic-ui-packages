@@ -137,49 +137,38 @@ export const deleteOperation = (options = {}) => {
 };
 
 export const fetchBulkOperations = (options = {}) => {
-  validateOptions('fetchOperation', ['connectionIds'], options);
-  const { connectionIds, ...params } = options;
-  // TODO [i] update when bulk operation fetch api exists
-  return Promise.all(
-    connectionIds.map(connectionId =>
-      axios
-        .get(
-          `${bundle.spaceLocation()}/app/integrator/api/connections/${connectionId}/operations`,
-          { params },
-        )
-        .then(response => ({ operations: response.data }))
-        .catch(handleErrors),
-    ),
-  ).then(response => ({
-    operations: response.reduce(
-      (list, { operations }) => [...list, ...(operations || [])],
-      [],
-    ),
-  }));
+  validateOptions('fetchBulkOperations', ['ids'], options);
+  const { ids, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/operations-search`,
+      { ids },
+      { params },
+    )
+    .then(response => ({ operations: response.data }))
+    .catch(handleErrors);
 };
 
 export const inspectOperation = (options = {}) => {
   validateOptions('inspectOperation', ['operation'], options);
   const { operation, ...params } = options;
   return axios
-    .post(`${bundle.spaceLocation()}/app/integrator/api/inspect`, operation, {
-      params,
-    })
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/inspect`,
+      { operation },
+      { params },
+    )
     .then(response => ({ detectedInputs: response.data.detectedInputs }))
     .catch(handleErrors);
 };
 
-/******************************************************************************
- * EXECUTIONS
- ******************************************************************************/
-
-export const runExecution = (options = {}) => {
-  validateOptions('runExecution', ['connection', 'operation', 'type'], options);
-  const { connection, operation, type, parameters = {}, ...params } = options;
+export const executeOperation = (options = {}) => {
+  validateOptions('executeOperation', ['connection', 'operation'], options);
+  const { connection, operation, parameters = {}, ...params } = options;
   return axios
     .post(
-      `${bundle.spaceLocation()}/app/integrator/api/executions`,
-      { connection, operation, type, parameters },
+      `${bundle.spaceLocation()}/app/integrator/api/execute`,
+      { connection, operation, parameters },
       { params },
     )
     .then(response => ({ execution: response.data }))

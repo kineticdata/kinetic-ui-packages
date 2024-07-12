@@ -47,6 +47,14 @@ const fields = ({ id, clone }) => ({ operation, connection }) => {
         ? generateHttpOperationConfigFields(get(operation, 'config'))
         : [];
     return [
+      // {
+      //   name: 'connectionId',
+      //   label: 'Connection ID',
+      //   type: 'text',
+      //   initialValue: !clone ? get(operation, 'connectionId') : '',
+      //   visible: false,
+      //   enabled: false,
+      // },
       {
         name: 'name',
         label: 'Operation Name',
@@ -61,9 +69,8 @@ const fields = ({ id, clone }) => ({ operation, connection }) => {
         name: 'documentationLink',
         label: 'Operation Documentation Link',
         type: 'text',
-        initialValue: get(operation, 'documentationLink'),
+        initialValue: get(operation, 'documentationLink') || '',
         placeholder: 'Optional (but recommended)',
-        transient: true, // TODO remove when property exists
       },
       {
         name: 'outputs',
