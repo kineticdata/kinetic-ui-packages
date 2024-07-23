@@ -1,46 +1,7 @@
 import { List, Map } from 'immutable';
 import { generateForm } from '../../form/Form';
 import { fetchForm, fetchKapps } from '../../../apis';
-
-export const checkOmittedParameters = (node, parameter) => {
-  if (node.definitionId === 'system_submission_create_v1') {
-    return !['kappSlug', 'formSlug'].includes(parameter.id);
-  } else {
-    return true;
-  }
-};
-
-export const generateTaskDefinition = taskDefinition => {
-  if (
-    taskDefinition &&
-    taskDefinition.definitionName === 'system_submission_create'
-  ) {
-    return ({ form }) => ({
-      ...taskDefinition,
-      parameters: [
-        ...taskDefinition.parameters.map(
-          parameter =>
-            parameter.id === 'kappSlug'
-              ? { ...parameter, defaultValue: form.kapp.slug }
-              : parameter.id === 'formSlug'
-                ? { ...parameter, defaultValue: form.slug }
-                : parameter,
-        ),
-        ...form.fields.map(field => ({
-          name: field.name,
-          defaultValue: '',
-          dependsOnId: null,
-          dependsOnValue: null,
-          description: '',
-          id: `values.${field.name}`,
-          required: false,
-        })),
-      ],
-    });
-  } else {
-    return null;
-  }
-};
+import { generateSubmissionCreateTaskDefinition } from './helpers';
 
 const dataSources = () => ({
   kapps: {
@@ -87,7 +48,9 @@ const handleSubmit = ({ taskDefinition }) => values =>
     kappSlug: values.get('kappSlug'),
     formSlug: values.getIn(['form', 'slug'], ''),
     include: 'fields,kapp',
-  }).then(generateTaskDefinition(taskDefinition));
+  }).then(({ form }) =>
+    generateSubmissionCreateTaskDefinition(taskDefinition, { form }),
+  );
 
 export const TaskDefinitionConfigForm = generateForm({
   formOptions: ['taskDefinition'],

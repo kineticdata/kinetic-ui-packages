@@ -10,7 +10,7 @@ import {
 } from '../../../apis/http';
 
 const fetchIntegrationsWithSupportingData = options =>
-  fetchIntegrations(options).then(({ integrations }) => {
+  fetchIntegrations(options).then(({ integrations, ...response }) => {
     // Get ids of all operations in the table
     const ids = integrations?.map(integration => integration.operationId);
     // Fetch supporting integrator data for the table
@@ -25,6 +25,7 @@ const fetchIntegrationsWithSupportingData = options =>
         : Promise.resolve({ operations: [] }),
     ]).then(([{ connections }, { operations }]) => {
       return {
+        ...response,
         integrations: integrations.map(integration => ({
           ...integration,
           // Add the connection and operation names to the records
@@ -51,7 +52,7 @@ const dataSource = ({ kappSlug }) => ({
   ],
   transform: result => ({
     data: result.integrations,
-    // nextPageToken: result.nextPageToken,
+    nextPageToken: result.nextPageToken,
   }),
 });
 

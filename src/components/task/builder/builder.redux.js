@@ -1,5 +1,5 @@
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
-import { List, OrderedMap } from 'immutable';
+import { fromJS, List, OrderedMap } from 'immutable';
 import { isFunction } from 'lodash-es';
 import { action, dispatch, regHandlers, regSaga } from '../../../store';
 import {
@@ -20,8 +20,10 @@ import {
   updateWebApi,
   fetchWorkflow,
   fetchPlatformItem,
+  fetchConnections,
 } from '../../../apis';
 import { renameDependencies, treeReturnTask } from './helpers';
+import integrationTypes from '../../integrator/integrationTypes';
 
 export const mountTreeBuilder = treeKey => dispatch('TREE_MOUNT', { treeKey });
 export const unmountTreeBuilder = treeKey =>
@@ -57,6 +59,7 @@ regSaga(
         { tree, error: treeError },
         { workflow, error: workflowError },
         { categories },
+        { connections = [] },
         { webApi, error: webApiError },
       ] = yield all([
         // Fetch the tree if not a linked workflow
@@ -75,6 +78,8 @@ regSaga(
           include:
             'handlers.results,handlers.parameters,trees.parameters,trees.inputs,trees.outputs',
         }),
+        // Fetch connections
+        call(fetchConnections),
         // Fetch the webAPI if applicable
         webApiProps
           ? call(fetchWebApi, {
@@ -137,6 +142,7 @@ regSaga(
           categories,
           kappSlug,
           formSlug,
+          connections,
           treeKey,
           tree:
             // Don't set the tree if it's for a webApi but the webApi errors
@@ -289,10 +295,25 @@ regHandlers({
   TREE_LOADED: (
     state,
     {
-      payload: { categories, kappSlug, formSlug, treeKey, tree, webApi, error },
+      payload: {
+        categories,
+        connections,
+        kappSlug,
+        formSlug,
+        treeKey,
+        tree,
+        webApi,
+        error,
+      },
     },
   ) =>
     state.mergeIn(['trees', treeKey], {
+      connections: fromJS(connections)
+        .sortBy(conn => conn.name)
+        .reduce(
+          (reduction, conn) => reduction.set(conn.get('id'), conn),
+          OrderedMap(),
+        ),
       kappSlug,
       formSlug,
       lastSave: tree,
@@ -321,6 +342,8 @@ regHandlers({
       webApi,
       error,
     }),
+  // TODO [i] add ways to refetch pieces of data ??
+  TREE_DATA_RELOADED: (state, { payload: { treeKey, connections } }) => state,
   TREE_SAVE: (state, { payload: { treeKey } }) =>
     state.mergeIn(['trees', treeKey], {
       saving: true,

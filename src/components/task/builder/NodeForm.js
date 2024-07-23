@@ -1,12 +1,22 @@
 import { List } from 'immutable';
 import { generateForm } from '../../form/Form';
 import { NodeMessage } from './models';
-import { buildBindings } from './helpers';
-import { fetchForm } from '../../../apis';
 import {
-  checkOmittedParameters,
-  generateTaskDefinition,
-} from './TaskDefinitionConfigForm';
+  buildBindings,
+  generateSubmissionCreateTaskDefinition,
+  generateIntegrationTaskDefinition,
+  checkOmittedParametersForAdvancedHandlers,
+} from './helpers';
+import {
+  ADVANCED_HANDLER_NAME_INTEGRATION,
+  ADVANCED_HANDLER_NAME_SUBMISSION_CREATE,
+} from './constants';
+import {
+  fetchConnection,
+  fetchForm,
+  fetchOperation,
+  inspectOperation,
+} from '../../../apis';
 
 const dataSources = ({ tasks, tree, node }) => ({
   bindings: {
@@ -20,29 +30,77 @@ const dataSources = ({ tasks, tree, node }) => ({
   form: {
     fn: node =>
       fetchForm({
-        kappSlug: node.parameters.find(parameter => parameter.id === 'kappSlug')
-          .value,
-        formSlug: node.parameters.find(parameter => parameter.id === 'formSlug')
-          .value,
+        kappSlug: node.parameters.find(p => p.id === 'kappSlug').value,
+        formSlug: node.parameters.find(p => p.id === 'formSlug').value,
         include: 'fields,kapp',
       }).then(data => data.form),
-    params: generateTaskDefinition(tasks.get(node.definitionId))
-      ? [node]
-      : null,
+    params:
+      tasks.get(node.definitionId)?.definitionName ===
+      ADVANCED_HANDLER_NAME_SUBMISSION_CREATE
+        ? [node]
+        : null,
+  },
+  connection: {
+    fn: node =>
+      fetchConnection({
+        id: node.parameters.find(p => p.id === '$$connection')?.value,
+      }).then(data => data.connection),
+    params:
+      tasks.get(node.definitionId)?.definitionName ===
+      ADVANCED_HANDLER_NAME_INTEGRATION
+        ? [node]
+        : null,
+  },
+  operation: {
+    fn: node =>
+      fetchOperation({
+        connectionId: node.parameters.find(p => p.id === '$$connection')?.value,
+        id: node.parameters.find(p => p.id === '$$operation')?.value,
+      }).then(data => data.operation),
+    params:
+      tasks.get(node.definitionId)?.definitionName ===
+      ADVANCED_HANDLER_NAME_INTEGRATION
+        ? [node]
+        : null,
+  },
+  detectedInputs: {
+    fn: node =>
+      inspectOperation({
+        operation: node.parameters.find(p => p.id === '$$operation')?.value,
+      }).then(data => data.detectedInputs),
+    params:
+      tasks.get(node.definitionId)?.definitionName ===
+      ADVANCED_HANDLER_NAME_INTEGRATION
+        ? [node]
+        : null,
   },
   task: {
-    fn: (node, form) =>
-      form
-        ? generateTaskDefinition(tasks.get(node.definitionId))({
-            form: form.toJS(),
-          })
-        : tasks.get(node.definitionId),
-    params: ({ form }) =>
-      generateTaskDefinition(tasks.get(node.definitionId))
-        ? form
-          ? [node, form]
-          : null
-        : [node, null],
+    fn: task => task,
+    params: ({ form, connection, operation, detectedInputs }) => {
+      const task = tasks.get(node.definitionId);
+
+      if (task?.definitionName === ADVANCED_HANDLER_NAME_SUBMISSION_CREATE) {
+        if (form) {
+          return [
+            generateSubmissionCreateTaskDefinition(task, { form: form.toJS() }),
+          ];
+        }
+        return null;
+      } else if (task?.definitionName === ADVANCED_HANDLER_NAME_INTEGRATION) {
+        if (connection && operation && detectedInputs) {
+          return [
+            generateIntegrationTaskDefinition(task, {
+              connection: connection.toJS(),
+              operation: operation.toJS(),
+              detectedInputs: detectedInputs.toJS(),
+            }),
+          ];
+        }
+        return null;
+      } else {
+        return [task];
+      }
+    },
   },
 });
 
@@ -120,7 +178,8 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
       options: parameter.menu ? getOptions(parameter.menu) : bindings,
       transient: true,
       visible:
-        checkDependsOn(parameter) && checkOmittedParameters(node, parameter),
+        checkDependsOn(parameter) &&
+        checkOmittedParametersForAdvancedHandlers(node, parameter),
     })),
     {
       name: 'parameters',

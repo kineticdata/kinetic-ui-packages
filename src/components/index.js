@@ -198,7 +198,6 @@ export { ConnectorForm } from './task/builder/ConnectorForm';
 export { NodeForm } from './task/builder/NodeForm';
 export { NodeParametersForm } from './task/builder/NodeParametersForm';
 export {
-  generateTaskDefinition,
   TaskDefinitionConfigForm,
 } from './task/builder/TaskDefinitionConfigForm';
 export { RunTable } from './task/runs/RunTable';

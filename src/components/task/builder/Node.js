@@ -8,7 +8,12 @@ import { Point } from './models';
 import { SvgText } from './SvgText';
 import plusIcon from '../../../../assets/task/icons/plus_small.svg';
 import dragHandleIcon from '../../../../assets/task/icons/drag-handle.svg';
-import { NODE_HEIGHT, NODE_START_RADIUS, NODE_WIDTH } from './constants';
+import {
+  ADVANCED_HANDLER_NAME_INTEGRATION,
+  NODE_HEIGHT,
+  NODE_START_RADIUS,
+  NODE_WIDTH,
+} from './constants';
 
 export class Node extends Component {
   constructor(props) {
@@ -162,6 +167,9 @@ export class Node extends Component {
       );
     const isRoutine =
       tasks.get(definitionId) && isArray(tasks.get(definitionId).inputs);
+    const isIntegration = node.definitionId.startsWith(
+      `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
+    );
     const type = getNodeType(node);
     const height =
       type === 'join' || type === 'junction'
@@ -237,6 +245,13 @@ export class Node extends Component {
           <path
             d={constants.NODE_LEFT_BAR_PATH}
             className="routine-bar"
+            strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
+          />
+        )}
+        {isIntegration && (
+          <path
+            d={constants.NODE_PLUG_BAR_PATH}
+            className="integration-bar"
             strokeWidth={constants.NODE_DECORATION_STROKE_WIDTH}
           />
         )}

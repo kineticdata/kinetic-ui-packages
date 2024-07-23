@@ -1,9 +1,14 @@
 import React, { createRef, Component, Fragment } from 'react';
-import { isFunction, pick } from 'lodash-es';
+import { isFunction } from 'lodash-es';
 import { connect, dispatch } from '../../../store';
 import { configureTreeBuilder } from './builder.redux';
 import * as constants from './constants';
-import { addNewTask, isPointInNode } from './helpers';
+import {
+  addNewTask,
+  isPointInNode,
+  generateIntegrationTaskDefinition,
+  generateSubmissionCreateTaskDefinition,
+} from './helpers';
 import { Connector as ConnectorModel, Node as NodeModel } from './models';
 import { SvgCanvas } from './SvgCanvas';
 import { Node } from './Node';
@@ -194,6 +199,7 @@ export class TreeBuilderComponent extends Component {
           addNewTask(
             this.props.treeKey,
             this.props.treeBuilderState.tree,
+            this.props.treeBuilderState.connections,
             this.state.newNodeParent,
             this.newNode.current.position,
             () => this.setState({ newConnector: null, newNode: null }),
@@ -375,3 +381,10 @@ const mapStateToProps = (state, props) => ({
   kappSlug: state.getIn(['trees', props.treeKey, 'kappSlug']),
 });
 export const TreeBuilder = connect(mapStateToProps)(TreeBuilderComponent);
+
+TreeBuilder.ADVANCED_HANDLERS = {
+  INTEGRATION_NAME: constants.ADVANCED_HANDLER_NAME_INTEGRATION,
+  generateIntegrationTaskDefinition,
+  SUBMISSION_CREATE_NAME: constants.ADVANCED_HANDLER_NAME_SUBMISSION_CREATE,
+  generateSubmissionCreateTaskDefinition,
+};

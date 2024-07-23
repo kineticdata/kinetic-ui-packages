@@ -1,7 +1,10 @@
 import { generateForm } from '../../form/Form';
-import { buildBindings, normalizeParameter } from './helpers';
+import {
+  buildBindings,
+  checkOmittedParametersForAdvancedHandlers,
+  normalizeParameter,
+} from './helpers';
 import { NodeParameter } from './models';
-import { checkOmittedParameters } from './TaskDefinitionConfigForm';
 
 const getOptions = menu =>
   menu
@@ -34,7 +37,7 @@ const fields = ({ node, task, tasks, tree }) => ({ bindings, parameters }) =>
       options: parameter.menu ? getOptions(parameter.menu) : bindings,
       transient: true,
       enabled: false,
-      visible: checkOmittedParameters(node, parameter),
+      visible: checkOmittedParametersForAdvancedHandlers(node, parameter),
     })),
     ...parameters.map(parameter => {
       const matchingParameter = node.parameters.find(
@@ -48,7 +51,10 @@ const fields = ({ node, task, tasks, tree }) => ({ bindings, parameters }) =>
         helpText: parameter.description,
         // If this parameter will be omitted, keep its value. Otherwise, set to
         // the matchingParameter's value or the default
-        initialValue: !checkOmittedParameters(task, parameter)
+        initialValue: !checkOmittedParametersForAdvancedHandlers(
+          task,
+          parameter,
+        )
           ? parameter.value || parameter.defaultValue
           : matchingParameter
             ? matchingParameter.value
@@ -56,7 +62,7 @@ const fields = ({ node, task, tasks, tree }) => ({ bindings, parameters }) =>
         options: parameter.menu ? getOptions(parameter.menu) : bindings,
         transient: true,
         // Use the task variable as the node since this is the new node
-        visible: checkOmittedParameters(task, parameter),
+        visible: checkOmittedParametersForAdvancedHandlers(task, parameter),
       };
     }),
     {

@@ -14,7 +14,12 @@ import {
   NodeResultDependency,
   NodeMessage,
 } from './models';
-import { NEW_TASK_DX, NEW_TASK_DY } from './constants';
+import {
+  ADVANCED_HANDLER_NAME_INTEGRATION,
+  ADVANCED_HANDLER_NAME_SUBMISSION_CREATE,
+  NEW_TASK_DX,
+  NEW_TASK_DY,
+} from './constants';
 
 export const isIE11 = document.documentMode === 11;
 
@@ -153,34 +158,40 @@ const bindify = raw =>
     );
 
 export const buildBindings = (tree, tasks, node) => {
-  const Results = Map({
-    children: tree.nodes
-      // convert the node map to use the name as the key
-      .mapKeys((_, node) => node.name)
-      .sortBy((value, key) => key)
-      // normalize the outputs / results property (routine / handler
-      // respectively)
-      .map(node => {
-        const task = tasks.get(node.definitionId);
-        return (task && (task.results || task.outputs)) || [];
-      })
-      // filter out any nodes that have no outputs / results
-      .filter(results => results.length > 0)
-      // convert the results list to the bindings map using the name property
-      // of each result object
-      .map((results, nodeNode) =>
-        Map({
-          children: OrderedMap(
-            results.map(result => [
-              result.name,
-              Map({
-                value: `@results['${nodeNode}']['${result.name}']`,
-              }),
-            ]),
-          ),
-        }),
-      ),
-  });
+  const Results =
+    // console.log('bindings', { // TODO [i] update bindings
+    //   tree: tree?.toJS(),
+    //   tasks: tasks?.toJS(),
+    //   node: node?.toJS(),
+    // }) ||
+    Map({
+      children: tree.nodes
+        // convert the node map to use the name as the key
+        .mapKeys((_, node) => node.name)
+        .sortBy((value, key) => key)
+        // normalize the outputs / results property (routine / handler
+        // respectively)
+        .map(node => {
+          const task = tasks.get(node.definitionId);
+          return (task && (task.results || task.outputs)) || [];
+        })
+        // filter out any nodes that have no outputs / results
+        .filter(results => results.length > 0)
+        // convert the results list to the bindings map using the name property
+        // of each result object
+        .map((results, nodeNode) =>
+          Map({
+            children: OrderedMap(
+              results.map(result => [
+                result.name,
+                Map({
+                  value: `@results['${nodeNode}']['${result.name}']`,
+                }),
+              ]),
+            ),
+          }),
+        ),
+    });
   return bindify(
     Results.get('children').isEmpty()
       ? tree.bindings
@@ -194,9 +205,17 @@ export const buildBindings = (tree, tasks, node) => {
 // should be called with a task definition, then it stubs out a node and
 // connector and passes a complete function which should be called with the
 // fully configured node and connector
-export const addNewTask = (treeKey, tree, parent, position, reset) => ({
+export const addNewTask = (
+  treeKey,
+  tree,
+  connections,
+  parent,
+  position,
+  reset,
+) => ({
   cancel: reset,
   tree: tree,
+  connections,
   selectCloneNode: cloneNode =>
     addNewTaskNext({ cloneNode, position, parent, reset, tree, treeKey }),
   selectTaskDefinition: task =>
@@ -420,5 +439,68 @@ export const getNewNodePosition = (node, childNodes) => {
       .sortBy(node => node.position.y)
       .maxBy(node => node.position.y);
     return maxChild.position.update('y', y => y + NEW_TASK_DY);
+  }
+};
+
+export const generateSubmissionCreateTaskDefinition = (task, { form }) => ({
+  ...task,
+  parameters: [
+    ...task.parameters.map(
+      parameter =>
+        parameter.id === 'kappSlug'
+          ? { ...parameter, defaultValue: form?.kapp?.slug }
+          : parameter.id === 'formSlug'
+            ? { ...parameter, defaultValue: form?.slug }
+            : parameter,
+    ),
+    ...form?.fields?.map(field => ({
+      name: field.name,
+      defaultValue: '',
+      dependsOnId: null,
+      dependsOnValue: null,
+      description: '',
+      id: `values.${field.name}`,
+      required: false,
+    })),
+  ],
+});
+
+export const generateIntegrationTaskDefinition = (
+  task,
+  { connection, operation, detectedInputs },
+) => ({
+  ...task,
+  parameters: [
+    ...task.parameters.map(
+      parameter =>
+        parameter.id === '$$connection'
+          ? { ...parameter, defaultValue: connection.id }
+          : parameter.id === '$$operation'
+            ? { ...parameter, defaultValue: operation.id }
+            : parameter,
+    ),
+    ...detectedInputs.map(input => ({
+      name: input,
+      defaultValue: '',
+      dependsOnId: null,
+      dependsOnValue: null,
+      description: '',
+      id: input,
+      required: false,
+    })),
+  ],
+});
+
+export const checkOmittedParametersForAdvancedHandlers = (node, parameter) => {
+  if (
+    node.definitionId.startsWith(`${ADVANCED_HANDLER_NAME_SUBMISSION_CREATE}_v`)
+  ) {
+    return !['kappSlug', 'formSlug'].includes(parameter.id);
+  } else if (
+    node.definitionId.startsWith(`${ADVANCED_HANDLER_NAME_INTEGRATION}_v`)
+  ) {
+    return !['$$connection', '$$operation'].includes(parameter.id);
+  } else {
+    return true;
   }
 };

@@ -12,9 +12,7 @@ export const {
   plural: {
     requiredOptions: ['kappSlug'],
     url: ({ kappSlug }) => `/kapps/${kappSlug}/integrations`,
-    transform: response => ({
-      integrations: response.data.integrations,
-    }),
+    transform: response => response.data,
   },
   singular: {
     requiredOptions: ['kappSlug', 'name'],

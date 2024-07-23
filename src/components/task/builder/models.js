@@ -81,6 +81,7 @@ export const Connector = Record({
 
 export const TreeBuilderState = Record({
   categories: OrderedMap(),
+  connections: OrderedMap(),
   error: null,
   formSlug: null,
   kappSlug: null,
