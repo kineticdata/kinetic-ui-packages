@@ -21,9 +21,11 @@ import {
   fetchWorkflow,
   fetchPlatformItem,
   fetchConnections,
+  fetchOperations,
+  fetchBulkOperations,
 } from '../../../apis';
 import { renameDependencies, treeReturnTask } from './helpers';
-import integrationTypes from '../../integrator/integrationTypes';
+import { ADVANCED_HANDLER_NAME_INTEGRATION } from './constants';
 
 export const mountTreeBuilder = treeKey => dispatch('TREE_MOUNT', { treeKey });
 export const unmountTreeBuilder = treeKey =>
@@ -137,26 +139,84 @@ regSaga(
 
       const loadError = workflowObjectError || treeError || webApiError;
 
+      // Find the operation ids of any integration nodes
+      const operationIds =
+        treeObject?.treeJson?.nodes
+          ?.map(
+            node =>
+              node.definitionId.startsWith(
+                `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
+              )
+                ? node.parameters.find(p => p.id === '$$operation')?.value
+                : null,
+          )
+          .filter(Boolean) || [];
+
+      yield all([
+        put(
+          action('TREE_LOADED', {
+            categories,
+            connections,
+            kappSlug,
+            formSlug,
+            treeKey,
+            tree:
+              // Don't set the tree if it's for a webApi but the webApi errors
+              treeObject && (!webApiProps || webApi)
+                ? deserializeTree(treeObject)
+                : null,
+            webApi: webApi
+              ? deserializeWebApi(webApi, webApiProps.kappSlug)
+              : null,
+            error: loadError ? loadError.message || loadError : null,
+          }),
+        ),
+        operationIds.length > 0
+          ? put(action('TREE_LOAD_OPERATIONS', { treeKey, operationIds }))
+          : null,
+      ]);
+    } catch (e) {
+      console.error('Caught error loading tree', e);
+    }
+  }),
+);
+
+regSaga(
+  takeEvery('TREE_LOAD_CONNECTIONS', function*({ payload }) {
+    try {
+      const { treeKey } = payload;
+
+      const { connections = [] } = yield call(fetchConnections);
+
       yield put(
-        action('TREE_LOADED', {
-          categories,
-          kappSlug,
-          formSlug,
+        action('TREE_INTEGRATION_DATA_LOADED', {
           connections,
           treeKey,
-          tree:
-            // Don't set the tree if it's for a webApi but the webApi errors
-            treeObject && (!webApiProps || webApi)
-              ? deserializeTree(treeObject)
-              : null,
-          webApi: webApi
-            ? deserializeWebApi(webApi, webApiProps.kappSlug)
-            : null,
-          error: loadError ? loadError.message || loadError : null,
         }),
       );
     } catch (e) {
-      console.error('Caught error loading tree', e);
+      console.error('Caught error loading tree integration data', e);
+    }
+  }),
+);
+
+regSaga(
+  takeEvery('TREE_LOAD_OPERATIONS', function*({ payload }) {
+    try {
+      const { treeKey, connectionId, operationIds = [] } = payload;
+
+      const { operations = [] } = yield connectionId
+        ? call(fetchOperations, { connectionId })
+        : call(fetchBulkOperations, { ids: operationIds });
+
+      yield put(
+        action('TREE_INTEGRATION_DATA_LOADED', {
+          operations,
+          treeKey,
+        }),
+      );
+    } catch (e) {
+      console.error('Caught error loading tree integration data', e);
     }
   }),
 );
@@ -311,7 +371,8 @@ regHandlers({
       connections: fromJS(connections)
         .sortBy(conn => conn.name)
         .reduce(
-          (reduction, conn) => reduction.set(conn.get('id'), conn),
+          (reduction, conn) =>
+            reduction.set(conn.get('id'), conn.set('operations', OrderedMap())),
           OrderedMap(),
         ),
       kappSlug,
@@ -342,8 +403,41 @@ regHandlers({
       webApi,
       error,
     }),
-  // TODO [i] add ways to refetch pieces of data ??
-  TREE_DATA_RELOADED: (state, { payload: { treeKey, connections } }) => state,
+  TREE_INTEGRATION_DATA_LOADED: (
+    state,
+    { payload: { treeKey, connections, operations } },
+  ) =>
+    state.updateIn(['trees', treeKey, 'connections'], connectionsMap => {
+      // Update connections map in state if data was provided
+      const newConnectionsMap = connections
+        ? fromJS(connections)
+            .sortBy(conn => conn.name)
+            .reduce(
+              (reduction, conn) =>
+                reduction.set(
+                  conn.get('id'),
+                  conn.set(
+                    'operations',
+                    connectionsMap.getIn([conn.get('id'), 'operations']) ||
+                      OrderedMap(),
+                  ),
+                ),
+              OrderedMap(),
+            )
+        : connectionsMap;
+
+      // Update the operations maps in each connection if data was provided
+      return operations
+        ? fromJS(operations).reduce(
+            (map, op) =>
+              map.setIn(
+                [op.get('connectionId'), 'operations', op.get('id')],
+                op,
+              ),
+            newConnectionsMap,
+          )
+        : newConnectionsMap;
+    }),
   TREE_SAVE: (state, { payload: { treeKey } }) =>
     state.mergeIn(['trees', treeKey], {
       saving: true,

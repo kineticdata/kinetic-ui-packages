@@ -279,6 +279,18 @@ const addNewTaskNext = ({
     stagedTree,
     complete: ({ connector, node }) => {
       reset();
+      if (
+        node.definitionId.startsWith(`${ADVANCED_HANDLER_NAME_INTEGRATION}_v`)
+      ) {
+        const operationId = node.parameters.find(p => p.id === '$$operation')
+          ?.value;
+        if (operationId) {
+          dispatch('TREE_LOAD_OPERATIONS', {
+            treeKey,
+            operationIds: [operationId],
+          });
+        }
+      }
       return dispatch('TREE_UPDATE', {
         treeKey,
         tree: stagedTree

@@ -245,6 +245,7 @@ export class TreeBuilderComponent extends Component {
     const [highlightType, highlightId] = highlight || [];
     if (treeBuilderState) {
       const {
+        connections,
         error,
         lastSave,
         lastWebApi,
@@ -270,6 +271,10 @@ export class TreeBuilderComponent extends Component {
             dispatch('TREE_UPDATE_SETTINGS', { treeKey, values }),
           updateWebApi: values =>
             dispatch('TREE_UPDATE_WEB_API', { treeKey, values }),
+          reloadConnections: () =>
+            dispatch('TREE_LOAD_CONNECTIONS', { treeKey }),
+          reloadOperations: (options = {}) =>
+            dispatch('TREE_LOAD_OPERATIONS', { treeKey, ...options }),
           save: ({
             overwrite = false,
             newName = '',
@@ -351,6 +356,7 @@ export class TreeBuilderComponent extends Component {
                     primary={selected.getIn([0, 'nodeId']) === node.id}
                     selected={selected.some(({ nodeId }) => nodeId === node.id)}
                     onSelect={this.props.onSelectNode}
+                    connections={connections}
                     tasks={tasks}
                     tree={tree}
                   />
@@ -361,6 +367,7 @@ export class TreeBuilderComponent extends Component {
                   ref={this.newNode}
                   treeKey={treeKey}
                   node={this.state.newNode}
+                  connections={connections}
                   tasks={tasks}
                   tree={tree}
                 />

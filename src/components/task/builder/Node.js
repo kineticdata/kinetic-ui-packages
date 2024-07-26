@@ -151,25 +151,43 @@ export class Node extends Component {
   }
 
   render() {
-    const { node, highlighted, primary, selected, tasks } = this.props;
+    const {
+      node,
+      highlighted,
+      primary,
+      selected,
+      connections,
+      tasks,
+    } = this.props;
     const { defers, definitionId, id, name } = node;
     const tempNode = typeof id !== 'number';
-    const missing =
-      !tempNode &&
-      !tasks.has(node.definitionId) &&
-      !node.definitionId.startsWith('system_tree_return_v') &&
-      !node.definitionId.startsWith('system_start_v');
-    const invalid =
-      missing ||
-      (!tempNode && !name) ||
-      node.parameters.some(
-        parameter => parameter.required && parameter.value === '',
-      );
     const isRoutine =
       tasks.get(definitionId) && isArray(tasks.get(definitionId).inputs);
     const isIntegration = node.definitionId.startsWith(
       `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
     );
+
+    const missing =
+      (!tempNode &&
+        !tasks.has(node.definitionId) &&
+        !node.definitionId.startsWith('system_tree_return_v') &&
+        !node.definitionId.startsWith('system_start_v')) ||
+      (isIntegration &&
+        !connections.get(
+          node.parameters.find(p => p.id === '$$connection')?.value,
+        ));
+    const invalid =
+      missing ||
+      (!tempNode && !name) ||
+      node.parameters.some(
+        parameter => parameter.required && parameter.value === '',
+      ) ||
+      (isIntegration &&
+        !connections.getIn([
+          node.parameters.find(p => p.id === '$$connection')?.value,
+          'operations',
+          node.parameters.find(p => p.id === '$$operation')?.value,
+        ]));
     const type = getNodeType(node);
     const height =
       type === 'join' || type === 'junction'
