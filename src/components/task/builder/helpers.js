@@ -282,7 +282,7 @@ const addNewTaskNext = ({
       if (
         node.definitionId.startsWith(`${ADVANCED_HANDLER_NAME_INTEGRATION}_v`)
       ) {
-        const operationId = node.parameters.find(p => p.id === '$$operation')
+        const operationId = node.parameters.find(p => p.id === 'operation')
           ?.value;
         if (operationId) {
           dispatch('TREE_LOAD_OPERATIONS', {
@@ -457,14 +457,17 @@ export const getNewNodePosition = (node, childNodes) => {
 export const generateSubmissionCreateTaskDefinition = (task, { form }) => ({
   ...task,
   parameters: [
-    ...task.parameters.map(
-      parameter =>
-        parameter.id === 'kappSlug'
-          ? { ...parameter, defaultValue: form?.kapp?.slug }
-          : parameter.id === 'formSlug'
-            ? { ...parameter, defaultValue: form?.slug }
-            : parameter,
-    ),
+    ...task.parameters
+      // Remove previous form's field parameters
+      .filter(parameter => !parameter.id.startsWith('values.'))
+      .map(
+        parameter =>
+          parameter.id === 'kappSlug'
+            ? { ...parameter, defaultValue: form?.kapp?.slug }
+            : parameter.id === 'formSlug'
+              ? { ...parameter, defaultValue: form?.slug }
+              : parameter,
+      ),
     ...form?.fields?.map(field => ({
       name: field.name,
       defaultValue: '',
@@ -483,21 +486,24 @@ export const generateIntegrationTaskDefinition = (
 ) => ({
   ...task,
   parameters: [
-    ...task.parameters.map(
-      parameter =>
-        parameter.id === '$$connection'
-          ? { ...parameter, defaultValue: connection.id }
-          : parameter.id === '$$operation'
-            ? { ...parameter, defaultValue: operation.id }
-            : parameter,
-    ),
+    ...task.parameters
+      // Remove previous operation's parameters
+      .filter(parameter => !parameter.id.startsWith('parameters.'))
+      .map(
+        parameter =>
+          parameter.id === 'connection'
+            ? { ...parameter, defaultValue: connection.id }
+            : parameter.id === 'operation'
+              ? { ...parameter, defaultValue: operation.id }
+              : parameter,
+      ),
     ...detectedInputs.map(input => ({
       name: input,
       defaultValue: '',
       dependsOnId: null,
       dependsOnValue: null,
       description: '',
-      id: input,
+      id: `parameters.${input}`,
       required: false,
     })),
   ],
@@ -511,7 +517,7 @@ export const checkOmittedParametersForAdvancedHandlers = (node, parameter) => {
   } else if (
     node.definitionId.startsWith(`${ADVANCED_HANDLER_NAME_INTEGRATION}_v`)
   ) {
-    return !['$$connection', '$$operation'].includes(parameter.id);
+    return !['connection', 'operation'].includes(parameter.id);
   } else {
     return true;
   }

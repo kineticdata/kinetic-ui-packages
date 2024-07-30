@@ -174,20 +174,14 @@ export class Node extends Component {
         !node.definitionId.startsWith('system_start_v')) ||
       (isIntegration &&
         !connections.get(
-          node.parameters.find(p => p.id === '$$connection')?.value,
+          node.parameters.find(p => p.id === 'connection')?.value,
         ));
     const invalid =
       missing ||
       (!tempNode && !name) ||
       node.parameters.some(
         parameter => parameter.required && parameter.value === '',
-      ) ||
-      (isIntegration &&
-        !connections.getIn([
-          node.parameters.find(p => p.id === '$$connection')?.value,
-          'operations',
-          node.parameters.find(p => p.id === '$$operation')?.value,
-        ]));
+      );
     const type = getNodeType(node);
     const height =
       type === 'join' || type === 'junction'

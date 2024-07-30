@@ -298,6 +298,7 @@ export class TreeBuilderComponent extends Component {
           zoomIn: () => this.canvasRef.current.zoomIn(),
           zoomOut: () => this.canvasRef.current.zoomOut(),
         },
+        connections,
         dirty: this.isDirty(treeBuilderState),
         error,
         lastTree: lastSave,

@@ -18,7 +18,7 @@ import {
   inspectOperation,
 } from '../../../apis';
 
-const dataSources = ({ tasks, tree, node }) => ({
+const dataSources = ({ tasks, tree, node, connections }) => ({
   bindings: {
     fn: buildBindings,
     params: [tree, tasks, node],
@@ -41,10 +41,13 @@ const dataSources = ({ tasks, tree, node }) => ({
         : null,
   },
   connection: {
-    fn: node =>
-      fetchConnection({
-        id: node.parameters.find(p => p.id === '$$connection')?.value,
-      }).then(data => data.connection),
+    fn: node => {
+      const id = node.parameters.find(p => p.id === 'connection')?.value;
+      return (
+        connections?.get(id) ||
+        fetchConnection({ id }).then(data => data.connection)
+      );
+    },
     params:
       tasks.get(node.definitionId)?.definitionName ===
       ADVANCED_HANDLER_NAME_INTEGRATION
@@ -52,11 +55,15 @@ const dataSources = ({ tasks, tree, node }) => ({
         : null,
   },
   operation: {
-    fn: node =>
-      fetchOperation({
-        connectionId: node.parameters.find(p => p.id === '$$connection')?.value,
-        id: node.parameters.find(p => p.id === '$$operation')?.value,
-      }).then(data => data.operation),
+    fn: node => {
+      const connectionId = node.parameters.find(p => p.id === 'connection')
+        ?.value;
+      const id = node.parameters.find(p => p.id === 'operation')?.value;
+      return (
+        connections?.getIn([connectionId, 'operations', id]) ||
+        fetchOperation({ connectionId, id }).then(data => data.operation)
+      );
+    },
     params:
       tasks.get(node.definitionId)?.definitionName ===
       ADVANCED_HANDLER_NAME_INTEGRATION
@@ -66,7 +73,7 @@ const dataSources = ({ tasks, tree, node }) => ({
   detectedInputs: {
     fn: node =>
       inspectOperation({
-        operation: node.parameters.find(p => p.id === '$$operation')?.value,
+        operation: node.parameters.find(p => p.id === 'operation')?.value,
       }).then(data => data.detectedInputs),
     params:
       tasks.get(node.definitionId)?.definitionName ===
@@ -116,7 +123,7 @@ const checkDependsOn = parameter =>
     values.get(`parameter_${parameter.dependsOnId}`) ===
     parameter.dependsOnValue);
 
-const fields = ({ tasks, tree, node }) => ({ bindings }) =>
+const fields = ({ tree, node }) => ({ bindings }) =>
   bindings && [
     {
       name: 'name',
@@ -249,7 +256,7 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
 const handleSubmit = ({ node }) => values => node.merge(values);
 
 export const NodeForm = generateForm({
-  formOptions: ['node', 'tasks', 'tree'],
+  formOptions: ['connections', 'node', 'tasks', 'tree'],
   dataSources,
   fields,
   handleSubmit,

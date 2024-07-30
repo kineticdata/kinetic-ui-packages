@@ -147,7 +147,7 @@ regSaga(
               node.definitionId.startsWith(
                 `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
               )
-                ? node.parameters.find(p => p.id === '$$operation')?.value
+                ? node.parameters.find(p => p.id === 'operation')?.value
                 : null,
           )
           .filter(Boolean) || [];
