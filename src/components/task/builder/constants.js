@@ -142,6 +142,6 @@ export const NODE_CORNER_TAB_PATH = `
 `;
 
 // Advanced handler definition names
-export const ADVANCED_HANDLER_NAME_INTEGRATION = 'system_integrator';
+export const ADVANCED_HANDLER_NAME_INTEGRATION = 'system_integration';
 export const ADVANCED_HANDLER_NAME_SUBMISSION_CREATE =
   'system_submission_create';
