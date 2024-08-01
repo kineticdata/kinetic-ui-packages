@@ -225,7 +225,7 @@ const generateHttpConnectionConfigAuthFields = auth => [
     initialValue:
       !get(auth, 'token') || typeof get(auth, 'token') === 'string'
         ? 'raw'
-        : typeof getIn(auth, ['token', 'op']) === 'object'
+        : typeof getIn(auth, ['token', 'operation']) === 'object'
           ? 'http'
           : '',
     visible: ({ values }) => values.get('auth.type') === 'bearer_token',
@@ -245,33 +245,58 @@ const generateHttpConnectionConfigAuthFields = auth => [
       values.get('auth.tokenType') === 'raw',
   },
   ...generateHttpConnectionConfigAuthTokenOperationFields(
-    getIn(auth, ['token', 'op']),
+    getIn(auth, ['token', 'operation']),
   ),
   {
     name: 'auth.tokenHttpConn',
     transient: true,
     label: 'Use different connection for auth',
     type: 'checkbox',
-    initialValue: getIn(auth, ['token', 'conn']) === 'object',
+    initialValue: getIn(auth, ['token', 'connection']) === 'object',
     visible: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
   },
   ...generateHttpConnectionConfigAuthTokenConnectionFields(
-    getIn(auth, ['token', 'conn']),
+    getIn(auth, ['token', 'connection']),
   ),
   {
-    name: 'auth.outputs',
-    label: 'Outputs',
-    type: 'map',
-    initialValue: get(auth, 'outputs') || {},
+    name: 'auth.tokenOutput',
+    label: 'Token',
+    type: 'code',
+    language: 'js-expression',
+    initialValue: get(auth, 'tokenOutput'),
     required: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
-    placeholder: 'Output Key',
     visible: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
+    helpText: (
+      <>
+        Define a mapping that's a JavaScript expression from the response{' '}
+        <code>body</code> to the token value.
+      </>
+    ),
+  },
+  {
+    name: 'auth.expirationOutput',
+    label: 'Expiration',
+    type: 'code',
+    language: 'js-expression',
+    initialValue: get(auth, 'expirationOutput'),
+    required: ({ values }) =>
+      values.get('auth.type') === 'bearer_token' &&
+      values.get('auth.tokenType') === 'http',
+    visible: ({ values }) =>
+      values.get('auth.type') === 'bearer_token' &&
+      values.get('auth.tokenType') === 'http',
+    helpText: (
+      <>
+        Define a mapping that's a JavaScript expression from the response{' '}
+        <code>body</code> to the expiration value.
+      </>
+    ),
   },
 ];
 
@@ -372,11 +397,13 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http' &&
       values.get('auth.token.operation.bodyType') === 'form',
+    placeholder: 'Body Key',
   },
   {
     name: 'auth.token.operation.body.raw',
     label: 'Raw Body',
-    type: 'text',
+    type: 'code',
+    language: 'json',
     initialValue: getIn(operation, ['body', 'raw']),
     visible: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
@@ -390,7 +417,12 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     options: [
       { name: 'name', label: 'Name', type: 'text' },
       { name: 'contentType', label: 'Content Type', type: 'text' },
-      { name: 'content', label: 'Content', type: 'text' },
+      {
+        name: 'content',
+        label: 'Content',
+        type: 'code',
+        renderAttributes: { simple: true, max: 'sm' },
+      },
       { name: 'fileName', label: 'File Name', type: 'text' },
     ],
     initialValue: getIn(operation, ['body', 'parts'], List()),

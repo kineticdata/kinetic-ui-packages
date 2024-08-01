@@ -42,7 +42,12 @@ export const generateHttpOperationConfigFields = config => [
     type: 'text',
     initialValue: get(config, 'path'),
     required: true,
-    helpText: 'Use {{ variables }} for dynamic content',
+    helpText: (
+      <>
+        Use the <code>{'{{parameter}}'}</code> format to create dynamic
+        parameters.
+      </>
+    ),
   },
   {
     name: 'params',
@@ -50,7 +55,12 @@ export const generateHttpOperationConfigFields = config => [
     type: 'map',
     initialValue: get(config, 'params'),
     placeholder: 'Parameter Key',
-    helpText: 'Use {{ variables }} for dynamic content',
+    helpText: (
+      <>
+        Use the <code>{'{{parameter}}'}</code> format to create dynamic
+        parameters.
+      </>
+    ),
   },
   {
     name: 'headers',
@@ -58,7 +68,12 @@ export const generateHttpOperationConfigFields = config => [
     type: 'map',
     initialValue: get(config, 'headers'),
     placeholder: 'Header Key',
-    helpText: 'Use {{ variables }} for dynamic content',
+    helpText: (
+      <>
+        Use the <code>{'{{parameter}}'}</code> format to create dynamic
+        parameters.
+      </>
+    ),
   },
   {
     name: 'followRedirect',
@@ -94,13 +109,27 @@ export const generateHttpOperationConfigFields = config => [
     type: 'map',
     initialValue: getIn(config, ['body', 'form']),
     visible: ({ values }) => values.get('bodyType') === 'form',
+    placeholder: 'Body Key',
+    helpText: (
+      <>
+        Use the <code>{'{{parameter}}'}</code> format to create dynamic
+        parameters.
+      </>
+    ),
   },
   {
     name: 'body.raw',
     label: 'Raw Body',
-    type: 'text',
+    type: 'code',
+    language: 'json',
     initialValue: getIn(config, ['body', 'raw']),
     visible: ({ values }) => values.get('bodyType') === 'raw',
+    helpText: (
+      <>
+        Use the <code>{'{{parameter}}'}</code> format to create dynamic
+        parameters.
+      </>
+    ),
   },
   {
     name: 'body.parts',
@@ -109,10 +138,21 @@ export const generateHttpOperationConfigFields = config => [
     options: [
       { name: 'name', label: 'Name', type: 'text' },
       { name: 'contentType', label: 'Content Type', type: 'text' },
-      { name: 'content', label: 'Content', type: 'text' },
+      {
+        name: 'content',
+        label: 'Content',
+        type: 'code',
+        renderAttributes: { simple: true, max: 'sm' },
+      },
       { name: 'fileName', label: 'File Name', type: 'text' },
     ],
     initialValue: getIn(config, ['body', 'parts'], List()),
     visible: ({ values }) => values.get('bodyType') === 'multipart',
+    helpText: (
+      <>
+        Use the <code>{'{{parameter}}'}</code> format to create dynamic
+        parameters.
+      </>
+    ),
   },
 ];

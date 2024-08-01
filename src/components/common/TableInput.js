@@ -17,6 +17,8 @@ const TextInput = props => (
   />
 );
 
+const CodeInput = TextInput;
+
 const SelectInput = props => (
   <select
     id={props.id}
@@ -117,6 +119,7 @@ const RowLayout = ({
 );
 
 const typeToComponent = {
+  code: 'CodeInput',
   drag: 'DragHandle',
   display: 'TextDisplay',
   checkbox: 'CheckboxInput',
@@ -132,6 +135,7 @@ const defaultComponents = {
   CheckboxInput,
   SelectInput,
   TextInput,
+  CodeInput,
 };
 
 const fieldFromConfig = (config, components = {}) => {

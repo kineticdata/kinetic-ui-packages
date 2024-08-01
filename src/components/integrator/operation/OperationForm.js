@@ -6,7 +6,6 @@ import {
   createOperation,
   updateOperation,
 } from '../../../apis';
-import integrationTypes from '../integrationTypes';
 import {
   generateHttpOperationConfigFields,
   serializeHttpOperationConfigFields,
@@ -47,14 +46,6 @@ const fields = ({ id, clone }) => ({ operation, connection }) => {
         ? generateHttpOperationConfigFields(get(operation, 'config'))
         : [];
     return [
-      // {
-      //   name: 'connectionId',
-      //   label: 'Connection ID',
-      //   type: 'text',
-      //   initialValue: !clone ? get(operation, 'connectionId') : '',
-      //   visible: false,
-      //   enabled: false,
-      // },
       {
         name: 'name',
         label: 'Operation Name',
