@@ -1,14 +1,16 @@
 import { generateForm } from '../../form/Form';
 import { buildBindings } from './helpers';
 
-const dataSources = ({ tasks, tree, connector }) => ({
+const dataSources = ({ tasks, tree, connector, connections }) => ({
   bindings: {
     fn: buildBindings,
-    params: [tree, tasks, tree.nodes.get(connector.headId)],
+    params: [
+      { tree, tasks, node: tree.nodes.get(connector.headId), connections },
+    ],
   },
 });
 
-const fields = ({ connector, tasks, tree }) => ({ bindings }) =>
+const fields = ({ connector }) => ({ bindings }) =>
   bindings && [
     {
       name: 'type',
@@ -33,7 +35,7 @@ const fields = ({ connector, tasks, tree }) => ({ bindings }) =>
       label: 'Condition',
       type: 'code',
       initialValue: connector.condition,
-      language: 'ruby',
+      language: 'ruby-expression',
       options: bindings,
     },
     {
@@ -65,7 +67,7 @@ const fields = ({ connector, tasks, tree }) => ({ bindings }) =>
 const handleSubmit = ({ connector }) => values => connector.merge(values);
 
 export const ConnectorForm = generateForm({
-  formOptions: ['connector', 'tasks', 'tree'],
+  formOptions: ['connections', 'connector', 'tasks', 'tree'],
   dataSources,
   fields,
   handleSubmit,

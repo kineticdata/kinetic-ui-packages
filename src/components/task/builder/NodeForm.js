@@ -21,7 +21,7 @@ import {
 const dataSources = ({ tasks, tree, node, connections }) => ({
   bindings: {
     fn: buildBindings,
-    params: [tree, tasks, node],
+    params: [{ tree, tasks, node, connections }],
   },
   parameters: {
     fn: node => node.parameters,
@@ -179,7 +179,7 @@ const fields = ({ tree, node }) => ({ bindings }) =>
       name: `parameter_${parameter.id}`,
       label: parameter.label,
       type: parameter.menu ? 'select' : 'code',
-      language: parameter.menu ? null : 'erb',
+      language: parameter.menu ? null : 'ruby-template',
       helpText: parameter.description,
       initialValue: parameter.value,
       options: parameter.menu ? getOptions(parameter.menu) : bindings,
@@ -205,7 +205,7 @@ const fields = ({ tree, node }) => ({ bindings }) =>
         .filter(message => message.type === 'Create')
         .map(message => message.value)
         .first(''),
-      language: 'erb',
+      language: 'ruby-template',
       options: bindings,
       transient: true,
       visible: ({ values }) => values.get('defers', false),
@@ -218,7 +218,7 @@ const fields = ({ tree, node }) => ({ bindings }) =>
         .filter(message => message.type === 'Update')
         .map(message => message.value)
         .first(''),
-      language: 'erb',
+      language: 'ruby-template',
       options: bindings,
       transient: true,
       visible: ({ values }) => values.get('defers', false),
@@ -231,7 +231,7 @@ const fields = ({ tree, node }) => ({ bindings }) =>
         .filter(message => message.type === 'Complete')
         .map(message => message.value)
         .first(''),
-      language: 'erb',
+      language: 'ruby-template',
       options: bindings,
       transient: true,
     },

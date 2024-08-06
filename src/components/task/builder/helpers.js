@@ -1,4 +1,4 @@
-import { isImmutable, List, Map, OrderedMap } from 'immutable';
+import { fromJS, isImmutable, List, Map, OrderedMap } from 'immutable';
 import { isObject } from 'lodash-es';
 import { Intersection, ShapeInfo } from 'kld-intersections';
 import * as constants from './constants';
@@ -142,61 +142,103 @@ export const getAncestors = (tree, node, result = Map()) =>
     result,
   );
 
-// recursive helper that calls bindify if the current raw value is an object
-// or returns the leaf value object if not (removing the erb tags at the same
-// time)
-const bindify = raw =>
-  Map(raw)
-    .sortBy((_, key) => key)
-    .map(
-      value =>
-        isImmutable(value)
-          ? value
-          : isObject(value)
-            ? Map({ children: bindify(value) })
-            : Map({ value: value.replace(/^<%=(.*)%>$/, '$1') }),
-    );
+// Converts the bindings data from the server and the generated Results
+// bindings into the correct structure needed for the code editor
+const bindify = raw => {
+  const flatBindings = flattenBindings(raw)
+    .map(binding => binding?.match(/^<?%?=?\s*(.*)\s*%?>?$/i)?.[1])
+    .filter(Boolean)
+    .map(binding => parseBinding(binding));
+  const groupedBindings = groupBindings(flatBindings);
+  return finalizeBindings(groupedBindings);
+};
 
-export const buildBindings = (tree, tasks, node) => {
-  const Results =
-    // console.log('bindings', { // TODO [i] update bindings
-    //   tree: tree?.toJS(),
-    //   tasks: tasks?.toJS(),
-    //   node: node?.toJS(),
-    // }) ||
-    Map({
-      children: tree.nodes
-        // convert the node map to use the name as the key
-        .mapKeys((_, node) => node.name)
-        .sortBy((value, key) => key)
-        // normalize the outputs / results property (routine / handler
-        // respectively)
-        .map(node => {
-          const task = tasks.get(node.definitionId);
-          return (task && (task.results || task.outputs)) || [];
+// Takes the bindings data from the server and the generated Results bindings,
+// and flattens them all into a list of the binding strings
+const flattenBindings = data =>
+  isObject(data) ? Object.values(data).flatMap(flattenBindings) : data;
+
+// Parses each flattened bindings string to an array of its parts
+const parseBinding = (binding, parsedSoFar) => {
+  const match = binding?.match(/^(?:(@\w+)|\[\'((?:\w|\s|-)+)\'\])(.*)$/i);
+  if (match) {
+    const parsedNext = [...(parsedSoFar || []), match[1] || match[2]].filter(
+      Boolean,
+    );
+    return match[3] ? parseBinding(match[3], parsedNext) : parsedNext;
+  }
+  return parsedSoFar;
+};
+
+// Recursively groups the flattened and parsed bindings into maps with the
+// parts as keys, with the final leaf having a value of null
+const groupBindings = flatBindings =>
+  Array.isArray(flatBindings)
+    ? List(flatBindings)
+        .groupBy(bindingArray => bindingArray[0])
+        .map(childBindings => {
+          const updatedBindings = childBindings
+            .map(([, ...children]) => (children.length > 0 ? children : null))
+            .filter(Boolean);
+          return updatedBindings.size > 0
+            ? groupBindings(updatedBindings.toArray())
+            : null;
         })
-        // filter out any nodes that have no outputs / results
-        .filter(results => results.length > 0)
-        // convert the results list to the bindings map using the name property
-        // of each result object
-        .map((results, nodeNode) =>
-          Map({
-            children: OrderedMap(
-              results.map(result => [
-                result.name,
-                Map({
-                  value: `@results['${nodeNode}']['${result.name}']`,
-                }),
-              ]),
+    : flatBindings;
+
+// Recursively converts the grouped bindings into the format needed for the
+// code editor
+const finalizeBindings = bindingsMap =>
+  bindingsMap
+    .map(
+      (children, label) =>
+        !!children
+          ? Map({ label, type: 'object', children: finalizeBindings(children) })
+          : Map({ label }),
+    )
+    .toList();
+
+export const buildBindings = ({ tree, tasks, connections, node }) => {
+  const Results = tree.nodes
+    .reduce((results, node) => {
+      const isIntegration = node.definitionId.startsWith(
+        `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
+      );
+      if (isIntegration) {
+        const outputs = connections?.getIn([
+          node.parameters.find(p => p.id === 'connection')?.value,
+          'operations',
+          node.parameters.find(p => p.id === 'operation')?.value,
+          'outputs',
+        ]);
+        if (outputs) {
+          return results.set(
+            node.name,
+            outputs.reduce(
+              (res, _, name) =>
+                res.set(name, `@results['${node.name}']['${name}']`),
+              Map(),
             ),
-          }),
+          );
+        }
+      }
+      const task = tasks.get(node.definitionId);
+      return results.set(
+        node.name,
+        ((task && (task.results || task.outputs)) || []).reduce(
+          (res, output) =>
+            res.set(output.name, `@results['${node.name}']['${output.name}']`),
+          Map(),
         ),
-    });
-  return bindify(
-    Results.get('children').isEmpty()
-      ? tree.bindings
-      : { ...tree.bindings, Results },
-  );
+      );
+    }, Map())
+    .filter(results => !results.isEmpty());
+
+  const bindings = Results.isEmpty()
+    ? tree.bindings
+    : { ...tree.bindings, Results: Results.toJS() };
+
+  return bindify(bindings);
 };
 
 // implements the process of adding a new task node and connector to the tree,
