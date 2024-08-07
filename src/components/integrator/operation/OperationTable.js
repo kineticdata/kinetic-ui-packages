@@ -30,11 +30,6 @@ const columns = [
     sortable: true,
   },
   {
-    value: 'type',
-    title: 'Type',
-    toggleable: true,
-  },
-  {
     value: 'id',
     title: 'Id',
     toggleable: true,
