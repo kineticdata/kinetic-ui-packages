@@ -174,3 +174,16 @@ export const executeOperation = (options = {}) => {
     .then(response => ({ execution: response.data }))
     .catch(handleErrors);
 };
+
+/******************************************************************************
+ * METADATA
+ ******************************************************************************/
+
+export const fetchIntegratorVersion = () => {
+  return axios
+    .get(`${bundle.spaceLocation()}/app/integrator/api/version`)
+    .then(response => ({
+      version: response.data.version,
+    }))
+    .catch(handleErrors);
+};
