@@ -84,6 +84,8 @@ regSaga(
           : {},
       ]);
 
+      let kappSlug = webApiProps?.kappSlug || workflowProps?.kappSlug;
+      let formSlug = workflowProps?.formSlug;
       let workflowObject = workflow;
       let workflowObjectError = workflowError;
       // If a tree was fetched and the tree has platform item data, fetch the
@@ -103,6 +105,17 @@ regSaga(
           );
           workflowObject = linkedWorkflow;
           workflowObjectError = linkedError;
+          // If workflow was loaded via the old tree route, set the kapp and
+          // form slugs from the platform item
+          if (!workflowProps) {
+            const slugs = getPlatformItemSlugs(platformItem);
+            if (!kappSlug) {
+              kappSlug = slugs?.kappSlug;
+            }
+            if (!formSlug) {
+              formSlug = slugs?.formSlug;
+            }
+          }
         } else {
           // If platform item was not retrieved, show an error because we don't
           // want to render a workflow using a tree route
@@ -122,8 +135,8 @@ regSaga(
       yield put(
         action('TREE_LOADED', {
           categories,
-          kappSlug: webApiProps?.kappSlug || workflowProps?.kappSlug,
-          formSlug: workflowProps?.formSlug,
+          kappSlug,
+          formSlug,
           treeKey,
           tree:
             // Don't set the tree if it's for a webApi but the webApi errors
@@ -225,7 +238,7 @@ regSaga(
               tree: newTree || newWorkflow,
               webApi,
               onSave,
-              scope: { kappSlug, formSlug },
+              scope: tree.event ? { kappSlug, formSlug } : undefined,
             }),
       );
     } catch (e) {
