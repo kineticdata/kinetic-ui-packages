@@ -107,6 +107,9 @@ const fields = ({ webApi, tree }) => ({ securityPolicyDefinitions }) =>
       type: 'text',
       required: true,
       initialValue: get(webApi, 'slug') || '',
+      pattern: /^[a-z\d-]*$/,
+      patternMessage:
+        'Slug may only contain lowercase letters, numbers, or hyphens.',
     },
     {
       name: 'method',
