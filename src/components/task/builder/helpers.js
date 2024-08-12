@@ -302,7 +302,7 @@ const addNewTaskNext = ({
         ).map(type => NodeMessage({ type, value: '' })),
   });
   // add the stubbed connector and node to the current tree, this is done to
-  // accommodate the <CodeInput> bindings helper in <ConnectorForm> and
+  // accommodate the code bindings helper in <ConnectorForm> and
   // <NodeForm>
   const stagedTree = tree.merge({
     connectors: connectors.set(connector.id, connector),

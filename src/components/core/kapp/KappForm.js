@@ -9,7 +9,7 @@ import {
   updateKapp,
 } from '../../../apis';
 
-import { buildBindings, slugify } from '../../../helpers';
+import { buildCodeEditorBindings, slugify } from '../../../helpers';
 
 const DISPLAY_TYPES = ['Redirect'];
 
@@ -136,11 +136,14 @@ const fields = ({ kappSlug }) => ({ kapp }) =>
         // eslint-disable-next-line no-template-curly-in-string
         "Default label for form submissions. Click the </> button to see available values derived from each submission. Example: ${form('name')}",
       options: ({ space, kapp, attributeDefinitions }) =>
-        buildBindings({
-          space,
-          kapp:
-            kapp && kapp.set('kappAttributeDefinitions', attributeDefinitions),
-          scope: 'Submission',
+        buildCodeEditorBindings({
+          space: {
+            attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+          },
+          kapp: { attributeDefinitions },
+          form: { attributeDefinitions: kapp?.get('formAttributeDefinitions') },
+          submission: { detailed: true },
+          values: kapp?.get('fields').size > 0 && { data: kapp.get('fields') },
         }),
     },
     {

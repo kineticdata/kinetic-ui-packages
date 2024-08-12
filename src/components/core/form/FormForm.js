@@ -10,7 +10,7 @@ import {
   fetchCategories,
   fetchSpace,
 } from '../../../apis';
-import { buildBindings, slugify } from '../../../helpers';
+import { buildCodeEditorBindings, slugify } from '../../../helpers';
 
 const FORM_STATUSES = ['New', 'Active', 'Inactive', 'Delete'];
 
@@ -18,8 +18,7 @@ const FORM_INCLUDES =
   'details,attributesMap,securityPolicies,backgroundJobs,fields,categorizations,categorizations.category,categorizations.category.attributes[Parent]';
 const KAPP_INCLUDES =
   'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies';
-const SPACE_INCLUDES =
-  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies';
+const SPACE_INCLUDES = 'spaceAttributeDefinitions,securityPolicies';
 
 const dataSources = ({ formSlug, kappSlug }) => ({
   form: {
@@ -198,12 +197,15 @@ const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
       helpText:
         // eslint-disable-next-line no-template-curly-in-string
         "Custom label for form submissions. Click the </> button to see available values derived from each submission. Example: ${values('Customer Name')}",
-      options: ({ space, kapp, form }) =>
-        buildBindings({
-          space,
-          kapp,
-          form,
-          scope: kappSlug ? 'Submission' : 'Submission',
+      options: ({ space, kapp, form, attributeDefinitions }) =>
+        buildCodeEditorBindings({
+          space: {
+            attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+          },
+          kapp: { attributeDefinitions: kapp?.get('kappAttributeDefinitions') },
+          form: { attributeDefinitions },
+          submission: { detailed: true },
+          values: form?.get('fields').size > 0 && { data: form.get('fields') },
         }),
     },
     !!kappSlug && {

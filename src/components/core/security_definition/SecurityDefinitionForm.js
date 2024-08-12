@@ -7,7 +7,7 @@ import {
   fetchKapp,
   fetchProfile,
 } from '../../../apis';
-import { buildBindings } from '../../../helpers';
+import { buildCodeEditorBindings } from '../../../helpers';
 
 export const SPACE_SECURITY_DEFINITION_TYPES = [
   'Space',
@@ -30,9 +30,9 @@ const KAPP_SECURITY_DEFINITION_TYPES_MAP = {
 };
 
 const SPACE_INCLUDES =
-  'datastoreFormAttributeDefinitions,spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
+  'spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
 const KAPP_INCLUDES =
-  'formAttributeDefinitions,kappAttributeDefinitions,fields';
+  'formAttributeDefinitions,kappAttributeDefinitions,fields.details';
 const PROFILE_INCLUDES = 'attributesMap,profileAttributesMap';
 
 const dataSources = ({ securityPolicyName, kappSlug }) => ({
@@ -124,10 +124,39 @@ const fields = ({ securityPolicyName, securityPolicyType, kappSlug }) => ({
       name: 'rule',
       label: 'Rule',
       type: 'code',
-      language: 'js',
+      language: 'js-expression',
       required: true,
       options: ({ space, kapp, values, profile }) =>
-        buildBindings({ space, kapp, scope: values.get('type'), profile }),
+        buildCodeEditorBindings({
+          identity: profile && {
+            attributeDefinitions: space?.get('userAttributeDefinitions'),
+            profileAttributeDefinitions: space?.get(
+              'userProfileAttributeDefinitions',
+            ),
+          },
+          space: {
+            attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+          },
+          file: values.get('type') === 'File Resource' && {},
+          user: values.get('type') === 'User' && {
+            attributeDefinitions: space?.get('userAttributeDefinitions'),
+            profileAttributeDefinitions: space?.get(
+              'userProfileAttributeDefinitions',
+            ),
+          },
+          team: values.get('type') === 'Team' && {
+            attributeDefinitions: space?.get('teamAttributeDefinitions'),
+          },
+          kapp: ['Kapp', 'Form', 'Submission'].includes(values.get('type')) && {
+            attributeDefinitions: kapp?.get('kappAttributeDefinitions'),
+          },
+          form: ['Form', 'Submission'].includes(values.get('type')) && {
+            attributeDefinitions: kapp?.get('formAttributeDefinitions'),
+          },
+          submission: values.get('type') === 'Submission' && { detailed: true },
+          values: values.get('type') === 'Submission' &&
+            kapp?.get('fields').size > 0 && { data: kapp.get('fields') },
+        }),
       initialValue: securityPolicy ? securityPolicy.get('rule') : '',
       helpText: `Expression to evaluate to true or false. Click the </> button to see available values scoped to this Kapp or Space.`,
     },
