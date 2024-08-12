@@ -131,14 +131,17 @@ const ToastContainerComponent = ({
   toasts,
   persistentToasts,
 }) => {
-  useEffect(() => {
-    dispatch('INIT_TOASTS');
-    return () => {
-      if (containerKey) {
-        dispatch('CLEAR_TOASTS', containerKey);
-      }
-    };
-  }, []);
+  useEffect(
+    () => {
+      dispatch('INIT_TOASTS');
+      return () => {
+        if (containerKey) {
+          dispatch('CLEAR_TOASTS', containerKey);
+        }
+      };
+    },
+    [containerKey],
+  );
 
   return (
     <ComponentConfigContext.Consumer>
