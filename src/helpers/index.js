@@ -308,6 +308,7 @@ export const buildCodeEditorBindings = ({
         buildIntegrationBindings(
           integration.label || 'integration',
           integration.integrationName,
+          integration.integrationProperty,
           integration.outputs,
         ),
       ...(staticBindings || []).map(binding => fromJS(binding)),
@@ -390,13 +391,25 @@ const buildResourcesBindings = (label, bridgedResourceName, attributes) =>
   });
 
 // Converts integration data to code editor bindings
-const buildIntegrationBindings = (label, integrationName, outputs) =>
+const buildIntegrationBindings = (
+  label,
+  integrationName,
+  integrationProperty,
+  outputs,
+) =>
   Map({
     label,
     type: 'function',
     detail: 'Integration Result',
     children: outputs.map(label =>
-      Map({ label, section: `${integrationName} Integration` }),
+      Map({
+        label,
+        section:
+          `${integrationName} Integration` +
+          (integrationProperty
+            ? `\n\u00A0\u2BA1 Properties of: ${integrationProperty}`
+            : ''),
+      }),
     ),
   });
 
