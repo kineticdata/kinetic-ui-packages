@@ -70,6 +70,22 @@ const fields = ({ id, clone }) => ({ operation, connection }) => {
         initialValue: get(operation, 'outputs') || {},
         placeholder: 'Output Key',
         serialize: ({ values }) => values.get('outputs'),
+        constraint: ({ values }) =>
+          values
+            .get('outputs')
+            .every(
+              (value, key) =>
+                key &&
+                key.match(/^[a-z\d_-]+[a-z\d\s_-]*$/i) &&
+                (!value.get('children') ||
+                  value
+                    .get('children')
+                    .every(
+                      (_, childKey) =>
+                        childKey && childKey.match(/^[a-z\d_-]+[a-z\d\s_-]*$/i),
+                    )),
+            ),
+        constraintMessage: '',
       },
       {
         name: 'config',
