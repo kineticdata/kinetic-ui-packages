@@ -121,7 +121,12 @@ export const generateHttpOperationConfigFields = config => [
     name: 'body.raw',
     label: 'Raw Body',
     type: 'code',
-    language: 'json',
+    language: ({ values }) =>
+      getLanguageFromContentType(
+        values
+          .get('headers')
+          .find((_, header) => header?.toLowerCase() === 'content-type'),
+      ),
     initialValue: getIn(config, ['body', 'raw']),
     visible: ({ values }) => values.get('bodyType') === 'raw',
     helpText: (
@@ -156,3 +161,15 @@ export const generateHttpOperationConfigFields = config => [
     ),
   },
 ];
+
+function getLanguageFromContentType(contentType) {
+  switch (contentType) {
+    case 'application/json':
+      return 'json';
+    case 'application/xml':
+    case 'text/xml':
+      return 'xml';
+    default:
+      return 'none';
+  }
+}
