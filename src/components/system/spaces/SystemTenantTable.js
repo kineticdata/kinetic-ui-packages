@@ -1,16 +1,25 @@
 import { generateTable } from '../../table/Table';
 import { fetchTenants } from '../../../apis';
-import { defineFilter } from '../../../helpers';
+import {
+  generatePaginationParams,
+  generateSortParams,
+} from '../../../apis/http';
+import { defineKqlQuery } from '../../../helpers';
 
-const clientSide = defineFilter(true)
-  .startsWith('slug', 'slug')
-  .startsWith('space.name', 'space.name')
+const filterQuery = defineKqlQuery()
+  .matches('name', 'name')
+  .matches('slug', 'slug')
   .end();
 
 const dataSource = () => ({
   fn: fetchTenants,
-  clientSide,
-  params: () => [],
+  params: paramData => [
+    {
+      ...generateSortParams(paramData),
+      ...generatePaginationParams(paramData),
+      q: filterQuery(paramData.filters.toJS()),
+    },
+  ],
   transform: result => ({
     data: result.tenants,
     nextPageToken: result.nextPageToken,
@@ -18,15 +27,21 @@ const dataSource = () => ({
 });
 
 const filters = () => () => [
+  { name: 'name', label: 'Name', type: 'text' },
   { name: 'slug', label: 'Slug', type: 'text' },
-  { name: 'space.name', label: 'Name', type: 'text' },
 ];
 
 const columns = [
   {
+    value: 'name',
+    title: 'Name',
+    sortable: true,
+    valueTransform: (_value, row) => row.getIn(['space', 'name']),
+  },
+  {
     value: 'slug',
     title: 'Slug',
-    sortable: false,
+    sortable: true,
   },
   {
     value: 'task.deployment.namespace',
@@ -40,12 +55,6 @@ const columns = [
     title: 'Task Image',
     sortable: false,
     valueTransform: (_value, row) => row.getIn(['task', 'deployment', 'image']),
-  },
-  {
-    value: 'space.name',
-    title: 'Name',
-    sortable: false,
-    valueTransform: (_value, row) => row.getIn(['space', 'name']),
   },
   {
     value: 'space.status',

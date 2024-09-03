@@ -240,7 +240,7 @@ export const fetchTaskDbAdapter = (options = {}) => {
     .catch(handleErrors);
 };
 
-export const fetchSystemDefaultTaskDbAdapter = (options = {}) => {
+export const fetchSystemDefaultSQLDbAdapter = (options = {}) => {
   // Build URL and fetch the space.
   return axios
     .get(`/app/system-coordinator/api/v1/platform/default-task-db-adapter`, {
@@ -251,11 +251,11 @@ export const fetchSystemDefaultTaskDbAdapter = (options = {}) => {
     .catch(handleErrors);
 };
 
-export const updateSystemDefaultTaskDbAdapter = (options = {}) => {
+export const updateSystemDefaultSQLDbAdapter = (options = {}) => {
   const { adapter, multipart } = options;
   if (!adapter) {
     throw new Error(
-      'updateSystemDefaultTaskDbAdapter failed! The option "adapter" is required.',
+      'updateSystemDefaultSQLDbAdapter failed! The option "adapter" is required.',
     );
   }
 

@@ -189,7 +189,12 @@ regHandlers({
     state
       .updateIn(['forms', formKey, 'fields', name], field =>
         field.merge({
-          value: value || FIELD_DEFAULT_VALUES.get(field.type, ''),
+          value:
+            field.type === 'number'
+              ? typeof value === 'number'
+                ? value
+                : ''
+              : value || FIELD_DEFAULT_VALUES.get(field.type, ''),
           touched: true,
           dirty: !is(value, field.initialValue),
         }),
