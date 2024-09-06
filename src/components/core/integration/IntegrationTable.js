@@ -15,15 +15,13 @@ const fetchIntegrationsWithSupportingData = options =>
     const ids = integrations?.map(integration => integration.operationId);
     // Fetch supporting integrator data for the table
     return Promise.all([
-      // Get all connections if there are any integrations
-      integrations?.length > 0
-        ? fetchConnections()
-        : Promise.resolve({ connections: [] }),
+      // Get all connections
+      fetchConnections(),
       // Get the operations that are used in the integrations
       ids?.length > 0
         ? fetchBulkOperations({ ids })
         : Promise.resolve({ operations: [] }),
-    ]).then(([{ connections }, { operations }]) => {
+    ]).then(([{ connections, error: integratorError }, { operations }]) => {
       return {
         ...response,
         integrations: integrations.map(integration => ({
@@ -36,6 +34,7 @@ const fetchIntegrationsWithSupportingData = options =>
             op => op.id === integration.operationId,
           )?.name,
         })),
+        integratorError,
       };
     });
   });
@@ -53,6 +52,7 @@ const dataSource = ({ kappSlug }) => ({
   transform: result => ({
     data: result.integrations,
     nextPageToken: result.nextPageToken,
+    extraData: { integratorError: result.integratorError },
   }),
 });
 
