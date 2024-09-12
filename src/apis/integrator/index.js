@@ -12,7 +12,20 @@ export const fetchConnections = (options = {}) =>
       params: options,
     })
     .then(response => ({ connections: response.data }))
-    .catch(handleErrors);
+    .catch(rawError => {
+      const errorResponse = handleErrors(rawError);
+      // If response statusCode is 404, then integrator isn't installed so we
+      // should return a better message.
+      if (errorResponse.error?.statusCode === 404) {
+        return {
+          error: {
+            ...errorResponse.error,
+            message: 'Integrator is unavailable.',
+          },
+        };
+      }
+      return errorResponse;
+    });
 
 export const fetchConnection = (options = {}) => {
   validateOptions('fetchConnection', ['id'], options);

@@ -432,7 +432,7 @@ const fields = () => ({
     },
     {
       name: 'allowedIpsEnabled',
-      label: 'Enabled Allowed IP Restrictions?',
+      label: 'Allowed IP Restrictions',
       type: 'checkbox',
       initialValue: get(space, 'allowedIpsEnabled', false) || false,
     },

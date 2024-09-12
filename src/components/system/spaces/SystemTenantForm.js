@@ -230,7 +230,7 @@ const fields = ({ slug, component }) => ({
     // Start - Feature Flags
     {
       name: 'task_feature',
-      label: 'Enable Task Component',
+      label: 'Task Component',
       type: 'checkbox',
       initialValue: getIn(tenant, ['features', 'task']) === 'true' || !slug,
       onChange: ({ values }, { setValue }) => {
@@ -252,7 +252,7 @@ const fields = ({ slug, component }) => ({
     },
     {
       name: 'integrator_feature',
-      label: 'Enable Integrator Component',
+      label: 'Integrator Component',
       type: 'checkbox',
       initialValue:
         getIn(tenant, ['features', 'integrator']) === 'true' || !slug,
@@ -281,7 +281,7 @@ const fields = ({ slug, component }) => ({
           // Start - Task fields
           {
             name: 'task_replicas',
-            label: 'Task Replica Count',
+            label: 'Replica Count',
             type: 'number',
             initialValue: getIn(
               tenant,
@@ -313,7 +313,7 @@ const fields = ({ slug, component }) => ({
           },
           {
             name: 'task_imageToggle',
-            label: 'Use Default Integrator Image',
+            label: 'Use Default Task Image',
             type: 'checkbox',
             transient: true,
             visible: !slug || getIn(tenant, ['features', 'task']) === 'false',
@@ -326,7 +326,7 @@ const fields = ({ slug, component }) => ({
           },
           {
             name: 'task_databaseAdapter_type',
-            label: 'Task Database Adapter',
+            label: 'Database Adapter',
             required: ({ values }) => values.get('task_feature'),
             type: 'select',
             options: VALIDATE_DB_ADAPTERS,
@@ -402,7 +402,7 @@ const fields = ({ slug, component }) => ({
           // Start - Integrator fields
           {
             name: 'integrator_replicas',
-            label: 'Integrator Replica Count',
+            label: 'Replica Count',
             type: 'number',
             initialValue: getIn(
               tenant,
@@ -441,7 +441,7 @@ const fields = ({ slug, component }) => ({
           },
           {
             name: 'integrator_databaseAdapter_type',
-            label: 'Integrator Database Adapter',
+            label: 'Database Adapter',
             required: ({ values }) => values.get('integrator_feature'),
             type: 'select',
             options: VALIDATE_DB_ADAPTERS.filter(

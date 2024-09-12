@@ -36,7 +36,7 @@ const fields = () => ({ systemSecurity }) =>
     },
     {
       name: 'allowedSystemIpsEnabled',
-      label: 'Enabled Allowed IP Restrictions?',
+      label: 'Allowed IP Restrictions',
       type: 'checkbox',
       initialValue: get(systemSecurity, 'allowedSystemIps', List()).size > 0,
       transient: true,
