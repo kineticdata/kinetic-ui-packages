@@ -102,9 +102,6 @@ const generateHttpConnectionConfigAuthFields = auth => [
       !!connection &&
       values.get('auth.type') === 'basic' &&
       connection.getIn(['config', 'auth', 'type']) === 'basic',
-    onChange: (...args) => {
-      console.log('toggle', args);
-    },
   },
   {
     name: 'auth.password',
@@ -232,17 +229,47 @@ const generateHttpConnectionConfigAuthFields = auth => [
     required: ({ values }) => values.get('auth.type') === 'bearer_token',
   },
   {
+    name: 'auth.token.toggle',
+    transient: true,
+    label: 'Modify Token',
+    type: 'toggle',
+    // Set to true if there is no auth config or if the current auth config is
+    // set to a different type
+    initialValue:
+      !auth ||
+      get(auth, 'type') !== 'bearer_token' ||
+      // Checks that tokenType (transient field) is not raw
+      typeof getIn(auth, ['token', 'operation']) === 'object',
+    // Show if we're editing a connection and the selected auth type matches
+    // the currently saved auth type
+    visible: ({ values, connection }) =>
+      !!connection &&
+      values.get('auth.type') === 'bearer_token' &&
+      connection.getIn(['config', 'auth', 'type']) === 'bearer_token' &&
+      values.get('auth.tokenType') === 'raw' &&
+      // Checks that tokenType (transient field) is raw
+      (!get(auth, 'token') || typeof get(auth, 'token') === 'string'),
+  },
+  {
     name: 'auth.token',
     label: 'Token',
-    type: 'text',
-    initialValue:
-      typeof get(auth, 'token') === 'string' ? get(auth, 'token') : '',
+    type: 'password',
+    initialValue: '',
     visible: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'raw',
-    required: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'raw',
+    // Enable if we're creating a new connection or the change toggle is true
+    enabled: ({ values, connection }) =>
+      !connection || !!values.get('auth.token.toggle'),
+    // Show the placeholder if there is a connection and it matches the saved type
+    placeholder: ({ values, connection }) =>
+      !!connection &&
+      connection.getIn(['config', 'auth', 'type']) === 'bearer_token' &&
+      // Checks that tokenType (transient field) is raw
+      (!get(auth, 'token') || typeof get(auth, 'token') === 'string') &&
+      !values.get('auth.token.toggle')
+        ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022'
+        : undefined,
   },
   ...generateHttpConnectionConfigAuthTokenOperationFields(
     getIn(auth, ['token', 'operation']),
@@ -261,11 +288,11 @@ const generateHttpConnectionConfigAuthFields = auth => [
     getIn(auth, ['token', 'connection']),
   ),
   {
-    name: 'auth.tokenOutput',
+    name: 'auth.token.tokenOutput',
     label: 'Token',
     type: 'code',
     language: 'js-expression',
-    initialValue: get(auth, 'tokenOutput'),
+    initialValue: getIn(auth, ['token', 'tokenOutput']),
     required: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
@@ -280,11 +307,11 @@ const generateHttpConnectionConfigAuthFields = auth => [
     ),
   },
   {
-    name: 'auth.expirationOutput',
+    name: 'auth.token.expirationOutput',
     label: 'Expiration',
     type: 'code',
     language: 'js-expression',
-    initialValue: get(auth, 'expirationOutput'),
+    initialValue: getIn(auth, ['token', 'expirationOutput']),
     required: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
       values.get('auth.tokenType') === 'http',
@@ -403,7 +430,12 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     name: 'auth.token.operation.body.raw',
     label: 'Raw Body',
     type: 'code',
-    language: 'json',
+    language: ({ values }) =>
+      getLanguageFromContentType(
+        values
+          .get('auth.token.operation.headers')
+          .find((_, header) => header?.toLowerCase() === 'content-type'),
+      ),
     initialValue: getIn(operation, ['body', 'raw']),
     visible: ({ values }) =>
       values.get('auth.type') === 'bearer_token' &&
@@ -459,3 +491,15 @@ const generateHttpConnectionConfigAuthTokenConnectionFields = connection => [
       !!values.get('auth.tokenHttpConn'),
   },
 ];
+
+function getLanguageFromContentType(contentType) {
+  switch (contentType) {
+    case 'application/json':
+      return 'json';
+    case 'application/xml':
+    case 'text/xml':
+      return 'xml';
+    default:
+      return 'none';
+  }
+}
