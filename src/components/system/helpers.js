@@ -512,7 +512,7 @@ export const POSTGRES_FIELDS = (
   const sslModeOptions = isIntegrator
     ? [
         { label: 'Verify None', value: 'verify-none' },
-        // { label: 'Verify Peer', value: 'verify-peer' },
+        { label: 'Verify Peer', value: 'verify-peer' },
       ]
     : [
         { label: 'Disable', value: 'disable' },
@@ -527,7 +527,7 @@ export const POSTGRES_FIELDS = (
   )
     ? sslModeInitialValueRaw
     : isIntegrator
-      ? 'verify-none'
+      ? 'verify-peer'
       : 'disable';
 
   return [
