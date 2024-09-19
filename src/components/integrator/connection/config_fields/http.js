@@ -301,8 +301,9 @@ const generateHttpConnectionConfigAuthFields = auth => [
       values.get('auth.tokenType') === 'http',
     helpText: (
       <>
-        Define a mapping that's a JavaScript expression from the response{' '}
-        <code>body</code> to the token value.
+        Define a JavaScript expression that maps the response to the token
+        value. Press <code>Ctrl + Space</code> to see the available properties
+        in the field.
       </>
     ),
   },
@@ -320,8 +321,9 @@ const generateHttpConnectionConfigAuthFields = auth => [
       values.get('auth.tokenType') === 'http',
     helpText: (
       <>
-        Define a mapping that's a JavaScript expression from the response{' '}
-        <code>body</code> to the expiration value.
+        Define a JavaScript expression that maps the response to a numeric
+        expiration value in seconds. Press <code>Ctrl + Space</code> to see the
+        available properties in the field.
       </>
     ),
   },
