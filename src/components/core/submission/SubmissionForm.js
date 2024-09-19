@@ -111,14 +111,10 @@ const convertRenderType = element => {
 const getInitialValue = (submission, element, type) => {
   const fieldKey = element.get('key');
 
-  let value =
-    getIn(
-      submission,
-      ['valuesRaw', fieldKey, 'value'],
-      ['checkbox', 'attachment'].includes(element.get('renderType'))
-        ? List()
-        : '',
-    ) || '';
+  // If value doesn't exist, set a default value based on the renderType
+  let value = ['checkbox', 'attachment'].includes(element.get('renderType'))
+    ? getIn(submission, ['valuesRaw', fieldKey, 'value']) || List()
+    : getIn(submission, ['valuesRaw', fieldKey, 'value']) || '';
 
   // To update a submission with existing submissions we need to grab the
   // documentId and insert that into the attachment value normally returned with
