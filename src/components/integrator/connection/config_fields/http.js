@@ -1,4 +1,5 @@
 import { get, getIn, hasIn, List, Map } from 'immutable';
+import integrationTypes from '../../integrationTypes';
 
 export const serializeHttpConnectionConfigFields = configFields => ({
   values,
@@ -20,7 +21,7 @@ export const serializeHttpConnectionConfigFields = configFields => ({
         }
 
         // If auth type is not selected, set the auth property to null
-        if (name === 'auth.type' && !values.get(name)) {
+        if (name === 'auth.authType' && !values.get(name)) {
           return serialization.setIn(['auth'], null);
         }
 
@@ -49,6 +50,15 @@ export const serializeHttpConnectionConfigFields = configFields => ({
 
 export const generateHttpConnectionConfigFields = config => [
   {
+    name: 'configType',
+    label: 'Type',
+    type: 'select',
+    options: integrationTypes,
+    initialValue: 'http',
+    required: true,
+    enabled: false,
+  },
+  {
     name: 'baseUrl',
     label: 'Base URL',
     type: 'text',
@@ -67,15 +77,16 @@ export const generateHttpConnectionConfigFields = config => [
 
 const generateHttpConnectionConfigAuthFields = auth => [
   {
-    name: 'auth.type',
+    name: 'auth.authType',
     label: 'Authentication',
     type: 'select',
     options: [
       { value: 'basic', label: 'Basic Auth' },
-      { value: 'bearer_token', label: 'Bearer Token' },
+      { value: 'http_bearer_token', label: 'HTTP Bearer Token' },
+      { value: 'raw_bearer_token', label: 'Raw Bearer Token' },
       { value: 'client_credentials', label: 'OAuth 2.0' },
     ],
-    initialValue: get(auth, 'type'),
+    initialValue: get(auth, 'authType'),
     placeholder: 'None',
   },
 
@@ -85,8 +96,8 @@ const generateHttpConnectionConfigAuthFields = auth => [
     label: 'Username',
     type: 'text',
     initialValue: get(auth, 'username'),
-    required: ({ values }) => values.get('auth.type') === 'basic',
-    visible: ({ values }) => values.get('auth.type') === 'basic',
+    required: ({ values }) => values.get('auth.authType') === 'basic',
+    visible: ({ values }) => values.get('auth.authType') === 'basic',
   },
   {
     name: 'auth.password.toggle',
@@ -95,27 +106,27 @@ const generateHttpConnectionConfigAuthFields = auth => [
     type: 'toggle',
     // Set to true if there is no auth config or if the current auth config is
     // set to a different type
-    initialValue: !auth || get(auth, 'type') !== 'basic',
+    initialValue: !auth || get(auth, 'authType') !== 'basic',
     // Show if we're editing a connection and the selected auth type matches
     // the currently saved auth type
     visible: ({ values, connection }) =>
       !!connection &&
-      values.get('auth.type') === 'basic' &&
-      connection.getIn(['config', 'auth', 'type']) === 'basic',
+      values.get('auth.authType') === 'basic' &&
+      connection.getIn(['config', 'auth', 'authType']) === 'basic',
   },
   {
     name: 'auth.password',
     label: 'Password',
     type: 'password',
     initialValue: '',
-    visible: ({ values }) => values.get('auth.type') === 'basic',
+    visible: ({ values }) => values.get('auth.authType') === 'basic',
     // Enable if we're creating a new connection or the change toggle is true
     enabled: ({ values, connection }) =>
       !connection || !!values.get('auth.password.toggle'),
     // Show the placeholder if there is a connection and it matches the saved type
     placeholder: ({ values, connection }) =>
       !!connection &&
-      connection.getIn(['config', 'auth', 'type']) === 'basic' &&
+      connection.getIn(['config', 'auth', 'authType']) === 'basic' &&
       !values.get('auth.password.toggle')
         ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022'
         : undefined,
@@ -127,16 +138,20 @@ const generateHttpConnectionConfigAuthFields = auth => [
     label: 'Access Token URL',
     type: 'text',
     initialValue: get(auth, 'tokenUrl'),
-    required: ({ values }) => values.get('auth.type') === 'client_credentials',
-    visible: ({ values }) => values.get('auth.type') === 'client_credentials',
+    required: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
+    visible: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
   },
   {
     name: 'auth.clientId',
     label: 'Client ID',
     type: 'text',
     initialValue: get(auth, 'clientId'),
-    required: ({ values }) => values.get('auth.type') === 'client_credentials',
-    visible: ({ values }) => values.get('auth.type') === 'client_credentials',
+    required: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
+    visible: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
   },
   {
     name: 'auth.clientSecret.toggle',
@@ -145,26 +160,28 @@ const generateHttpConnectionConfigAuthFields = auth => [
     type: 'toggle',
     // Set to true if there is no auth config or if the current auth config is
     // set to a different type
-    initialValue: !auth || get(auth, 'type') !== 'client_credentials',
+    initialValue: !auth || get(auth, 'authType') !== 'client_credentials',
     // Show if we're editing a connection and the selected auth type matches
     // the currently saved auth type
     visible: ({ values, connection }) =>
       !!connection &&
-      values.get('auth.type') === 'client_credentials' &&
-      connection.getIn(['config', 'auth', 'type']) === 'client_credentials',
+      values.get('auth.authType') === 'client_credentials' &&
+      connection.getIn(['config', 'auth', 'authType']) === 'client_credentials',
   },
   {
     name: 'auth.clientSecret',
     label: 'Client Secret',
     type: 'password',
-    visible: ({ values }) => values.get('auth.type') === 'client_credentials',
+    visible: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
     // Enable if we're creating a new connection or the change toggle is true
     enabled: ({ values, connection }) =>
       !connection || !!values.get('auth.clientSecret.toggle'),
     // Show the placeholder if there is a connection and it matches the saved type
     placeholder: ({ values, connection }) =>
       !!connection &&
-      connection.getIn(['config', 'auth', 'type']) === 'client_credentials' &&
+      connection.getIn(['config', 'auth', 'authType']) ===
+        'client_credentials' &&
       !values.get('auth.clientSecret.toggle')
         ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022'
         : undefined,
@@ -174,7 +191,8 @@ const generateHttpConnectionConfigAuthFields = auth => [
     label: 'Scope',
     type: 'text',
     initialValue: get(auth, 'scope'),
-    visible: ({ values }) => values.get('auth.type') === 'client_credentials',
+    visible: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
   },
   {
     name: 'auth.clientAuth',
@@ -185,15 +203,18 @@ const generateHttpConnectionConfigAuthFields = auth => [
       { label: 'Form URL Encoded', value: 'www_form_urlencoded' },
     ],
     initialValue: get(auth, 'clientAuth', 'www_form_urlencoded'),
-    required: ({ values }) => values.get('auth.type') === 'client_credentials',
-    visible: ({ values }) => values.get('auth.type') === 'client_credentials',
+    required: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
+    visible: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
   },
   {
     name: 'auth.caCert',
     label: 'Trusted CA Certificate',
     type: 'text',
     initialValue: get(auth, 'caCert') || '',
-    visible: ({ values }) => values.get('auth.type') === 'client_credentials',
+    visible: ({ values }) =>
+      values.get('auth.authType') === 'client_credentials',
   },
 
   // bearer_token
@@ -202,31 +223,28 @@ const generateHttpConnectionConfigAuthFields = auth => [
     label: 'Token Header',
     type: 'text',
     initialValue: get(auth, 'header', 'Authorization'),
-    visible: ({ values }) => values.get('auth.type') === 'bearer_token',
-    required: ({ values }) => values.get('auth.type') === 'bearer_token',
+    visible: ({ values }) =>
+      ['raw_bearer_token', 'http_bearer_token'].includes(
+        values.get('auth.authType'),
+      ),
+    required: ({ values }) =>
+      ['raw_bearer_token', 'http_bearer_token'].includes(
+        values.get('auth.authType'),
+      ),
   },
   {
     name: 'auth.prefix',
     label: 'Token Prefix',
     type: 'text',
     initialValue: get(auth, 'prefix', 'Bearer'),
-    visible: ({ values }) => values.get('auth.type') === 'bearer_token',
-    required: ({ values }) => values.get('auth.type') === 'bearer_token',
-  },
-  {
-    name: 'auth.tokenType',
-    transient: true,
-    label: 'Token Type',
-    type: 'select',
-    options: [{ value: 'raw', label: 'Raw' }, { value: 'http', label: 'HTTP' }],
-    initialValue:
-      !get(auth, 'token') || typeof get(auth, 'token') === 'string'
-        ? 'raw'
-        : typeof getIn(auth, ['token', 'operation']) === 'object'
-          ? 'http'
-          : '',
-    visible: ({ values }) => values.get('auth.type') === 'bearer_token',
-    required: ({ values }) => values.get('auth.type') === 'bearer_token',
+    visible: ({ values }) =>
+      ['raw_bearer_token', 'http_bearer_token'].includes(
+        values.get('auth.authType'),
+      ),
+    required: ({ values }) =>
+      ['raw_bearer_token', 'http_bearer_token'].includes(
+        values.get('auth.authType'),
+      ),
   },
   {
     name: 'auth.token.toggle',
@@ -235,38 +253,27 @@ const generateHttpConnectionConfigAuthFields = auth => [
     type: 'toggle',
     // Set to true if there is no auth config or if the current auth config is
     // set to a different type
-    initialValue:
-      !auth ||
-      get(auth, 'type') !== 'bearer_token' ||
-      // Checks that tokenType (transient field) is not raw
-      typeof getIn(auth, ['token', 'operation']) === 'object',
+    initialValue: !auth || get(auth, 'authType') !== 'raw_bearer_token',
     // Show if we're editing a connection and the selected auth type matches
     // the currently saved auth type
     visible: ({ values, connection }) =>
       !!connection &&
-      values.get('auth.type') === 'bearer_token' &&
-      connection.getIn(['config', 'auth', 'type']) === 'bearer_token' &&
-      values.get('auth.tokenType') === 'raw' &&
-      // Checks that tokenType (transient field) is raw
-      (!get(auth, 'token') || typeof get(auth, 'token') === 'string'),
+      values.get('auth.authType') === 'raw_bearer_token' &&
+      connection.getIn(['config', 'auth', 'authType']) === 'raw_bearer_token',
   },
   {
     name: 'auth.token',
     label: 'Token',
     type: 'password',
     initialValue: '',
-    visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'raw',
+    visible: ({ values }) => values.get('auth.authType') === 'raw_bearer_token',
     // Enable if we're creating a new connection or the change toggle is true
     enabled: ({ values, connection }) =>
       !connection || !!values.get('auth.token.toggle'),
     // Show the placeholder if there is a connection and it matches the saved type
     placeholder: ({ values, connection }) =>
       !!connection &&
-      connection.getIn(['config', 'auth', 'type']) === 'bearer_token' &&
-      // Checks that tokenType (transient field) is raw
-      (!get(auth, 'token') || typeof get(auth, 'token') === 'string') &&
+      connection.getIn(['config', 'auth', 'authType']) === 'raw_bearer_token' &&
       !values.get('auth.token.toggle')
         ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022'
         : undefined,
@@ -281,8 +288,7 @@ const generateHttpConnectionConfigAuthFields = auth => [
     type: 'checkbox',
     initialValue: getIn(auth, ['token', 'connection']) === 'object',
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
   },
   ...generateHttpConnectionConfigAuthTokenConnectionFields(
     getIn(auth, ['token', 'connection']),
@@ -294,11 +300,9 @@ const generateHttpConnectionConfigAuthFields = auth => [
     language: 'js-expression',
     initialValue: getIn(auth, ['token', 'tokenOutput']),
     required: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
     helpText: (
       <>
         Define a JavaScript expression that maps the response to the token
@@ -314,11 +318,9 @@ const generateHttpConnectionConfigAuthFields = auth => [
     language: 'js-expression',
     initialValue: getIn(auth, ['token', 'expirationOutput']),
     required: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
     helpText: (
       <>
         Define a JavaScript expression that maps the response to a numeric
@@ -331,6 +333,15 @@ const generateHttpConnectionConfigAuthFields = auth => [
 
 const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
   {
+    name: 'auth.token.operation.configType',
+    label: 'Type',
+    type: 'select',
+    options: integrationTypes,
+    initialValue: 'http',
+    required: true,
+    enabled: false,
+  },
+  {
     name: 'auth.token.operation.method',
     label: 'Method',
     type: 'select',
@@ -342,11 +353,9 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     ],
     initialValue: get(operation, 'method'),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
     required: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
   },
   {
     name: 'auth.token.operation.path',
@@ -354,11 +363,9 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     type: 'text',
     initialValue: get(operation, 'path'),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
     required: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
   },
   {
     name: 'auth.token.operation.params',
@@ -366,8 +373,7 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     type: 'map',
     initialValue: get(operation, 'params'),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
     placeholder: 'Parameter Key',
   },
   {
@@ -376,8 +382,7 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     type: 'map',
     initialValue: get(operation, 'headers'),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
     placeholder: 'Header Key',
   },
   {
@@ -386,8 +391,7 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     type: 'checkbox',
     initialValue: get(operation, 'followRedirect'),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
   },
   {
     name: 'auth.token.operation.streamResponse',
@@ -395,27 +399,22 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     type: 'checkbox',
     initialValue: get(operation, 'streamResponse'),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
   },
   {
-    name: 'auth.token.operation.bodyType',
-    transient: true,
+    name: 'auth.token.operation.body.bodyType',
     label: 'Body Type',
     type: 'radio',
     options: [
-      { label: 'Form URL Encoded', value: 'form' },
+      { label: 'Form URL Encoded', value: 'www_form_urlencoded' },
       { label: 'Raw', value: 'raw' },
-      { label: 'Multipart', value: 'multipart' },
+      // { label: 'Multipart', value: 'multipart_form' },
     ],
-    initialValue: hasIn(operation, ['body', 'raw'])
-      ? 'raw'
-      : hasIn(operation, ['body', 'parts'])
-        ? 'multipart'
-        : 'form',
+    initialValue:
+      getIn(operation, ['body', 'bodyType']) || 'www_form_urlencoded',
+    required: true,
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http',
+      values.get('auth.authType') === 'http_bearer_token',
   },
   {
     name: 'auth.token.operation.body.form',
@@ -423,9 +422,9 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     type: 'map',
     initialValue: getIn(operation, ['body', 'form']),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http' &&
-      values.get('auth.token.operation.bodyType') === 'form',
+      values.get('auth.authType') === 'http_bearer_token' &&
+      values.get('auth.token.operation.body.bodyType') ===
+        'www_form_urlencoded',
     placeholder: 'Body Key',
   },
   {
@@ -440,9 +439,8 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
       ),
     initialValue: getIn(operation, ['body', 'raw']),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http' &&
-      values.get('auth.token.operation.bodyType') === 'raw',
+      values.get('auth.authType') === 'http_bearer_token' &&
+      values.get('auth.token.operation.body.bodyType') === 'raw',
   },
   {
     name: 'auth.token.operation.body.parts',
@@ -461,9 +459,8 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     ],
     initialValue: getIn(operation, ['body', 'parts'], List()),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http' &&
-      values.get('auth.token.operation.bodyType') === 'multipart',
+      values.get('auth.authType') === 'http_bearer_token' &&
+      values.get('auth.token.operation.body.bodyType') === 'multipart_form',
   },
 ];
 
@@ -474,12 +471,10 @@ const generateHttpConnectionConfigAuthTokenConnectionFields = connection => [
     type: 'text',
     initialValue: get(connection, 'baseUrl'),
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http' &&
+      values.get('auth.authType') === 'http_bearer_token' &&
       !!values.get('auth.tokenHttpConn'),
     required: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http' &&
+      values.get('auth.authType') === 'http_bearer_token' &&
       !!values.get('auth.tokenHttpConn'),
   },
   {
@@ -488,8 +483,7 @@ const generateHttpConnectionConfigAuthTokenConnectionFields = connection => [
     type: 'text',
     initialValue: get(connection, 'caCert') || '',
     visible: ({ values }) =>
-      values.get('auth.type') === 'bearer_token' &&
-      values.get('auth.tokenType') === 'http' &&
+      values.get('auth.authType') === 'http_bearer_token' &&
       !!values.get('auth.tokenHttpConn'),
   },
 ];

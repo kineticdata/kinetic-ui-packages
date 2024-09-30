@@ -1,4 +1,5 @@
 import { get, getIn, hasIn, List, Map } from 'immutable';
+import integrationTypes from '../../integrationTypes';
 
 export const serializeHttpOperationConfigFields = configFields => ({
   values,
@@ -23,6 +24,15 @@ export const serializeHttpOperationConfigFields = configFields => ({
 };
 
 export const generateHttpOperationConfigFields = config => [
+  {
+    name: 'configType',
+    label: 'Type',
+    type: 'select',
+    options: integrationTypes,
+    initialValue: 'http',
+    required: true,
+    enabled: false,
+  },
   {
     name: 'method',
     label: 'Method',
@@ -88,27 +98,23 @@ export const generateHttpOperationConfigFields = config => [
     initialValue: get(config, 'streamResponse'),
   },
   {
-    name: 'bodyType',
-    transient: true,
+    name: 'body.bodyType',
     label: 'Body Type',
     type: 'radio',
     options: [
-      { label: 'Form URL Encoded', value: 'form' },
+      { label: 'Form URL Encoded', value: 'www_form_urlencoded' },
       { label: 'Raw', value: 'raw' },
-      { label: 'Multipart', value: 'multipart' },
+      // { label: 'Multipart', value: 'multipart_form' },
     ],
-    initialValue: hasIn(config, ['body', 'raw'])
-      ? 'raw'
-      : hasIn(config, ['body', 'parts'])
-        ? 'multipart'
-        : 'form',
+    initialValue: getIn(config, ['body', 'bodyType']) || 'www_form_urlencoded',
   },
   {
     name: 'body.form',
     label: 'Form Body',
     type: 'map',
     initialValue: getIn(config, ['body', 'form']),
-    visible: ({ values }) => values.get('bodyType') === 'form',
+    visible: ({ values }) =>
+      values.get('body.bodyType') === 'www_form_urlencoded',
     placeholder: 'Body Key',
     helpText: (
       <>
@@ -128,7 +134,7 @@ export const generateHttpOperationConfigFields = config => [
           .find((_, header) => header?.toLowerCase() === 'content-type'),
       ),
     initialValue: getIn(config, ['body', 'raw']),
-    visible: ({ values }) => values.get('bodyType') === 'raw',
+    visible: ({ values }) => values.get('body.bodyType') === 'raw',
     helpText: (
       <>
         Use the <code>{'{{parameter}}'}</code> format to create dynamic
@@ -152,7 +158,7 @@ export const generateHttpOperationConfigFields = config => [
       { name: 'fileName', label: 'File Name', type: 'text' },
     ],
     initialValue: getIn(config, ['body', 'parts'], List()),
-    visible: ({ values }) => values.get('bodyType') === 'multipart',
+    visible: ({ values }) => values.get('body.bodyType') === 'multipart_form',
     helpText: (
       <>
         Use the <code>{'{{parameter}}'}</code> format to create dynamic

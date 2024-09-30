@@ -120,13 +120,27 @@ export const formDataBuilder = (data, prefix, formData = new FormData()) =>
     return result;
   }, formData);
 
+/**
+ *
+ * @param {string} functionName
+ * @param {(string|string[])[]} requiredOptions
+ *    The keys of the required options. You can group keys in a nested array if
+ *    only one of a subset is required.
+ * @param {object} options
+ *    The options object to validate.
+ */
 export const validateOptions = (functionName, requiredOptions, options) => {
   const missing = requiredOptions.filter(
-    requiredOption => !options[requiredOption],
+    requiredOption =>
+      Array.isArray(requiredOption)
+        ? !requiredOption.some(option => options[option])
+        : !options[requiredOption],
   );
   if (missing.length > 0) {
     throw new Error(
-      `${functionName} failed! The following required options are missing: ${missing}`,
+      `${functionName} failed! The following required options are missing: ${missing
+        .map(key => (Array.isArray(key) ? key.join(' or ') : key))
+        .join(', ')}`,
     );
   }
 };

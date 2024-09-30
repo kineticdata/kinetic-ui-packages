@@ -163,12 +163,12 @@ export const fetchBulkOperations = (options = {}) => {
 };
 
 export const inspectOperation = (options = {}) => {
-  validateOptions('inspectOperation', ['operation'], options);
-  const { operation, ...params } = options;
+  validateOptions('inspectOperation', [['operation', 'operationId']], options);
+  const { operation, operationId, ...params } = options;
   return axios
     .post(
       `${bundle.spaceLocation()}/app/integrator/api/inspect`,
-      { operation },
+      { operation, operationId },
       { params },
     )
     .then(response => ({ detectedInputs: response.data.detectedInputs }))
@@ -176,12 +176,23 @@ export const inspectOperation = (options = {}) => {
 };
 
 export const executeOperation = (options = {}) => {
-  validateOptions('executeOperation', ['connection', 'operation'], options);
-  const { connection, operation, parameters = {}, ...params } = options;
+  validateOptions(
+    'executeOperation',
+    [['connection', 'connectionId'], ['operation', 'operationId']],
+    options,
+  );
+  const {
+    connection,
+    connectionId,
+    operation,
+    operationId,
+    parameters = {},
+    ...params
+  } = options;
   return axios
     .post(
       `${bundle.spaceLocation()}/app/integrator/api/execute`,
-      { connection, operation, parameters },
+      { connection, connectionId, operation, operationId, parameters },
       { params },
     )
     .then(response => ({ execution: response.data }))

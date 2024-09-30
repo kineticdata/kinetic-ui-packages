@@ -73,7 +73,7 @@ const dataSources = ({ tasks, tree, node, connections }) => ({
   detectedInputs: {
     fn: node =>
       inspectOperation({
-        operation: node.parameters.find(p => p.id === 'operation')?.value,
+        operationId: node.parameters.find(p => p.id === 'operation')?.value,
       }).then(data => data.detectedInputs),
     params:
       tasks.get(node.definitionId)?.definitionName ===
