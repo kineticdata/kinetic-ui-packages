@@ -1,4 +1,4 @@
-import { get, getIn, hasIn, List, Map } from 'immutable';
+import { get, getIn, List, Map } from 'immutable';
 import integrationTypes from '../../integrationTypes';
 
 export const serializeHttpConnectionConfigFields = configFields => ({
@@ -338,8 +338,11 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     type: 'select',
     options: integrationTypes,
     initialValue: 'http',
-    required: true,
     enabled: false,
+    visible: ({ values }) =>
+      values.get('auth.authType') === 'http_bearer_token',
+    required: ({ values }) =>
+      values.get('auth.authType') === 'http_bearer_token',
   },
   {
     name: 'auth.token.operation.method',
