@@ -34,8 +34,8 @@ const dataSources = ({ kappSlug, name }) => ({
   },
   parameters: {
     fn: options =>
-      !!options.operation ? inspectOperation(options) : Promise.resolve({}),
-    params: ({ values }) => [{ operation: values?.get('operationId') }],
+      !!options.operationId ? inspectOperation(options) : Promise.resolve({}),
+    params: ({ values }) => [{ operationId: values?.get('operationId') }],
   },
   securityPolicyDefinitions: {
     fn: fetchSecurityPolicyDefinitions,
