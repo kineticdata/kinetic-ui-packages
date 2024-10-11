@@ -286,7 +286,7 @@ const generateHttpConnectionConfigAuthFields = auth => [
     transient: true,
     label: 'Use different connection for auth',
     type: 'checkbox',
-    initialValue: getIn(auth, ['token', 'connection']) === 'object',
+    initialValue: typeof getIn(auth, ['token', 'connection']) === 'object',
     visible: ({ values }) =>
       values.get('auth.authType') === 'http_bearer_token',
   },
