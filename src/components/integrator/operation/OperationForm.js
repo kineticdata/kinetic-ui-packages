@@ -64,6 +64,13 @@ const fields = ({ id, clone }) => ({ operation, connection }) => {
         placeholder: 'Optional (but recommended)',
       },
       {
+        name: 'notes',
+        label: 'Description',
+        type: 'text',
+        initialValue: get(operation, 'notes') || '',
+        placeholder: 'Enter a short description for the operation',
+      },
+      {
         name: 'outputs',
         label: 'Outputs',
         type: 'map',
