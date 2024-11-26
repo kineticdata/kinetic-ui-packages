@@ -98,6 +98,12 @@ export const generateHttpOperationConfigFields = config => [
     initialValue: get(config, 'streamResponse'),
   },
   {
+    name: 'includeEmptyParams',
+    label: 'Include Empty Parameters',
+    type: 'checkbox',
+    initialValue: get(config, 'includeEmptyParams'),
+  },
+  {
     name: 'body.bodyType',
     label: 'Body Type',
     type: 'radio',
