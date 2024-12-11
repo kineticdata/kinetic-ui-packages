@@ -74,6 +74,15 @@ const fields = ({ id, type, clone }) => ({ connection }) => {
         placeholder: 'Enter a short description for the connection',
       },
       {
+        name: 'secrets',
+        label: 'Secrets',
+        type: 'map',
+        initialValue: get(connection, 'secrets') || {},
+        placeholder: 'Secret Key',
+        helpText:
+          'Secrets are key-value pairs that define sensitive values that will be hidden from view, but can be referenced in other parts of the connection by their keys.',
+      },
+      {
         name: 'config',
         label: 'Config',
         type: null,

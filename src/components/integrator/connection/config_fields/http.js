@@ -369,6 +369,12 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
       values.get('auth.authType') === 'http_bearer_token',
     required: ({ values }) =>
       values.get('auth.authType') === 'http_bearer_token',
+    helpText: (
+      <>
+        Use the <code>{'{{secretKey}}'}</code> format to insert secrets that
+        have been defined for this connection.
+      </>
+    ),
   },
   {
     name: 'auth.token.operation.params',
@@ -378,6 +384,12 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     visible: ({ values }) =>
       values.get('auth.authType') === 'http_bearer_token',
     placeholder: 'Parameter Key',
+    helpText: (
+      <>
+        Use the <code>{'{{secretKey}}'}</code> format to insert secrets that
+        have been defined for this connection.
+      </>
+    ),
   },
   {
     name: 'auth.token.operation.headers',
@@ -387,6 +399,12 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     visible: ({ values }) =>
       values.get('auth.authType') === 'http_bearer_token',
     placeholder: 'Header Key',
+    helpText: (
+      <>
+        Use the <code>{'{{secretKey}}'}</code> format to insert secrets that
+        have been defined for this connection.
+      </>
+    ),
   },
   {
     name: 'auth.token.operation.followRedirect',
@@ -429,6 +447,12 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
       values.get('auth.token.operation.body.bodyType') ===
         'www_form_urlencoded',
     placeholder: 'Body Key',
+    helpText: (
+      <>
+        Use the <code>{'{{secretKey}}'}</code> format to insert secrets that
+        have been defined for this connection.
+      </>
+    ),
   },
   {
     name: 'auth.token.operation.body.raw',
@@ -444,6 +468,12 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     visible: ({ values }) =>
       values.get('auth.authType') === 'http_bearer_token' &&
       values.get('auth.token.operation.body.bodyType') === 'raw',
+    helpText: (
+      <>
+        Use the <code>{'{{secretKey}}'}</code> format to insert secrets that
+        have been defined for this connection.
+      </>
+    ),
   },
   {
     name: 'auth.token.operation.body.parts',
@@ -464,6 +494,12 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
     visible: ({ values }) =>
       values.get('auth.authType') === 'http_bearer_token' &&
       values.get('auth.token.operation.body.bodyType') === 'multipart_form',
+    helpText: (
+      <>
+        Use the <code>{'{{secretKey}}'}</code> format to insert secrets that
+        have been defined for this connection.
+      </>
+    ),
   },
 ];
 
