@@ -171,6 +171,9 @@ export { WebhookJobTable } from './core/webhook_job/WebhookJobTable';
 // System Platform
 export { SystemTenantTable } from './system/spaces/SystemTenantTable';
 export { SystemTenantForm } from './system/spaces/SystemTenantForm';
+export {
+  SystemTenantMigrateForm,
+} from './system/spaces/SystemTenantMigrateForm';
 export { SystemSpaceForm } from './system/spaces/SystemSpaceForm';
 export { SystemFilestoreForm } from './system/SystemFilestoreForm';
 export { SystemUserForm } from './system/SystemUserForm';

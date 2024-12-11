@@ -76,6 +76,28 @@ export const createTenant = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const migrateTenant = (options = {}) => {
+  const { slug, tenant, multipart } = options;
+  if (!tenant) {
+    throw new Error('migrateTenant failed! The option "tenant" is required.');
+  }
+  if (!slug) {
+    throw new Error('migrateTenant failed! The option "slug" is required.');
+  }
+
+  return axios
+    .post(
+      `/app/system-coordinator/api/v1/tenants/${slug}`,
+      !multipart ? tenant : formDataBuilder(tenant),
+      {
+        params: paramBuilder(options),
+        headers: headerBuilder(options),
+      },
+    )
+    .then(response => ({ tenant: response.data.tenant }))
+    .catch(handleErrors);
+};
+
 export const deleteTenant = (options = {}) => {
   const { slug } = options;
   if (!slug) {
