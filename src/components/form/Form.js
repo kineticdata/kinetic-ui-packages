@@ -448,7 +448,9 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('SUBMIT', function*({ payload: { formKey, fieldSet, onInvalid } }) {
+  takeEvery('SUBMIT', function*({
+    payload: { formKey, fieldSet, onInvalid, onSave: onSaveOverride },
+  }) {
     try {
       const { bindings, fields, onSubmit, onSave, onError } = yield select(
         selectForm(formKey),
@@ -465,7 +467,8 @@ regSaga(
         try {
           const result = yield call(onSubmit, values, bindings);
           dispatch('SUBMIT_SUCCESS', { formKey });
-          if (onSave) yield call(onSave, result);
+          if (onSaveOverride || onSave)
+            yield call(onSaveOverride || onSave, result);
         } catch (error) {
           dispatch('SUBMIT_ERROR', {
             formKey,
@@ -580,8 +583,8 @@ export const reloadDataSource = (formKey, name) =>
 
 export const configureForm = config => dispatch('CONFIGURE_FORM', config);
 
-export const submitForm = (formKey, { fieldSet, onInvalid, values }) =>
-  dispatch('SUBMIT', { formKey, fieldSet, onInvalid, values });
+export const submitForm = (formKey, { fieldSet, onInvalid, values, onSave }) =>
+  dispatch('SUBMIT', { formKey, fieldSet, onInvalid, values, onSave });
 
 export const serializeForm = (formKey, { fieldSet } = {}) =>
   serializeImpl(selectForm(formKey)(store.getState()), fieldSet);
