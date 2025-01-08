@@ -39,6 +39,14 @@ const columns = [
     toggleable: true,
   },
   {
+    value: 'status',
+    valueTransform: (_value, row) =>
+      row.getIn(['status', 'healthy']) ? 'Valid' : 'Invalid',
+    title: 'Status',
+    sortable: false,
+    toggleable: true,
+  },
+  {
     value: 'id',
     title: 'Id',
     toggleable: true,

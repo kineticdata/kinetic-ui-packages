@@ -67,6 +67,14 @@ export const generateHttpConnectionConfigFields = config => [
     placeholder: 'https://www.kineticdata.com',
   },
   {
+    name: 'testPath',
+    label: 'Test Path',
+    type: 'text',
+    initialValue: get(config, 'testPath'),
+    helpText:
+      'Path to a GET endpoint to be used for testing the connection and checking the health status.',
+  },
+  {
     name: 'caCert',
     label: 'Trusted CA Certificate',
     type: 'text',

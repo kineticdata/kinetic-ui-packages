@@ -75,6 +75,21 @@ export const deleteConnection = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const testConnection = (options = {}) => {
+  validateOptions('testConnection', ['connection'], options);
+  const { connection, connectionId, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api${
+        connectionId ? `/connections/${connectionId}` : ''
+      }/test`,
+      connection,
+      { params },
+    )
+    .then(response => ({ data: response.data }))
+    .catch(handleErrors);
+};
+
 /******************************************************************************
  * OPERATIONS
  ******************************************************************************/
@@ -195,7 +210,7 @@ export const executeOperation = (options = {}) => {
       { connection, connectionId, operation, operationId, parameters },
       { params },
     )
-    .then(response => ({ execution: response.data }))
+    .then(response => ({ data: response.data }))
     .catch(handleErrors);
 };
 
