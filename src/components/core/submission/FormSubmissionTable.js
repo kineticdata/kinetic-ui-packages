@@ -44,7 +44,7 @@ const columns = [
   {
     value: 'closedAt',
     title: 'Closed At',
-    sortable: true,
+    sortable: false,
     toggleable: true,
   },
   {
@@ -62,7 +62,7 @@ const columns = [
   {
     value: 'createdAt',
     title: 'Created At',
-    sortable: true,
+    sortable: false,
     toggleable: true,
   },
   {
@@ -117,7 +117,7 @@ const columns = [
   {
     value: 'submittedAt',
     title: 'Submitted At',
-    sortable: true,
+    sortable: false,
     toggleable: true,
   },
   {
@@ -141,6 +141,12 @@ const columns = [
   {
     value: 'updatedBy',
     title: 'Updated By',
+    sortable: false,
+    toggleable: true,
+  },
+  {
+    value: 'sortDate',
+    title: 'Sort Date',
     sortable: false,
     toggleable: true,
   },
