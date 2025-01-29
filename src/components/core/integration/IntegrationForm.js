@@ -9,7 +9,10 @@ import {
   fetchSecurityPolicyDefinitions,
 } from '../../../apis';
 import { List, Map } from 'immutable';
-import integrationTypes from '../../integrator/integrationTypes';
+import integrationTypes, {
+  getConnectionMetadata,
+  getOperationMetadata,
+} from '../../integrator/integrationTypes';
 
 const dataSources = ({ kappSlug, name }) => ({
   integration: {
@@ -91,7 +94,7 @@ const fields = ({ name }) => ({ integration, connections, operations }) =>
             value: conn.get('id'),
             label: conn.get('name'),
             type: integrationTypes.getLabel(conn.get('type')),
-            detail: conn.getIn(['config', 'baseUrl']),
+            detail: getConnectionMetadata(conn)?.optionDetail,
           }),
         ),
       onChange: (bindings, { setValue }) => {
@@ -114,7 +117,7 @@ const fields = ({ name }) => ({ integration, connections, operations }) =>
             Map({
               value: op.get('id'),
               label: op.get('name'),
-              detail: op.getIn(['config', 'method']),
+              detail: getOperationMetadata(op)?.optionDetail,
             }),
           ),
       enabled: ({ values }) => !!values.get('connectionId'),

@@ -227,7 +227,11 @@ export { PolicyRuleForm } from './task/policy_rule/PolicyRuleForm';
 export { EngineSettingsForm } from './task/engine/EngineSettingsForm';
 
 // Integrator
-export { integrationTypes } from './integrator/integrationTypes';
+export {
+  integrationTypes,
+  getConnectionMetadata,
+  getOperationMetadata,
+} from './integrator/integrationTypes';
 export { ConnectionTable } from './integrator/connection/ConnectionTable';
 export { ConnectionForm } from './integrator/connection/ConnectionForm';
 export { OperationTable } from './integrator/operation/OperationTable';
