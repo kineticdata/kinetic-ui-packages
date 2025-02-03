@@ -2,14 +2,19 @@ import { fetchWebhooks, fetchWebhookJobs } from '../../../apis';
 import { generateTable } from '../../table/Table';
 import { List, Map } from 'immutable';
 
-const dataSource = ({ scope, kappSlug, status }) => ({
+const WORKFLOW_JOB_STATUSES = [
+  { label: 'Failed', value: 'failed' },
+  { label: 'Pending', value: 'queued' },
+];
+
+const dataSource = ({ scope, kappSlug }) => ({
   fn: fetchWebhookJobs,
   params: paramData => [
     {
       include: 'details',
       scope,
       kappSlug,
-      status,
+      status: paramData.filters.get('status') || 'all',
       limit: paramData.pageSize,
       pageToken: paramData.nextPageToken,
       webhook: paramData.filters.get('name') || undefined, // required by the API, can't pass empty webhook= param
@@ -44,6 +49,12 @@ const filters = () => ({ values, definitions }) =>
               }),
             )
           : List(),
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      options: WORKFLOW_JOB_STATUSES,
     },
   ];
 
@@ -147,7 +158,7 @@ const columns = [
 ];
 
 export const WebhookJobTable = generateTable({
-  tableOptions: ['scope', 'kappSlug', 'status'],
+  tableOptions: ['scope', 'kappSlug'],
   columns,
   filters,
   filterDataSources,

@@ -9,7 +9,7 @@ const ORDER_BY = Map({
   type: 'tree.type',
 });
 
-const RUN_TYPES = ['Tree', 'Global Routine', 'Local Routine'].map(v => ({
+const RUN_TYPES = ['Tree', 'Global Routine'].map(v => ({
   label: v,
   value: v,
 }));
