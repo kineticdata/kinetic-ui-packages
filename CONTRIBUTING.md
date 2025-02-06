@@ -105,7 +105,7 @@ check.
 
 ```javascript static
 "concurrently": "^4.1.0",
-"cross-env": "^5.2.0",
+"cross-env": "^7.0.3",
 "lint-staged": "^8.1.3",
 "onchange": "^5.2.0",
 "prettier": "^1.16.4",

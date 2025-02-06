@@ -1,4 +1,12 @@
-import { apiGroup } from '../http';
+import {
+  apiGroup,
+  handleErrors,
+  headerBuilder,
+  paramBuilder,
+  validateOptions,
+} from '../http';
+import axios from 'axios';
+import { bundle } from '../../helpers';
 
 export const {
   fetchIntegrations,
@@ -22,3 +30,20 @@ export const {
     }),
   },
 });
+
+export const executeIntegration = (options = {}) => {
+  validateOptions('executeOperation', ['kappSlug', 'integrationName'], options);
+  const { kappSlug, formSlug, integrationName, parameters = {} } = options;
+  const params = { ...paramBuilder(options) };
+
+  return axios
+    .post(
+      `${bundle.apiLocation()}/integrations/kapps/${kappSlug}${
+        formSlug ? `/forms/${formSlug}` : ''
+      }/${integrationName}`,
+      parameters,
+      { params, headers: headerBuilder(options) },
+    )
+    .then(response => ({ data: response.data }))
+    .catch(handleErrors);
+};

@@ -1,8 +1,30 @@
 # Changelog for `@kineticdata/react`
 
+This changelog documents the changes to the `@kineticdata/react` library that are relevant when the library is used for customer implementations. It does not document changes made to components used in our internal consoles.
+
 When upgrading `@kineticdata/react` to a newer version, remember that all `@kineticdata/*` libraries must be on the same exact version. This is because each `@kineticdata/bundle-*` library has `@kineticdata/react` as a dependency, and if two different versions of `@kineticdata/react` are installed in a bundle, the bundle will never load because authentication happens in a different version of `@kineticdata/react` than the one used during rendering the packages.
 
 Remember to always run `yarn install` after upgrading any dependency versions.
+
+## 6.1.0 (February 7, 2025)
+
+- Upgraded `axios` version to resolve vulnerabilities
+- Added missing `qs` and `react-beautiful-dnd` dependencies
+- Added new API functions for Kapp Integrations
+  - `fetchIntegrations`, `fetchIntegration`, `createIntegration`, `updateIntegration`, `deleteIntegration`, `executeIntegration`
+- Added new API functions for Connections
+  - `fetchConnections`, `fetchConnection`, `updateConnection`, `createConnection`, `deleteConnection`, `testConnection`
+- Added new API functions for Operations
+  - `fetchOperations`, `fetchOperation`, `updateOperation`, `createOperation`, `deleteOperation`, `fetchBulkOperations`, `inspectOperation`, `executeOperation`
+- Added misc API functions that were missing
+  - `cloneSubmission`
+- Added new props to `CoreForm`
+  - `renderProps` allows passing through props to the `Layout` component
+  - `addSubmissionIncludes` and `addFormIncludes` allows passing an array of additional `include` properties for the corresponding queries
+
+## 6.0.5 (February 16, 2024)
+
+- Upgraded `axios` version to resolve vulnerabilities
 
 ## 6.0.4 (January 22, 2024)
 

@@ -22,10 +22,29 @@ import {
   DefaultCoreFormConfig,
 } from './defaults';
 
-const submissionIncludes =
-  'values,form,form.fields,form.attributesMap,form.kapp,form.kapp.attributesMap,form.kapp.space,form.kapp.space.attributesMap';
-const formIncludes =
-  'fields,attributesMap,kapp,kapp.attributesMap,kapp.space,kapp.space.attributesMap';
+const submissionIncludes = (addSubmissionIncludes = []) =>
+  [
+    'values',
+    'form',
+    'form.fields',
+    'form.attributesMap',
+    'form.kapp',
+    'form.kapp.attributesMap',
+    'form.kapp.space',
+    'form.kapp.space.attributesMap',
+    ...addSubmissionIncludes,
+  ].join(',');
+
+const formIncludes = (addFormIncludes = []) =>
+  [
+    'fields',
+    'attributesMap',
+    'kapp',
+    'kapp.attributesMap',
+    'kapp.space',
+    'kapp.space.attributesMap',
+    ...addFormIncludes,
+  ].join(',');
 
 const getNumericAttributeValue = (form, name, defaultValue = 0) => {
   const kapp = form ? form.kapp : null;
@@ -105,7 +124,7 @@ export const lockSubmission = ({ id, datastore, options = {} }) => {
   return fetchSubmission({
     id,
     datastore: !!datastore,
-    include: submissionIncludes,
+    include: submissionIncludes(options.addSubmissionIncludes),
   }).then(({ submission, error }) => {
     if (error) {
       return { error };
@@ -132,7 +151,7 @@ export const lockSubmission = ({ id, datastore, options = {} }) => {
 
     return updateSubmission({
       id: submission.id,
-      include: submissionIncludes,
+      include: submissionIncludes(options.addSubmissionIncludes),
       values: {
         [options.lockedByField || LOCKED_BY_FIELD]: bundle.identity(),
         [options.lockedUntilField || LOCKED_UNTIL_FIELD]: new Date(
@@ -152,7 +171,7 @@ export const unlockSubmission = ({
   return fetchSubmission({
     id,
     datastore: !!datastore,
-    include: submissionIncludes,
+    include: submissionIncludes(options.addSubmissionIncludes),
   }).then(({ submission, error }) => {
     if (error) {
       return { error };
@@ -175,7 +194,7 @@ export const unlockSubmission = ({
 
     return updateSubmission({
       id: submission.id,
-      include: submissionIncludes,
+      include: submissionIncludes(options.addSubmissionIncludes),
       values: {
         [options.lockedByField || LOCKED_BY_FIELD]: '',
         [options.lockedUntilField || LOCKED_UNTIL_FIELD]: '',
@@ -412,7 +431,7 @@ export class CoreFormComponent extends Component {
       ? fetchSubmission({
           id: this.props.submission,
           datastore: !!this.props.datastore,
-          include: submissionIncludes,
+          include: submissionIncludes(this.props.addSubmissionIncludes),
           public: this.props.public,
         }).then(({ submission, error }) => {
           this.setStateSafe({
@@ -425,7 +444,7 @@ export class CoreFormComponent extends Component {
           datastore: !!this.props.datastore,
           kappSlug: this.props.kapp,
           formSlug: this.props.form,
-          include: formIncludes,
+          include: formIncludes(this.props.addFormIncludes),
           public: this.props.public,
         }).then(({ form, error }) => {
           this.setStateSafe({
@@ -440,7 +459,7 @@ export class CoreFormComponent extends Component {
       ? fetchSubmission({
           id: this.props.submission,
           datastore: !!this.props.datastore,
-          include: submissionIncludes,
+          include: submissionIncludes(this.props.addSubmissionIncludes),
         }).then(({ submission, error }) => {
           this.setStateSafe({
             submission,
@@ -725,6 +744,7 @@ export class CoreFormComponent extends Component {
         lockMessage={lockMessage}
         reviewPaginationControl={reviewPaginationControl}
         lock={init ? lockProps : undefined}
+        renderProps={this.props.renderProps}
       />
     ) : (
       content
