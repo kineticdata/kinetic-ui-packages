@@ -9,8 +9,9 @@ const dataSource = () => ({
       include: 'details',
       limit: paramData.pageSize,
       offset: paramData.nextPageToken,
-      status: status ? status : paramData.filters.get('status'),
-      name: name ? name : paramData.filters.get('name'),
+      status: paramData.filters.get('status'),
+      name: paramData.filters.get('name'),
+
       ...generateSortParams(paramData),
     },
   ],

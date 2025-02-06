@@ -1,4 +1,4 @@
-import { get, getIn, hasIn, List, Map } from 'immutable';
+import { get, getIn, List, Map } from 'immutable';
 import integrationTypes from '../../integrationTypes';
 
 export const serializeHttpOperationConfigFields = configFields => ({

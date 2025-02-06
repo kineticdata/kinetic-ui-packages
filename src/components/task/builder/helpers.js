@@ -1,4 +1,4 @@
-import { fromJS, isImmutable, List, Map, OrderedMap } from 'immutable';
+import { List, Map } from 'immutable';
 import { isObject } from 'lodash-es';
 import { Intersection, ShapeInfo } from 'kld-intersections';
 import * as constants from './constants';

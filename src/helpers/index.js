@@ -1,4 +1,4 @@
-import { fromJS, get, List, Map, OrderedMap } from 'immutable';
+import { fromJS, get, List, Map } from 'immutable';
 import { capitalize } from 'lodash-es';
 
 export const K = typeof window !== `undefined` ? window.K : () => {};
