@@ -231,6 +231,7 @@ export const FormListComponent = ({
           },
         }}
         filterSet={['name', 'type', 'status']}
+        filterAutoFocus={0}
         alterFilters={{
           type: {
             options: queueSettings.queueSettingsKapp.formTypes.map(
