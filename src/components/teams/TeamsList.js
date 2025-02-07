@@ -79,6 +79,7 @@ export const TeamsListComponent = ({
       }}
       columnSet={['name', 'description']}
       filterSet={['name']}
+      filterAutoFocus={0}
       onSearch={() => () => setFilterOpen(false)}
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (

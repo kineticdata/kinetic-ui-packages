@@ -203,6 +203,7 @@ export const UsersListComponent = ({
         username: { components: { BodyCell: NameCell } },
       }}
       filterSet={['username', 'displayName', 'email']}
+      filterAutoFocus={0}
       onSearch={() => () => setFilterOpen(false)}
     >
       {({ pagination, table, filter, appliedFilters, filterFormKey }) => (

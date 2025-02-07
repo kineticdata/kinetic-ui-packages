@@ -1,6 +1,6 @@
 {
   "name": "@kineticdata/bundle-settings",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "main": "./lib/index.js",
   "files": [
     "assets",
@@ -16,8 +16,8 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@kineticdata/bundle-common": "6.0.0",
-    "@kineticdata/react": "6.0.0",
+    "@kineticdata/bundle-common": "6.1.0",
+    "@kineticdata/react": "6.1.0",
     "@reach/router": "https://github.com/kineticdata/router.git",
     "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
@@ -44,8 +44,8 @@
     "semver": "^5.5.0"
   },
   "peerDependencies": {
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "babel": {
     "presets": [
