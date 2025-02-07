@@ -11,7 +11,14 @@ import {
 } from '../../../apis';
 import { slugify } from '../../../helpers';
 
-const DISPLAY_TYPES = ['Display Page', 'Redirect', 'Single Page App'];
+const DISPLAY_TYPES = ['Custom', 'Hosted', 'Platform', 'Redirect'];
+
+const getInitialDisplayType = value => {
+  if (value === 'Single Page App') {
+    return 'Custom';
+  }
+  return value || 'Platform';
+};
 
 const dataSources = () => ({
   space: {
@@ -97,26 +104,6 @@ const securityEndpoints = {
     label: 'User Modification',
     types: ['Space', 'User'],
   },
-  defaultFormDisplay: {
-    endpoint: 'Default Form Display',
-    label: 'Default Form Display',
-    types: ['Form'],
-  },
-  defaultFormModification: {
-    endpoint: 'Default Form Modification',
-    label: 'Default Form Modification',
-    types: ['Form'],
-  },
-  defaultSubmissionAccess: {
-    endpoint: 'Default Submission Access',
-    label: 'Default Submission Access',
-    types: ['Form', 'Submission'],
-  },
-  defaultSubmissionModification: {
-    endpoint: 'Default Submission Modification',
-    label: 'Default Submission Modification',
-    types: ['Form', 'Submission'],
-  },
 };
 
 const fields = () => ({
@@ -137,16 +124,14 @@ const fields = () => ({
       type: 'text',
       initialValue: get(space, 'afterLogoutPath'),
       placeholder: ({ space }) => `/${get(space, 'slug')}`,
-      visible: ({ values }) => get(values, 'displayType') !== 'Single Page App',
+      visible: false,
     },
     {
       name: 'bundlePath',
       label: 'Bundle Path',
       type: 'text',
       initialValue: get(space, 'bundlePath'),
-      required: ({ values }) =>
-        get(values, 'sharedBundleBase') !== '' &&
-        get(values, 'displayType') === 'Display Page',
+      visible: false,
     },
     {
       name: 'defaultFormConfirmationPage',
@@ -154,7 +139,7 @@ const fields = () => ({
       type: 'text',
       initialValue: get(space, 'defaultFormConfirmationPage'),
       placeholder: 'confirmation.jsp',
-      visible: ({ values }) => get(values, 'displayType') !== 'Single Page App',
+      visible: false,
     },
     {
       name: 'defaultFormDisplayPage',
@@ -162,7 +147,7 @@ const fields = () => ({
       type: 'text',
       initialValue: get(space, 'defaultFormDisplayPage'),
       placeholder: 'form.jsp',
-      visible: ({ values }) => get(values, 'displayType') !== 'Single Page App',
+      visible: false,
     },
     {
       name: 'defaultLocale',
@@ -199,18 +184,17 @@ const fields = () => ({
         label: displayType,
       })),
       required: true,
-      initialValue: get(space, 'displayType') || 'Display Page',
+      initialValue: getInitialDisplayType(get(space, 'displayType')),
       helpText:
-        'Determines how the application works. For kinops, Single Page App is used.',
+        'Display Types indicate how the Platform should render your bundle.',
     },
     {
       name: 'displayValueJSP',
-      label: 'Space Display Page',
+      label: '',
       type: 'text',
       transient: true,
       placeholder: 'space.jsp',
       visible: ({ values }) => get(values, 'displayType') === 'Display Page',
-      required: ({ values }) => get(values, 'displayType') === 'Display Page',
       initialValue:
         get(space, 'displayType') === 'Display Page'
           ? get(space, 'displayValue')
@@ -235,32 +219,52 @@ const fields = () => ({
       label: 'Location',
       type: 'text',
       transient: true,
-      visible: ({ values }) => get(values, 'displayType') === 'Single Page App',
-      required: ({ values }) =>
-        get(values, 'displayType') === 'Single Page App',
+      visible: ({ values }) => get(values, 'displayType') === 'Custom',
+      required: ({ values }) => get(values, 'displayType') === 'Custom',
       initialValue:
-        get(space, 'displayType') === 'Single Page App'
+        get(space, 'displayType') === 'Single Page App' ||
+        get(space, 'displayType') === 'Custom'
           ? (get(space, 'displayValue') || '')
               .replace('spa.jsp', '')
               .replace('?location=', '')
           : '',
-      helpText: 'See explanation below for external and embedded asset modes.',
+      helpText:
+        'Enter the full URL to where your bundle is stored. This must include the index.html in the path.',
+    },
+    {
+      name: 'displayValueHost',
+      label: 'Bundle Slug',
+      type: 'text',
+      transient: true,
+      visible: ({ values }) => get(values, 'displayType') === 'Hosted',
+      required: ({ values }) => get(values, 'displayType') === 'Hosted',
+      initialValue:
+        get(space, 'displayType') === 'Hosted'
+          ? get(space, 'displayValue')
+          : '',
+      helpText:
+        'Enter the full "slug" which corresponds to the directory your hosted bundle is stored in.',
     },
     {
       name: 'displayValue',
-      label: 'Dispaly Value',
+      label: 'Display Value',
       type: 'text',
       visible: false,
       initialValue: get(space, 'displayValue'),
       serialize: ({ values }) => {
         const displayType = values.get('displayType');
         const displayValueSPA = values.get('displayValueSPA');
+        const displayValueHost = values.get('displayValueHost');
         const displayValueJSP = values.get('displayValueJSP');
         const displayValueRedirect = values.get('displayValueRedirect');
-        if (displayType === 'Single Page App') {
+        if (get(values, 'displayType') === 'Custom') {
           return displayValueSPA && displayValueSPA.endsWith('index.html')
             ? displayValueSPA
             : `spa.jsp${displayValueSPA && '?location=' + displayValueSPA}`;
+        } else if (get(values, 'displayType') === 'Hosted') {
+          return displayValueHost;
+        } else if (get(values, 'displayType') === 'Platform') {
+          return '';
         } else {
           return displayType === 'Redirect'
             ? displayValueRedirect
@@ -274,7 +278,7 @@ const fields = () => ({
       type: 'text',
       initialValue: get(space, 'loginPage'),
       placeholder: 'login.jsp',
-      visible: ({ values }) => get(values, 'displayType') !== 'Single Page App',
+      visible: false,
     },
     {
       name: 'name',
@@ -296,7 +300,7 @@ const fields = () => ({
       type: 'text',
       initialValue: get(space, 'resetPasswordPage'),
       placeholder: 'resetPassword.jsp',
-      visible: ({ values }) => get(values, 'displayType') !== 'Single Page App',
+      visible: false,
     },
     {
       name: 'oauthSigningKey',
@@ -335,6 +339,7 @@ const fields = () => ({
       type: 'text',
       initialValue: get(space, 'sharedBundleBase'),
       helpText: 'Directory used as path prefix for bundles.',
+      visible: false,
     },
     {
       name: 'slug',
@@ -381,6 +386,7 @@ const fields = () => ({
               Map({
                 value: definition.get('name'),
                 label: definition.get('name'),
+                type: definition.get('type'),
               }),
             ),
         initialValue: space
@@ -426,7 +432,7 @@ const fields = () => ({
     },
     {
       name: 'allowedIpsEnabled',
-      label: 'Enabled Allowed IP Restrictions?',
+      label: 'Allowed IP Restrictions',
       type: 'checkbox',
       initialValue: get(space, 'allowedIpsEnabled', false) || false,
     },

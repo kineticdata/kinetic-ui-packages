@@ -7,7 +7,7 @@ import {
   fetchKapp,
   fetchProfile,
 } from '../../../apis';
-import { buildBindings } from '../../../helpers';
+import { buildCodeEditorBindings } from '../../../helpers';
 
 export const SPACE_SECURITY_DEFINITION_TYPES = [
   'Space',
@@ -15,13 +15,24 @@ export const SPACE_SECURITY_DEFINITION_TYPES = [
   'Team',
   'User',
 ];
+const SPACE_SECURITY_DEFINITION_TYPES_MAP = {
+  Space: ['Space'],
+  'File Resource': ['Space', 'File Resource'],
+  Team: ['Space', 'Team'],
+  User: ['Space', 'User'],
+};
 
 export const KAPP_SECURITY_DEFINITION_TYPES = ['Kapp', 'Form', 'Submission'];
+const KAPP_SECURITY_DEFINITION_TYPES_MAP = {
+  Kapp: ['Kapp'],
+  Form: ['Kapp', 'Form'],
+  Submission: ['Kapp', 'Form', 'Submission'],
+};
 
 const SPACE_INCLUDES =
-  'datastoreFormAttributeDefinitions,spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
+  'spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
 const KAPP_INCLUDES =
-  'formAttributeDefinitions,kappAttributeDefinitions,fields';
+  'formAttributeDefinitions,kappAttributeDefinitions,fields.details';
 const PROFILE_INCLUDES = 'attributesMap,profileAttributesMap';
 
 const dataSources = ({ securityPolicyName, kappSlug }) => ({
@@ -39,6 +50,7 @@ const dataSources = ({ securityPolicyName, kappSlug }) => ({
     fn: fetchSecurityPolicyDefinition,
     params: securityPolicyName && [{ securityPolicyName, kappSlug }],
     transform: result => result.securityPolicyDefinition,
+    errorTransform: result => result.error,
   },
   profile: {
     fn: fetchProfile,
@@ -62,7 +74,9 @@ const handleSubmit = ({ securityPolicyName, kappSlug }) => values =>
     return securityPolicyDefinition;
   });
 
-const fields = ({ securityPolicyName, kappSlug }) => ({ securityPolicy }) =>
+const fields = ({ securityPolicyName, securityPolicyType, kappSlug }) => ({
+  securityPolicy,
+}) =>
   (!securityPolicyName || securityPolicy) && [
     {
       name: 'name',
@@ -78,8 +92,14 @@ const fields = ({ securityPolicyName, kappSlug }) => ({ securityPolicy }) =>
       type: 'select',
       required: true,
       options: (kappSlug
-        ? KAPP_SECURITY_DEFINITION_TYPES
-        : SPACE_SECURITY_DEFINITION_TYPES
+        ? securityPolicyType &&
+          KAPP_SECURITY_DEFINITION_TYPES.includes(securityPolicyType)
+          ? KAPP_SECURITY_DEFINITION_TYPES_MAP[securityPolicyType]
+          : KAPP_SECURITY_DEFINITION_TYPES
+        : securityPolicyType &&
+          SPACE_SECURITY_DEFINITION_TYPES.includes(securityPolicyType)
+          ? SPACE_SECURITY_DEFINITION_TYPES_MAP[securityPolicyType]
+          : SPACE_SECURITY_DEFINITION_TYPES
       ).map(ele => ({
         value: ele,
         label: ele,
@@ -104,17 +124,46 @@ const fields = ({ securityPolicyName, kappSlug }) => ({ securityPolicy }) =>
       name: 'rule',
       label: 'Rule',
       type: 'code',
-      language: 'js',
+      language: 'js-expression',
       required: true,
       options: ({ space, kapp, values, profile }) =>
-        buildBindings({ space, kapp, scope: values.get('type'), profile }),
+        buildCodeEditorBindings({
+          identity: profile && {
+            attributeDefinitions: space?.get('userAttributeDefinitions'),
+            profileAttributeDefinitions: space?.get(
+              'userProfileAttributeDefinitions',
+            ),
+          },
+          space: {
+            attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+          },
+          file: values.get('type') === 'File Resource' && {},
+          user: values.get('type') === 'User' && {
+            attributeDefinitions: space?.get('userAttributeDefinitions'),
+            profileAttributeDefinitions: space?.get(
+              'userProfileAttributeDefinitions',
+            ),
+          },
+          team: values.get('type') === 'Team' && {
+            attributeDefinitions: space?.get('teamAttributeDefinitions'),
+          },
+          kapp: ['Kapp', 'Form', 'Submission'].includes(values.get('type')) && {
+            attributeDefinitions: kapp?.get('kappAttributeDefinitions'),
+          },
+          form: ['Form', 'Submission'].includes(values.get('type')) && {
+            attributeDefinitions: kapp?.get('formAttributeDefinitions'),
+          },
+          submission: values.get('type') === 'Submission' && { detailed: true },
+          values: values.get('type') === 'Submission' &&
+            kapp?.get('fields').size > 0 && { data: kapp.get('fields') },
+        }),
       initialValue: securityPolicy ? securityPolicy.get('rule') : '',
       helpText: `Expression to evaluate to true or false. Click the </> button to see available values scoped to this Kapp or Space.`,
     },
   ];
 
 export const SecurityDefinitionForm = generateForm({
-  formOptions: ['kappSlug', 'securityPolicyName'],
+  formOptions: ['kappSlug', 'securityPolicyName', 'securityPolicyType'],
   dataSources,
   fields,
   handleSubmit,

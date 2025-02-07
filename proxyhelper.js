@@ -64,6 +64,7 @@ const setupProxy = ({
   target = process.env.REACT_APP_PROXY_HOST,
   proxyLogger,
   pathRewrite,
+  onlyTenant = false,
 } = {}) => {
   return {
     target,
@@ -79,6 +80,7 @@ const setupProxy = ({
       }
 
       if (
+        !onlyTenant &&
         process.env.REACT_APP_PROXY_SUBDOMAIN &&
         !proxyRequest.path.endsWith('pack') &&
         !proxyRequest.path.endsWith('favicon.ico')
@@ -119,6 +121,8 @@ const getProxyConfig = (
   {
     mainTarget = process.env.REACT_APP_PROXY_HOST,
     loghubTarget = process.env.REACT_APP_LOGHUB_PROXY_HOST,
+    systemCoordinatorTarget = process.env.REACT_APP_SYS_COORDINATOR_PROXY_HOST,
+    integratorTarget = process.env.REACT_APP_INTEGRATOR_PROXY_HOST,
     proxyLogger,
   } = {},
 ) => {
@@ -152,6 +156,33 @@ const getProxyConfig = (
       },
     });
     finalConfigs.push({ paths: ['/app/loghub/**'], options });
+  }
+
+  if (systemCoordinatorTarget) {
+    // If we're overriding the underlying Loghub host, bypass it in the main.
+    mainPaths.push('!/app/system-coordinator/**');
+    const options = setupProxy({
+      target: systemCoordinatorTarget,
+      proxyLogger,
+      pathRewrite: {
+        '^/app/system-coordinator': '/app',
+      },
+    });
+    finalConfigs.push({ paths: ['/app/system-coordinator/**'], options });
+  }
+
+  if (integratorTarget) {
+    // If we're overriding the underlying Integrator host, bypass it in the main.
+    mainPaths.push('!/app/integrator/**');
+    const options = setupProxy({
+      target: integratorTarget,
+      proxyLogger,
+      pathRewrite: {
+        '^/app/integrator/': '/',
+      },
+      onlyTenant: true,
+    });
+    finalConfigs.push({ paths: ['/app/integrator/**'], options });
   }
 
   return finalConfigs.map(config => {

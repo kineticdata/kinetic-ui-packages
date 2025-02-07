@@ -1,7 +1,10 @@
 import { generateForm } from '../../form/Form';
-import { buildBindings, normalizeParameter } from './helpers';
+import {
+  buildBindings,
+  checkOmittedParametersForAdvancedHandlers,
+  normalizeParameter,
+} from './helpers';
 import { NodeParameter } from './models';
-import { checkOmittedParameters } from './TaskDefinitionConfigForm';
 
 const getOptions = menu =>
   menu
@@ -9,49 +12,62 @@ const getOptions = menu =>
     .filter(value => !!value)
     .map(value => ({ label: value, value }));
 
-const dataSources = ({ task, tasks, tree, node }) => ({
+const dataSources = ({ connections, task, tasks, tree, node }) => ({
   bindings: {
     fn: buildBindings,
-    params: [tree, tasks, node],
+    params: [{ tree, tasks, node, connections }],
   },
   parameters: {
     fn: () => task.inputs || task.parameters,
     params: [],
     transform: result => result.map(normalizeParameter).map(NodeParameter),
   },
+  oldParameters: {
+    fn: () => node.parameters,
+    params: [],
+  },
 });
 
-const fields = ({ node, task, tasks, tree }) => ({ bindings, parameters }) =>
+const fields = ({ node, task }) => ({ bindings, parameters, oldParameters }) =>
   bindings &&
-  parameters && [
-    ...node.parameters.map(parameter => ({
+  parameters &&
+  oldParameters && [
+    ...oldParameters.map(parameter => ({
       name: `oldParameter_${parameter.id}`,
       label: parameter.label,
       type: parameter.menu ? 'select' : 'code',
-      language: parameter.menu ? null : 'erb',
+      language: parameter.menu ? null : 'ruby-template',
       helpText: parameter.description,
       initialValue: parameter.value,
       options: parameter.menu ? getOptions(parameter.menu) : bindings,
       transient: true,
       enabled: false,
-      visible: checkOmittedParameters(node, parameter),
+      visible: checkOmittedParametersForAdvancedHandlers(node, parameter),
     })),
     ...parameters.map(parameter => {
-      const matchingParameter = node.parameters.find(
+      const matchingParameter = oldParameters.find(
         oldParameter => oldParameter.id === parameter.id,
       );
       return {
         name: `parameter_${parameter.id}`,
         label: parameter.label,
         type: parameter.menu ? 'select' : 'code',
-        language: parameter.menu ? null : 'erb',
+        language: parameter.menu ? null : 'ruby-template',
         helpText: parameter.description,
-        initialValue: matchingParameter
-          ? matchingParameter.value
-          : parameter.defaultValue,
+        // If this parameter will be omitted, keep its value. Otherwise, set to
+        // the matchingParameter's value or the default
+        initialValue: !checkOmittedParametersForAdvancedHandlers(
+          task,
+          parameter,
+        )
+          ? parameter.value || parameter.defaultValue
+          : matchingParameter
+            ? matchingParameter.value
+            : parameter.defaultValue,
         options: parameter.menu ? getOptions(parameter.menu) : bindings,
         transient: true,
-        visible: checkOmittedParameters(node, parameter),
+        // Use the task variable as the node since this is the new node
+        visible: checkOmittedParametersForAdvancedHandlers(task, parameter),
       };
     }),
     {
@@ -110,10 +126,10 @@ const fields = ({ node, task, tasks, tree }) => ({ bindings, parameters }) =>
     },
   ];
 
-const handleSubmit = ({ node }) => values => values;
+const handleSubmit = () => values => values;
 
 export const NodeParametersForm = generateForm({
-  formOptions: ['node', 'task', 'tasks', 'tree'],
+  formOptions: ['connections', 'node', 'task', 'tasks', 'tree'],
   dataSources,
   fields,
   handleSubmit,

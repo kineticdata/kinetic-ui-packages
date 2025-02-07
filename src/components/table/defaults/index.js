@@ -14,6 +14,7 @@ import FilterLayout from './FilterLayout';
 import BooleanFilter from './BooleanFilter';
 import TextFilter from './TextFilter';
 import PaginationControl from './PaginationControl';
+import ColumnControl from './ColumnControl';
 
 export const DefaultTableConfig = Map({
   TableLayout,
@@ -32,4 +33,5 @@ export const DefaultTableConfig = Map({
   TextFilter,
   BooleanFilter,
   PaginationControl,
+  ColumnControl,
 });

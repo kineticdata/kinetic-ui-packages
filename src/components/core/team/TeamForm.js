@@ -9,7 +9,7 @@ import { splitTeamName } from '../../../helpers';
 import { get, List, Map } from 'immutable';
 import { handleFormErrors } from '../../form/Form.helpers';
 
-const TEAM_INCLUDES = 'attributesMap,authorization,memberships.user';
+const TEAM_INCLUDES = 'details,attributesMap,authorization,memberships.user';
 
 const dataSources = ({ teamSlug }) => ({
   team: {

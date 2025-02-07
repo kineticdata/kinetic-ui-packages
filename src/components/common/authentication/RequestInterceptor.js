@@ -1,4 +1,4 @@
-const tokenEndpointPattern = /\/app\/(loghub|system-coordinator)\/(refresh|components|api\/v\d)/;
+const tokenEndpointPattern = /\/app\/(loghub|system-coordinator|integrator)\/(refresh|components|api)/;
 
 export default class RequestInterceptor {
   constructor(store) {
@@ -18,7 +18,7 @@ export default class RequestInterceptor {
     return config.__bypassInitInterceptor
       ? config
       : this.initPromise.then(() => {
-          const { csrfToken, loggedIn, token } = this.store
+          const { loggedIn, token } = this.store
             .getState()
             .get('session')
             .toObject();
@@ -28,12 +28,7 @@ export default class RequestInterceptor {
           if (token && config.url.match(tokenEndpointPattern)) {
             config.headers.Authorization = 'Bearer ' + token;
           }
-          if (csrfToken) {
-            // we need to set xsrfCookieName otherwise axios will override the
-            // xsrf header that we set manually
-            config.xsrfCookieName = 'DONT_USE_COOKIES_FOR_XSRF_TOKEN';
-            config.headers['X-XSRF-TOKEN'] = csrfToken;
-          }
+
           return config;
         });
   }

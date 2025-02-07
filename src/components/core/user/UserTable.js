@@ -58,42 +58,58 @@ const columns = [
     value: 'username',
     title: 'Username',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'email',
     title: 'Email',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'displayName',
     title: 'Display Name',
     sortable: true,
-  },
-  {
-    value: 'createdAt',
-    title: 'Created',
-    sortable: true,
-  },
-  {
-    value: 'updatedAt',
-    title: 'Updated',
-    sortable: true,
+    toggleable: true,
   },
   {
     value: 'enabled',
     title: 'Enabled?',
     sortable: false,
-    components: {
-      BodyCell: BooleanYesNoCell,
-    },
+    toggleable: true,
+    components: { BodyCell: BooleanYesNoCell },
   },
   {
     value: 'spaceAdmin',
     title: 'Space Admin?',
     sortable: false,
-    components: {
-      BodyCell: BooleanYesNoCell,
-    },
+    toggleable: true,
+    components: { BodyCell: BooleanYesNoCell },
+  },
+  {
+    value: 'createdAt',
+    title: 'Created At',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'updatedAt',
+    title: 'Updated At',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'updatedBy',
+    title: 'Updated By',
+    sortable: true,
+    toggleable: true,
   },
 ];
 

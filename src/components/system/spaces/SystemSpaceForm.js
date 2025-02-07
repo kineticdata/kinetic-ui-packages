@@ -35,36 +35,21 @@ const fields = () => ({ space }) =>
       initialValue: get(space, 'slug', '') || '',
     },
     {
-      name: 'sharedBundle',
-      label: 'Use Shared Bundle base directory?',
-      type: 'checkbox',
-      transient: true,
-      initialValue: (get(space, 'sharedBundleBase') || '') !== '',
-      onChange: ({ values }, { setValue }) => {
-        if (values.get('sharedBundleBase') !== '') {
-          setValue('sharedBundleBase', '');
-        }
-        if (values.get('bundlePath') !== '') {
-          setValue('bundlePath', '');
-        }
-      },
-    },
-    {
       name: 'sharedBundleBase',
       label: 'Shared Bundle Base Directory',
       type: 'text',
       initialValue: get(space, 'sharedBundleBase') || '',
       helpText: 'Directory used as path prefix for bundles.',
-      visible: ({ values }) => values.get('sharedBundle'),
-      required: ({ values }) => values.get('sharedBundle'),
+      visible: false,
+      required: false,
     },
     {
       name: 'bundlePath',
       label: 'Bundle Path',
       type: 'text',
       initialValue: get(space, 'bundlePath') || '',
-      visible: ({ values }) => get(values, 'sharedBundle'),
-      required: ({ values }) => get(values, 'sharedBundle'),
+      visible: false,
+      required: false,
     },
     {
       name: 'allowedIps',
@@ -82,7 +67,7 @@ const fields = () => ({ space }) =>
     },
     {
       name: 'allowedIpsEnabled',
-      label: 'Enabled Allowed IP Restrictions?',
+      label: 'Allowed IP Restrictions',
       type: 'checkbox',
       initialValue: get(space, 'allowedIpsEnabled', false) || false,
     },

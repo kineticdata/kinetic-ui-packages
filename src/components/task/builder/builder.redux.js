@@ -1,5 +1,5 @@
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
-import { List, OrderedMap } from 'immutable';
+import { fromJS, List, OrderedMap } from 'immutable';
 import { isFunction } from 'lodash-es';
 import { action, dispatch, regHandlers, regSaga } from '../../../store';
 import {
@@ -11,15 +11,21 @@ import {
 } from './models';
 import {
   createWorkflow,
+  updateWorkflow,
   createTree,
-  fetchPlatformItem,
   fetchTaskCategories,
   fetchTree,
   fetchWebApi,
   updateTree,
   updateWebApi,
+  fetchWorkflow,
+  fetchPlatformItem,
+  fetchConnections,
+  fetchOperations,
+  fetchBulkOperations,
 } from '../../../apis';
 import { renameDependencies, treeReturnTask } from './helpers';
+import { ADVANCED_HANDLER_NAME_INTEGRATION } from './constants';
 
 export const mountTreeBuilder = treeKey => dispatch('TREE_MOUNT', { treeKey });
 export const unmountTreeBuilder = treeKey =>
@@ -41,20 +47,42 @@ const remember = (state, treeKey) =>
 regSaga(
   takeEvery('TREE_CONFIGURE', function*({ payload }) {
     try {
-      const { name, sourceGroup, sourceName, treeKey } = payload;
+      const {
+        name,
+        sourceGroup,
+        sourceName,
+        treeKey,
+        platformSourceName,
+      } = payload;
       const webApiProps = getWebApiProps(payload);
+      const workflowProps = getWorkflowProps(payload);
 
-      const [{ tree }, { categories }, { webApi }] = yield all([
-        call(fetchTree, {
-          name,
-          sourceGroup,
-          sourceName,
-          include: 'bindings,categories,details,treeJson,inputs,outputs',
-        }),
+      const [
+        { tree, error: treeError },
+        { workflow, error: workflowError },
+        { categories },
+        { connections = [] },
+        { webApi, error: webApiError },
+      ] = yield all([
+        // Fetch the tree if not a linked workflow
+        !workflowProps
+          ? call(fetchTree, {
+              name,
+              sourceGroup,
+              sourceName,
+              include: 'bindings,categories,details,treeJson,inputs,outputs',
+            })
+          : {},
+        // Fetch the workflow if it is a linked workflow
+        workflowProps ? call(fetchWorkflow, { ...workflowProps }) : {},
+        // Fetch task categories
         call(fetchTaskCategories, {
           include:
             'handlers.results,handlers.parameters,trees.parameters,trees.inputs,trees.outputs',
         }),
+        // Fetch connections
+        call(fetchConnections),
+        // Fetch the webAPI if applicable
         webApiProps
           ? call(fetchWebApi, {
               ...webApiProps,
@@ -63,36 +91,142 @@ regSaga(
           : {},
       ]);
 
-      let platformItem = null;
-      if (tree.event) {
-        const result = yield call(fetchPlatformItem, {
-          type: tree.platformItemType,
-          id: tree.platformItemId,
-        });
-        platformItem = result.platformItem;
+      let kappSlug = webApiProps?.kappSlug || workflowProps?.kappSlug;
+      let formSlug = workflowProps?.formSlug;
+      let workflowObject = workflow;
+      let workflowObjectError = workflowError;
+      // If a tree was fetched and the tree has platform item data, fetch the
+      // platform item and then retrieve the workflow
+      if (tree && tree.platformItemId && tree.platformItemType) {
+        const { platformItem, error: platformItemError } = yield call(
+          fetchPlatformItem,
+          {
+            type: tree.platformItemType,
+            id: tree.platformItemId,
+          },
+        );
+        if (platformItem) {
+          const { workflow: linkedWorkflow, error: linkedError } = yield call(
+            fetchWorkflow,
+            { workflowId: sourceGroup, ...getPlatformItemSlugs(platformItem) },
+          );
+          workflowObject = linkedWorkflow;
+          workflowObjectError = linkedError;
+          // If workflow was loaded via the old tree route, set the kapp and
+          // form slugs from the platform item
+          if (!workflowProps) {
+            const slugs = getPlatformItemSlugs(platformItem);
+            if (!kappSlug) {
+              kappSlug = slugs?.kappSlug;
+            }
+            if (!formSlug) {
+              formSlug = slugs?.formSlug;
+            }
+          }
+        } else {
+          // If platform item was not retrieved, show an error because we don't
+          // want to render a workflow using a tree route
+          workflowObjectError =
+            platformItemError || 'Failed to load linked workflow.';
+        }
       }
 
-      yield put(
-        action('TREE_LOADED', {
-          categories,
-          kappSlug: webApiProps && webApiProps.kappSlug,
-          platformItem,
-          treeKey,
-          tree: deserializeTree(tree),
-          webApi:
-            webApiProps && deserializeWebApi(webApi, webApiProps.kappSlug),
-        }),
-      );
+      // If workflow, set sourceName to platformSourceName since the value is
+      // needed when creating new runs
+      const treeObject = workflowObject
+        ? { sourceName: platformSourceName, ...workflowObject }
+        : tree;
+
+      const loadError = workflowObjectError || treeError || webApiError;
+
+      // Find the operation ids of any integration nodes
+      const operationIds =
+        treeObject?.treeJson?.nodes
+          ?.map(
+            node =>
+              node.definitionId.startsWith(
+                `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
+              )
+                ? node.parameters.find(p => p.id === 'operation')?.value
+                : null,
+          )
+          .filter(Boolean) || [];
+
+      yield all([
+        put(
+          action('TREE_LOADED', {
+            categories,
+            connections,
+            kappSlug,
+            formSlug,
+            treeKey,
+            tree:
+              // Don't set the tree if it's for a webApi but the webApi errors
+              treeObject && (!webApiProps || webApi)
+                ? deserializeTree(treeObject)
+                : null,
+            webApi: webApi
+              ? deserializeWebApi(webApi, webApiProps.kappSlug)
+              : null,
+            error: loadError ? loadError.message || loadError : null,
+          }),
+        ),
+        operationIds.length > 0
+          ? put(action('TREE_LOAD_OPERATIONS', { treeKey, operationIds }))
+          : null,
+      ]);
     } catch (e) {
       console.error('Caught error loading tree', e);
     }
   }),
 );
 
+regSaga(
+  takeEvery('TREE_LOAD_CONNECTIONS', function*({ payload }) {
+    try {
+      const { treeKey } = payload;
+
+      const { connections = [] } = yield call(fetchConnections);
+
+      yield put(
+        action('TREE_INTEGRATION_DATA_LOADED', {
+          connections,
+          treeKey,
+        }),
+      );
+    } catch (e) {
+      console.error('Caught error loading tree integration data', e);
+    }
+  }),
+);
+
+regSaga(
+  takeEvery('TREE_LOAD_OPERATIONS', function*({ payload }) {
+    try {
+      const { treeKey, connectionId, operationIds = [] } = payload;
+
+      const { operations = [] } = yield connectionId
+        ? call(fetchOperations, { connectionId })
+        : call(fetchBulkOperations, { ids: operationIds });
+
+      yield put(
+        action('TREE_INTEGRATION_DATA_LOADED', {
+          operations,
+          treeKey,
+        }),
+      );
+    } catch (e) {
+      console.error('Caught error loading tree integration data', e);
+    }
+  }),
+);
+
 const getPlatformItemSlugs = platformItem =>
-  platformItem.kapp
+  // If platform item has a kapp property, then it's a form object
+  platformItem?.kapp
     ? { formSlug: platformItem.slug, kappSlug: platformItem.kapp.slug }
-    : platformItem.space
+    : // If platform item has a space property, than it's a kapp object
+      platformItem?.space
       ? { kappSlug: platformItem.slug }
       : {};
 
@@ -104,9 +238,9 @@ regSaga(
       const { newName, onError, onSave, overwrite, treeKey } = payload;
       const {
         kappSlug,
+        formSlug,
         lastSave,
         lastWebApi,
-        platformItem,
         tree,
         webApi,
       } = yield select(state => state.getIn(['trees', treeKey]));
@@ -123,7 +257,8 @@ regSaga(
         ? tree.event
           ? call(createWorkflow, {
               workflow: { ...serializeTree(tree), name: newName },
-              ...getPlatformItemSlugs(platformItem),
+              kappSlug,
+              formSlug,
             })
           : call(createTree, {
               tree: {
@@ -131,12 +266,19 @@ regSaga(
                 name: newName,
               },
             })
-        : call(updateTree, {
-            name,
-            sourceGroup,
-            sourceName,
-            tree: serializeTree(tree, overwrite),
-          });
+        : tree.event
+          ? call(updateWorkflow, {
+              workflowId: sourceGroup,
+              workflow: serializeTree(tree, overwrite),
+              kappSlug,
+              formSlug,
+            })
+          : call(updateTree, {
+              name,
+              sourceGroup,
+              sourceName,
+              tree: serializeTree(tree, overwrite),
+            });
 
       const { error: error2 } = yield webApi && !error1
         ? call(updateWebApi, {
@@ -162,6 +304,7 @@ regSaga(
               tree: newTree || newWorkflow,
               webApi,
               onSave,
+              scope: tree.event ? { kappSlug, formSlug } : undefined,
             }),
       );
     } catch (e) {
@@ -184,14 +327,14 @@ regSaga(
 
 regSaga(
   takeEvery('TREE_SAVE_SUCCESS', function*({
-    payload: { onSave, previousTree, treeKey },
+    payload: { onSave, previousTree, treeKey, scope },
   }) {
     try {
       if (isFunction(onSave)) {
         const tree = yield select(state =>
           state.getIn(['trees', treeKey, 'tree']),
         );
-        yield call(onSave, tree, previousTree);
+        yield call(onSave, tree, previousTree, scope);
       }
     } catch (e) {
       console.error(e);
@@ -211,21 +354,42 @@ regHandlers({
     state.deleteIn(['trees', treeKey]),
   TREE_LOADED: (
     state,
-    { payload: { categories, kappSlug, platformItem, treeKey, tree, webApi } },
+    {
+      payload: {
+        categories,
+        connections,
+        kappSlug,
+        formSlug,
+        treeKey,
+        tree,
+        webApi,
+        error,
+      },
+    },
   ) =>
     state.mergeIn(['trees', treeKey], {
+      connections: fromJS(connections)
+        .sortBy(conn => conn.name)
+        .reduce(
+          (reduction, conn) =>
+            reduction.set(conn.get('id'), conn.set('operations', OrderedMap())),
+          OrderedMap(),
+        ),
       kappSlug,
+      formSlug,
       lastSave: tree,
       lastWebApi: webApi,
       loading: false,
-      platformItem,
       tasks: List(categories)
         .map(
           category =>
             category.name === 'System Controls'
               ? {
                   ...category,
-                  handlers: [...category.handlers, treeReturnTask(tree)],
+                  handlers: [
+                    ...category.handlers,
+                    tree ? treeReturnTask(tree) : null,
+                  ].filter(Boolean),
                 }
               : category,
         )
@@ -237,6 +401,42 @@ regHandlers({
         ),
       tree,
       webApi,
+      error,
+    }),
+  TREE_INTEGRATION_DATA_LOADED: (
+    state,
+    { payload: { treeKey, connections, operations } },
+  ) =>
+    state.updateIn(['trees', treeKey, 'connections'], connectionsMap => {
+      // Update connections map in state if data was provided
+      const newConnectionsMap = connections
+        ? fromJS(connections)
+            .sortBy(conn => conn.name)
+            .reduce(
+              (reduction, conn) =>
+                reduction.set(
+                  conn.get('id'),
+                  conn.set(
+                    'operations',
+                    connectionsMap.getIn([conn.get('id'), 'operations']) ||
+                      OrderedMap(),
+                  ),
+                ),
+              OrderedMap(),
+            )
+        : connectionsMap;
+
+      // Update the operations maps in each connection if data was provided
+      return operations
+        ? fromJS(operations).reduce(
+            (map, op) =>
+              map.setIn(
+                [op.get('connectionId'), 'operations', op.get('id')],
+                op,
+              ),
+            newConnectionsMap,
+          )
+        : newConnectionsMap;
     }),
   TREE_SAVE: (state, { payload: { treeKey } }) =>
     state.mergeIn(['trees', treeKey], {
@@ -439,6 +639,13 @@ const getWebApiProps = ({
       : undefined;
     const slug = name;
     return { kappSlug, slug };
+  }
+  return null;
+};
+
+const getWorkflowProps = ({ type, sourceGroup, kappSlug, formSlug }) => {
+  if (type === 'workflow') {
+    return { workflowId: sourceGroup, kappSlug, formSlug };
   }
   return null;
 };

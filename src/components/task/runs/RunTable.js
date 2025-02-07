@@ -9,7 +9,7 @@ const ORDER_BY = Map({
   type: 'tree.type',
 });
 
-const RUN_TYPES = ['Tree', 'Global Routine', 'Local Routine'].map(v => ({
+const RUN_TYPES = ['Tree', 'Global Routine'].map(v => ({
   label: v,
   value: v,
 }));
@@ -96,52 +96,81 @@ const filters = () => ({ sourceTypes }) =>
 const columns = [
   {
     value: 'id',
-    title: 'Id',
+    title: 'ID',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'originatingId',
     title: 'Originating ID',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'sourceName',
     valueTransform: (_value, row) => getIn(row, ['source', 'name'], ''),
     title: 'Source',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'sourceId',
     title: 'Source Id',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'tree',
     title: 'Tree',
     sortable: true,
+    toggleable: true,
     valueTransform: value => get(value, 'name', ''),
   },
   {
     value: 'sourceGroup',
     title: 'Group',
     sortable: true,
+    toggleable: true,
     valueTransform: (_value, row) => row.getIn(['tree', 'sourceGroup']),
   },
   {
     value: 'type',
     title: 'Type',
     sortable: true,
+    toggleable: true,
     valueTransform: (_value, row) => row.getIn(['tree', 'type']),
   },
   {
     value: 'status',
     title: 'Status',
     sortable: false,
+    toggleable: true,
   },
-  { value: 'createdAt', title: 'Created', sortable: true },
-  { value: 'createdBy', title: 'Created By', sortable: false },
-  { value: 'updatedAt', title: 'Updated', sortable: true },
-  { value: 'updatedBy', title: 'Updated By', sortable: false },
+  {
+    value: 'createdAt',
+    title: 'Created At',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
+    sortable: false,
+    toggleable: true,
+  },
+  {
+    value: 'updatedAt',
+    title: 'Updated At',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'updatedBy',
+    title: 'Updated By',
+    sortable: false,
+    toggleable: true,
+  },
 ];
 
 export const RunTable = generateTable({

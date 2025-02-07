@@ -43,17 +43,18 @@ const handleSubmit = ({ modelName, attributeName }) => (
     attributeName,
     bridgeModelAttribute: { name },
   })
-    .then(result =>
-      result.error
-        ? result
-        : (attributeName
-            ? updateBridgeModelAttributeMapping
-            : createBridgeModelAttributeMapping)({
-            modelName,
-            mappingName,
-            attributeName: name,
-            bridgeModelAttributeMapping: { name, structureField },
-          }),
+    .then(
+      result =>
+        result.error
+          ? result
+          : (attributeName
+              ? updateBridgeModelAttributeMapping
+              : createBridgeModelAttributeMapping)({
+              modelName,
+              mappingName,
+              attributeName: name,
+              bridgeModelAttributeMapping: { name, structureField },
+            }),
     )
     .then(({ bridgeModelAttributeMapping, error }) => {
       if (error) {
@@ -84,12 +85,14 @@ const fields = ({ modelName, attributeName }) => ({ bridgeModelAttribute }) =>
       initialValue:
         (bridgeModelAttribute && bridgeModelAttribute.get('structureField')) ||
         '',
-      options: {
-        'Add Field': {
-          value: 'fields("NAME")',
-          selection: { start: 8, end: 12 },
+      options: [
+        {
+          label: 'fields',
+          type: 'function',
+          quoteType: 'double',
+          detail: 'Add Field Mapping',
         },
-      },
+      ],
     },
   ];
 

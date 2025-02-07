@@ -70,7 +70,7 @@ const fields = ({ adapterClass }) => ({
         initialValue: get(filestore, 'slug', ''),
         pattern: /^[a-z\d-]+$/,
         patternMessage:
-          'File Store Slug may only contain letters, numbers, and dashes',
+          'Filestore Slug may only contain letters, numbers, and dashes',
         helpText: 'Unique name used in the bridge path.',
       },
       {

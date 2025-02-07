@@ -69,12 +69,16 @@ const dataSource = () => ({
   }),
 });
 
-const APP_COMPONENT_OPTIONS = ['agent', 'core', 'loghub', 'task'].map(
-  component => ({
-    label: component,
-    value: component,
-  }),
-);
+const APP_COMPONENT_OPTIONS = [
+  'agent',
+  'core',
+  'integrator',
+  'loghub',
+  'task',
+].map(component => ({
+  label: component,
+  value: component,
+}));
 
 const LEVEL_OPTIONS = ['TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR'].map(
   level => ({
@@ -135,6 +139,7 @@ const columns = [
     value: 'timestamp',
     title: 'Timestamp',
     sortable: false,
+    toggleable: false,
   },
   {
     value: 'message',
@@ -274,7 +279,7 @@ const columns = [
     title: 'Pod',
     sortable: false,
   },
-];
+].map(column => ({ toggleable: true, ...column }));
 
 export const LogTable = generateTable({ columns, dataSource, filters });
 

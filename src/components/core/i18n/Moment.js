@@ -146,6 +146,7 @@ Moment.formats = {
   dateShort: 'll',
   dateWithDayShort: 'ddd, ll',
   dateTime: 'LLL',
+  dateTimeWithSeconds: 'LL LTS',
   dateTimeNumeric: 'L LT',
   dateTimeShort: 'lll',
   dateTimeWithDay: 'LLLL',

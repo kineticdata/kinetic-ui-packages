@@ -43,14 +43,18 @@ const columns = [
   {
     value: 'name',
     title: 'Name',
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'status',
     title: 'Status',
+    toggleable: true,
   },
   {
     value: 'unique',
     title: 'Unique',
+    toggleable: true,
     components: {
       BodyCell: BooleanYesNoCell,
     },
@@ -58,14 +62,17 @@ const columns = [
   {
     value: 'parts',
     title: 'Parts',
+    toggleable: true,
   },
   {
     value: 'unpopulatedForms',
     title: 'Unpopulated Forms',
+    toggleable: true,
   },
   {
     value: 'detatchedForms',
     title: 'Detatched Forms',
+    toggleable: true,
   },
 ];
 

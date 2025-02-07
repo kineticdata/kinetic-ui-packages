@@ -10,6 +10,7 @@ const dataSources = ({ tree }) => ({
           label: `${node.name} (${serializeNodeId(node)})`,
           value: serializeNodeId(node),
         }))
+        .sortBy(node => node.label)
         .valueSeq()
         .toArray();
     },

@@ -37,47 +37,44 @@ const columns = [
     value: 'name',
     title: 'Name',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'slug',
     title: 'Slug',
     sortable: true,
+    toggleable: true,
   },
   {
-    value: 'CreatedAt',
-    title: 'Created',
+    value: 'createdAt',
+    title: 'Created At',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdBy',
     title: 'Created By',
+    toggleable: true,
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'updatedBy',
     title: 'Updated By',
-  },
-  {
-    value: 'resetPasswordPage',
-    title: 'Reset Password Page',
+    toggleable: true,
   },
 
-  { value: 'afterLogoutPath', title: 'After Logout Path' },
-  { value: 'bundlePath', title: 'Bundle Path' },
-  { value: 'defaultFormConfirmationPage', title: 'Form Confirmation Page' },
-  { value: 'defaultFormDisplayPage', title: 'Form Display Page' },
+  { value: 'afterLogoutPath', title: 'After Logout Path', toggleable: true },
   {
     value: 'defaultSubmissionLabelExpression',
     title: 'Default Submission Label',
+    toggleable: true,
   },
-  { value: 'displayType', title: 'Display Type' },
-  { value: 'displayValue', title: 'Display Value' },
-  { value: 'loginPage', title: 'Login Page' },
-  { value: 'resetPasswordPage', title: 'Reset Password Page' },
 ];
 
 export const KappTable = generateTable({

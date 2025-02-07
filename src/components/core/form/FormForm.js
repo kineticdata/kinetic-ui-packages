@@ -10,16 +10,15 @@ import {
   fetchCategories,
   fetchSpace,
 } from '../../../apis';
-import { buildBindings, slugify } from '../../../helpers';
+import { buildCodeEditorBindings, slugify } from '../../../helpers';
 
 const FORM_STATUSES = ['New', 'Active', 'Inactive', 'Delete'];
 
 const FORM_INCLUDES =
-  'details,attributesMap,securityPolicies,backgroundJobs,fields,categorizations';
+  'details,attributesMap,securityPolicies,backgroundJobs,fields,categorizations,categorizations.category,categorizations.category.attributes[Parent]';
 const KAPP_INCLUDES =
   'fields,formTypes,formAttributeDefinitions,kappAttributeDefinitions,securityPolicies';
-const SPACE_INCLUDES =
-  'spaceAttributeDefinitions,formAttributeDefinitions,securityPolicies';
+const SPACE_INCLUDES = 'spaceAttributeDefinitions,securityPolicies';
 
 const dataSources = ({ formSlug, kappSlug }) => ({
   form: {
@@ -73,7 +72,7 @@ const handleSubmit = ({ formSlug, kappSlug }) => values =>
     return form;
   });
 
-const buildLabel = ({ name, category, categories }) => {
+const buildLabel = ({ name, category, categories, loading }) => {
   let match = null;
   if (category.get('attributes').size) {
     category.get('attributes').map(c => {
@@ -87,8 +86,11 @@ const buildLabel = ({ name, category, categories }) => {
               name: `${match.get('name')}::${name}`,
               category: match,
               categories,
+              loading,
             })
-          : `(Missing Category ${c.getIn(['values', 0])})::${name}`;
+          : loading
+            ? `${c.getIn(['values', 0])}::${name}`
+            : `(Missing Category ${c.getIn(['values', 0])})::${name}`;
       }
       return name;
     });
@@ -100,27 +102,28 @@ const securityEndpoints = {
   formDisplay: {
     endpoint: 'Display',
     label: 'Form Display',
-    types: ['Space', 'Kapp', 'Form'],
+    types: ['Kapp', 'Form'],
   },
   formModification: {
     endpoint: 'Modification',
     label: 'Form Modification',
-    types: ['Space', 'Kapp', 'Form'],
+    types: ['Kapp', 'Form'],
   },
   submissionAccess: {
     endpoint: 'Submission Access',
     label: 'Submission Access',
-    types: ['Space', 'Kapp', 'Form', 'Submission'],
+    types: ['Kapp', 'Form', 'Submission'],
   },
   submissionModification: {
     endpoint: 'Submission Modification',
     label: 'Submission Modification',
-    types: ['Space', 'Kapp', 'Form', 'Submission'],
+    types: ['Kapp', 'Form', 'Submission'],
   },
 };
 
-const fields = ({ formSlug, kappSlug }) => ({ form }) =>
-  (!formSlug || form) && [
+const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
+  (!formSlug || form) &&
+  (!kappSlug || kapp) && [
     !!kappSlug && {
       name: 'anonymous',
       label: 'Anonymous',
@@ -194,12 +197,15 @@ const fields = ({ formSlug, kappSlug }) => ({ form }) =>
       helpText:
         // eslint-disable-next-line no-template-curly-in-string
         "Custom label for form submissions. Click the </> button to see available values derived from each submission. Example: ${values('Customer Name')}",
-      options: ({ space, kapp, form }) =>
-        buildBindings({
-          space,
-          kapp,
-          form,
-          scope: kappSlug ? 'Submission' : 'Submission',
+      options: ({ space, kapp, form, attributeDefinitions }) =>
+        buildCodeEditorBindings({
+          space: {
+            attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+          },
+          kapp: { attributeDefinitions: kapp?.get('kappAttributeDefinitions') },
+          form: { attributeDefinitions },
+          submission: { detailed: true },
+          values: form?.get('fields').size > 0 && { data: form.get('fields') },
         }),
     },
     !!kappSlug && {
@@ -235,6 +241,7 @@ const fields = ({ formSlug, kappSlug }) => ({ form }) =>
                       Map({
                         value: definition.get('name'),
                         label: definition.get('name'),
+                        type: definition.get('type'),
                       }),
                     )
                 : [],
@@ -278,19 +285,27 @@ const fields = ({ formSlug, kappSlug }) => ({ form }) =>
       name: 'categorizations',
       label: 'Categories',
       type: 'select-multi',
-      options: ({ categories }) =>
-        categories
-          ? categories.map(category =>
+      options: ({ categories, form }) => {
+        // Until categories are fetched, use the data from the form's
+        // categories to build options to minimize the flash of the slug values
+        // changing to the names
+        const categoriesList =
+          categories ||
+          form?.get('categorizations').map(c => c.get('category'));
+        return categoriesList
+          ? categoriesList.map(category =>
               Map({
                 label: buildLabel({
                   name: category.get('name'),
                   category,
-                  categories,
+                  categories: categoriesList,
+                  loading: !categories,
                 }),
                 value: category.get('slug'),
               }),
             )
-          : [],
+          : [];
+      },
       initialValue: form
         ? form
             .get('categorizations')

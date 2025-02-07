@@ -164,12 +164,12 @@ export class CodeInput extends Component {
                 props.language === 'js'
                   ? processJavaScript
                   : props.language === 'js-template'
-                  ? processJavaScriptTemplate
-                  : props.language === 'ruby'
-                  ? processRuby
-                  : props.language === 'erb'
-                  ? processErbTemplate
-                  : null;
+                    ? processJavaScriptTemplate
+                    : props.language === 'ruby'
+                      ? processRuby
+                      : props.language === 'erb'
+                        ? processErbTemplate
+                        : null;
               if (processor) {
                 this.tokenStarts = {};
                 this.tokenEnds = {};
@@ -386,15 +386,11 @@ export class CodeInput extends Component {
   };
 
   copy = () => {
-    const el = document.createElement('textarea');
-    el.value = this.state.editorState
+    const value = this.state.editorState
       .getCurrentContent()
       .getFirstBlock()
       .getText();
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
+    return navigator.clipboard.writeText(value);
   };
 
   render() {

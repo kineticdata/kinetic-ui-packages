@@ -452,6 +452,32 @@ export const createSubmission = options => {
   );
 };
 
+export const cloneSubmission = options => {
+  const { id, completed = false, submission = {}, files = [] } = options;
+
+  if (!id) {
+    throw new Error('cloneSubmission failed! The option "id" is required.');
+  }
+
+  const path = `${bundle.apiLocation()}/submissions/${id}/clone`;
+  const params = { ...paramBuilder(options), completed };
+  const formData = new FormData();
+  formData.append('submission', JSON.stringify(submission));
+  files.forEach(({ fieldName, file, filename }) => {
+    formData.append(fieldName, file, filename);
+  });
+
+  return (
+    axios
+      .post(path, formData, { params, headers: headerBuilder(options) })
+      // Remove the response envelop and leave us with the submission one.
+      .then(response => ({ submission: response.data.submission }))
+      // Clean up any errors we receive. Make sure this the last thing so that it
+      // cleans up any errors.
+      .catch(handleErrors)
+  );
+};
+
 export const updateSubmission = options => {
   const { id, values } = options;
 
@@ -608,7 +634,7 @@ export const importSubmissions = options => {
     onUploadProgress,
     file,
     mode = MODE_IMPORT,
-    cancelToken,
+    signal,
   } = options;
 
   if (!kappSlug) {
@@ -629,7 +655,7 @@ export const importSubmissions = options => {
 
   const path = `${bundle.apiLocation()}/kapps/${kappSlug}/forms/${formSlug}/submissions?import`;
   return axios[modeToFn(mode)](path, file, {
-    cancelToken,
+    signal,
     data: file,
     params: paramBuilder(options),
     headers: {

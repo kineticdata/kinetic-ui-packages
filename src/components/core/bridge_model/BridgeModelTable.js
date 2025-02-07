@@ -42,10 +42,36 @@ const columns = [
     value: 'name',
     title: 'Model Name',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'status',
     title: 'Status',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'createdAt',
+    title: 'Created At',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
+    toggleable: true,
+  },
+  {
+    value: 'updatedAt',
+    title: 'Updated At',
+    toggleable: true,
+    sortable: true,
+  },
+  {
+    value: 'updatedBy',
+    title: 'Updated By',
+    toggleable: true,
     sortable: true,
   },
 ];

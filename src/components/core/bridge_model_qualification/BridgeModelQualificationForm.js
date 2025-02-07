@@ -113,18 +113,20 @@ const fields = ({ modelName, qualificationName }) => ({
       name: 'query',
       label: 'Query',
       type: 'code',
-      language: 'js-template',
+      language: 'text',
       required: false,
       initialValue:
         (bridgeModelQualificationMapping &&
           bridgeModelQualificationMapping.get('query')) ||
         '',
-      options: {
-        'Add Parameter': {
-          value: 'parameters("NAME")',
-          selection: { start: 12, end: 16 },
+      options: [
+        {
+          label: 'parameters',
+          type: 'function',
+          quoteType: 'double',
+          detail: 'Add Parameter',
         },
-      },
+      ],
     },
   ];
 

@@ -6,6 +6,7 @@ const dataSources = ({ kappSlug, name }) => ({
     fn: fetchFormType,
     params: name && [{ kappSlug, name, include: 'details' }],
     transform: result => result.formType,
+    errorTransform: result => result.error,
   },
 });
 

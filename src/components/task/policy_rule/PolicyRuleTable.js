@@ -39,12 +39,12 @@ const columns = [
   },
   {
     value: 'id',
-    title: 'Id',
+    title: 'ID',
     sortable: true,
   },
   {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     sortable: true,
   },
   {
@@ -54,7 +54,7 @@ const columns = [
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     sortable: true,
   },
   {

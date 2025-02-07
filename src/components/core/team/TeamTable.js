@@ -33,26 +33,44 @@ const columns = [
     value: 'name',
     title: 'Name',
     sortable: true,
-  },
-  {
-    value: 'updatedAt',
-    title: 'Updated',
-    sortable: true,
-  },
-  {
-    value: 'createdAt',
-    title: 'Created',
-    sortable: true,
-  },
-  {
-    value: 'description',
-    title: 'Description',
-    sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'slug',
     title: 'Slug',
     sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'description',
+    title: 'Description',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'createdAt',
+    title: 'Created At',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'createdBy',
+    title: 'Created By',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'updatedAt',
+    title: 'Updated At',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    value: 'updatedBy',
+    title: 'Updated By',
+    sortable: true,
+    toggleable: true,
   },
 ];
 

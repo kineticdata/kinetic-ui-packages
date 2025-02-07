@@ -132,7 +132,12 @@ const buildBindings = formState =>
   formState.set(
     'bindings',
     formState.dataSources
-      .filter(dataSource => dataSource.status === DATA_SOURCE_STATUS.RESOLVED)
+      .filter(dataSource =>
+        [
+          DATA_SOURCE_STATUS.RESOLVED,
+          DATA_SOURCE_STATUS.PENDING_RELOAD,
+        ].includes(dataSource.status),
+      )
       .map(dataSource => dataSource.data)
       .merge(
         formState.fields
@@ -184,7 +189,12 @@ regHandlers({
     state
       .updateIn(['forms', formKey, 'fields', name], field =>
         field.merge({
-          value: value || FIELD_DEFAULT_VALUES.get(field.type, ''),
+          value:
+            field.type === 'number'
+              ? typeof value === 'number'
+                ? value
+                : ''
+              : value || FIELD_DEFAULT_VALUES.get(field.type, ''),
           touched: true,
           dirty: !is(value, field.initialValue),
         }),
@@ -210,10 +220,14 @@ regHandlers({
       touched: true,
     }),
   CALL_DATA_SOURCE: (state, { payload: { formKey, name } }) =>
-    state.mergeIn(['forms', formKey, 'dataSources', name], {
-      status: DATA_SOURCE_STATUS.PENDING,
-    }),
-  RESOLVE_DATA_SOURCE: (state, { payload: { formKey, name, data } }) =>
+    state.updateIn(
+      ['forms', formKey, 'dataSources', name, 'status'],
+      status =>
+        status === DATA_SOURCE_STATUS.RESOLVED
+          ? DATA_SOURCE_STATUS.PENDING_RELOAD
+          : DATA_SOURCE_STATUS.PENDING,
+    ),
+  RESOLVE_DATA_SOURCE: (state, { payload: { formKey, name, data, error } }) =>
     state
       .updateIn(
         ['forms', formKey, 'dataSources', name],
@@ -221,12 +235,13 @@ regHandlers({
           dataSource &&
           dataSource.merge({
             data: fromJS(data),
+            error,
             status: DATA_SOURCE_STATUS.RESOLVED,
           }),
       )
       .updateIn(['forms', formKey], digest),
   RESET: (state, { payload: { formKey } }) =>
-    state.hasIn(['forms', formKey])
+    !!state.getIn(['forms', formKey])
       ? state
           .updateIn(['forms', formKey, 'fields'], resetValues)
           .updateIn(['forms', formKey], digest)
@@ -270,6 +285,13 @@ regHandlers({
               : field,
         ),
       ),
+  VALIDATION_FIELD_ERRORS: (state, { payload: { formKey, fieldNames } }) =>
+    state.updateIn(['forms', formKey, 'fields'], fields =>
+      fields.map(
+        field =>
+          fieldNames.includes(field.name) ? field.set('touched', true) : field,
+      ),
+    ),
 });
 
 const selectForm = formKey => state => state.getIn(['forms', formKey]);
@@ -307,6 +329,26 @@ regSaga(
   }),
 );
 
+regSaga(
+  takeEvery('RELOAD_DATA_SOURCES', function*(action) {
+    const { formKey, dataSourceNames } = action.payload;
+    const formState = yield select(selectForm(formKey));
+    // If form state exists, re-fetch the necessary dataSources
+    if (formState?.dataSources) {
+      yield all(
+        formState.dataSources
+          .filter(
+            (ds, name) =>
+              !dataSourceNames?.length || dataSourceNames.includes(name),
+          )
+          .map((ds, name) => fork(runDataSource, formKey, name, ds))
+          .valueSeq()
+          .toArray(),
+      );
+    }
+  }),
+);
+
 // Create a process that represents a datasource, it listens for form events
 // and checks to see if its parameters have changed, if it detects parameter
 // changes it should trigger a call to the datasource function. Finally, it
@@ -322,6 +364,7 @@ function* runDataSource(formKey, name, dataSource) {
       const [checkAction, unmountAction] = yield race([
         take([
           'CONFIGURE_FORM',
+          'RELOAD_DATA_SOURCES',
           'REJECT_DATA_SOURCE',
           'RESET',
           'RESOLVE_DATA_SOURCE',
@@ -360,7 +403,9 @@ regSaga(
     payload: { formKey, name, params },
   }) {
     try {
-      const { fn, transform } = yield select(selectDataSource(formKey, name));
+      const { fn, transform, errorTransform } = yield select(
+        selectDataSource(formKey, name),
+      );
       const data = yield call(fn, ...params);
       const timestamp = yield call(getTimestamp);
       yield put(
@@ -368,6 +413,7 @@ regSaga(
           formKey,
           name,
           data: transform ? transform(data) : data,
+          error: errorTransform ? errorTransform(data) : null,
           timestamp,
         }),
       );
@@ -402,7 +448,9 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('SUBMIT', function*({ payload: { formKey, fieldSet, onInvalid } }) {
+  takeEvery('SUBMIT', function*({
+    payload: { formKey, fieldSet, onInvalid, onSave: onSaveOverride },
+  }) {
     try {
       const { bindings, fields, onSubmit, onSave, onError } = yield select(
         selectForm(formKey),
@@ -419,7 +467,8 @@ regSaga(
         try {
           const result = yield call(onSubmit, values, bindings);
           dispatch('SUBMIT_SUCCESS', { formKey });
-          if (onSave) yield call(onSave, result);
+          if (onSaveOverride || onSave)
+            yield call(onSaveOverride || onSave, result);
         } catch (error) {
           dispatch('SUBMIT_ERROR', {
             formKey,
@@ -526,13 +575,16 @@ export const unmountForm = formKey => dispatch('UNMOUNT_FORM', { formKey });
 
 export const resetForm = formKey => dispatch('RESET', { formKey });
 
+export const reloadDataSources = (formKey, ...dataSourceNames) =>
+  dispatch('RELOAD_DATA_SOURCES', { formKey, dataSourceNames });
+
 export const reloadDataSource = (formKey, name) =>
   dispatch('CALL_DATA_SOURCE', { formKey, name });
 
 export const configureForm = config => dispatch('CONFIGURE_FORM', config);
 
-export const submitForm = (formKey, { fieldSet, onInvalid, values }) =>
-  dispatch('SUBMIT', { formKey, fieldSet, onInvalid, values });
+export const submitForm = (formKey, { fieldSet, onInvalid, values, onSave }) =>
+  dispatch('SUBMIT', { formKey, fieldSet, onInvalid, values, onSave });
 
 export const serializeForm = (formKey, { fieldSet } = {}) =>
   serializeImpl(selectForm(formKey)(store.getState()), fieldSet);
@@ -542,6 +594,22 @@ const serializeImpl = ({ bindings, fields }, fieldSet) => {
   return fields
     .filter(field => !field.transient && computedFieldSet.contains(field.name))
     .map(field => (field.serialize ? field.serialize(bindings) : field.value));
+};
+export const validateForm = (formKey, { fieldSet } = {}) => {
+  const { fields } = selectForm(formKey)(store.getState());
+  const computedFieldSet = computeFieldSet(fields, fieldSet);
+  const errors = fields
+    .filter(field => computedFieldSet.contains(field.name))
+    .map(field => field.errors)
+    .filter(errors => !errors.isEmpty());
+  if (!errors.isEmpty()) {
+    dispatch('VALIDATION_FIELD_ERRORS', {
+      formKey,
+      fieldNames: errors.keySeq(),
+    });
+    return false;
+  }
+  return true;
 };
 
 // Wraps the FormImpl to handle the formKey behavior. If this is passed a
@@ -667,12 +735,16 @@ class FormImplComponent extends Component {
     } = this.props;
     const bindings = formState ? formState.bindings : {};
     const initialized = formState ? !!formState.fields : false;
+    const errors = formState
+      ? formState.dataSources.map(ds => ds.error).filter(Boolean)
+      : Map();
     let form = null;
+    let dirty = false;
+    const { FormButtons, FormError, FormLayout } = components.toObject();
     if (initialized) {
-      const { FormButtons, FormError, FormLayout } = components.toObject();
       const { error, fields, formOptions, submitting } = formState;
+      dirty = fields.some(field => field.dirty);
       // Build a map of components by field, merging the fields, addFields, and
-      const dirty = fields.some(field => field.dirty);
       // alterFields options. Note that we get those from the parent props not
       // redux store because we want to see new components on HMR updates.
       const fieldComponents = resolveFieldConfig(
@@ -734,13 +806,14 @@ class FormImplComponent extends Component {
           meta={fields.map(field =>
             Map({
               visible: field.visible,
+              hasErrors: field.errors?.size > 0,
             }),
           )}
         />
       );
     }
     return typeof this.props.children === 'function'
-      ? this.props.children({ bindings, form, initialized })
+      ? this.props.children({ bindings, form, initialized, errors, dirty })
       : form;
   }
 }

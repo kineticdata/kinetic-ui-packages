@@ -145,5 +145,6 @@ export const FormSelect = props => (
     placeholder={props.placeholder}
     id={props.id}
     form={props.form}
+    invalid={props.invalid}
   />
 );

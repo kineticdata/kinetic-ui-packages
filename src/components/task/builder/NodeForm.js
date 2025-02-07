@@ -1,17 +1,27 @@
 import { List } from 'immutable';
 import { generateForm } from '../../form/Form';
 import { NodeMessage } from './models';
-import { buildBindings } from './helpers';
-import { fetchForm } from '../../../apis';
 import {
-  checkOmittedParameters,
-  generateTaskDefinition,
-} from './TaskDefinitionConfigForm';
+  buildBindings,
+  generateSubmissionCreateTaskDefinition,
+  generateIntegrationTaskDefinition,
+  checkOmittedParametersForAdvancedHandlers,
+} from './helpers';
+import {
+  ADVANCED_HANDLER_NAME_INTEGRATION,
+  ADVANCED_HANDLER_NAME_SUBMISSION_CREATE,
+} from './constants';
+import {
+  fetchConnection,
+  fetchForm,
+  fetchOperation,
+  inspectOperation,
+} from '../../../apis';
 
-const dataSources = ({ tasks, tree, node }) => ({
+const dataSources = ({ tasks, tree, node, connections }) => ({
   bindings: {
     fn: buildBindings,
-    params: [tree, tasks, node],
+    params: [{ tree, tasks, node, connections }],
   },
   parameters: {
     fn: node => node.parameters,
@@ -20,29 +30,84 @@ const dataSources = ({ tasks, tree, node }) => ({
   form: {
     fn: node =>
       fetchForm({
-        kappSlug: node.parameters.find(parameter => parameter.id === 'kappSlug')
-          .value,
-        formSlug: node.parameters.find(parameter => parameter.id === 'formSlug')
-          .value,
+        kappSlug: node.parameters.find(p => p.id === 'kappSlug').value,
+        formSlug: node.parameters.find(p => p.id === 'formSlug').value,
         include: 'fields,kapp',
       }).then(data => data.form),
-    params: generateTaskDefinition(tasks.get(node.definitionId))
-      ? [node]
-      : null,
+    params:
+      tasks.get(node.definitionId)?.definitionName ===
+      ADVANCED_HANDLER_NAME_SUBMISSION_CREATE
+        ? [node]
+        : null,
+  },
+  connection: {
+    fn: node => {
+      const id = node.parameters.find(p => p.id === 'connection')?.value;
+      return (
+        connections?.get(id) ||
+        fetchConnection({ id }).then(data => data.connection)
+      );
+    },
+    params:
+      tasks.get(node.definitionId)?.definitionName ===
+      ADVANCED_HANDLER_NAME_INTEGRATION
+        ? [node]
+        : null,
+  },
+  operation: {
+    fn: node => {
+      const connectionId = node.parameters.find(p => p.id === 'connection')
+        ?.value;
+      const id = node.parameters.find(p => p.id === 'operation')?.value;
+      return (
+        connections?.getIn([connectionId, 'operations', id]) ||
+        fetchOperation({ connectionId, id }).then(data => data.operation)
+      );
+    },
+    params:
+      tasks.get(node.definitionId)?.definitionName ===
+      ADVANCED_HANDLER_NAME_INTEGRATION
+        ? [node]
+        : null,
+  },
+  detectedInputs: {
+    fn: node =>
+      inspectOperation({
+        operationId: node.parameters.find(p => p.id === 'operation')?.value,
+      }).then(data => data.detectedInputs),
+    params:
+      tasks.get(node.definitionId)?.definitionName ===
+      ADVANCED_HANDLER_NAME_INTEGRATION
+        ? [node]
+        : null,
   },
   task: {
-    fn: (node, form) =>
-      form
-        ? generateTaskDefinition(tasks.get(node.definitionId))({
-            form: form.toJS(),
-          })
-        : tasks.get(node.definitionId),
-    params: ({ form }) =>
-      generateTaskDefinition(tasks.get(node.definitionId))
-        ? form
-          ? [node, form]
-          : null
-        : [node, null],
+    fn: task => task,
+    params: ({ form, connection, operation, detectedInputs }) => {
+      const task = tasks.get(node.definitionId);
+
+      if (task?.definitionName === ADVANCED_HANDLER_NAME_SUBMISSION_CREATE) {
+        if (form) {
+          return [
+            generateSubmissionCreateTaskDefinition(task, { form: form.toJS() }),
+          ];
+        }
+        return null;
+      } else if (task?.definitionName === ADVANCED_HANDLER_NAME_INTEGRATION) {
+        if (connection && operation && detectedInputs) {
+          return [
+            generateIntegrationTaskDefinition(task, {
+              connection: connection.toJS(),
+              operation: operation.toJS(),
+              detectedInputs: detectedInputs.toJS(),
+            }),
+          ];
+        }
+        return null;
+      } else {
+        return [task];
+      }
+    },
   },
 });
 
@@ -58,7 +123,7 @@ const checkDependsOn = parameter =>
     values.get(`parameter_${parameter.dependsOnId}`) ===
     parameter.dependsOnValue);
 
-const fields = ({ tasks, tree, node }) => ({ bindings }) =>
+const fields = ({ tree, node }) => ({ bindings }) =>
   bindings && [
     {
       name: 'name',
@@ -114,13 +179,14 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
       name: `parameter_${parameter.id}`,
       label: parameter.label,
       type: parameter.menu ? 'select' : 'code',
-      language: parameter.menu ? null : 'erb',
+      language: parameter.menu ? null : 'ruby-template',
       helpText: parameter.description,
       initialValue: parameter.value,
       options: parameter.menu ? getOptions(parameter.menu) : bindings,
       transient: true,
       visible:
-        checkDependsOn(parameter) && checkOmittedParameters(node, parameter),
+        checkDependsOn(parameter) &&
+        checkOmittedParametersForAdvancedHandlers(node, parameter),
     })),
     {
       name: 'parameters',
@@ -139,7 +205,7 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
         .filter(message => message.type === 'Create')
         .map(message => message.value)
         .first(''),
-      language: 'erb',
+      language: 'ruby-template',
       options: bindings,
       transient: true,
       visible: ({ values }) => values.get('defers', false),
@@ -152,7 +218,7 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
         .filter(message => message.type === 'Update')
         .map(message => message.value)
         .first(''),
-      language: 'erb',
+      language: 'ruby-template',
       options: bindings,
       transient: true,
       visible: ({ values }) => values.get('defers', false),
@@ -165,7 +231,7 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
         .filter(message => message.type === 'Complete')
         .map(message => message.value)
         .first(''),
-      language: 'erb',
+      language: 'ruby-template',
       options: bindings,
       transient: true,
     },
@@ -190,7 +256,7 @@ const fields = ({ tasks, tree, node }) => ({ bindings }) =>
 const handleSubmit = ({ node }) => values => node.merge(values);
 
 export const NodeForm = generateForm({
-  formOptions: ['node', 'tasks', 'tree'],
+  formOptions: ['connections', 'node', 'tasks', 'tree'],
   dataSources,
   fields,
   handleSubmit,

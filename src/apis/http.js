@@ -75,13 +75,72 @@ export const headerBuilder = options => {
   return headers;
 };
 
+export const formDataBuilder = (data, prefix, formData = new FormData()) =>
+  Object.keys(data).reduce((result, property) => {
+    // Reduce the data object into a FormData object
+    if (Array.isArray(data[property])) {
+      // If value of property is an array of non-file objects, recursively add
+      // each object in the array
+      if (
+        data[property].some(
+          value => typeof value === 'object' && !(value instanceof File),
+        )
+      ) {
+        data[property].forEach((value, index) =>
+          formDataBuilder(
+            value,
+            prefix
+              ? `${prefix}[${property}][${index}]`
+              : `${property}[${index}]`,
+            result,
+          ),
+        );
+      }
+      // If it's an array of other types, add each value
+      else {
+        data[property].forEach(value =>
+          result.append(prefix ? `${prefix}[${property}]` : property, value),
+        );
+      }
+    } else if (
+      typeof data[property] === 'object' &&
+      !(data[property] instanceof File)
+    ) {
+      // If value of property is an object that's not a file, append the
+      // object's nested properties recursively
+      formDataBuilder(
+        data[property],
+        prefix ? `${prefix}[${property}]` : property,
+        result,
+      );
+    } else {
+      // Otherwise append the value
+      result.set(prefix ? `${prefix}[${property}]` : property, data[property]);
+    }
+    return result;
+  }, formData);
+
+/**
+ *
+ * @param {string} functionName
+ * @param {(string|string[])[]} requiredOptions
+ *    The keys of the required options. You can group keys in a nested array if
+ *    only one of a subset is required.
+ * @param {object} options
+ *    The options object to validate.
+ */
 export const validateOptions = (functionName, requiredOptions, options) => {
   const missing = requiredOptions.filter(
-    requiredOption => !options[requiredOption],
+    requiredOption =>
+      Array.isArray(requiredOption)
+        ? !requiredOption.some(option => options[option])
+        : !options[requiredOption],
   );
   if (missing.length > 0) {
     throw new Error(
-      `${functionName} failed! The following required options are missing: ${missing}`,
+      `${functionName} failed! The following required options are missing: ${missing
+        .map(key => (Array.isArray(key) ? key.join(' or ') : key))
+        .join(', ')}`,
     );
   }
 };

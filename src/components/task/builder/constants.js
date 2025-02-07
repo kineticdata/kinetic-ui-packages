@@ -23,6 +23,10 @@ export const NODE_BADGE_OFFSET = 6;
 export const NODE_BAR_THICKNESS = 8;
 export const NODE_RADIUS = 8;
 export const NODE_HEIGHT = 45;
+export const NODE_PLUG_PRONG_HEIGHT = 4;
+export const NODE_PLUG_SPACE_HEIGHT = 3;
+export const NODE_PLUG_HEIGHT =
+  NODE_PLUG_PRONG_HEIGHT * 2 + NODE_PLUG_SPACE_HEIGHT;
 export const NODE_JOIN_JUNCTION_HEIGHT = 45;
 export const NODE_START_RADIUS = 28;
 export const NODE_STROKE_WIDTH = 1;
@@ -83,6 +87,24 @@ export const NODE_LEFT_BAR_PATH = `
   h  ${NODE_BAR_THICKNESS - NODE_RADIUS}
  `;
 
+export const NODE_PLUG_BAR_PATH = `
+  M  ${MIN + NODE_BAR_THICKNESS} ${MIN}
+  v  ${OUTER_HEIGHT}
+  h -${NODE_BAR_THICKNESS - NODE_RADIUS}
+  a  ${ARC_UP_LEFT}
+  v -${(OUTER_HEIGHT - NODE_RADIUS * 2 - NODE_PLUG_HEIGHT) / 2}
+  h  ${NODE_BAR_THICKNESS * 0.625}
+  v -${NODE_PLUG_PRONG_HEIGHT}
+  h -${NODE_BAR_THICKNESS * 0.625}
+  v -${NODE_PLUG_SPACE_HEIGHT}
+  h  ${NODE_BAR_THICKNESS * 0.625}
+  v -${NODE_PLUG_PRONG_HEIGHT}
+  h -${NODE_BAR_THICKNESS * 0.625}
+  v -${(OUTER_HEIGHT - NODE_RADIUS * 2 - NODE_PLUG_HEIGHT) / 2}
+  a  ${ARC_UP_RIGHT}
+  h  ${NODE_BAR_THICKNESS - NODE_RADIUS}
+ `;
+
 export const NODE_LEFT_TOP_BAR_PATH = `
   M  ${MIN + NODE_BAR_THICKNESS} ${MIN}
   v  ${OUTER_HEIGHT / 2}
@@ -118,3 +140,8 @@ export const NODE_CORNER_TAB_PATH = `
   v ${NODE_BAR_THICKNESS * 3 - NODE_RADIUS}
   L ${MAX_X - NODE_BAR_THICKNESS * 3} ${MIN}
 `;
+
+// Advanced handler definition names
+export const ADVANCED_HANDLER_NAME_INTEGRATION = 'system_integration';
+export const ADVANCED_HANDLER_NAME_SUBMISSION_CREATE =
+  'system_submission_create';

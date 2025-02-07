@@ -445,6 +445,7 @@ export const fetchPolicyRules = (options = {}) => {
         params: {
           include: options.include,
           type: options.type,
+          limit: options.limit,
         },
       },
     )
@@ -584,13 +585,20 @@ export const fetchHandlers = (options = {}) =>
     .get(`${bundle.spaceLocation()}/app/components/task/app/api/v2/handlers`, {
       params: {
         include: options.include,
+        limit: options.limit,
+        offset: options.offset,
+        name: options.name || undefined,
+        status: options.status || undefined,
+        direction: options.direction || undefined,
+        orderBy: options.orderBy || undefined,
       },
     })
     .then(response => ({
       handlers: response.data.handlers,
+      count: response.data.count,
+      nextPageToken: generateNextPageToken(response.data),
     }))
     .catch(handleErrors);
-
 export const fetchHandler = (options = {}) => {
   validateOptions('fetchHandler', ['definitionId'], options);
   return axios
@@ -874,6 +882,26 @@ export const fetchTaskRun = (options = {}) => {
     .get(
       `${bundle.spaceLocation()}/app/components/task/app/api/v2/runs/${
         options.runId
+      }`,
+      {
+        params: {
+          include: options.include,
+        },
+      },
+    )
+    .then(response => ({
+      run: response.data,
+    }))
+    .catch(handleErrors);
+};
+
+export const fetchTaskRunViaDeferralToken = (options = {}) => {
+  validateOptions('fetchTaskRunViaDeferralToken', ['deferralToken'], options);
+
+  return axios
+    .get(
+      `${bundle.spaceLocation()}/app/components/task/app/api/v2/runs/task/${
+        options.deferralToken
       }`,
       {
         params: {

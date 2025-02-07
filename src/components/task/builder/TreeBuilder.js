@@ -1,9 +1,14 @@
 import React, { createRef, Component, Fragment } from 'react';
-import { isFunction, pick } from 'lodash-es';
+import { isFunction } from 'lodash-es';
 import { connect, dispatch } from '../../../store';
 import { configureTreeBuilder } from './builder.redux';
 import * as constants from './constants';
-import { addNewTask, isPointInNode } from './helpers';
+import {
+  addNewTask,
+  isPointInNode,
+  generateIntegrationTaskDefinition,
+  generateSubmissionCreateTaskDefinition,
+} from './helpers';
 import { Connector as ConnectorModel, Node as NodeModel } from './models';
 import { SvgCanvas } from './SvgCanvas';
 import { Node } from './Node';
@@ -50,20 +55,19 @@ export class TreeBuilderComponent extends Component {
     // placeholder then we will call configureTreeBuilder with the component's
     // props at that time
     if (this.props.treeBuilderState === null) {
-      configureTreeBuilder(
-        pick(this.props, [
-          'treeKey',
-          'sourceName',
-          'sourceGroup',
-          'name',
-          'platformSourceName',
-        ]),
-      );
+      configureTreeBuilder({
+        ...this.props.configParams,
+        treeKey: this.props.treeKey,
+      });
     }
   }
 
   checkHighlight(prevProps = {}) {
-    if (this.props.treeBuilderState && !this.props.treeBuilderState.loading) {
+    if (
+      this.props.treeBuilderState &&
+      !this.props.treeBuilderState.loading &&
+      this.props.tree
+    ) {
       // one the first "real" render of the tree builder check for the highlight
       // node and focus if one is specified
       if (
@@ -195,6 +199,7 @@ export class TreeBuilderComponent extends Component {
           addNewTask(
             this.props.treeKey,
             this.props.treeBuilderState.tree,
+            this.props.treeBuilderState.connections,
             this.state.newNodeParent,
             this.newNode.current.position,
             () => this.setState({ newConnector: null, newNode: null }),
@@ -240,12 +245,16 @@ export class TreeBuilderComponent extends Component {
     const [highlightType, highlightId] = highlight || [];
     if (treeBuilderState) {
       const {
+        connections,
+        error,
         lastSave,
         lastWebApi,
         redoStack,
         saving,
         tasks,
         tree,
+        kappSlug,
+        formSlug,
         undoStack,
         webApi,
       } = treeBuilderState;
@@ -262,6 +271,10 @@ export class TreeBuilderComponent extends Component {
             dispatch('TREE_UPDATE_SETTINGS', { treeKey, values }),
           updateWebApi: values =>
             dispatch('TREE_UPDATE_WEB_API', { treeKey, values }),
+          reloadConnections: () =>
+            dispatch('TREE_LOAD_CONNECTIONS', { treeKey }),
+          reloadOperations: (options = {}) =>
+            dispatch('TREE_LOAD_OPERATIONS', { treeKey, ...options }),
           save: ({
             overwrite = false,
             newName = '',
@@ -285,7 +298,9 @@ export class TreeBuilderComponent extends Component {
           zoomIn: () => this.canvasRef.current.zoomIn(),
           zoomOut: () => this.canvasRef.current.zoomOut(),
         },
+        connections,
         dirty: this.isDirty(treeBuilderState),
+        error,
         lastTree: lastSave,
         lastWebApi,
         name: tree ? tree.name : null,
@@ -293,6 +308,8 @@ export class TreeBuilderComponent extends Component {
         sidebarRef: this.sidebarRef,
         tasks,
         tree,
+        kappSlug,
+        formSlug,
         treeBuilder: tree && (
           <Fragment>
             <SvgCanvas ref={this.canvasRef}>
@@ -340,6 +357,7 @@ export class TreeBuilderComponent extends Component {
                     primary={selected.getIn([0, 'nodeId']) === node.id}
                     selected={selected.some(({ nodeId }) => nodeId === node.id)}
                     onSelect={this.props.onSelectNode}
+                    connections={connections}
                     tasks={tasks}
                     tree={tree}
                   />
@@ -350,6 +368,7 @@ export class TreeBuilderComponent extends Component {
                   ref={this.newNode}
                   treeKey={treeKey}
                   node={this.state.newNode}
+                  connections={connections}
                   tasks={tasks}
                   tree={tree}
                 />
@@ -367,5 +386,13 @@ export class TreeBuilderComponent extends Component {
 const mapStateToProps = (state, props) => ({
   treeBuilderState: state.getIn(['trees', props.treeKey]),
   tree: state.getIn(['trees', props.treeKey, 'tree']),
+  kappSlug: state.getIn(['trees', props.treeKey, 'kappSlug']),
 });
 export const TreeBuilder = connect(mapStateToProps)(TreeBuilderComponent);
+
+TreeBuilder.ADVANCED_HANDLERS = {
+  INTEGRATION_NAME: constants.ADVANCED_HANDLER_NAME_INTEGRATION,
+  generateIntegrationTaskDefinition,
+  SUBMISSION_CREATE_NAME: constants.ADVANCED_HANDLER_NAME_SUBMISSION_CREATE,
+  generateSubmissionCreateTaskDefinition,
+};

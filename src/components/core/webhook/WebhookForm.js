@@ -9,7 +9,7 @@ import {
   updateWebhook,
 } from '../../../apis';
 import { generateForm } from '../../form/Form';
-import { buildBindings } from '../../../helpers';
+import { buildCodeEditorBindings } from '../../../helpers';
 
 const SPACE_INCLUDES =
   'formAttributeDefinitions,spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
@@ -51,7 +51,32 @@ const handleSubmit = ({ kappSlug, name }) => values =>
     return webhook;
   });
 
-const fields = ({ kappSlug, name }) => ({ webhook }) =>
+const generateCodeBindings = ({ space, kapp, values }) =>
+  buildCodeEditorBindings({
+    space: {
+      attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+    },
+    user: values.get('type') === 'User' && {
+      attributeDefinitions: space?.get('userAttributeDefinitions'),
+      profileAttributeDefinitions: space?.get(
+        'userProfileAttributeDefinitions',
+      ),
+    },
+    team: values.get('type') === 'Team' && {
+      attributeDefinitions: space?.get('teamAttributeDefinitions'),
+    },
+    kapp: ['Form', 'Submission'].includes(values.get('type')) && {
+      attributeDefinitions: kapp?.get('kappAttributeDefinitions'),
+    },
+    form: ['Form', 'Submission'].includes(values.get('type')) && {
+      attributeDefinitions: kapp?.get('formAttributeDefinitions'),
+    },
+    submission: values.get('type') === 'Submission' && { detailed: true },
+    values: values.get('type') === 'Submission' &&
+      kapp?.get('fields').size > 0 && { data: kapp.get('fields') },
+  });
+
+const fields = ({ name }) => ({ webhook }) =>
   (!name || webhook) && [
     {
       name: 'name',
@@ -98,12 +123,11 @@ const fields = ({ kappSlug, name }) => ({ webhook }) =>
       name: 'filter',
       label: 'Filter',
       type: 'code',
-      language: 'js',
+      language: 'js-expression',
       initialValue: webhook ? webhook.get('filter') : '',
       helpText:
         'Optional parameters limiting the events than can trigger a webhook. Click the </> button to see available insert values.',
-      options: ({ space, kapp, values }) =>
-        buildBindings({ space, kapp, scope: values.get('type') }),
+      options: generateCodeBindings,
     },
     {
       name: 'url',
@@ -114,8 +138,7 @@ const fields = ({ kappSlug, name }) => ({ webhook }) =>
       initialValue: webhook ? webhook.get('url') : '',
       helpText:
         'Location of the platform workflow or external system to pass information to. Click the </> button to see available insert values.',
-      options: ({ space, kapp, values }) =>
-        buildBindings({ space, kapp, scope: values.get('type') }),
+      options: generateCodeBindings,
     },
   ];
 

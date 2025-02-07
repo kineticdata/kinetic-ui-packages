@@ -43,7 +43,7 @@ const columns = [
   },
   {
     value: 'closedBy',
-    title: 'closedBy',
+    title: 'Closed By',
     sortable: false,
   },
   {
@@ -53,7 +53,7 @@ const columns = [
   },
   {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     sortable: true,
   },
   {
@@ -73,7 +73,7 @@ const columns = [
   },
   {
     value: 'id',
-    title: 'Id',
+    title: 'ID',
     sortable: false,
   },
   {
@@ -113,7 +113,7 @@ const columns = [
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     sortable: false,
   },
   {

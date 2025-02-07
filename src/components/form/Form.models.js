@@ -21,17 +21,20 @@ export const FormState = Record({
 
 export const DATA_SOURCE_STATUS = {
   PENDING: 'PENDING',
+  PENDING_RELOAD: 'PENDING_RELOAD',
   RESOLVED: 'RESOLVED',
   REJECTED: 'REJECTED',
 };
 
 export const DataSource = Record({
   data: null,
+  error: null,
   fn: null,
   params: null,
   paramsFn: null,
   status: DATA_SOURCE_STATUS.PENDING,
   transform: null,
+  errorTransform: null,
 });
 
 export const FIELD_DEFAULT_VALUES = Map({
@@ -43,15 +46,18 @@ export const FIELD_DEFAULT_VALUES = Map({
   form: null,
   'form-multi': List(),
   map: OrderedMap(),
+  nullable: null,
   'select-multi': List(),
   team: null,
   'team-multi': List(),
   'text-multi': List(),
+  toggle: false,
   user: null,
   'user-multi': List(),
 });
 
 export const Field = Record({
+  bindings: {},
   constraint: null,
   constraintMessage: 'Invalid',
   dirty: false,

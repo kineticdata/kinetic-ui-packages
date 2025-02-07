@@ -15,6 +15,7 @@ export * from './core/fileResources';
 export * from './core/filestores';
 export * from './core/forms';
 export * from './core/formTypes';
+export * from './core/integrations';
 export * from './core/kapps';
 export * from './core/logs';
 export * from './core/memberships';
@@ -38,6 +39,9 @@ export * from './core/workflows';
 
 // Http
 export { generateCESearchParams } from './http';
+
+// Integrator
+export * from './integrator';
 
 // Task
 export * from './task';

@@ -88,54 +88,66 @@ const filters = () => () => [
 
 const columns = [
   {
+    // Note: This appears as 'Occured' in the columnControl
     value: 'createdAt',
     title: 'Created At',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdBy',
     title: 'Created By',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'engineIdentification',
     title: 'Engine Identification',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'id',
     title: 'Error Id',
     sortable: false,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'relatedItem1Id',
     title: 'Related Item 1 ID',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'relatedItem1Type',
     title: 'Related Item 1 Type',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'relatedItem2Id',
     title: 'Related Item 2 ID',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'relatedItem2Type',
     title: 'Related Item 2 Type',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'status',
     title: 'Status',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'sourceName',
     title: 'Source',
     sortable: false,
+    toggleable: true,
     valueTransform: (_value, row) =>
       getIn(row, ['run', 'tree', 'sourceName'], ''),
   },
@@ -143,6 +155,7 @@ const columns = [
     value: 'sourceGroup',
     title: 'Group',
     sortable: false,
+    toggleable: true,
     valueTransform: (_value, row) =>
       getIn(row, ['run', 'tree', 'sourceGroup'], ''),
   },
@@ -150,32 +163,38 @@ const columns = [
     value: 'treeName',
     title: 'Name',
     sortable: false,
+    toggleable: true,
     valueTransform: (_value, row) => getIn(row, ['run', 'tree', 'name'], ''),
   },
   {
     value: 'Summary',
     title: 'Summary',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'text',
     title: 'Text',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'type',
     title: 'Type',
     sortable: false,
+    toggleable: true,
   },
   {
     value: 'updatedAt',
     title: 'Updated At',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'updatedBy',
     title: 'Updated By',
     sortable: false,
+    toggleable: true,
   },
 ];
 

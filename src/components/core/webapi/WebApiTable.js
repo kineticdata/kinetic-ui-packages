@@ -11,7 +11,7 @@ const clientSide = defineFilter(true)
 const dataSource = ({ kappSlug }) => ({
   fn: fetchWebApis,
   clientSide,
-  params: () => [{ kappSlug, include: 'details' }],
+  params: () => [{ kappSlug, include: 'details,securityPolicies' }],
   transform: result => ({
     data: result.webApis,
   }),
@@ -36,29 +36,36 @@ const columns = [
     value: 'slug',
     title: 'Slug',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'method',
     title: 'Method',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdAt',
-    title: 'Created',
+    title: 'Created At',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'createdBy',
     title: 'Created By',
+    toggleable: true,
   },
   {
     value: 'updatedAt',
-    title: 'Updated',
+    title: 'Updated At',
     sortable: true,
+    toggleable: true,
   },
   {
     value: 'updatedBy',
     title: 'Updated By',
+    toggleable: true,
   },
 ];
 

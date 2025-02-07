@@ -24,10 +24,10 @@
 
 ## Publishing
 
-
 ### Prereleases
+
 - `npm version prerelease --preid=alpha` will create a new pre-release with the tag "alpha" and increment the number after.
-    For example, if the current version is 0.1.0-alpha.1, running this command will bump the version to 0.1.0-alpha.2
+  For example, if the current version is 0.1.0-alpha.1, running this command will bump the version to 0.1.0-alpha.2
 
 # Code Style
 
@@ -76,7 +76,7 @@ to transpile our React/ES6 code into browser-friendly code. These should likely
 be upgraded together.
 
 ```javascript static
-"@babel/cli": "^7.19.3",
+"@babel/cli": "^7.23.0",
 "babel-preset-react-app": "^10.0.1",
 ```
 
@@ -97,17 +97,15 @@ check.
 ##### testing
 
 ```javascript static
-"enzyme": "^3.9.0",
-"enzyme-adapter-react-16": "^1.9.1",
-"enzyme-to-json": "^3.3.5",
 "react-addons-test-utils": "^15.6.2",
+"react-test-renderer": "^18.2.0",
 ```
 
 ##### scripting
 
 ```javascript static
 "concurrently": "^4.1.0",
-"cross-env": "^5.2.0",
+"cross-env": "^7.0.3",
 "lint-staged": "^8.1.3",
 "onchange": "^5.2.0",
 "prettier": "^1.16.4",

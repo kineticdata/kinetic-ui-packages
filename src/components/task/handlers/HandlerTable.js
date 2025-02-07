@@ -1,21 +1,25 @@
 import { generateTable } from '../../table/Table';
 import { fetchHandlers } from '../../../apis';
-import { defineFilter } from '../../../helpers';
-
-const clientSide = defineFilter(true)
-  .equals('id', 'id')
-  .startsWith('name', 'name')
-  .equals('status', 'status')
-  .equals('definitionId', 'definitionId')
-  .startsWith('definitionName', 'definitionName')
-  .equals('definitionVersion', 'definitionVersion')
-  .end();
+import { generateSortParams } from '../../../apis/http';
 
 const dataSource = () => ({
   fn: fetchHandlers,
-  params: () => [{ include: 'details' }],
-  transform: result => ({ data: result.handlers }),
-  clientSide,
+  params: paramData => [
+    {
+      include: 'details',
+      limit: paramData.pageSize,
+      offset: paramData.nextPageToken,
+      status: paramData.filters.get('status'),
+      name: paramData.filters.get('name'),
+
+      ...generateSortParams(paramData),
+    },
+  ],
+  transform: result => ({
+    data: result.handlers,
+    nextPageToken: result.nextPageToken,
+    count: result.count,
+  }),
 });
 
 const filters = () => () => [
@@ -37,48 +41,70 @@ const filters = () => () => [
 
 const columns = [
   {
-    title: 'ID',
-    value: 'id',
-  },
-  {
     title: 'Name',
     value: 'name',
-  },
-  {
-    title: 'Status',
-    value: 'status',
+    sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     title: 'Definition ID',
     value: 'definitionId',
+    sortable: true,
+    toggleable: true,
   },
   {
     title: 'Definition Name',
     value: 'definitionName',
+    sortable: true,
+    toggleable: true,
   },
   {
     title: 'Definition Version',
     value: 'definitionVersion',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    title: 'Status',
+    value: 'status',
+    sortable: true,
+    toggleable: true,
   },
   {
     title: 'Description',
     value: 'description',
+    toggleable: true,
   },
   {
-    title: 'Created',
+    title: 'Created At',
     value: 'createdAt',
+    sortable: true,
+    toggleable: true,
   },
   {
     title: 'Created By',
     value: 'createdBy',
+    sortable: true,
+    toggleable: true,
   },
   {
-    title: 'Updated',
+    title: 'Updated At',
     value: 'updatedAt',
+    sortable: true,
+    toggleable: true,
   },
   {
     title: 'Updated By',
     value: 'updatedBy',
+    sortable: true,
+    toggleable: true,
+  },
+  {
+    title: 'ID',
+    value: 'id',
+    sortable: true,
+    toggleable: true,
   },
 ];
 

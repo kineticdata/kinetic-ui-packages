@@ -4,9 +4,17 @@ import {
   fetchSource,
   createTree,
   fetchTaskCategories,
+  fetchSpace,
+  fetchKapp,
 } from '../../../apis';
 import { Form } from '../../form/Form';
 import { get, List, Map } from 'immutable';
+import { buildCodeEditorBindings } from '../../../helpers';
+
+const SPACE_INCLUDES =
+  'spaceAttributeDefinitions,teamAttributeDefinitions,userAttributeDefinitions,userProfileAttributeDefinitions';
+const KAPP_INCLUDES =
+  'formAttributeDefinitions,kappAttributeDefinitions,fields';
 
 // bulids a definition id based on a name (similar to slugify)
 const buildDefinitionId = text =>
@@ -19,7 +27,7 @@ const buildDefinitionId = text =>
     // Remove unwanted chars
     .replace(/[^A-Za-z0-9_]+/g, '');
 
-const dataSources = () => ({
+const dataSources = ({ kappSlug, workflow }) => ({
   selectedSource: {
     fn: fetchSource,
     params: ({ values }) =>
@@ -45,6 +53,16 @@ const dataSources = () => ({
     fn: fetchTaskCategories,
     params: [],
     transform: result => result.categories,
+  },
+  space: {
+    fn: fetchSpace,
+    params: [{ include: SPACE_INCLUDES }],
+    transform: result => result.space,
+  },
+  kapp: {
+    fn: fetchKapp,
+    params: kappSlug && [{ kappSlug, include: KAPP_INCLUDES }],
+    transform: result => result.kapp,
   },
 });
 
@@ -110,6 +128,44 @@ const fields = ({ name, workflow, workflowType }) => ({ categories }) =>
       required: workflow && !!workflow.get('event'),
       visible: workflow && !!workflow.get('event'),
       enabled: false,
+    },
+    {
+      name: 'filter',
+      label: 'Filter',
+      type: 'code',
+      language: 'js-expression',
+      initialValue: (workflow && workflow.get('filter')) || '',
+      required: false,
+      // use event to show filter on linked workflows
+      visible: workflow && !!workflow.get('event'),
+      options: ({ space, kapp, values }) => {
+        const type = ['Space', 'Team', 'User', 'Form', 'Submission'].find(
+          type => values.get('event')?.startsWith(type),
+        );
+        return buildCodeEditorBindings({
+          space: {
+            attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+          },
+          user: type === 'User' && {
+            attributeDefinitions: space?.get('userAttributeDefinitions'),
+            profileAttributeDefinitions: space?.get(
+              'userProfileAttributeDefinitions',
+            ),
+          },
+          team: type === 'Team' && {
+            attributeDefinitions: space?.get('teamAttributeDefinitions'),
+          },
+          kapp: ['Form', 'Submission'].includes(type) && {
+            attributeDefinitions: kapp?.get('kappAttributeDefinitions'),
+          },
+          form: ['Form', 'Submission'].includes(type) && {
+            attributeDefinitions: kapp?.get('formAttributeDefinitions'),
+          },
+          submission: type === 'Submission' && { detailed: true },
+          values: type === 'Submission' &&
+            kapp?.get('fields').size > 0 && { data: kapp.get('fields') },
+        });
+      },
     },
     {
       name: 'name',
@@ -238,6 +294,8 @@ export const WorkflowForm = ({
   children,
   workflow,
   workflowType,
+  uncontrolled,
+  kappSlug,
 }) => (
   <Form
     addFields={addFields}
@@ -250,7 +308,8 @@ export const WorkflowForm = ({
     onError={onError}
     dataSources={dataSources}
     fields={fields}
-    formOptions={{ workflow, workflowType }}
+    formOptions={{ kappSlug, workflow, workflowType }}
+    uncontrolled={uncontrolled}
   >
     {children}
   </Form>

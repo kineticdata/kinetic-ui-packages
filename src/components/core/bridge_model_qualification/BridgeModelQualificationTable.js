@@ -7,8 +7,6 @@ const clientSide = defineFilter(true)
   .equals('resultType', 'resultType')
   .end();
 
-// const resultTypes = ['Single', 'Multiple'];
-
 // Handles bridge model api response by checking for error and also returning
 // error if active mapping is not present. If valid returns object with the
 // attributes and their mappings.
@@ -44,16 +42,6 @@ const dataSource = ({ modelName }) => ({
   transform,
 });
 
-// const filters = () => () => [
-//   { name: 'name', label: 'Name', type: 'text' },
-//   {
-//     name: 'resultType',
-//     label: 'Result Type',
-//     type: 'select',
-//     options: resultTypes.map(el => ({ label: el, value: el })),
-//   },
-// ];
-
 const columns = [
   {
     value: 'name',
@@ -63,6 +51,7 @@ const columns = [
   {
     value: 'resultType',
     title: 'Result Type',
+    sortable: true,
   },
   {
     value: 'query',
@@ -72,7 +61,6 @@ const columns = [
 
 export const BridgeModelQualificationTable = generateTable({
   columns,
-  // filters,
   dataSource,
   tableOptions: ['modelName'],
 });

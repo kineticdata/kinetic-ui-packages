@@ -31,11 +31,14 @@ const columns = [
     value: 'slug',
     title: 'Slug',
     sortable: true,
+    toggleable: false,
+    columnOrder: 'first',
   },
   {
     value: 'adapterClass',
     title: 'Adapter',
     sortable: true,
+    toggleable: true,
     valueTransform: _value =>
       _value
         .split('.')

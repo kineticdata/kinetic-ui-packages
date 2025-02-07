@@ -226,16 +226,17 @@ regSaga(
 
 regSaga(
   takeEvery('LOGOUT_START', function*({ payload }) {
+    const { callback, isSaml } = payload;
     try {
       const system = yield select(state => state.getIn(['session', 'system']));
       const loggedIn = yield select(state => state.getIn(['session', 'token']));
 
       if (!system && loggedIn) {
-        yield call(logoutDirect);
+        yield call(logoutDirect, isSaml);
       }
       yield put(action('LOGOUT'));
-      if (isFunction(payload)) {
-        yield call(payload);
+      if (isFunction(callback)) {
+        yield call(callback);
       }
     } catch (e) {
       console.error(e);
@@ -264,8 +265,8 @@ const onLogin = (e, callback) => {
   dispatch('LOGIN', callback);
 };
 
-const logout = callback => {
-  dispatch('LOGOUT_START', callback);
+const logout = (callback, isSaml) => {
+  dispatch('LOGOUT_START', { callback, isSaml });
 };
 
 const timedOut = () => {

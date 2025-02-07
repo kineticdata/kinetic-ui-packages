@@ -1,6 +1,6 @@
 import {
-  fetchSystemDefaultTaskDbAdapter,
-  updateSystemDefaultTaskDbAdapter,
+  fetchSystemDefaultSQLDbAdapter,
+  updateSystemDefaultSQLDbAdapter,
 } from '../../apis/system';
 import { generateForm } from '../form/Form';
 import {
@@ -14,37 +14,56 @@ import { getIn } from 'immutable';
 import { handleFormErrors } from '../form/Form.helpers';
 
 const dataSources = () => ({
-  defaultTaskDbAdapter: {
-    fn: fetchSystemDefaultTaskDbAdapter,
+  defaultSQLDatabaseAdapter: {
+    fn: fetchSystemDefaultSQLDbAdapter,
     params: [],
     transform: result => result.adapter,
   },
+  fileFields: {
+    fn: () => ({
+      mssql: ['sslrootcert', 'sslcert'],
+      oracle: ['serverCert', 'clientCert'],
+      postgres: ['sslrootcert', 'sslcert', 'sslkey'],
+    }),
+    params: [],
+  },
 });
 
-const handleSubmit = () => values => {
+const handleSubmit = () => (values, { fileFields, values: rawValues }) => {
   const type = values.get('type');
+  const fileFieldsForType = fileFields.get(type);
+  // Only include values for file fields if the toggle field is true
+  const filterFn = (value, key) =>
+    !fileFieldsForType.includes(key) ||
+    !!rawValues.get(`${type}_change_${key}`);
 
   const adapter = {
     type,
-    properties: adapterProperties(values, type),
+    properties: adapterProperties(values, null, type, filterFn),
   };
-  return updateSystemDefaultTaskDbAdapter({ adapter }).then(
+
+  return updateSystemDefaultSQLDbAdapter({
+    adapter,
+    multipart: Object.entries(adapter.properties).some(
+      ([name, value]) => value instanceof File,
+    ),
+  }).then(
     handleFormErrors('adapter', 'There was an error saving the Adapter.'),
   );
 };
 
-const fields = () => ({ defaultTaskDbAdapter }) =>
-  (defaultTaskDbAdapter || defaultTaskDbAdapter === null) && [
+const fields = () => ({ defaultSQLDatabaseAdapter }) =>
+  (defaultSQLDatabaseAdapter || defaultSQLDatabaseAdapter === null) && [
     {
       name: 'type',
-      label: 'Task Adapter',
+      label: 'Database Adapter',
       type: 'select',
       options: VALIDATE_DB_ADAPTERS,
-      initialValue: getIn(defaultTaskDbAdapter, ['type'], ''),
+      initialValue: getIn(defaultSQLDatabaseAdapter, ['type'], ''),
     },
-    ...MSSQL_FIELDS('type', defaultTaskDbAdapter, [], null),
-    ...ORACLE_FIELDS('type', defaultTaskDbAdapter, [], null),
-    ...POSTGRES_FIELDS('type', defaultTaskDbAdapter, [], null),
+    ...MSSQL_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
+    ...ORACLE_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
+    ...POSTGRES_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
   ];
 
 export const SystemTaskAdapterForm = generateForm({

@@ -441,6 +441,31 @@ export const KitchenSinkForm = generateForm({
       placeholder: 'Placeholder',
     },
     {
+      name: 'number1',
+      type: 'number',
+      label: 'Number 1',
+    },
+    {
+      name: 'number2',
+      type: 'number',
+      label: 'Number 2',
+      required: true,
+    },
+    {
+      name: 'number3',
+      type: 'number',
+      label: 'Number 3',
+      enabled: false,
+      initialValue: 'asdfasdf',
+    },
+    {
+      name: 'number4',
+      type: 'number',
+      label: 'Number 4',
+      helpText: 'Help Text',
+      placeholder: 'Placeholder',
+    },
+    {
       name: 'password1',
       type: 'password',
       label: 'Password 1',
