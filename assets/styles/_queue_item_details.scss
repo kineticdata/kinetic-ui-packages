@@ -1,0 +1,110 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Queue Item Details ~ Queue
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.queue-item-details {
+  background-color: $white;
+  position: relative;
+
+  .section--general {
+    color: $blue-lake;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3rem;
+
+    .timestamps {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin: 0.25rem 0 1.5rem 0;
+      .timestamp {
+        font-size: 0.875rem;
+        line-height: 1.5rem;
+        padding: 0;
+        .label {
+          color: $gray60;
+        }
+        .value {
+          color: $blue-lake;
+          margin-left: 0.25rem;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        &:not(:last-child):after {
+          content: '\2022';
+          color: $gray50;
+          margin: 0 0.3125rem;
+        }
+      }
+    }
+
+    &__title {
+      color: $gray80;
+      font-weight: 600;
+      margin: 0;
+      font-size: 1.25rem;
+      line-height: 1.411764706;
+    }
+
+    .summary {
+      font-size: 0.875rem;
+      line-height: 1.5rem;
+      color: $gray80;
+    }
+
+    .actions {
+      display: flex;
+
+      .assignment-badge {
+        flex-grow: 1;
+      }
+
+      .wally-button {
+        border-radius: 0;
+        margin: 1.5rem 0;
+        padding: 0 1.5rem;
+      }
+    }
+
+    pre {
+      color: $blue-lake;
+      font-size: 0.75rem;
+      line-height: 1.5rem;
+      margin-bottom: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+
+  .request-button {
+    display: block;
+    width: 100%;
+  }
+
+  .empty-subtasks {
+    border-radius: $border-radius-lg;
+    background-color: $gray3;
+    text-align: center;
+    padding: 1.5em;
+
+    &__title {
+      color: $blue-lake;
+      font-size: 14px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    &__message {
+      color: $gray60;
+      font-size: 0.875rem;
+      line-height: 1.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+  }
+}
