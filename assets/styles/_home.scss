@@ -1,0 +1,52 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *   Home ~ services
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+// Search container
+.search-services-home {
+  width: 100%;
+  padding: 0 0 2.25rem;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex: 0 0 auto;
+  background-color: $blue-slate;
+  form input, 
+  form button{
+    &:focus {
+      outline: none;
+      border-color: $gray60;
+      box-shadow: 0 0 1px 4px rgba($white, .5);
+    }
+  }
+  &__wrapper {
+    h1 {
+      color: $white;
+      font-size: 2rem;
+      font-weight: 300;
+      line-height: 3.75rem;
+      margin-top: 1.5rem;
+      @media all and (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 90%;
+    @media all and (min-width: 0) {
+      flex-basis: 90%;
+    }
+    @media all and (min-width: 576px) {
+      flex-basis: 75%;
+    }
+    @media all and (min-width: 768px) {
+      flex-basis: 66.667%;
+    }
+    @media all and (min-width: 992px) {
+      flex-basis: 48%;
+    }
+    @media all and (min-width: 1200px) {
+    }
+  }
+}
