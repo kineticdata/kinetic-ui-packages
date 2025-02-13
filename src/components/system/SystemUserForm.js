@@ -25,6 +25,8 @@ const fields = () => ({ user }) =>
       label: 'Username',
       type: 'text',
       required: true,
+      pattern: /^[^/&?=:%]*$/,
+      patternMessage: 'The characters / & ? = : % are not allowed.',
       initialValue: get(user, 'username') || '',
     },
     {
