@@ -10,6 +10,10 @@ import {
   generateHttpOperationConfigFields,
   serializeHttpOperationConfigFields,
 } from './config_fields/http';
+import {
+  generatePostgresOperationConfigFields,
+  serializePostgresOperationConfigFields,
+} from './config_fields/postgres';
 
 const dataSources = ({ id, connectionId }) => ({
   connection: {
@@ -46,6 +50,14 @@ const getFieldConfigByType = (type, operation) => {
       return [
         configFieldsHTTP,
         serializeHttpOperationConfigFields(configFieldsHTTP),
+      ];
+    case 'postgres':
+      const configFieldsPostgres = generatePostgresOperationConfigFields(
+        get(operation, 'config'),
+      );
+      return [
+        configFieldsPostgres,
+        serializePostgresOperationConfigFields(configFieldsPostgres),
       ];
     default:
       return [[], undefined];
