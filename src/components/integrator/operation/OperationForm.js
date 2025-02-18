@@ -85,7 +85,7 @@ const fields = ({ id, clone }) => ({ operation, connection }) => {
       },
       {
         name: 'documentationLink',
-        label: 'Operation Documentation Link',
+        label: 'API Documentation Link',
         type: 'text',
         initialValue: get(operation, 'documentationLink') || '',
         placeholder: 'Optional (but recommended)',
