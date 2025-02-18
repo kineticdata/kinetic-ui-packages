@@ -160,7 +160,7 @@ const flattenBindings = data =>
 
 // Parses each flattened bindings string to an array of its parts
 const parseBinding = (binding, parsedSoFar) => {
-  const match = binding?.match(/^(?:(@\w+)|\[\'((?:\w|\s|-)+)\'\])(.*)$/i);
+  const match = binding?.match(/^(?:(@\w+)|\[\'(.+?)\'\])(.*)$/i);
   if (match) {
     const parsedNext = [...(parsedSoFar || []), match[1] || match[2]].filter(
       Boolean,
