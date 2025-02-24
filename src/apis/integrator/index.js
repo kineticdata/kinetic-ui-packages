@@ -226,3 +226,16 @@ export const fetchIntegratorVersion = () => {
     }))
     .catch(handleErrors);
 };
+
+export const transformOutputs = (options = {}) => {
+  validateOptions('transformOutputs', ['outputs', 'raw'], options);
+  const { outputs, raw, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/transform`,
+      { outputs, raw },
+      { params },
+    )
+    .then(response => ({ data: response.data }))
+    .catch(handleErrors);
+};
