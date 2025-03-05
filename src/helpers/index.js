@@ -139,6 +139,7 @@ const STATIC_IDENTITY_BINDINGS = [
   { label: 'authenticated' },
   { label: 'sessionToken' },
   { label: 'spaceAdmin' },
+  { label: 'teams' },
 ];
 
 const STATIC_FILE_BINDINGS = [
