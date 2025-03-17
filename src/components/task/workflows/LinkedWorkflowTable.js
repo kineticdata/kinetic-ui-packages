@@ -7,25 +7,30 @@ const STATUS_OPTIONS = ['Active', 'Inactive', 'Paused'].map(v => ({
   value: v,
 }));
 
-const clientSide = defineFilter(true)
-  .equals('name', 'name')
+const clientSideFilter = defineFilter(true)
+  .startsWith('name', 'name')
   .startsWith('event', 'event')
   .equals('status', 'status')
   .end();
 
+const clientSide = (object, filters) =>
+  clientSideFilter(
+    object.event
+      ? object
+      : {
+          ...object,
+          name: 'Legacy workflow',
+          event: `${object.sourceGroup?.split(' > ')[0]?.replace(/s?$/, '')} ${
+            object.name
+          }`,
+        },
+    filters,
+  );
+
 const dataSource = ({ formSlug, kappSlug }) => ({
   clientSide,
   fn: fetchWorkflows,
-  params: paramData => [
-    {
-      kappSlug,
-      formSlug,
-      include: 'details',
-      name: paramData.filters.get('name'),
-      event: paramData.filters.get('event'),
-      status: paramData.filters.get('status'),
-    },
-  ],
+  params: () => [{ kappSlug, formSlug, include: 'details' }],
   transform: result => {
     const extraData = {
       migratable: result.migratable,
@@ -40,17 +45,16 @@ const dataSource = ({ formSlug, kappSlug }) => ({
   },
 });
 
-const filters = () => ({ sourceTypes }) =>
-  sourceTypes && [
-    { name: 'name', label: 'Name', type: 'text' },
-    { name: 'event', label: 'Event', type: 'text' },
-    {
-      name: 'status',
-      label: 'Status',
-      type: 'select',
-      options: STATUS_OPTIONS,
-    },
-  ];
+const filters = () => () => [
+  { name: 'name', label: 'Name', type: 'text' },
+  { name: 'event', label: 'Event', type: 'text' },
+  {
+    name: 'status',
+    label: 'Status',
+    type: 'select',
+    options: STATUS_OPTIONS,
+  },
+];
 
 const columns = [
   {

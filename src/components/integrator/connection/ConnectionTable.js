@@ -16,11 +16,7 @@ const clientSide = defineFilter(true)
 const dataSource = () => ({
   fn: fetchConnections,
   clientSide,
-  params: paramData => [
-    {
-      ...paramData.filters.filter(Boolean).toJS(),
-    },
-  ],
+  params: () => [],
   transform: result => ({
     data: result.connections,
   }),

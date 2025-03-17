@@ -9,7 +9,7 @@ import {
   select,
   takeEvery,
 } from 'redux-saga/effects';
-import { action, dispatch, regHandlers, regSaga } from '../../store';
+import { action, dispatch, regHandlers, regSaga, store } from '../../store';
 import { mountForm, unmountForm } from '..';
 
 export const hasData = data => isarray(data) || data instanceof List;
@@ -21,12 +21,12 @@ const getDataSource = tableData => {
   return dataSourceFn(tableOptions);
 };
 
-export const isClientSide = tableData => {
+export const isClientSide = (tableData, ignoreData) => {
   const data = tableData.get('data');
   const dataSource = getDataSource(tableData);
 
   return (
-    hasData(data) &&
+    (hasData(data) || ignoreData) &&
     ((dataSource &&
       (dataSource.clientSideSearch === true || dataSource.clientSide)) ||
       !dataSource)
@@ -94,6 +94,11 @@ const serverSidePrevPage = tableData =>
     .set('loading', true)
     .update('pageTokens', pt => pt.pop())
     .update(t => t.set('nextPageToken', t.get('pageTokens').last()));
+
+const serverSideReloadPage = tableData =>
+  tableData
+    .set('loading', true)
+    .set('nextPageToken', tableData.get('pageTokens').last());
 
 // should be '' except if op is between, or in
 const getInitialFilterValue = column =>
@@ -275,6 +280,20 @@ regHandlers({
             : serverSideGotoPage(tableData, pageNumber),
       )
       .setIn(['tables', tableKey, 'error'], null),
+  RELOAD_PAGE: (state, { payload: { tableKey } }) =>
+    state.hasIn(['tables', tableKey])
+      ? state
+          .updateIn(['tables', tableKey], tableData =>
+            (isClientSide(tableData)
+              ? tableData
+              : serverSideReloadPage(tableData)
+            )
+              .set('loading', true)
+              .set('data', null)
+              .set('error', null),
+          )
+          .setIn(['tables', tableKey, 'error'], null)
+      : state,
   SORT_COLUMN: (state, { payload: { tableKey, column } }) =>
     state.updateIn(['tables', tableKey], t => {
       const sortColumn = t.get('sortColumn');
@@ -366,31 +385,53 @@ function* calculateRowsTask({ payload }) {
 
     const response = yield call(calculateRows, tableData);
 
-    const { rows, data, nextPageToken, count, error, extraData } = response;
-    const onFetch = tableData.get('onFetch');
+    const isPageEmpty = isClientSide(tableData, true)
+      ? response?.data?.size <= tableData.get('pageOffset') &&
+        tableData.get('pageOffset') > 0
+      : response?.data?.size === 0 && tableData.get('pageTokens').size !== 0;
 
-    if (error) {
+    if (isPageEmpty && !isClientSide(tableData, true)) {
+      // If there is no data and a server side previous page exists, load the
+      // previous page instead of setting the current response into state
       yield put({
-        type: 'SET_ROWS',
-        payload: {
-          tableKey,
-          error,
-          rows: List(),
-          data: List(),
-          nextPageToken: null,
-          count: null,
-          extraData,
-        },
+        type: 'PREV_PAGE',
+        payload: { tableKey },
       });
     } else {
-      yield put({
-        type: 'SET_ROWS',
-        payload: { tableKey, rows, data, nextPageToken, count, extraData },
-      });
-    }
+      const { rows, data, nextPageToken, count, error, extraData } = response;
+      const onFetch = tableData.get('onFetch');
 
-    if (typeof onFetch === 'function') {
-      yield call(onFetch, { tableKey, rows, count, error, extraData });
+      if (error) {
+        yield put({
+          type: 'SET_ROWS',
+          payload: {
+            tableKey,
+            error,
+            rows: List(),
+            data: List(),
+            nextPageToken: null,
+            count: null,
+            extraData,
+          },
+        });
+      } else {
+        yield put({
+          type: 'SET_ROWS',
+          payload: { tableKey, rows, data, nextPageToken, count, extraData },
+        });
+        if (isPageEmpty && isClientSide(tableData, true)) {
+          // If there is no data and a client side previous page exists, load
+          // the previous page after we set the updated data
+          yield put({
+            type: 'PREV_PAGE',
+            payload: { tableKey },
+          });
+        }
+      }
+
+      if (typeof onFetch === 'function') {
+        yield call(onFetch, { tableKey, rows, count, error, extraData });
+      }
     }
   } catch (e) {
     console.error(e);
@@ -445,6 +486,7 @@ regSaga(takeEvery('UNMOUNT_TABLE', stopPollingTask));
 regSaga(takeEvery('NEXT_PAGE', calculateRowsTask));
 regSaga(takeEvery('PREV_PAGE', calculateRowsTask));
 regSaga(takeEvery('GOTO_PAGE', calculateRowsTask));
+regSaga(takeEvery('RELOAD_PAGE', calculateRowsTask));
 regSaga(takeEvery('SORT_COLUMN', calculateRowsTask));
 regSaga(takeEvery('SORT_DIRECTION', calculateRowsTask));
 regSaga(takeEvery('APPLY_FILTERS', calculateRowsTask));
@@ -557,7 +599,6 @@ const transformData = (data, tableData) =>
 
 const calculateRows = tableData => {
   const dataSource = getDataSource(tableData);
-
   if (isClientSide(tableData)) {
     const data = transformData(tableData.get('data'), tableData);
     const rows = applyClientSideFilters(tableData, data);
@@ -626,5 +667,21 @@ export const configureTable = payload => {
 };
 export const refetchTable = tableKey =>
   dispatch('REFETCH_TABLE_DATA', { tableKey });
+export const reloadTablePage = tableKey =>
+  dispatch('RELOAD_PAGE', { tableKey });
 export const clearFilters = tableKey =>
   dispatch('CLEAR_TABLE_FILTERS', { tableKey });
+
+export const hasTableFiltersApplied = tableKey =>
+  store
+    .getState()
+    .getIn(['tables', tableKey, 'appliedFilters'])
+    ?.filter(Boolean)?.size > 0;
+
+export const findTableKey = fn =>
+  store
+    .getState()
+    .get('tables')
+    .keySeq()
+    .toList()
+    .find(fn || (() => true));

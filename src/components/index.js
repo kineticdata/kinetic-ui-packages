@@ -47,8 +47,11 @@ export {
   mountTable,
   unmountTable,
   refetchTable,
+  reloadTablePage,
   clearFilters,
   isValueEmpty,
+  hasTableFiltersApplied,
+  findTableKey,
 } from './table/Table.redux';
 export {
   Table,
