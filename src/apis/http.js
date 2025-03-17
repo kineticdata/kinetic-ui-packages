@@ -14,11 +14,16 @@ export const handleErrors = error => {
   // handle a javascript runtime exception by re-throwing it, this is in case we
   // make a mistake in a `then` block in one of our api functions.
   if (error instanceof Error && !error.response) {
+    if (error.name === 'AxiosError') {
+      return {
+        error: { message: error.message || 'An unexpected error occurred.' },
+      };
+    }
     throw error;
   }
 
   if (axios.isCancel(error)) {
-    return { error: 'Canceled by user request.' };
+    return { error: { message: 'Canceled by user request.' } };
   }
 
   // Destructure out the information needed.
