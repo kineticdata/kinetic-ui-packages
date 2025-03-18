@@ -3,6 +3,7 @@ import { getIn } from 'immutable';
 export const integrationTypes = [
   { label: 'HTTP', value: 'http' },
   { label: 'PostgreSQL', value: 'postgres' },
+  { label: 'SQL Server', value: 'mssql' },
   // { label: 'SMTP', value: 'smtp' },
 ];
 
@@ -41,7 +42,7 @@ export const getConnectionMetadata = connection => {
         ].filter(o => o.value),
         // Table columns for the operations table of this type of connection.
         // Objects define columns to add, and strings define default columns to
-        // show. The order of the items is defines the order of the columns.
+        // show. The order of the items defines the order of the columns.
         operationColumns: [
           {
             value: 'method',
@@ -55,6 +56,7 @@ export const getConnectionMetadata = connection => {
         ],
       };
     case 'postgres':
+    case 'mssql':
     default:
       return {
         headingData: [],
@@ -86,6 +88,7 @@ export const getOperationMetadata = operation => {
         ].filter(o => o.value),
       };
     case 'postgres':
+    case 'mssql':
     default:
       return { headingData: [] };
   }

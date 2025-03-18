@@ -11,9 +11,9 @@ import {
   serializeHttpConnectionConfigFields,
 } from './config_fields/http';
 import {
-  generatePostgresConnectionConfigFields,
-  serializePostgresConnectionConfigFields,
-} from './config_fields/postgres';
+  generateSQLConnectionConfigFields,
+  serializeSQLConnectionConfigFields,
+} from './config_fields/sql';
 
 const dataSources = ({ id }) => ({
   connection: {
@@ -46,12 +46,14 @@ const getFieldConfigByType = (type, connection) => {
         serializeHttpConnectionConfigFields(configFieldsHTTP),
       ];
     case 'postgres':
-      const configFieldsPostgres = generatePostgresConnectionConfigFields(
+    case 'mssql':
+      const configFieldsSQL = generateSQLConnectionConfigFields(
         get(connection, 'config'),
+        type,
       );
       return [
-        configFieldsPostgres,
-        serializePostgresConnectionConfigFields(configFieldsPostgres),
+        configFieldsSQL,
+        serializeSQLConnectionConfigFields(configFieldsSQL),
       ];
     default:
       return [[], undefined];

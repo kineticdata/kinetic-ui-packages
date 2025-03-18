@@ -1,7 +1,7 @@
 import { get, Map } from 'immutable';
 import integrationTypes from '../../integrationTypes';
 
-export const serializePostgresConnectionConfigFields = configFields => ({
+export const serializeSQLConnectionConfigFields = configFields => ({
   values,
 }) => {
   return configFields.reduce(
@@ -34,13 +34,13 @@ export const serializePostgresConnectionConfigFields = configFields => ({
   );
 };
 
-export const generatePostgresConnectionConfigFields = config => [
+export const generateSQLConnectionConfigFields = (config, type) => [
   {
     name: 'configType',
     label: 'Type',
     type: 'select',
     options: integrationTypes,
-    initialValue: 'postgres',
+    initialValue: type,
     required: true,
     enabled: false,
   },
