@@ -1,7 +1,7 @@
 import { get, Map } from 'immutable';
 import integrationTypes from '../../integrationTypes';
 
-export const serializePostgresOperationConfigFields = configFields => ({
+export const serializeSQLOperationConfigFields = configFields => ({
   values,
 }) => {
   return configFields.reduce(
@@ -47,6 +47,39 @@ export const generatePostgresOperationConfigFields = config => [
     type: 'text-multi',
     initialValue: get(config, 'parameters'),
     placeholder: 'Value',
+    helpText: (
+      <>
+        Use the <code>{'{{parameter}}'}</code> format to create dynamic
+        parameters.
+      </>
+    ),
+  },
+];
+
+export const generateMSSQLOperationConfigFields = config => [
+  {
+    name: 'configType',
+    label: 'Type',
+    type: 'select',
+    options: integrationTypes,
+    initialValue: 'mssql',
+    required: true,
+    enabled: false,
+  },
+  {
+    name: 'statement',
+    label: 'Query',
+    type: 'code',
+    language: 'mssql',
+    initialValue: get(config, 'statement'),
+    required: true,
+  },
+  {
+    name: 'parameters',
+    label: 'Query Parameters',
+    type: 'map',
+    initialValue: get(config, 'parameters'),
+    placeholder: 'Key',
     helpText: (
       <>
         Use the <code>{'{{parameter}}'}</code> format to create dynamic

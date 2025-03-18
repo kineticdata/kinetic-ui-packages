@@ -11,9 +11,10 @@ import {
   serializeHttpOperationConfigFields,
 } from './config_fields/http';
 import {
+  generateMSSQLOperationConfigFields,
   generatePostgresOperationConfigFields,
-  serializePostgresOperationConfigFields,
-} from './config_fields/postgres';
+  serializeSQLOperationConfigFields,
+} from './config_fields/sql';
 
 const dataSources = ({ id, connectionId }) => ({
   connection: {
@@ -57,7 +58,15 @@ const getFieldConfigByType = (type, operation) => {
       );
       return [
         configFieldsPostgres,
-        serializePostgresOperationConfigFields(configFieldsPostgres),
+        serializeSQLOperationConfigFields(configFieldsPostgres),
+      ];
+    case 'mssql':
+      const configFieldsMSSQL = generateMSSQLOperationConfigFields(
+        get(operation, 'config'),
+      );
+      return [
+        configFieldsMSSQL,
+        serializeSQLOperationConfigFields(configFieldsMSSQL),
       ];
     default:
       return [[], undefined];

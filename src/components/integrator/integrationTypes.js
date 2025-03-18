@@ -34,7 +34,7 @@ export const getConnectionMetadata = connection => {
             value:
               {
                 basic: 'Basic',
-                client_credentials: 'Client Credentials',
+                client_credentials: 'OAuth 2.0',
                 http_bearer_token: 'HTTP Bearer Token',
                 raw_bearer_token: 'Raw Bearer Token',
               }[getIn(connection, ['config', 'auth', 'authType'])] || 'None',
