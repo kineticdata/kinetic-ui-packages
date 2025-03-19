@@ -15,7 +15,7 @@ const dataSources = ({ kappSlug, formSlug, submissionId }) => ({
       {
         id: submissionId,
         include:
-          'details,values.raw,form,form.fields,form.fields.details,form.pages',
+          'details,values.raw,form,form.fields,form.fields.details,form.pages,origin,origin.form,origin.form.kapp,parent,parent.form,parent.form.kapp',
       },
     ],
     transform: result => result.submission,
