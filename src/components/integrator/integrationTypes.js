@@ -2,9 +2,9 @@ import { getIn } from 'immutable';
 
 export const integrationTypes = [
   { label: 'HTTP', value: 'http' },
-  { label: 'PostgreSQL', value: 'postgres' },
-  { label: 'SQL Server', value: 'mssql' },
   // { label: 'SMTP', value: 'smtp' },
+  { label: 'PostgreSQL', value: 'postgres', group: 'sql', groupLabel: 'SQL' },
+  { label: 'SQL Server', value: 'mssql', group: 'sql', groupLabel: 'SQL' },
 ];
 
 // Helper function for getting the label for a given type value
