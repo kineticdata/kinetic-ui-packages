@@ -138,7 +138,8 @@ export const generateHttpOperationConfigFields = config => [
       getLanguageFromContentType(
         values
           .get('headers')
-          .find((_, header) => header?.toLowerCase() === 'content-type'),
+          .find((_, header) => header?.toLowerCase() === 'content-type')
+          ?.toLowerCase?.(),
       ),
     initialValue: getIn(config, ['body', 'raw']),
     visible: ({ values }) => values.get('body.bodyType') === 'raw',
