@@ -282,17 +282,19 @@ regHandlers({
       .setIn(['tables', tableKey, 'error'], null),
   RELOAD_PAGE: (state, { payload: { tableKey } }) =>
     state.hasIn(['tables', tableKey])
-      ? state
-          .updateIn(['tables', tableKey], tableData =>
-            (isClientSide(tableData)
-              ? tableData
-              : serverSideReloadPage(tableData)
-            )
-              .set('loading', true)
-              .set('data', null)
-              .set('error', null),
-          )
-          .setIn(['tables', tableKey, 'error'], null)
+      ? state.updateIn(
+          ['tables', tableKey],
+          tableData =>
+            tableData.get('configured')
+              ? (isClientSide(tableData)
+                  ? tableData
+                  : serverSideReloadPage(tableData)
+                )
+                  .set('loading', true)
+                  .set('data', null)
+                  .set('error', null)
+              : tableData,
+        )
       : state,
   SORT_COLUMN: (state, { payload: { tableKey, column } }) =>
     state.updateIn(['tables', tableKey], t => {
@@ -375,13 +377,15 @@ regHandlers({
     ),
 });
 
-function* calculateRowsTask({ payload }) {
+function* calculateRowsTask({ type, payload }) {
   try {
     const { tableKey } = payload;
     const tableData = yield select(state => state.getIn(['tables', tableKey]));
 
-    // Skip this process if the table hasn't been mounted yet.
-    if (!tableData) return;
+    // Skip this process if the table hasn't been mounted yet, or trying to
+    // reload the page before it's been configured
+    if (!tableData || (type === 'RELOAD_PAGE' && !tableData.get('configured')))
+      return;
 
     const response = yield call(calculateRows, tableData);
 
