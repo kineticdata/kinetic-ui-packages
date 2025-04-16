@@ -604,8 +604,9 @@ const transformData = (data, tableData) =>
 const calculateRows = tableData => {
   const dataSource = getDataSource(tableData);
   if (isClientSide(tableData)) {
-    const data = transformData(tableData.get('data'), tableData);
-    const rows = applyClientSideFilters(tableData, data);
+    const data = tableData.get('data');
+    const transformedRows = transformData(data, tableData);
+    const rows = applyClientSideFilters(tableData, transformedRows);
 
     return Promise.resolve({
       rows,

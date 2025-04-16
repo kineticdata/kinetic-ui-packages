@@ -77,13 +77,26 @@ export const deleteConnection = (options = {}) => {
 
 export const testConnection = (options = {}) => {
   validateOptions('testConnection', ['connection'], options);
-  const { connection, connectionId, ...params } = options;
+  const { connection, id, ...params } = options;
   return axios
     .post(
       `${bundle.spaceLocation()}/app/integrator/api${
-        connectionId ? `/connections/${connectionId}` : ''
+        id ? `/connections/${id}` : ''
       }/test`,
       connection,
+      { params },
+    )
+    .then(response => ({ data: response.data }))
+    .catch(handleErrors);
+};
+
+export const restartConnection = (options = {}) => {
+  validateOptions('restartConnection', ['id'], options);
+  const { id, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/connections/${id}/restart`,
+      null,
       { params },
     )
     .then(response => ({ data: response.data }))
