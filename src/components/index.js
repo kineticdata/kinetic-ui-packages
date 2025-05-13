@@ -18,6 +18,11 @@ export {
   timedOut,
 } from './common/authentication/AuthenticationContainer';
 export {
+  usePreferences,
+  setPreference,
+  preferenceUtils,
+} from './common/preferences/PreferencesProvider';
+export {
   ToastContainer,
   showToast,
   hideToast,

@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import { applyMiddleware, compose, createStore } from 'redux';
-import { connect as originalConnect } from 'react-redux';
+import { connect as originalConnect, createSelectorHook } from 'react-redux';
 import { select, take } from 'redux-saga/effects';
 import { Map, setIn } from 'immutable';
 import { reducer, regHandlers } from './reducer';
@@ -32,6 +32,8 @@ const context = createContext();
 const connect = (...args) =>
   originalConnect(...setIn(args, [3, 'context'], context));
 
+const useSelector = createSelectorHook(context);
+
 export {
   action,
   context,
@@ -44,6 +46,7 @@ export {
   regSaga,
   runSaga,
   store,
+  useSelector,
 };
 
 export const selectWaiting = function*(selector) {

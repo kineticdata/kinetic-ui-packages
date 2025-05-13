@@ -31,6 +31,7 @@ export * from './core/submissions';
 export * from './core/teams';
 export * from './core/translations';
 export * from './core/users';
+export * from './core/userPreferences';
 export * from './core/version';
 export * from './core/webApis';
 export * from './core/webhooks';

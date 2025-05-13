@@ -27,6 +27,7 @@ import {
   systemLogin,
 } from '../../../apis';
 import { refreshSystemToken } from '../../../apis';
+import { PreferencesProvider } from '../preferences/PreferencesProvider';
 
 const defaultLoginProps = {
   error: null,
@@ -296,7 +297,8 @@ export class AuthenticationComponent extends Component {
       spaceSlug,
       token,
     } = this.props;
-    return this.props.children({
+
+    const content = this.props.children({
       serverError,
       initialized: initialized,
       timedOut: loggedIn && !token,
@@ -307,11 +309,21 @@ export class AuthenticationComponent extends Component {
         onLogin,
         onSso:
           securityStrategies && securityStrategies.length > 0
-            ? callback => dispatch('SINGLE_SIGN_ON', { callback, spaceSlug })
+            ? callback =>
+                dispatch('SINGLE_SIGN_ON', {
+                  callback,
+                  spaceSlug,
+                })
             : null,
         ...login,
       },
     });
+
+    return this.props.preferences ? (
+      <PreferencesProvider loggedIn={loggedIn}>{content}</PreferencesProvider>
+    ) : (
+      content
+    );
   }
 }
 

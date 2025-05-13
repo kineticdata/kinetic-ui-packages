@@ -49,6 +49,7 @@ export const KineticLib = props => (
             <AuthenticationContainer
               skipInit={props.skipInit}
               system={props.system}
+              preferences={props.preferences}
             >
               {props.children}
             </AuthenticationContainer>
