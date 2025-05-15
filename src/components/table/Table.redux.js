@@ -157,6 +157,8 @@ regHandlers({
         onValidateFilters,
         filterForm,
         onFetch,
+        onColumnSort,
+        onColumnToggle,
       },
     },
   ) =>
@@ -198,6 +200,8 @@ regHandlers({
               onValidateFilters,
 
               onFetch,
+              onColumnSort,
+              onColumnToggle,
 
               configured: true,
               initialize: true,
@@ -491,11 +495,41 @@ regSaga(takeEvery('NEXT_PAGE', calculateRowsTask));
 regSaga(takeEvery('PREV_PAGE', calculateRowsTask));
 regSaga(takeEvery('GOTO_PAGE', calculateRowsTask));
 regSaga(takeEvery('RELOAD_PAGE', calculateRowsTask));
-regSaga(takeEvery('SORT_COLUMN', calculateRowsTask));
-regSaga(takeEvery('SORT_DIRECTION', calculateRowsTask));
 regSaga(takeEvery('APPLY_FILTERS', calculateRowsTask));
 regSaga(takeEvery('APPLY_FILTER_FORM', calculateRowsTask));
 regSaga(takeEvery('REFETCH_TABLE_DATA', calculateRowsTask));
+
+regSaga(
+  takeEvery('SORT_COLUMN', function*(action) {
+    const tableKey = action.payload.tableKey;
+    // Call calculate rows task
+    yield call(calculateRowsTask, action);
+
+    // Get sort data and call callback
+    const [onColumnSort, sortColumn, sortDirection] = yield select(state => [
+      state.getIn(['tables', tableKey, 'onColumnSort']),
+      state.getIn(['tables', tableKey, 'sortColumn', 'value']),
+      state.getIn(['tables', tableKey, 'sortDirection']),
+    ]);
+
+    if (typeof onColumnSort === 'function') {
+      yield call(onColumnSort, { tableKey, sortColumn, sortDirection });
+    }
+  }),
+);
+
+regSaga(
+  takeEvery('TOGGLE_COLUMN', function*({ payload: { tableKey } }) {
+    const [onColumnToggle, columnSet] = yield select(state => [
+      state.getIn(['tables', tableKey, 'onColumnToggle']),
+      state.getIn(['tables', tableKey, 'columnSet']),
+    ]);
+
+    if (typeof onColumnToggle === 'function') {
+      yield call(onColumnToggle, { tableKey, columnSet });
+    }
+  }),
+);
 
 export const operations = Map({
   includes: (cv, v) => cv.toLocaleLowerCase().includes(v.toLocaleLowerCase()),

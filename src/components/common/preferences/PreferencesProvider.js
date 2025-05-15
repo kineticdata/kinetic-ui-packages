@@ -15,28 +15,28 @@ import { fetchUserPreferences, upsertUserPreference } from '../../../apis';
  *
  * This implementation expects that the key persisted in session or the db will
  * consist of a prefix and key(suffix) value, where both contain lowercase
- * alphanumeric characters and dashes, with no consecutive dashes. This
- * implementation then combines the two parts with a double dash to create the
- * full key. The reason for having the two parts is to allow us to group
- * preferences together by using the same prefix, which will make it easier to
- * retrieve groups of preferences.
+ * alphanumeric characters and dashes. This implementation then combines the
+ * two parts with 4 consecutive dashes (----) to create the full key. The
+ * reason for having the two parts is to allow us to group preferences together
+ * by using the same prefix, which will make it easier to retrieve groups of
+ * preferences.
  *
- * The value must be saves as a string. In order to use other datatypes, you
+ * The value must be saved as a string. In order to use other datatypes, you
  * will need to convert the data when retrieving and updating preferences.
  *
  * Persisted preference examples:
- *  'kapp-forms-table--filterable': 'true'
- *  'kapp-forms-table--filters': '{"name": "A", "type": "Service"}'
- *  'workflow-table--columns': '["name", "event", "updatedAt"]'
+ *  'kapp-forms-table----filter-toggle': 'true'
+ *  'kapp-forms-table----initial-filters': '{"name": "A", "type": "Service"}'
+ *  'workflow-table----columns': '["name", "event", "updatedAt"]'
  *
  * Retrieved preference structure (as stored in redux):
  *  {
  *    kapp-forms-table: {
- *      filterable: 'true',
- *      filters: '{"name": "A", "type": "Service"}'
+ *      'filter-toggle': 'true',
+ *      'initial-filters': '{"name": "A", "type": "Service"}'
  *    },
  *    workflow-table: {
- *      columns: '["name", "event", "updatedAt"]'
+ *      'columns': '["name", "event", "updatedAt"]'
  *    }
  *  }
  */
@@ -54,8 +54,8 @@ regHandlers({
 
 regSaga(
   takeLatest('INIT_PREFERENCES', function*({ payload: loggedIn }) {
-    // Get preferences from session storage
-    let preferences = Map({ ...sessionStorage });
+    // Create preferences map
+    let preferences = Map();
     if (loggedIn) {
       // If user is logged in, get their persisted preferences
       const persisted = yield call(fetchUserPreferences);
@@ -69,6 +69,8 @@ regSaga(
         );
       }
     }
+    // Get preferences from session storage
+    preferences = preferences.merge({ ...sessionStorage });
 
     yield put(
       action(
@@ -77,8 +79,8 @@ regSaga(
           // Split each key into a prefix and key(suffix), using an empty
           // string if a prefix is missing
           .mapKeys(key => {
-            const keyArray = key.split(/--(.*)/);
-            if (keyArray.length > 1) return keyArray.slice(0, 2);
+            const keyArray = key.split(/(.*)----/);
+            if (keyArray.length > 1) return keyArray.slice(1, 3);
             else if (keyArray.length === 1) return ['', keyArray[0]];
             else return ['', ''];
           })
@@ -99,7 +101,7 @@ regSaga(
       // Persist the preference in the database
       yield call(upsertUserPreference, {
         userPreference: {
-          key: `${prefix}--${key}`,
+          key: `${prefix}----${key}`,
           value,
         },
       });
@@ -119,7 +121,7 @@ regSaga(
       // Persist the preference in session storage
       yield call(
         [sessionStorage, sessionStorage.setItem],
-        `${prefix}--${key}`,
+        `${prefix}----${key}`,
         value,
       );
     } else {
@@ -152,125 +154,157 @@ const setPreference = (prefix, key, value, duration) =>
   );
 
 /**
- * Generate a setter function for preferences with a given prefix.
- * @param prefix The prefix context to use for the returned updater function.
- *  Prefixes should be lowercase, alphanumeric and dashes only, and should not
- *  contain multiple consecutive dashes.
- * @returns {PreferenceUpdater}
+ * A class for defining a Preference record with getters and setters for
+ * different data types.
+ * @class
+ * @property {string} prefix The prefix of the preference
+ * @property {string} key The key of the preference
+ * @property {string} value The value of the preference
+ * @property {function():bool} asBool Returns the value converted to a boolean
+ * @property {function():object} asJSON Returns the value converted to a JSON
+ *  object
+ * @property {function(string):void} set Sets the value of the preference
+ * @property {function(bool):void} setBool Sets the value of the preference,
+ *  accepting a boolean which will be converted to a string when saved
+ * @property {function(object):void} setJSON Sets the value of the preference,
+ *  accepting a JSON object which will be converted to a string when saved
  */
-const setPreferenceForPrefix = prefix => (key, value, duration) =>
-  dispatch(
-    duration === 'persist'
-      ? 'SET_PREFERENCE_PERSISTENT'
-      : duration === 'temp'
-        ? 'SET_PREFERENCE_TEMP'
-        : 'SET_PREFERENCE_SESSION',
-    { prefix, key, value },
-  );
+class Preference {
+  #prefix;
+  #key;
+  #value;
+  constructor(prefix, key, value) {
+    this.#prefix = prefix;
+    this.#key = key;
+    this.#value = value;
+
+    /**
+     * Get the preference value as a boolean, defaulting to the provided
+     *  `defaultValue` if there is no preference set.
+     * @param {boolean} [defaultValue]
+     * @returns {boolean}
+     */
+    this.asBool = this.asBool.bind(this);
+
+    /**
+     * Get the preference values as a JSON object, defaulting to the provided
+     *  `defaultValue` if there is no preference set, or the set preference is
+     *  not a valid JSON string
+     * @param {Object} [defaultValue]
+     * @returns {Object}
+     */
+    this.asJSON = this.asJSON.bind(this);
+
+    /**
+     * Saves the provided value for this preference for the given duration
+     * @param {string} value The value to save
+     * @param {('persist'|'session'|'temp')} [duration] How long to save the
+     *  preference for. Defaults to `session`.
+     *  - `persist` will store it forever.
+     *  - `session` will store it for the current browser session.
+     *  - `temp` will store it for the current instance of the webpage.
+     */
+    this.set = this.set.bind(this);
+
+    /**
+     * Saves the provided boolean value for this preference for the given duration
+     * @param {boolean} value The boolean value to save
+     * @param {('persist'|'session'|'temp')} [duration] How long to save the
+     *  preference for. Defaults to `session`.
+     *  - `persist` will store it forever.
+     *  - `session` will store it for the current browser session.
+     *  - `temp` will store it for the current instance of the webpage.
+     */
+    this.setBool = this.setBool.bind(this);
+
+    /**
+     * Saves the provided JSON value for this preference for the given duration
+     * @param {Object} value The JSON value to save
+     * @param {('persist'|'session'|'temp')} [duration] How long to save the
+     *  preference for. Defaults to `session`.
+     *  - `persist` will store it forever.
+     *  - `session` will store it for the current browser session.
+     *  - `temp` will store it for the current instance of the webpage.
+     */
+    this.setJSON = this.setJSON.bind(this);
+  }
+
+  /**
+   * Get the preference prefix
+   * @returns {String}
+   */
+  get prefix() {
+    return this.#prefix;
+  }
+  /**
+   * Get the preference key
+   * @returns {String}
+   */
+  get key() {
+    return this.#key;
+  }
+  /**
+   * Get the preference value as a string
+   * @returns {String}
+   */
+  get value() {
+    return this.#value;
+  }
+  asBool(defaultValue) {
+    return fromBooleanString(this.#value, defaultValue);
+  }
+  asJSON(defaultValue) {
+    return fromJSONString(this.#value, defaultValue);
+  }
+  set(value, duration) {
+    setPreference(this.#prefix, this.#key, value, duration);
+  }
+  setBool(value, duration) {
+    setPreference(this.#prefix, this.#key, toBooleanString(value), duration);
+  }
+  setJSON(value, duration) {
+    setPreference(this.#prefix, this.#key, toJSONString(value), duration);
+  }
+}
 
 /**
- * @callback PreferenceUpdater
- * @param {String} key The key to update within the current prefix context.
- *  Keys should be lowercase, alphanumeric and dashes only, and should not
- *  contain multiple consecutive dashes.
- * @param {String} value The value to store for the preference key.
- * @param {('persist'|'session'|'temp')} duration How long to store the
- *  preference for. Defaults to `session`.
- *  - `persist` will store it forever.
- *  - `session` will store it for the current browser session.
- *  - `temp` will store it for the current instance of the webpage.
- */
-
-/**
- * Hook for retrieving user preferences for a given prefix and getting an
- * update function.
+ * Hook for retrieving user preferences for a given prefix.
  *
  * @param {String} prefix A prefix that defines a group of preferences to allow
- *  for fetching multiple at once. Prefixes should be lowercase, alphanumeric
- *  and dashes only, and should not contain multiple consecutive dashes.
- * @param {String|String[]|Function} [keys] Defines which keys for the given
- *  prefix to return. Providing a string returns the value for a single key.
- *  Providing an array returns a map of preferences matching the given keys.
- *  Providing a function allows you to extra whichever preferences you want and
- *  return them in any format. Keys should be lowercase, alphanumeric
- *  and dashes only, and should not contain multiple consecutive dashes.
- * @returns {[any,PreferenceUpdater]} Returns a tuple with the preferences as
- *  the first value, and an update function for updating the preference values.
- *  The update function takes a key, value, and optional duration parameter
+ *  for fetching multiple related preferences at once. Prefixes should be
+ *  lowercase, alphanumeric and dashes only, and should not contain multiple
+ *  consecutive dashes.
+ * @param {String[]} [keys] List of preference keys for the given prefix to
+ *  return. Keys should be lowercase, alphanumeric and dashes only, and should
+ *  not contain multiple consecutive dashes.
+ * @returns {Object.<string,Preference>} Returns a map of preferences for the
+ *  provided `keys`. Each preference is a class with getters and setters for
+ *  various data types.
  */
 const usePreferences = (prefix = '', keys) => {
   const preferences = useSelector(state => {
-    const prefixedPreferences = state.getIn(['preferences', prefix], Map());
-    return typeof keys === 'function'
-      ? keys(prefixedPreferences.toJS())
-      : Array.isArray(keys)
-        ? prefixedPreferences.filter((v, key) => keys.includes(key)).toJS()
-        : typeof keys === 'string'
-          ? prefixedPreferences.get(keys)
-          : prefixedPreferences.toJS();
+    const prefixPrefs = state.getIn(['preferences', prefix], Map());
+    return Array.isArray(keys)
+      ? keys.reduce(
+          (prefs, key) => ({ ...prefs, [key]: prefixPrefs.get(key, '') }),
+          {},
+        )
+      : prefixPrefs.toJS();
   }, shallowEqual);
 
-  return useMemo(() => [preferences, setPreferenceForPrefix(prefix)], [
-    preferences,
-    prefix,
-  ]);
+  return useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(preferences).map(([key, value]) => [
+          key,
+          new Preference(prefix, key, value),
+        ]),
+      ),
+    [preferences, prefix],
+  );
 };
-
-/**
- * @param {String} value JSON string to parse into a JS object.
- * @param {Object} [defaultValue] Value to return if the `value` param isn't
- *  valid JSON.
- * @returns {Object}
- */
-const fromJSONString = (value, defaultValue) => {
-  try {
-    return value && typeof value === 'string'
-      ? JSON.parse(value)
-      : defaultValue || null;
-  } catch (e) {
-    return defaultValue || null;
-  }
-};
-
-/**
- * @param {Object} value JS object to convert into a JSON string.
- * @returns {String}
- */
-const toJSONString = value => {
-  try {
-    return value && typeof value === 'object' ? JSON.stringify(value) : '';
-  } catch (e) {
-    return '';
-  }
-};
-
-/**
- * @param {String} value Boolean string to parse into a boolean variable.
- * @param {boolean} [defaultValue] Value to return if the `value` param is empty.
- * @returns {boolean}
- */
-const fromBooleanString = (value, defaultValue) =>
-  value && typeof value === 'string'
-    ? value?.toLowerCase() === 'true'
-    : typeof defaultValue === 'boolean'
-      ? defaultValue
-      : null;
-
-/**
- * @param {boolean} value Boolean variable to convert to a string.
- * @returns {string}
- */
-const toBooleanString = value =>
-  typeof value === 'boolean' ? (value ? 'true' : 'false') : '';
 
 export { usePreferences, setPreference };
-
-export const preferenceUtils = {
-  fromJSONString,
-  toJSONString,
-  fromBooleanString,
-  toBooleanString,
-};
 
 export const PreferencesProvider = ({ loggedIn, children }) => {
   useEffect(
@@ -282,3 +316,52 @@ export const PreferencesProvider = ({ loggedIn, children }) => {
 
   return children;
 };
+
+/**
+ * @param {String} value JSON string to parse into a JS object.
+ * @param {Object} [defaultValue] Value to return if the `value` param isn't
+ *  valid JSON.
+ * @returns {Object}
+ */
+function fromJSONString(value, defaultValue) {
+  try {
+    return value && typeof value === 'string'
+      ? JSON.parse(value)
+      : defaultValue || null;
+  } catch (e) {
+    return defaultValue || null;
+  }
+}
+
+/**
+ * @param {Object} value JS object to convert into a JSON string.
+ * @returns {String}
+ */
+function toJSONString(value) {
+  try {
+    return value && typeof value === 'object' ? JSON.stringify(value) : '';
+  } catch (e) {
+    return '';
+  }
+}
+
+/**
+ * @param {String} value Boolean string to parse into a boolean variable.
+ * @param {boolean} [defaultValue] Value to return if the `value` param is empty.
+ * @returns {boolean}
+ */
+function fromBooleanString(value, defaultValue) {
+  return value && typeof value === 'string'
+    ? value?.toLowerCase() === 'true'
+    : typeof defaultValue === 'boolean'
+      ? defaultValue
+      : null;
+}
+
+/**
+ * @param {boolean} value Boolean variable to convert to a string.
+ * @returns {string}
+ */
+function toBooleanString(value) {
+  return typeof value === 'boolean' ? (value ? 'true' : 'false') : '';
+}

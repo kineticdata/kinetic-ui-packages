@@ -20,7 +20,6 @@ export {
 export {
   usePreferences,
   setPreference,
-  preferenceUtils,
 } from './common/preferences/PreferencesProvider';
 export {
   ToastContainer,

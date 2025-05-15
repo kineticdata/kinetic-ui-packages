@@ -137,7 +137,6 @@ const buildFilterForm = props => {
   const FilterForm = props.components.FilterForm;
   // Build the form filter components.
   const components = filtersToFields(props.components);
-
   return (
     <FilterForm
       {...props.tableOptions}
@@ -800,6 +799,8 @@ export const generateTable = ({
     initialFilterValues: props.initialFilterValues || {},
     onSearch: props.onSearch,
     onFetch: props.onFetch,
+    onColumnSort: props.onColumnSort,
+    onColumnToggle: props.onColumnToggle,
   };
 
   return <Table {...setProps}>{props.children}</Table>;
