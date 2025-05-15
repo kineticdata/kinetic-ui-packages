@@ -160,14 +160,6 @@ const setPreference = (prefix, key, value, duration) =>
  * @property {string} prefix The prefix of the preference
  * @property {string} key The key of the preference
  * @property {string} value The value of the preference
- * @property {function():bool} asBool Returns the value converted to a boolean
- * @property {function():object} asJSON Returns the value converted to a JSON
- *  object
- * @property {function(string):void} set Sets the value of the preference
- * @property {function(bool):void} setBool Sets the value of the preference,
- *  accepting a boolean which will be converted to a string when saved
- * @property {function(object):void} setJSON Sets the value of the preference,
- *  accepting a JSON object which will be converted to a string when saved
  */
 class Preference {
   #prefix;
@@ -177,55 +169,10 @@ class Preference {
     this.#prefix = prefix;
     this.#key = key;
     this.#value = value;
-
-    /**
-     * Get the preference value as a boolean, defaulting to the provided
-     *  `defaultValue` if there is no preference set.
-     * @param {boolean} [defaultValue]
-     * @returns {boolean}
-     */
     this.asBool = this.asBool.bind(this);
-
-    /**
-     * Get the preference values as a JSON object, defaulting to the provided
-     *  `defaultValue` if there is no preference set, or the set preference is
-     *  not a valid JSON string
-     * @param {Object} [defaultValue]
-     * @returns {Object}
-     */
     this.asJSON = this.asJSON.bind(this);
-
-    /**
-     * Saves the provided value for this preference for the given duration
-     * @param {string} value The value to save
-     * @param {('persist'|'session'|'temp')} [duration] How long to save the
-     *  preference for. Defaults to `session`.
-     *  - `persist` will store it forever.
-     *  - `session` will store it for the current browser session.
-     *  - `temp` will store it for the current instance of the webpage.
-     */
     this.set = this.set.bind(this);
-
-    /**
-     * Saves the provided boolean value for this preference for the given duration
-     * @param {boolean} value The boolean value to save
-     * @param {('persist'|'session'|'temp')} [duration] How long to save the
-     *  preference for. Defaults to `session`.
-     *  - `persist` will store it forever.
-     *  - `session` will store it for the current browser session.
-     *  - `temp` will store it for the current instance of the webpage.
-     */
     this.setBool = this.setBool.bind(this);
-
-    /**
-     * Saves the provided JSON value for this preference for the given duration
-     * @param {Object} value The JSON value to save
-     * @param {('persist'|'session'|'temp')} [duration] How long to save the
-     *  preference for. Defaults to `session`.
-     *  - `persist` will store it forever.
-     *  - `session` will store it for the current browser session.
-     *  - `temp` will store it for the current instance of the webpage.
-     */
     this.setJSON = this.setJSON.bind(this);
   }
 
@@ -250,18 +197,63 @@ class Preference {
   get value() {
     return this.#value;
   }
+
+  /**
+   * Get the preference value as a boolean, defaulting to the provided
+   *  `defaultValue` if there is no preference set.
+   * @param {boolean} [defaultValue]
+   * @returns {boolean}
+   */
   asBool(defaultValue) {
     return fromBooleanString(this.#value, defaultValue);
   }
+
+  /**
+   * Get the preference values as a JSON object, defaulting to the provided
+   *  `defaultValue` if there is no preference set, or the set preference is
+   *  not a valid JSON string
+   * @param {Object} [defaultValue]
+   * @returns {Object}
+   */
   asJSON(defaultValue) {
     return fromJSONString(this.#value, defaultValue);
   }
+
+  /**
+   * Saves the provided value for this preference for the given duration
+   * @param {string} value The value to save
+   * @param {('persist'|'session'|'temp')} [duration] How long to save the
+   *  preference for. Defaults to `session`.
+   *  - `persist` will store it forever.
+   *  - `session` will store it for the current browser session.
+   *  - `temp` will store it for the current instance of the webpage.
+   */
   set(value, duration) {
     setPreference(this.#prefix, this.#key, value, duration);
   }
+
+  /**
+   * Saves the provided boolean value for this preference for the given duration
+   * @param {boolean} value The boolean value to save
+   * @param {('persist'|'session'|'temp')} [duration] How long to save the
+   *  preference for. Defaults to `session`.
+   *  - `persist` will store it forever.
+   *  - `session` will store it for the current browser session.
+   *  - `temp` will store it for the current instance of the webpage.
+   */
   setBool(value, duration) {
     setPreference(this.#prefix, this.#key, toBooleanString(value), duration);
   }
+
+  /**
+   * Saves the provided JSON value for this preference for the given duration
+   * @param {Object} value The JSON value to save
+   * @param {('persist'|'session'|'temp')} [duration] How long to save the
+   *  preference for. Defaults to `session`.
+   *  - `persist` will store it forever.
+   *  - `session` will store it for the current browser session.
+   *  - `temp` will store it for the current instance of the webpage.
+   */
   setJSON(value, duration) {
     setPreference(this.#prefix, this.#key, toJSONString(value), duration);
   }
