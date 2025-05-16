@@ -16,10 +16,7 @@ const tableKey = 'datastore-list';
  * when the slug changes or the component is unmounted.
  */
 const FormWrapper = compose(
-  connect(
-    null,
-    { reset: actions.resetSearchParams },
-  ),
+  connect(null, { reset: actions.resetSearchParams }),
   lifecycle({
     componentDidUpdate(prevProps) {
       if (this.props.slug !== prevProps.slug) {

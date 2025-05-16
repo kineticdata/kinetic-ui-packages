@@ -193,10 +193,7 @@ const handleDelete = props => id => () =>
   });
 
 export const CalendarList = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     handleClone,
     handleDelete,

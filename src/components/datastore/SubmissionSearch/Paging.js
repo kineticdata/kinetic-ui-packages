@@ -73,31 +73,26 @@ export const mapDispatchToProps = {
   setNextPageToken: actions.setNextPageToken,
 };
 
-const handleNextThousandPage = ({
-  simpleSearchActive,
-  fetchSubmissionsSimple,
-  fetchSubmissionsAdvanced,
-}) => () => {
-  simpleSearchActive ? fetchSubmissionsSimple() : fetchSubmissionsAdvanced();
-};
+const handleNextThousandPage =
+  ({ simpleSearchActive, fetchSubmissionsSimple, fetchSubmissionsAdvanced }) =>
+  () => {
+    simpleSearchActive ? fetchSubmissionsSimple() : fetchSubmissionsAdvanced();
+  };
 
-const handlePrevThousandPage = ({
-  popPageToken,
-  simpleSearchActive,
-  fetchSubmissionsSimple,
-  fetchSubmissionsAdvanced,
-}) => () => {
-  popPageToken();
-  simpleSearchActive ? fetchSubmissionsSimple() : fetchSubmissionsAdvanced();
-};
+const handlePrevThousandPage =
+  ({
+    popPageToken,
+    simpleSearchActive,
+    fetchSubmissionsSimple,
+    fetchSubmissionsAdvanced,
+  }) =>
+  () => {
+    popPageToken();
+    simpleSearchActive ? fetchSubmissionsSimple() : fetchSubmissionsAdvanced();
+  };
 
 export const Paging = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { context },
-  ),
+  connect(mapStateToProps, mapDispatchToProps, null, { context }),
   withHandlers({
     handlePrevThousandPage,
     handleNextThousandPage,

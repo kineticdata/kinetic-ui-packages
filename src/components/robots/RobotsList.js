@@ -256,10 +256,7 @@ const handleDelete = props => id => () =>
   });
 
 export const RobotsList = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     handleClone,
     handleDelete,

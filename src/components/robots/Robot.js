@@ -49,10 +49,9 @@ const RobotComponent = ({
                 <I18n>Inactive</I18n>
               </strong>
             )}
-            {isInactive &&
-              isExpired && (
-                <I18n render={translate => ` ${translate('and')} `} />
-              )}
+            {isInactive && isExpired && (
+              <I18n render={translate => ` ${translate('and')} `} />
+            )}
             {isExpired && (
               <strong>
                 <I18n>Expired</I18n>

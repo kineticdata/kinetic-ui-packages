@@ -118,10 +118,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = { importUsersReset: actions.importUsersReset };
 
 export const ImportModal = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     toggleModal: props => () => {
       props.importUsersReset();

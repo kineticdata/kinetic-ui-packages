@@ -71,55 +71,65 @@ export const UserEditComponent = ({
         }),
         FormLayout,
       }}
-      addFields={() => ({ user }) =>
-        user && [
-          {
-            name: 'firstName',
-            label: 'First Name',
-            type: 'text',
-            initialValue: user.getIn(['profileAttributesMap', 'First Name', 0]),
-          },
-          {
-            name: 'lastName',
-            label: 'Last Name',
-            type: 'text',
-            initialValue: user.getIn(['profileAttributesMap', 'Last Name', 0]),
-          },
-          {
-            name: 'phoneNumber',
-            label: 'Phone Number',
-            type: 'text',
-            initialValue: user.getIn([
-              'profileAttributesMap',
-              'Phone Number',
-              0,
-            ]),
-          },
-          {
-            name: 'department',
-            label: 'Department',
-            type: 'text',
-            initialValue: user.getIn(['attributesMap', 'Department', 0]),
-          },
-          {
-            name: 'manager',
-            label: 'Manager',
-            type: 'text',
-            initialValue: user.getIn(['attributesMap', 'Manager', 0]),
-          },
-          {
-            name: 'organization',
-            label: 'Organization',
-            type: 'text',
-            initialValue: user.getIn(['attributesMap', 'Organization', 0]),
-          },
-          {
-            name: 'site',
-            label: 'Site',
-            type: 'text',
-            initialValue: user.getIn(['attributesMap', 'Site', 0]),
-          },
-        ]}
+      addFields={() =>
+        ({ user }) =>
+          user && [
+            {
+              name: 'firstName',
+              label: 'First Name',
+              type: 'text',
+              initialValue: user.getIn([
+                'profileAttributesMap',
+                'First Name',
+                0,
+              ]),
+            },
+            {
+              name: 'lastName',
+              label: 'Last Name',
+              type: 'text',
+              initialValue: user.getIn([
+                'profileAttributesMap',
+                'Last Name',
+                0,
+              ]),
+            },
+            {
+              name: 'phoneNumber',
+              label: 'Phone Number',
+              type: 'text',
+              initialValue: user.getIn([
+                'profileAttributesMap',
+                'Phone Number',
+                0,
+              ]),
+            },
+            {
+              name: 'department',
+              label: 'Department',
+              type: 'text',
+              initialValue: user.getIn(['attributesMap', 'Department', 0]),
+            },
+            {
+              name: 'manager',
+              label: 'Manager',
+              type: 'text',
+              initialValue: user.getIn(['attributesMap', 'Manager', 0]),
+            },
+            {
+              name: 'organization',
+              label: 'Organization',
+              type: 'text',
+              initialValue: user.getIn(['attributesMap', 'Organization', 0]),
+            },
+            {
+              name: 'site',
+              label: 'Site',
+              type: 'text',
+              initialValue: user.getIn(['attributesMap', 'Site', 0]),
+            },
+          ]
+        }
       alterFields={{
         profileAttributesMap: {
           serialize: ({ values }) => ({

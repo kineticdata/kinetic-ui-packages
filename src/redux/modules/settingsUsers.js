@@ -59,10 +59,8 @@ export const reducer = (state = State(), { type, payload }) => {
       return state
         .set('importing', 'COMPLETED')
         .set('importErrors', payload.errors ? List(payload.errors) : List())
-        .update(
-          'importCounts',
-          counts =>
-            payload.counts ? { ...counts, ...payload.counts } : counts,
+        .update('importCounts', counts =>
+          payload.counts ? { ...counts, ...payload.counts } : counts,
         );
     case types.IMPORT_USERS_RESET:
       return state
@@ -74,9 +72,8 @@ export const reducer = (state = State(), { type, payload }) => {
       return state.set('fetchingAll', true).set('exportUsers', List());
     case types.SET_EXPORT_USERS:
       return state
-        .update(
-          'exportUsers',
-          users => (payload.error ? List() : users.concat(List(payload.data))),
+        .update('exportUsers', users =>
+          payload.error ? List() : users.concat(List(payload.data)),
         )
         .set('fetchingAll', !payload.completed && !payload.error);
 

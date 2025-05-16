@@ -14,10 +14,7 @@ const tableKey = 'robots-list';
 const exeTableKey = 'robot-executions-list';
 
 const RobotWrapper = compose(
-  connect(
-    null,
-    { fetchRobot: actions.fetchRobotRequest },
-  ),
+  connect(null, { fetchRobot: actions.fetchRobotRequest }),
   lifecycle({
     componentDidMount() {
       this.props.fetchRobot({ id: this.props.robotId });

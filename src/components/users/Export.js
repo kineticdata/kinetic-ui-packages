@@ -116,10 +116,7 @@ const mapDispatchToProps = {
 };
 
 export const Export = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('exportStatus', 'setExportStatus', 'NOT_STARTED'),
   withHandlers({
     handleDownload,

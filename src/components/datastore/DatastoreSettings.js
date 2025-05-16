@@ -1042,259 +1042,267 @@ const AttributeTable = ({
   </div>
 );
 
-const handleColumnChange = ({ setFormChanges, updatedForm: { columns } }) => (
-  index,
-  prop,
-  value,
-) => {
-  const updated = columns.setIn([index, prop], value);
-  setFormChanges({ type: 'columns', value: updated });
-};
-
-const handleColumnOrderChange = ({
-  setFormChanges,
-  updatedForm: { columns },
-}) => ({ source, destination }) => {
-  if (destination && source.index !== destination.index) {
-    const updated = columns.update(cols => {
-      const col = cols.get(source.index);
-      return cols.delete(source.index).insert(destination.index, col);
-    });
+const handleColumnChange =
+  ({ setFormChanges, updatedForm: { columns } }) =>
+  (index, prop, value) => {
+    const updated = columns.setIn([index, prop], value);
     setFormChanges({ type: 'columns', value: updated });
-  }
-};
+  };
 
-const handleBridgeChange = ({
-  setFormChanges,
-  updatedForm: { bridgeModel, bridgeModelMapping },
-}) => (type, value) => {
-  if (type === 'bridgeSlug') {
-    setFormChanges({ type: 'bridgeSlug', value });
-    setFormChanges({
-      type: 'bridgeModelMapping',
-      value: bridgeModelMapping.set('bridgeSlug', value),
-    });
-  } else if (type === 'formName') {
-    if (bridgeModel.name) {
-      setFormChanges({
-        type: 'bridgeModel',
-        value: bridgeModel.set('name', `Datastore - ${value}`),
+const handleColumnOrderChange =
+  ({ setFormChanges, updatedForm: { columns } }) =>
+  ({ source, destination }) => {
+    if (destination && source.index !== destination.index) {
+      const updated = columns.update(cols => {
+        const col = cols.get(source.index);
+        return cols.delete(source.index).insert(destination.index, col);
       });
-      setFormChanges({
-        type: 'bridgeModelMapping',
-        value: bridgeModelMapping.set('name', `Datastore - ${value}`),
-      });
+      setFormChanges({ type: 'columns', value: updated });
     }
-  } else if (type === 'bridgeQualification') {
-    if (value.index === null) {
-      setFormChanges({
-        type: 'bridgeModel',
-        value: bridgeModel.update('qualifications', quals =>
-          quals.push(BridgeModelQualification(value)),
-        ),
-      });
-      setFormChanges({
-        type: 'bridgeModelMapping',
-        value: bridgeModelMapping.update('qualifications', quals =>
-          quals.push(BridgeModelMappingQualification(value)),
-        ),
-      });
-    } else {
-      setFormChanges({
-        type: 'bridgeModel',
-        value: bridgeModel.setIn(
-          ['qualifications', value.index],
-          BridgeModelQualification(value),
-        ),
-      });
+  };
+
+const handleBridgeChange =
+  ({ setFormChanges, updatedForm: { bridgeModel, bridgeModelMapping } }) =>
+  (type, value) => {
+    if (type === 'bridgeSlug') {
+      setFormChanges({ type: 'bridgeSlug', value });
       setFormChanges({
         type: 'bridgeModelMapping',
-        value: bridgeModelMapping.setIn(
-          ['qualifications', value.index],
-          BridgeModelMappingQualification(value),
-        ),
+        value: bridgeModelMapping.set('bridgeSlug', value),
       });
-    }
-  } else if (type === 'bridgeQualificationDelete') {
-    setFormChanges({
-      type: 'bridgeModel',
-      value: bridgeModel.deleteIn(['qualifications', value]),
-    });
-    setFormChanges({
-      type: 'bridgeModelMapping',
-      value: bridgeModelMapping.deleteIn(['qualifications', value]),
-    });
-  } else if (type === 'bridgeAttribute') {
-    if (value.index === null) {
-      setFormChanges({
-        type: 'bridgeModel',
-        value: bridgeModel.update('attributes', quals =>
-          quals.push({ name: value.name }),
-        ),
-      });
-      !isBlank(value.structureField) &&
+    } else if (type === 'formName') {
+      if (bridgeModel.name) {
+        setFormChanges({
+          type: 'bridgeModel',
+          value: bridgeModel.set('name', `Datastore - ${value}`),
+        });
         setFormChanges({
           type: 'bridgeModelMapping',
-          value: bridgeModelMapping.update('attributes', quals =>
-            quals.push({
-              name: value.name,
-              structureField: value.structureField,
-            }),
+          value: bridgeModelMapping.set('name', `Datastore - ${value}`),
+        });
+      }
+    } else if (type === 'bridgeQualification') {
+      if (value.index === null) {
+        setFormChanges({
+          type: 'bridgeModel',
+          value: bridgeModel.update('qualifications', quals =>
+            quals.push(BridgeModelQualification(value)),
           ),
         });
-    } else {
-      const attr = bridgeModel.getIn(['attributes', value.index]);
+        setFormChanges({
+          type: 'bridgeModelMapping',
+          value: bridgeModelMapping.update('qualifications', quals =>
+            quals.push(BridgeModelMappingQualification(value)),
+          ),
+        });
+      } else {
+        setFormChanges({
+          type: 'bridgeModel',
+          value: bridgeModel.setIn(
+            ['qualifications', value.index],
+            BridgeModelQualification(value),
+          ),
+        });
+        setFormChanges({
+          type: 'bridgeModelMapping',
+          value: bridgeModelMapping.setIn(
+            ['qualifications', value.index],
+            BridgeModelMappingQualification(value),
+          ),
+        });
+      }
+    } else if (type === 'bridgeQualificationDelete') {
+      setFormChanges({
+        type: 'bridgeModel',
+        value: bridgeModel.deleteIn(['qualifications', value]),
+      });
+      setFormChanges({
+        type: 'bridgeModelMapping',
+        value: bridgeModelMapping.deleteIn(['qualifications', value]),
+      });
+    } else if (type === 'bridgeAttribute') {
+      if (value.index === null) {
+        setFormChanges({
+          type: 'bridgeModel',
+          value: bridgeModel.update('attributes', quals =>
+            quals.push({ name: value.name }),
+          ),
+        });
+        !isBlank(value.structureField) &&
+          setFormChanges({
+            type: 'bridgeModelMapping',
+            value: bridgeModelMapping.update('attributes', quals =>
+              quals.push({
+                name: value.name,
+                structureField: value.structureField,
+              }),
+            ),
+          });
+      } else {
+        const attr = bridgeModel.getIn(['attributes', value.index]);
+        const attrMapping = bridgeModelMapping.attributes.find(
+          mapAttr => mapAttr.name === attr.name,
+        );
+        setFormChanges({
+          type: 'bridgeModel',
+          value: bridgeModel.setIn(['attributes', value.index], {
+            name: value.name,
+          }),
+        });
+        if (attrMapping) {
+          const index = bridgeModelMapping.attributes.indexOf(attrMapping);
+          if (!isBlank(value.structureField)) {
+            setFormChanges({
+              type: 'bridgeModelMapping',
+              value: bridgeModelMapping.setIn(['attributes', index], {
+                name: value.name,
+                structureField: value.structureField,
+              }),
+            });
+          } else {
+            setFormChanges({
+              type: 'bridgeModelMapping',
+              value: bridgeModelMapping.deleteIn(['attributes', index]),
+            });
+          }
+        } else if (!isBlank(value.structureField)) {
+          setFormChanges({
+            type: 'bridgeModelMapping',
+            value: bridgeModelMapping.update('attributes', quals =>
+              quals.push({
+                name: value.name,
+                structureField: value.structureField,
+              }),
+            ),
+          });
+        }
+      }
+    } else if (type === 'bridgeAttributeDelete') {
+      const attr = bridgeModel.getIn(['attributes', value]);
       const attrMapping = bridgeModelMapping.attributes.find(
         mapAttr => mapAttr.name === attr.name,
       );
       setFormChanges({
         type: 'bridgeModel',
-        value: bridgeModel.setIn(['attributes', value.index], {
-          name: value.name,
-        }),
+        value: bridgeModel.deleteIn(['attributes', value]),
       });
       if (attrMapping) {
         const index = bridgeModelMapping.attributes.indexOf(attrMapping);
-        if (!isBlank(value.structureField)) {
-          setFormChanges({
-            type: 'bridgeModelMapping',
-            value: bridgeModelMapping.setIn(['attributes', index], {
-              name: value.name,
-              structureField: value.structureField,
-            }),
-          });
-        } else {
-          setFormChanges({
-            type: 'bridgeModelMapping',
-            value: bridgeModelMapping.deleteIn(['attributes', index]),
-          });
-        }
-      } else if (!isBlank(value.structureField)) {
         setFormChanges({
           type: 'bridgeModelMapping',
-          value: bridgeModelMapping.update('attributes', quals =>
-            quals.push({
-              name: value.name,
-              structureField: value.structureField,
-            }),
-          ),
+          value: bridgeModelMapping.deleteIn(['attributes', index]),
         });
       }
     }
-  } else if (type === 'bridgeAttributeDelete') {
-    const attr = bridgeModel.getIn(['attributes', value]);
-    const attrMapping = bridgeModelMapping.attributes.find(
-      mapAttr => mapAttr.name === attr.name,
-    );
-    setFormChanges({
-      type: 'bridgeModel',
-      value: bridgeModel.deleteIn(['attributes', value]),
+  };
+
+const handleFormChange =
+  ({ setFormChanges }) =>
+  (type, value) => {
+    setFormChanges({ type, value });
+  };
+
+const handleSave =
+  ({ updateForm }) =>
+  () =>
+  () => {
+    updateForm();
+  };
+
+const handleReset =
+  ({ resetForm }) =>
+  () =>
+  () => {
+    resetForm();
+  };
+
+const generateAttributes =
+  ({
+    updatedForm: { columns, bridgeModel, bridgeModelMapping },
+    setFormChanges,
+  }) =>
+  () => {
+    let updatedBridgeModel = bridgeModel;
+    let updatedBridgeModelMapping = bridgeModelMapping;
+    columns.forEach(column => {
+      if (
+        column.type === 'value' &&
+        !bridgeModel.attributes.find(a => a.name === column.name)
+      ) {
+        updatedBridgeModel = updatedBridgeModel.update('attributes', quals =>
+          quals.push({ name: column.name }),
+        );
+        updatedBridgeModelMapping = updatedBridgeModelMapping.update(
+          'attributes',
+          quals =>
+            quals.push({
+              name: column.name,
+              structureField: `\${fields('values[${column.name}]')}`,
+            }),
+        );
+      }
     });
-    if (attrMapping) {
-      const index = bridgeModelMapping.attributes.indexOf(attrMapping);
-      setFormChanges({
-        type: 'bridgeModelMapping',
-        value: bridgeModelMapping.deleteIn(['attributes', index]),
-      });
-    }
-  }
-};
-
-const handleFormChange = ({ setFormChanges }) => (type, value) => {
-  setFormChanges({ type, value });
-};
-
-const handleSave = ({ updateForm }) => () => () => {
-  updateForm();
-};
-
-const handleReset = ({ resetForm }) => () => () => {
-  resetForm();
-};
-
-const generateAttributes = ({
-  updatedForm: { columns, bridgeModel, bridgeModelMapping },
-  setFormChanges,
-}) => () => {
-  let updatedBridgeModel = bridgeModel;
-  let updatedBridgeModelMapping = bridgeModelMapping;
-  columns.forEach(column => {
-    if (
-      column.type === 'value' &&
-      !bridgeModel.attributes.find(a => a.name === column.name)
-    ) {
+    if (!bridgeModel.attributes.find(a => a.name === 'Id')) {
       updatedBridgeModel = updatedBridgeModel.update('attributes', quals =>
-        quals.push({ name: column.name }),
+        quals.push({ name: 'Id' }),
       );
       updatedBridgeModelMapping = updatedBridgeModelMapping.update(
         'attributes',
         quals =>
           quals.push({
-            name: column.name,
-            structureField: `\${fields('values[${column.name}]')}`,
+            name: 'Id',
+            structureField: `\${fields('id')}`,
           }),
       );
     }
-  });
-  if (!bridgeModel.attributes.find(a => a.name === 'Id')) {
-    updatedBridgeModel = updatedBridgeModel.update('attributes', quals =>
-      quals.push({ name: 'Id' }),
-    );
-    updatedBridgeModelMapping = updatedBridgeModelMapping.update(
-      'attributes',
-      quals =>
-        quals.push({
-          name: 'Id',
-          structureField: `\${fields('id')}`,
-        }),
-    );
-  }
-  setFormChanges({
-    type: 'bridgeModel',
-    value: updatedBridgeModel,
-  });
-  setFormChanges({
-    type: 'bridgeModelMapping',
-    value: updatedBridgeModelMapping,
-  });
-};
-
-const canGenerateAttributes = ({
-  updatedForm: { columns, bridgeModel },
-}) => () => {
-  const missing = columns.find(
-    column =>
-      column.type === 'value' &&
-      !bridgeModel.attributes.find(a => a.name === column.name),
-  );
-  return missing || !bridgeModel.attributes.find(a => a.name === 'Id');
-};
-
-const windowFocusListener = ({ setStaleFields, origForm }) => () => {
-  // Check if form fields are stale, and if yes, allow user to reload form
-  axios
-    .get(`${bundle.apiLocation()}/kapps/datastore/forms/${origForm.slug}`, {
-      params: { include: 'fields' },
-    })
-    .then(response => ({ form: response.data.form }))
-    .then(({ form }) => {
-      if (
-        !List(origForm.fields)
-          .map(({ name }) => name)
-          .sort()
-          .equals(
-            List(form.fields)
-              .map(({ name }) => name)
-              .sort(),
-          )
-      ) {
-        setStaleFields(true);
-      }
-    })
-    .catch(() => {
-      /* Do nothing if form fetch errors */
+    setFormChanges({
+      type: 'bridgeModel',
+      value: updatedBridgeModel,
     });
-};
+    setFormChanges({
+      type: 'bridgeModelMapping',
+      value: updatedBridgeModelMapping,
+    });
+  };
+
+const canGenerateAttributes =
+  ({ updatedForm: { columns, bridgeModel } }) =>
+  () => {
+    const missing = columns.find(
+      column =>
+        column.type === 'value' &&
+        !bridgeModel.attributes.find(a => a.name === column.name),
+    );
+    return missing || !bridgeModel.attributes.find(a => a.name === 'Id');
+  };
+
+const windowFocusListener =
+  ({ setStaleFields, origForm }) =>
+  () => {
+    // Check if form fields are stale, and if yes, allow user to reload form
+    axios
+      .get(`${bundle.apiLocation()}/kapps/datastore/forms/${origForm.slug}`, {
+        params: { include: 'fields' },
+      })
+      .then(response => ({ form: response.data.form }))
+      .then(({ form }) => {
+        if (
+          !List(origForm.fields)
+            .map(({ name }) => name)
+            .sort()
+            .equals(
+              List(form.fields)
+                .map(({ name }) => name)
+                .sort(),
+            )
+        ) {
+          setStaleFields(true);
+        }
+      })
+      .catch(() => {
+        /* Do nothing if form fetch errors */
+      });
+  };
 
 export const mapStateToProps = (state, { slug }) => ({
   loading: state.settingsDatastore.currentFormLoading,
@@ -1319,12 +1327,7 @@ export const mapDispatchToProps = {
 };
 
 export const DatastoreSettings = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { context },
-  ),
+  connect(mapStateToProps, mapDispatchToProps, null, { context }),
   withState('newQualification', 'setNewQualification', null),
   withState('newAttribute', 'setNewAttribute', new BridgeAttribute()),
   withState('editAttribute', 'setEditAttribute', new BridgeAttribute()),

@@ -82,10 +82,7 @@ export const handleLoaded = props => form => {
 };
 
 export const IsolatedForm = compose(
-  connect(
-    mapStateToProps,
-    { push },
-  ),
+  connect(mapStateToProps, { push }),
   withState('formName', 'setFormName', ''),
   withHandlers({ handleCreated, handleLoaded }),
 )(IsolatedFormComponent);

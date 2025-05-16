@@ -42,27 +42,29 @@ const FormButtons = props => (
   </button>
 );
 
-const ActionsCell = () => ({ row }) => (
-  <td className="text-right" style={{ width: '1%' }}>
-    <UncontrolledDropdown className="more-actions">
-      <DropdownToggle tag="button" className="btn btn-sm btn-link">
-        <span className="sr-only">More Actions</span>
-        <span className="fa fa-chevron-down fa-fw" />
-      </DropdownToggle>
-      <DropdownMenu right positionFixed>
-        <Link to={row.get('slug')} className="dropdown-item">
-          <I18n>View</I18n>
-        </Link>
-        <Link to={`${row.get('slug')}/new`} className="dropdown-item">
-          <I18n>New Record</I18n>
-        </Link>
-        <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
-          <I18n>Configure</I18n>
-        </Link>
-      </DropdownMenu>
-    </UncontrolledDropdown>
-  </td>
-);
+const ActionsCell =
+  () =>
+  ({ row }) => (
+    <td className="text-right" style={{ width: '1%' }}>
+      <UncontrolledDropdown className="more-actions">
+        <DropdownToggle tag="button" className="btn btn-sm btn-link">
+          <span className="sr-only">More Actions</span>
+          <span className="fa fa-chevron-down fa-fw" />
+        </DropdownToggle>
+        <DropdownMenu right positionFixed>
+          <Link to={row.get('slug')} className="dropdown-item">
+            <I18n>View</I18n>
+          </Link>
+          <Link to={`${row.get('slug')}/new`} className="dropdown-item">
+            <I18n>New Record</I18n>
+          </Link>
+          <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
+            <I18n>Configure</I18n>
+          </Link>
+        </DropdownMenu>
+      </UncontrolledDropdown>
+    </td>
+  );
 
 const FormNameCell = ({ row, value }) => (
   <td>
@@ -202,10 +204,9 @@ export const FormListComponent = ({
 
 // Datastore Container
 export const FormList = compose(
-  connect(
-    state => ({ profile: state.app.profile }),
-    { resetSearch: actions.resetSearchParams },
-  ),
+  connect(state => ({ profile: state.app.profile }), {
+    resetSearch: actions.resetSearchParams,
+  }),
   withState('modalOpen', 'setModalOpen', false),
   withState('filterOpen', 'setFilterOpen', false),
   withHandlers({
