@@ -44,18 +44,17 @@ const QueueListSidebarComponent = ({
 
   return (
     <div className="queue-sidebar">
-      {showCreateNew &&
-        hasForms && (
-          <div className="px-4 pt-4 pb-2">
-            <button
-              type="button"
-              className="btn btn-secondary btn-block"
-              onClick={openNewItemMenu}
-            >
-              <I18n>New Task</I18n>
-            </button>
-          </div>
-        )}
+      {showCreateNew && hasForms && (
+        <div className="px-4 pt-4 pb-2">
+          <button
+            type="button"
+            className="btn btn-secondary btn-block"
+            onClick={openNewItemMenu}
+          >
+            <I18n>New Task</I18n>
+          </button>
+        </div>
+      )}
       <Nav className="nav-tabs nav-tabs--vertical">
         <div className="nav-item nav-item--header">Default Filters</div>
         <NavItem>

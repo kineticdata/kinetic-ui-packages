@@ -77,12 +77,10 @@ export const reducer = (state = defaultState, { type, payload }) => {
         return i > -1 ? teams.delete(i) : teams.push(payload);
       });
     case types.TOGGLE_STATUS:
-      return state.updateIn(
-        ['currentFilter', 'status'],
-        statuses =>
-          statuses.includes(payload)
-            ? statuses.delete(statuses.indexOf(payload))
-            : statuses.push(payload),
+      return state.updateIn(['currentFilter', 'status'], statuses =>
+        statuses.includes(payload)
+          ? statuses.delete(statuses.indexOf(payload))
+          : statuses.push(payload),
       );
     case types.SET_DATE_RANGE_TIMELINE:
       return (
@@ -90,13 +88,11 @@ export const reducer = (state = defaultState, { type, payload }) => {
           .setIn(['currentFilter', 'dateRange', 'timeline'], payload)
           // If dateRange timeline is changed and dateRange filter has a value,
           // set sortBy to the dateRange timeline
-          .updateIn(
-            ['currentFilter', 'sortBy'],
-            sortBy =>
-              !!state.getIn(['currentFilter', 'dateRange', 'preset']) ||
-              !!state.getIn(['currentFilter', 'dateRange', 'custom'])
-                ? payload
-                : sortBy,
+          .updateIn(['currentFilter', 'sortBy'], sortBy =>
+            !!state.getIn(['currentFilter', 'dateRange', 'preset']) ||
+            !!state.getIn(['currentFilter', 'dateRange', 'custom'])
+              ? payload
+              : sortBy,
           )
       );
     case types.SET_DATE_RANGE:
@@ -110,12 +106,10 @@ export const reducer = (state = defaultState, { type, payload }) => {
             end: custom ? payload.end : '',
           })
           // If dataRange filter has a value, set sortBy to dateRange timeline
-          .updateIn(
-            ['currentFilter', 'sortBy'],
-            sortBy =>
-              !!payload
-                ? state.getIn(['currentFilter', 'dateRange', 'timeline'])
-                : sortBy,
+          .updateIn(['currentFilter', 'sortBy'], sortBy =>
+            !!payload
+              ? state.getIn(['currentFilter', 'dateRange', 'timeline'])
+              : sortBy,
           )
       );
     case types.SET_SORTED_BY:

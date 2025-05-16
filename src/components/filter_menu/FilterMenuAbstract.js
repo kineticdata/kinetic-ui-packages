@@ -197,7 +197,7 @@ const FilterMenuAbstractComponent = props => (
           .toList()
           .push(
             props.currentFilter.dateRange.preset ||
-            props.currentFilter.dateRange.current ? (
+              props.currentFilter.dateRange.current ? (
               <small key="info-msg" className="text-muted">
                 {translate(
                   'Options restricted due to the selected date range.',
@@ -344,12 +344,15 @@ const changeSortedBy = props => e => props.setSortedBy(e.target.value);
 const changeDirection = props => e => props.setDirection(e.target.value);
 const changeFilterName = props => e => props.setFilterName(e.target.value);
 
-const toggleShowing = props => (name, persistChanges = false) => () => {
-  if (!persistChanges) {
-    props.resetFilter();
-  }
-  props.show(props.showing === name ? null : name);
-};
+const toggleShowing =
+  props =>
+  (name, persistChanges = false) =>
+  () => {
+    if (!persistChanges) {
+      props.resetFilter();
+    }
+    props.show(props.showing === name ? null : name);
+  };
 
 const applyFilter = props => filter => {
   props.close();
@@ -366,9 +369,8 @@ const clearDateRange = props => () =>
   props.applyFilter(props.filter.delete('dateRange'));
 const toggleDirection = props => () =>
   props.applyFilter(
-    props.filter.update(
-      'sortDirection',
-      dir => (dir === 'ASC' ? 'DESC' : 'ASC'),
+    props.filter.update('sortDirection', dir =>
+      dir === 'ASC' ? 'DESC' : 'ASC',
     ),
   );
 
@@ -397,10 +399,7 @@ const removeFilter = props => filter => {
 };
 
 export const FilterMenuAbstract = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({ applyFilter }),
   withHandlers({
     toggleShowing,

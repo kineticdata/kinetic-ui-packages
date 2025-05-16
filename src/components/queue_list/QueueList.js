@@ -112,7 +112,9 @@ export const QueueList = ({
               </div>
             ) : (
               <QueueBadFilterMessage
-                message={filterValidations.map((v, i) => <p key={i}>{v}</p>)}
+                message={filterValidations.map((v, i) => (
+                  <p key={i}>{v}</p>
+                ))}
               />
             )}
           </div>

@@ -114,17 +114,15 @@ export const NewItemMenu = ({
           )}
         </span>
       </div>
-      {currentForm !== null &&
-        currentAssignment === null && (
-          <FormsBackButton handleFormClick={handleFormClick} />
-        )}
-      {currentForm !== null &&
-        currentAssignment !== null && (
-          <AssignmentBackButton
-            handleAssignmentClick={handleAssignmentClick}
-            currentAssignment={currentAssignment}
-          />
-        )}
+      {currentForm !== null && currentAssignment === null && (
+        <FormsBackButton handleFormClick={handleFormClick} />
+      )}
+      {currentForm !== null && currentAssignment !== null && (
+        <AssignmentBackButton
+          handleAssignmentClick={handleAssignmentClick}
+          currentAssignment={currentAssignment}
+        />
+      )}
     </div>
     <ModalBody>
       {currentForm === null ? (
@@ -149,20 +147,15 @@ export const NewItemMenu = ({
         </I18n>
       )}
     </ModalBody>
-    {currentForm !== null &&
-      kForm !== null && (
-        <ModalFooter>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleSave}
-          >
-            <I18n>Save</I18n>{' '}
-            <I18n context={`kapps.${kappSlug}.forms.${currentForm.slug}`}>
-              {currentForm.name}
-            </I18n>
-          </button>
-        </ModalFooter>
-      )}
+    {currentForm !== null && kForm !== null && (
+      <ModalFooter>
+        <button type="button" className="btn btn-primary" onClick={handleSave}>
+          <I18n>Save</I18n>{' '}
+          <I18n context={`kapps.${kappSlug}.forms.${currentForm.slug}`}>
+            {currentForm.name}
+          </I18n>
+        </button>
+      </ModalFooter>
+    )}
   </Modal>
 );

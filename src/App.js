@@ -107,12 +107,12 @@ const mapDispatchToProps = {
 };
 
 const enhance = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
-    handleOpenNewItemMenu: ({ openNewItemMenu }) => () => openNewItemMenu(),
+    handleOpenNewItemMenu:
+      ({ openNewItemMenu }) =>
+      () =>
+        openNewItemMenu(),
   }),
   lifecycle({
     componentDidMount() {

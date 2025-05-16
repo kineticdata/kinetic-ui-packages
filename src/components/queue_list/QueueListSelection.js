@@ -62,17 +62,16 @@ export const QueueListSelectionComponent = ({
               </span>
             )}
           </button>
-          {assignTooltip &&
-            !isMobile && (
-              <UncontrolledTooltip
-                placement="top"
-                target="bulk-assign-btn"
-                delay={0}
-                trigger="hover focus"
-              >
-                <I18n>{assignTooltip}</I18n>
-              </UncontrolledTooltip>
-            )}
+          {assignTooltip && !isMobile && (
+            <UncontrolledTooltip
+              placement="top"
+              target="bulk-assign-btn"
+              delay={0}
+              trigger="hover focus"
+            >
+              <I18n>{assignTooltip}</I18n>
+            </UncontrolledTooltip>
+          )}
           {!workHidden && (
             <>
               <button
@@ -94,17 +93,16 @@ export const QueueListSelectionComponent = ({
                   </span>
                 )}
               </button>
-              {workTooltip &&
-                !isMobile && (
-                  <UncontrolledTooltip
-                    placement="top"
-                    target="bulk-work-btn"
-                    delay={0}
-                    trigger="hover focus"
-                  >
-                    <I18n>{workTooltip}</I18n>
-                  </UncontrolledTooltip>
-                )}
+              {workTooltip && !isMobile && (
+                <UncontrolledTooltip
+                  placement="top"
+                  target="bulk-work-btn"
+                  delay={0}
+                  trigger="hover focus"
+                >
+                  <I18n>{workTooltip}</I18n>
+                </UncontrolledTooltip>
+              )}
             </>
           )}
           <div className="ml-1 mr-2 border-right" aria-hidden="true" />
@@ -158,10 +156,7 @@ const mapDispatchToProps = {
 };
 
 export const QueueListSelection = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(props => {
     // Create default additional props
     const addProps = {

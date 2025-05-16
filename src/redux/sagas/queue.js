@@ -159,19 +159,14 @@ export function* fetchListTask(action) {
           actions.fetchListSuccess({ submissions: [], nextPageToken: null }),
         );
       } else {
-        const {
-          submissions,
-          nextPageToken,
-          error,
-          count,
-          countPageToken,
-        } = yield call(searchSubmissions, {
-          kapp: kappSlug,
-          search,
-          limit,
-          pageToken,
-          count: !pageToken,
-        });
+        const { submissions, nextPageToken, error, count, countPageToken } =
+          yield call(searchSubmissions, {
+            kapp: kappSlug,
+            search,
+            limit,
+            pageToken,
+            count: !pageToken,
+          });
 
         if (error) {
           yield put(actions.fetchListFailure(error));

@@ -425,18 +425,17 @@ const FilterItemSection = ({ label, content, error, messages }) => (
           <I18n>{error}</I18n>
         </small>
       )}
-      {messages &&
-        messages.length > 0 && (
-          <I18n
-            render={translate =>
-              messages.map((msg, i) => (
-                <small key={`msg-${i}`} className="text-info d-block">
-                  {translate(msg)}
-                </small>
-              ))
-            }
-          />
-        )}
+      {messages && messages.length > 0 && (
+        <I18n
+          render={translate =>
+            messages.map((msg, i) => (
+              <small key={`msg-${i}`} className="text-info d-block">
+                {translate(msg)}
+              </small>
+            ))
+          }
+        />
+      )}
     </h5>
     {content}
   </>

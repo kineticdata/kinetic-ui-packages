@@ -131,10 +131,7 @@ export const mapDispatchToProps = {
 };
 
 export const QueueItemContainer = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(
     ({
       currentPageData,

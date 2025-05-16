@@ -108,13 +108,15 @@ export const FormSubmissionsComponent = ({
         columnSet={visibleColumns.map(c => c.value).toJS()}
         defaultSortColumn={sortField}
         addColumns={visibleColumns.filter(c => !!c.valueTransform).toJS()}
-        alterColumns={visibleColumns.filter(c => !c.valueTransform).reduce(
-          (alter, { value, valueTransform, ...properties }) => ({
-            ...alter,
-            [value]: properties,
-          }),
-          {},
-        )}
+        alterColumns={visibleColumns
+          .filter(c => !c.valueTransform)
+          .reduce(
+            (alter, { value, valueTransform, ...properties }) => ({
+              ...alter,
+              [value]: properties,
+            }),
+            {},
+          )}
         filterSet={[
           'startDate',
           'endDate',
@@ -227,10 +229,7 @@ const mapDispatchToProps = {
 };
 
 export const FormSubmissions = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('filterOpen', 'setFilterOpen', false),
   withProps(props => ({
     columns: buildFormConfigurationObject(props.form).columns,

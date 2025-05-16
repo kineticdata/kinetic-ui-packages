@@ -189,10 +189,7 @@ export const mapDispatchToProps = {
 };
 
 export const QueueItemDetailsContainer = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(({ queueItem }) => {
     const prohibit = getAttr(queueItem.form, 'Prohibit Subtasks');
     const permitted = getAttr(queueItem.form, 'Permitted Subtasks');
@@ -201,75 +198,68 @@ export const QueueItemDetailsContainer = compose(
       permittedSubtasks: permitted && permitted.split(/\s*,\s*/),
     };
   }),
-  withState(
-    'currentTab',
-    'setCurrentTab',
-    props => (!props.prohibitSubtasks ? 'subtasks' : ''),
+  withState('currentTab', 'setCurrentTab', props =>
+    !props.prohibitSubtasks ? 'subtasks' : '',
   ),
   withState('isAssigning', 'setIsAssigning', false),
   withHandlers({
-    refetchCounts: ({ defaultFilters, fetchListCount, filter }) => () => {
-      defaultFilters
-        .filter(filter => ['Mine', 'Unassigned'].includes(filter.name))
-        // Refetch current filters count if it isn't the Mine or Unassigned defaults
-        .concat(
-          !filter ||
-          (filter.type === 'default' &&
-            ['Mine', 'Unassigned'].includes(filter.name))
-            ? []
-            : [filter],
-        )
-        .forEach(fetchListCount);
-    },
+    refetchCounts:
+      ({ defaultFilters, fetchListCount, filter }) =>
+      () => {
+        defaultFilters
+          .filter(filter => ['Mine', 'Unassigned'].includes(filter.name))
+          // Refetch current filters count if it isn't the Mine or Unassigned defaults
+          .concat(
+            !filter ||
+              (filter.type === 'default' &&
+                ['Mine', 'Unassigned'].includes(filter.name))
+              ? []
+              : [filter],
+          )
+          .forEach(fetchListCount);
+      },
     toggleCurrentTab: props => tab => e => props.setCurrentTab(tab),
   }),
   withHandlers({
-    toggleAssigning: ({ setIsAssigning, isAssigning }) => () =>
-      setIsAssigning(!isAssigning),
-    setAssignment: ({
-      queueItem,
-      updateQueueItem,
-      setCurrentItem,
-      refetchCounts,
-    }) => (_v, assignment) => {
-      const teamParts = assignment.team.split('::');
-      const values = {
-        'Assigned Individual': assignment.username,
-        'Assigned Individual Display Name': assignment.displayName,
-        'Assigned Team': assignment.team,
-        'Assigned Team Display Name': teamParts[teamParts.length - 1],
-      };
+    toggleAssigning:
+      ({ setIsAssigning, isAssigning }) =>
+      () =>
+        setIsAssigning(!isAssigning),
+    setAssignment:
+      ({ queueItem, updateQueueItem, setCurrentItem, refetchCounts }) =>
+      (_v, assignment) => {
+        const teamParts = assignment.team.split('::');
+        const values = {
+          'Assigned Individual': assignment.username,
+          'Assigned Individual Display Name': assignment.displayName,
+          'Assigned Team': assignment.team,
+          'Assigned Team Display Name': teamParts[teamParts.length - 1],
+        };
 
-      updateQueueItem({
-        id: queueItem.id,
-        values,
-        onSuccess: submission => {
-          setCurrentItem(submission);
-          refetchCounts();
-        },
-      });
-    },
-    openNewItemMenu: ({
-      openNewItemMenu,
-      queueItem,
-      permittedSubtasks,
-    }) => () => {
-      openNewItemMenu({
-        permittedSubtasks,
-        parentId: queueItem.id,
-        originId: queueItem.origin ? queueItem.origin.id : queueItem.id,
-      });
-    },
-    refreshQueueItem: ({
-      filter,
-      fetchList,
-      fetchCurrentItem,
-      queueItem,
-      refetchCounts,
-    }) => () => {
-      fetchCurrentItem(queueItem.id);
-      refetchCounts();
-    },
+        updateQueueItem({
+          id: queueItem.id,
+          values,
+          onSuccess: submission => {
+            setCurrentItem(submission);
+            refetchCounts();
+          },
+        });
+      },
+    openNewItemMenu:
+      ({ openNewItemMenu, queueItem, permittedSubtasks }) =>
+      () => {
+        openNewItemMenu({
+          permittedSubtasks,
+          parentId: queueItem.id,
+          originId: queueItem.origin ? queueItem.origin.id : queueItem.id,
+        });
+      },
+    refreshQueueItem:
+      ({ filter, fetchList, fetchCurrentItem, queueItem, refetchCounts }) =>
+      () => {
+        fetchCurrentItem(queueItem.id);
+        refetchCounts();
+      },
   }),
   withProps(
     ({

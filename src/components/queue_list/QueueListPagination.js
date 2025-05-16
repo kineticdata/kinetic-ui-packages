@@ -127,10 +127,7 @@ const mapDispatchToProps = {
 };
 
 export const QueueListPagination = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     handlePrevious: props => () => props.previousPage(),
     handleNext: props => () => props.nextPage(),

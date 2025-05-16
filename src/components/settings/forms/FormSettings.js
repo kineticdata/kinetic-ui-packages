@@ -193,125 +193,136 @@ export const FormSettingsComponent = ({ form, kapp, onSave }) => {
           transform: result => result.submissions,
         },
       }}
-      addFields={() => ({ form, notifications }) =>
-        form &&
-        notifications && [
-          {
-            name: 'prohibitSubtasks',
-            label: 'Prohibit Subtasks',
-            type: 'select',
-            helpText: "Can users create subtasks for this form's submissions.",
-            initialValue: form.getIn(['attributesMap', 'Prohibit Subtasks', 0]),
-            options: ['Yes', 'No'].map(el => ({
-              label: el,
-              value: el,
-            })),
-          },
-          {
-            name: 'permittedSubtasks',
-            label: 'Permitted Subtasks',
-            type: 'text-multi',
-            helpText:
-              "Defines which forms may be submitted as subtasks to this form's submissions.",
-            initialValue: form.getIn(['attributesMap', 'Permitted Subtasks', 0])
-              ? form
-                  .getIn(['attributesMap', 'Permitted Subtasks', 0])
-                  .split(',')
-              : [],
-          },
-          {
-            name: 'owningTeam',
-            label: 'Owning Team',
-            type: 'team-multi',
-            helpText: 'Teams responsible for maintaining this form.',
-            initialValue: form
-              .getIn(['attributesMap', 'Owning Team'], List())
-              .map(name => ({ name }))
-              .toJS(),
-          },
-          {
-            name: 'allowReassignment',
-            label: 'Allow Reassignment',
-            type: 'select',
-            helpText:
-              'Can submissions of this form be reassigned to other teams.',
-            initialValue: form.getIn([
-              'attributesMap',
-              'Allow Reassignment',
-              0,
-            ]),
-            options: ['Yes', 'No'].map(el => ({
-              label: el,
-              value: el,
-            })),
-          },
-          {
-            name: 'assignableTeams',
-            label: 'Assignable Teams',
-            type: 'team-multi',
-            helpText:
-              'Teams to which submissions of this form can be reassigned to.',
-            initialValue: form
-              .getIn(['attributesMap', 'Assignable Teams'], List())
-              .map(name => ({ name }))
-              .toJS(),
-          },
-          {
-            name: 'notificationCreate',
-            label: 'Notification Template Name - Create',
-            type: 'select',
-            renderAttributes: { typeahead: true },
-            helpText:
-              "Name of the Notification Template to use when this form's submission is submitted. Defaults to value at Kapp level.",
-            initialValue: form.getIn([
-              'attributesMap',
-              'Notification Template Name - Create',
-              0,
-            ]),
-            options: notifications
-              ? notifications
-                  .map(notification => ({
-                    label: notification.getIn(['values', 'Name']),
-                    value: notification.getIn(['values', 'Name']),
-                    slug: notification.get('id'),
-                  }))
-                  .toJS()
-              : [],
-            component: FormComponents.NotificationField,
-          },
-          {
-            name: 'notificationComplete',
-            label: 'Notification Template Name - Complete',
-            type: 'select',
-            renderAttributes: { typeahead: true },
-            helpText:
-              "Name of the Notification Template to use when this form's submission is completed. Defaults to value at Kapp level.",
-            initialValue: form.getIn([
-              'attributesMap',
-              'Notification Template Name - Complete',
-              0,
-            ]),
-            options: notifications
-              ? notifications
-                  .map(notification => ({
-                    label: notification.getIn(['values', 'Name']),
-                    value: notification.getIn(['values', 'Name']),
-                    slug: notification.get('id'),
-                  }))
-                  .toJS()
-              : [],
-            component: FormComponents.NotificationField,
-          },
-          {
-            name: 'submissionTableFields',
-            label: 'Submission Table - Fields',
-            type: 'custom',
-            helpText:
-              'Select which field columns should be visible by default when displaying submissions for this form in the settings pages. Drag and drop to change the order in which the columns will appear.',
-            initialValue: buildFormConfigurationObject(form.toJS()).columns,
-            component: FieldsTableField,
-          },
-        ]}
+      addFields={() =>
+        ({ form, notifications }) =>
+          form &&
+          notifications && [
+            {
+              name: 'prohibitSubtasks',
+              label: 'Prohibit Subtasks',
+              type: 'select',
+              helpText:
+                "Can users create subtasks for this form's submissions.",
+              initialValue: form.getIn([
+                'attributesMap',
+                'Prohibit Subtasks',
+                0,
+              ]),
+              options: ['Yes', 'No'].map(el => ({
+                label: el,
+                value: el,
+              })),
+            },
+            {
+              name: 'permittedSubtasks',
+              label: 'Permitted Subtasks',
+              type: 'text-multi',
+              helpText:
+                "Defines which forms may be submitted as subtasks to this form's submissions.",
+              initialValue: form.getIn([
+                'attributesMap',
+                'Permitted Subtasks',
+                0,
+              ])
+                ? form
+                    .getIn(['attributesMap', 'Permitted Subtasks', 0])
+                    .split(',')
+                : [],
+            },
+            {
+              name: 'owningTeam',
+              label: 'Owning Team',
+              type: 'team-multi',
+              helpText: 'Teams responsible for maintaining this form.',
+              initialValue: form
+                .getIn(['attributesMap', 'Owning Team'], List())
+                .map(name => ({ name }))
+                .toJS(),
+            },
+            {
+              name: 'allowReassignment',
+              label: 'Allow Reassignment',
+              type: 'select',
+              helpText:
+                'Can submissions of this form be reassigned to other teams.',
+              initialValue: form.getIn([
+                'attributesMap',
+                'Allow Reassignment',
+                0,
+              ]),
+              options: ['Yes', 'No'].map(el => ({
+                label: el,
+                value: el,
+              })),
+            },
+            {
+              name: 'assignableTeams',
+              label: 'Assignable Teams',
+              type: 'team-multi',
+              helpText:
+                'Teams to which submissions of this form can be reassigned to.',
+              initialValue: form
+                .getIn(['attributesMap', 'Assignable Teams'], List())
+                .map(name => ({ name }))
+                .toJS(),
+            },
+            {
+              name: 'notificationCreate',
+              label: 'Notification Template Name - Create',
+              type: 'select',
+              renderAttributes: { typeahead: true },
+              helpText:
+                "Name of the Notification Template to use when this form's submission is submitted. Defaults to value at Kapp level.",
+              initialValue: form.getIn([
+                'attributesMap',
+                'Notification Template Name - Create',
+                0,
+              ]),
+              options: notifications
+                ? notifications
+                    .map(notification => ({
+                      label: notification.getIn(['values', 'Name']),
+                      value: notification.getIn(['values', 'Name']),
+                      slug: notification.get('id'),
+                    }))
+                    .toJS()
+                : [],
+              component: FormComponents.NotificationField,
+            },
+            {
+              name: 'notificationComplete',
+              label: 'Notification Template Name - Complete',
+              type: 'select',
+              renderAttributes: { typeahead: true },
+              helpText:
+                "Name of the Notification Template to use when this form's submission is completed. Defaults to value at Kapp level.",
+              initialValue: form.getIn([
+                'attributesMap',
+                'Notification Template Name - Complete',
+                0,
+              ]),
+              options: notifications
+                ? notifications
+                    .map(notification => ({
+                      label: notification.getIn(['values', 'Name']),
+                      value: notification.getIn(['values', 'Name']),
+                      slug: notification.get('id'),
+                    }))
+                    .toJS()
+                : [],
+              component: FormComponents.NotificationField,
+            },
+            {
+              name: 'submissionTableFields',
+              label: 'Submission Table - Fields',
+              type: 'custom',
+              helpText:
+                'Select which field columns should be visible by default when displaying submissions for this form in the settings pages. Drag and drop to change the order in which the columns will appear.',
+              initialValue: buildFormConfigurationObject(form.toJS()).columns,
+              component: FieldsTableField,
+            },
+          ]
+        }
       alterFields={{
         description: { component: FormComponents.TextAreaField },
         attributesMap: {
@@ -387,10 +398,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = { fetchFormRequest: actions.fetchForm };
 
 export const FormSettings = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     onSave: props => () => () => {
       props.fetchFormRequest({

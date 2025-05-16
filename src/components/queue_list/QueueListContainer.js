@@ -35,10 +35,7 @@ const mapDispatchToProps = {
 };
 
 export const QueueListContainer = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(({ filter }) => {
     return {
       filterValidations: filter

@@ -31,10 +31,9 @@ export const StatusBadge = ({ queueItem, withReason }) => (
     <span className={getStatusClass(queueItem.values.Status)}>
       <I18n>{queueItem.values.Status}</I18n>
     </span>
-    {withReason &&
-      getStatusReason(queueItem) && (
-        <span className="status-reason ml-2">{getStatusReason(queueItem)}</span>
-      )}
+    {withReason && getStatusReason(queueItem) && (
+      <span className="status-reason ml-2">{getStatusReason(queueItem)}</span>
+    )}
   </>
 );
 
