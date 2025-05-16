@@ -36,14 +36,13 @@ export const FormComponent = ({
           title={form && form.name}
         />
         <div className="form-description">
-          {form &&
-            form.description && (
-              <p>
-                <I18n context={`kapps.${kappSlug}.forms.${formSlug}`}>
-                  {form.description}
-                </I18n>
-              </p>
-            )}
+          {form && form.description && (
+            <p>
+              <I18n context={`kapps.${kappSlug}.forms.${formSlug}`}>
+                {form.description}
+              </I18n>
+            </p>
+          )}
         </div>
         <I18n context={`kapps.${kappSlug}.forms.${formSlug}`}>
           <div className="embedded-core-form--wrapper">

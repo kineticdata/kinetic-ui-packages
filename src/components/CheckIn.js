@@ -241,44 +241,45 @@ export const mapDispatchToProps = {
   fetchTodayAppointmentsRequest: actions.fetchTodayAppointmentsRequest,
 };
 
-const toggleShowDetails = ({
-  showDetails,
-  setShowDetails,
-  setInput,
-  fetchTodayAppointmentsRequest,
-  techBarId,
-}) => name => {
-  setShowDetails(showDetails === name ? null : name);
-  setInput('');
-  if (name === 'appointment') {
-    fetchTodayAppointmentsRequest({
-      schedulerId: techBarId,
-      status: 'Scheduled',
-    });
-  }
-};
+const toggleShowDetails =
+  ({
+    showDetails,
+    setShowDetails,
+    setInput,
+    fetchTodayAppointmentsRequest,
+    techBarId,
+  }) =>
+  name => {
+    setShowDetails(showDetails === name ? null : name);
+    setInput('');
+    if (name === 'appointment') {
+      fetchTodayAppointmentsRequest({
+        schedulerId: techBarId,
+        status: 'Scheduled',
+      });
+    }
+  };
 
-const getFilteredAppointments = ({ input, appointments }) => () =>
-  appointments
-    ? appointments.filter(
-        appt =>
-          appt.values['Requested For Display Name']
-            .toLowerCase()
-            .includes(input.toLowerCase()) ||
-          appt.values['Requested For']
-            .toLowerCase()
-            .includes(input.toLowerCase()),
-      )
-    : null;
+const getFilteredAppointments =
+  ({ input, appointments }) =>
+  () =>
+    appointments
+      ? appointments.filter(
+          appt =>
+            appt.values['Requested For Display Name']
+              .toLowerCase()
+              .includes(input.toLowerCase()) ||
+            appt.values['Requested For']
+              .toLowerCase()
+              .includes(input.toLowerCase()),
+        )
+      : null;
 
 export const CheckIn = compose(
   withProps(({ techBar }) => ({
     techBarId: techBar.values['Id'],
   })),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('showDetails', 'setShowDetails', null),
   withState('input', 'setInput', ''),
   withHandlers({

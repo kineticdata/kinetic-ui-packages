@@ -209,19 +209,23 @@ export const mapStateToProps = (state, props) => ({
   profile: state.app.profile,
 });
 
-const toggleDropdown = ({
-  setOpenDropdown,
-  openDropdown,
-}) => dropdownSlug => () =>
-  setOpenDropdown(dropdownSlug === openDropdown ? false : dropdownSlug);
+const toggleDropdown =
+  ({ setOpenDropdown, openDropdown }) =>
+  dropdownSlug =>
+  () =>
+    setOpenDropdown(dropdownSlug === openDropdown ? false : dropdownSlug);
 
-const hasTechBarDisplayRole = ({ profile }) => techBarName =>
-  Utils.isMemberOf(profile, `Role::Tech Bar Display::${techBarName}`);
+const hasTechBarDisplayRole =
+  ({ profile }) =>
+  techBarName =>
+    Utils.isMemberOf(profile, `Role::Tech Bar Display::${techBarName}`);
 
-const selectCurrentTechBar = ({ techBars, setCurrentTechBar }) => id => {
-  sessionStorage.setItem(SESSION_ITEM_CURRENT_TECH_BAR, id);
-  setCurrentTechBar(techBars.find(t => t.id === id));
-};
+const selectCurrentTechBar =
+  ({ techBars, setCurrentTechBar }) =>
+  id => {
+    sessionStorage.setItem(SESSION_ITEM_CURRENT_TECH_BAR, id);
+    setCurrentTechBar(techBars.find(t => t.id === id));
+  };
 
 export const TechBars = compose(
   withState('userLocation', 'setUserLocation', () => {

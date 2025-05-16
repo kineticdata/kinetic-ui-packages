@@ -82,10 +82,7 @@ export const mapDispatchToProps = {
 };
 
 export const SchedulerSettings = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   lifecycle({
     componentWillUnmount() {
       this.props.fetchAppDataRequest(true);

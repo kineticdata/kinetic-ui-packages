@@ -327,17 +327,16 @@ export const HomeComponent = ({
               </Link>
             </h4>
           </div>
-          {useLocationServices &&
-            !userLocation && (
-              <div className="modal-header">
-                <div className="px-3 py-1 text-center">
-                  <button className="btn btn-link" onClick={getUserLocation}>
-                    <span className="fa fa-fw fa-map-marker" />{' '}
-                    <I18n>use my current location</I18n>
-                  </button>
-                </div>
+          {useLocationServices && !userLocation && (
+            <div className="modal-header">
+              <div className="px-3 py-1 text-center">
+                <button className="btn btn-link" onClick={getUserLocation}>
+                  <span className="fa fa-fw fa-map-marker" />{' '}
+                  <I18n>use my current location</I18n>
+                </button>
               </div>
-            )}
+            </div>
+          )}
           <ModalBody>
             <ul>
               {techBars.map(techBar => (
@@ -418,40 +417,42 @@ export const mapDispatchToProps = {
   fetchWalkInsOverviewRequest: walkInActions.fetchWalkInsOverviewRequest,
 };
 
-const selectCurrentTechBar = ({
-  techBars,
-  setCurrentTechBar,
-  setModalOpen,
-}) => id => {
-  setModalOpen(false);
-  sessionStorage.setItem(SESSION_ITEM_CURRENT_TECH_BAR, id);
-  setCurrentTechBar(techBars.find(t => t.id === id));
-};
+const selectCurrentTechBar =
+  ({ techBars, setCurrentTechBar, setModalOpen }) =>
+  id => {
+    setModalOpen(false);
+    sessionStorage.setItem(SESSION_ITEM_CURRENT_TECH_BAR, id);
+    setCurrentTechBar(techBars.find(t => t.id === id));
+  };
 
-const getUserLocation = ({ setUserLocation }) => () => {
-  navigator.geolocation.getCurrentPosition(position => {
-    if (position && position.coords) {
-      const userLocObj = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      };
-      setUserLocation(userLocObj);
-      sessionStorage.setItem(
-        SESSION_ITEM_USER_LOCATION,
-        JSON.stringify(userLocObj),
-      );
-    }
-  });
-};
+const getUserLocation =
+  ({ setUserLocation }) =>
+  () => {
+    navigator.geolocation.getCurrentPosition(position => {
+      if (position && position.coords) {
+        const userLocObj = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        setUserLocation(userLocObj);
+        sessionStorage.setItem(
+          SESSION_ITEM_USER_LOCATION,
+          JSON.stringify(userLocObj),
+        );
+      }
+    });
+  };
 
-const toggleDropdown = ({
-  setOpenDropdown,
-  openDropdown,
-}) => dropdownSlug => () =>
-  setOpenDropdown(dropdownSlug === openDropdown ? false : dropdownSlug);
+const toggleDropdown =
+  ({ setOpenDropdown, openDropdown }) =>
+  dropdownSlug =>
+  () =>
+    setOpenDropdown(dropdownSlug === openDropdown ? false : dropdownSlug);
 
-const hasTechBarDisplayRole = ({ profile }) => techBarName =>
-  Utils.isMemberOf(profile, `Role::Tech Bar Display::${techBarName}`);
+const hasTechBarDisplayRole =
+  ({ profile }) =>
+  techBarName =>
+    Utils.isMemberOf(profile, `Role::Tech Bar Display::${techBarName}`);
 
 export const Home = compose(
   withState('userLocation', 'setUserLocation', () => {
@@ -465,10 +466,7 @@ export const Home = compose(
     } catch (e) {}
     return null;
   }),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('currentTechBar', 'setCurrentTechBar', ({ techBars }) => {
     const techBarId = sessionStorage.getItem(SESSION_ITEM_CURRENT_TECH_BAR);
     return techBarId ? techBars.find(t => t.id === techBarId) : null;

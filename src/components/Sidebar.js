@@ -152,14 +152,16 @@ export const mapStateToProps = state => ({
   profile: state.app.profile,
 });
 
-const toggleDropdown = ({
-  setOpenDropdown,
-  openDropdown,
-}) => dropdownSlug => () =>
-  setOpenDropdown(dropdownSlug === openDropdown ? false : dropdownSlug);
+const toggleDropdown =
+  ({ setOpenDropdown, openDropdown }) =>
+  dropdownSlug =>
+  () =>
+    setOpenDropdown(dropdownSlug === openDropdown ? false : dropdownSlug);
 
-const hasTechBarDisplayRole = ({ profile }) => techBarName =>
-  Utils.isMemberOf(profile, `Role::Tech Bar Display::${techBarName}`);
+const hasTechBarDisplayRole =
+  ({ profile }) =>
+  techBarName =>
+    Utils.isMemberOf(profile, `Role::Tech Bar Display::${techBarName}`);
 
 export const Sidebar = compose(
   connect(mapStateToProps),

@@ -294,51 +294,61 @@ export const mapDispatchToProps = {
   fetchDisplayTeamRequest: actions.fetchDisplayTeamRequest,
 };
 
-const toggleDropdown = ({
-  setOpenDropdown,
-  openDropdown,
-}) => dropdownSlug => () =>
-  setOpenDropdown(dropdownSlug === openDropdown ? false : dropdownSlug);
+const toggleDropdown =
+  ({ setOpenDropdown, openDropdown }) =>
+  dropdownSlug =>
+  () =>
+    setOpenDropdown(dropdownSlug === openDropdown ? false : dropdownSlug);
 
-const handleAdd = ({ setOpenModal }) => () => setOpenModal(true);
-const toggleModal = ({ setOpenModal, setUsernames, setUser }) => () => {
-  setOpenModal(false);
-  setUsernames([]);
-  setUser(null);
-};
-const processAdd = ({
-  addDisplayTeamUser,
-  createUserAsDisplayTeamUser,
-  setOpenModal,
-  techBarName,
-  usernames,
-  setUsernames,
-  user,
-  setUser,
-}) => () => {
-  user
-    ? createUserAsDisplayTeamUser({ user, techBarName })
-    : addDisplayTeamUser({ usernames, techBarName });
-  setOpenModal(false);
-  setUsernames([]);
-  setUser(null);
-};
-const handleRemove = ({ setOpenConfirm }) => id => () => setOpenConfirm(id);
-const toggleConfirm = ({ setOpenConfirm }) => () => setOpenConfirm(false);
-const processRemove = ({
-  removeDisplayTeamUser,
-  setOpenConfirm,
-  techBarName,
-}) => username => () => {
-  removeDisplayTeamUser({ username, techBarName });
-  setOpenConfirm(false);
-};
+const handleAdd =
+  ({ setOpenModal }) =>
+  () =>
+    setOpenModal(true);
+const toggleModal =
+  ({ setOpenModal, setUsernames, setUser }) =>
+  () => {
+    setOpenModal(false);
+    setUsernames([]);
+    setUser(null);
+  };
+const processAdd =
+  ({
+    addDisplayTeamUser,
+    createUserAsDisplayTeamUser,
+    setOpenModal,
+    techBarName,
+    usernames,
+    setUsernames,
+    user,
+    setUser,
+  }) =>
+  () => {
+    user
+      ? createUserAsDisplayTeamUser({ user, techBarName })
+      : addDisplayTeamUser({ usernames, techBarName });
+    setOpenModal(false);
+    setUsernames([]);
+    setUser(null);
+  };
+const handleRemove =
+  ({ setOpenConfirm }) =>
+  id =>
+  () =>
+    setOpenConfirm(id);
+const toggleConfirm =
+  ({ setOpenConfirm }) =>
+  () =>
+    setOpenConfirm(false);
+const processRemove =
+  ({ removeDisplayTeamUser, setOpenConfirm, techBarName }) =>
+  username =>
+  () => {
+    removeDisplayTeamUser({ username, techBarName });
+    setOpenConfirm(false);
+  };
 
 export const TechBarDisplayMembers = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(({ techBar }) => ({
     techBarName: techBar ? techBar.values['Name'] : '',
   })),

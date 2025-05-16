@@ -48,12 +48,9 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = {};
 
-export const Settings = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(SettingsComponent);
+export const Settings = compose(connect(mapStateToProps, mapDispatchToProps))(
+  SettingsComponent,
+);
 
 const SettingsCard = ({ path, icon, name, description }) => (
   <Card

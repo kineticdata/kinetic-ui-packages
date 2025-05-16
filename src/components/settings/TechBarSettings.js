@@ -102,10 +102,7 @@ export const mapDispatchToProps = {
 };
 
 export const TechBarSettings = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   lifecycle({
     componentDidMount() {
       // this.props.fetchAppDataRequest();

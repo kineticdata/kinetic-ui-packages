@@ -129,10 +129,7 @@ export const mapDispatchToProps = {
 };
 
 export const Past = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   lifecycle({
     componentDidMount() {
       this.props.fetchPastAppointmentsRequest();
