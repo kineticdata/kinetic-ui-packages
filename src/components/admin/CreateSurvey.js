@@ -183,42 +183,40 @@ const CreateSurveyComponent = ({
   </div>
 );
 
-const handleSave = ({
-  createForm,
-  fetchAppDataRequest,
-  newForm,
-  push,
-  setCreating,
-  kapp,
-}) => () => () => {
-  setCreating(true);
-  createForm({
-    kappSlug: kapp.slug,
-    form: newForm,
-    callback: () => {
-      fetchAppDataRequest();
-      push(`${newForm.slug}/settings`);
-    },
-  });
-};
+const handleSave =
+  ({ createForm, fetchAppDataRequest, newForm, push, setCreating, kapp }) =>
+  () =>
+  () => {
+    setCreating(true);
+    createForm({
+      kappSlug: kapp.slug,
+      form: newForm,
+      callback: () => {
+        fetchAppDataRequest();
+        push(`${newForm.slug}/settings`);
+      },
+    });
+  };
 
-const handleNameChange = ({ setNewForm, newForm }) => value => {
-  const slug = value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-');
-  if (
-    newForm.slug === '' ||
-    slug.includes(newForm.slug) ||
-    newForm.slug.includes(slug)
-  ) {
-    const updatedForm = newForm.set('name', value).set('slug', slug);
-    setNewForm(updatedForm);
-  } else {
-    setNewForm(newForm.set('name', value));
-  }
-};
+const handleNameChange =
+  ({ setNewForm, newForm }) =>
+  value => {
+    const slug = value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-');
+    if (
+      newForm.slug === '' ||
+      slug.includes(newForm.slug) ||
+      newForm.slug.includes(slug)
+    ) {
+      const updatedForm = newForm.set('name', value).set('slug', slug);
+      setNewForm(updatedForm);
+    } else {
+      setNewForm(newForm.set('name', value));
+    }
+  };
 
 export const mapStateToProps = state => ({
   kapp: state.app.kapp,
@@ -234,10 +232,7 @@ export const mapDispatchToProps = {
 };
 
 export const CreateSurvey = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('newForm', 'setNewForm', Survey()),
   withState('creating', 'setCreating', false),
   withState('asideOpen', 'toggleAsideOpen', false),

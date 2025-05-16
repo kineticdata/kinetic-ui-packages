@@ -6,7 +6,7 @@ import { watchSurveys } from './sagas/surveys';
 import { watchSurveyApp } from './sagas/surveyApp';
 import { watchUsers } from './sagas/users';
 
-export default function*() {
+export default function* () {
   yield all([
     watchApp(),
     watchNotifications(),

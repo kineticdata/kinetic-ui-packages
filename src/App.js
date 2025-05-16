@@ -82,10 +82,7 @@ const mapDispatchToProps = {
 };
 
 const enhance = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   lifecycle({
     componentDidMount() {
       this.props.fetchAppDataRequest();
@@ -139,10 +136,7 @@ const mapStateToPropsPublic = state => ({
 });
 
 const enhancePublic = compose(
-  connect(
-    mapStateToPropsPublic,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToPropsPublic, mapDispatchToProps),
   lifecycle({
     componentDidMount() {
       this.props.fetchAppDataRequest();

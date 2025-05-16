@@ -203,10 +203,7 @@ const mapDispatchToProps = {
 };
 
 export const SubmissionDetails = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(props => ({
     form: props.forms && props.forms.find(form => form.slug === props.slug),
   })),

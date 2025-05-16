@@ -15,11 +15,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
 
 const sagaMiddlware = createSagaMiddleware();
 
-const {
-  createReduxHistory,
-  routerMiddleware,
-  routerReducer,
-} = createReduxHistoryContext({ history });
+const { createReduxHistory, routerMiddleware, routerReducer } =
+  createReduxHistoryContext({ history });
 
 export const store = createStore(
   combineReducers({

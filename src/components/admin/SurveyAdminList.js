@@ -34,37 +34,37 @@ import { FormStatusBadgeCell } from '../shared/StatusBadge';
 
 const tableKey = 'survey-list';
 
-const ActionsCell = ({ deleteForm, toggleModal, createTestSubmission }) => ({
-  row,
-}) => (
-  <td className="text-right" style={{ width: '1%' }}>
-    <UncontrolledDropdown className="more-actions">
-      <DropdownToggle tag="button" className="btn btn-sm btn-link">
-        <span className="sr-only">More Actions</span>
-        <span className="fa fa-chevron-down fa-fw" />
-      </DropdownToggle>
-      <DropdownMenu right positionFixed>
-        <Link to={`${row.get('slug')}/submissions`} className="dropdown-item">
-          View Records
-        </Link>
-        <DropdownItem
-          onClick={() => createTestSubmission({ formSlug: row.get('slug') })}
-        >
-          Create Draft
-        </DropdownItem>
-        <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
-          Settings
-        </Link>
-        <DropdownItem onClick={() => toggleModal(row.get('slug'))}>
-          Clone
-        </DropdownItem>
-        <DropdownItem onClick={() => deleteForm(row.get('slug'))}>
-          Delete
-        </DropdownItem>
-      </DropdownMenu>
-    </UncontrolledDropdown>
-  </td>
-);
+const ActionsCell =
+  ({ deleteForm, toggleModal, createTestSubmission }) =>
+  ({ row }) => (
+    <td className="text-right" style={{ width: '1%' }}>
+      <UncontrolledDropdown className="more-actions">
+        <DropdownToggle tag="button" className="btn btn-sm btn-link">
+          <span className="sr-only">More Actions</span>
+          <span className="fa fa-chevron-down fa-fw" />
+        </DropdownToggle>
+        <DropdownMenu right positionFixed>
+          <Link to={`${row.get('slug')}/submissions`} className="dropdown-item">
+            View Records
+          </Link>
+          <DropdownItem
+            onClick={() => createTestSubmission({ formSlug: row.get('slug') })}
+          >
+            Create Draft
+          </DropdownItem>
+          <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
+            Settings
+          </Link>
+          <DropdownItem onClick={() => toggleModal(row.get('slug'))}>
+            Clone
+          </DropdownItem>
+          <DropdownItem onClick={() => deleteForm(row.get('slug'))}>
+            Delete
+          </DropdownItem>
+        </DropdownMenu>
+      </UncontrolledDropdown>
+    </td>
+  );
 
 const FormNameCell = ({ row, value }) => (
   <td>
@@ -358,10 +358,7 @@ const mapDispatchToProps = {
 };
 
 export const SurveyAdminList = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('modalOpen', 'setModalOpen', false),
   withState('filterOpen', 'setFilterOpen', false),
   withHandlers({

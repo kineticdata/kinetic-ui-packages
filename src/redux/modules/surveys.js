@@ -263,9 +263,8 @@ export const reducer = (state = State(), { type, payload }) => {
 
     case types.FETCH_FORM_REQUEST:
       return state
-        .update(
-          'form',
-          form => (form && form.slug === payload.formSlug ? form : null),
+        .update('form', form =>
+          form && form.slug === payload.formSlug ? form : null,
         )
         .set('error', null);
     case types.FETCH_FORM_SUCCESS:
@@ -274,10 +273,8 @@ export const reducer = (state = State(), { type, payload }) => {
       return state.set('error', payload).set('currentFormLoading', false);
     case types.FETCH_SUBMISSION_REQUEST:
       return state
-        .update(
-          'submission',
-          submission =>
-            submission && submission.id === payload.id ? submission : null,
+        .update('submission', submission =>
+          submission && submission.id === payload.id ? submission : null,
         )
         .set('submissionError', null);
     case types.FETCH_SUBMISSION_SUCCESS:

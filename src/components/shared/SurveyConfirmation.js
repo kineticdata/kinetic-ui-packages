@@ -54,10 +54,7 @@ export const mapDispatchToProps = {
 };
 
 const enhance = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(props => ({
     form:
       props.surveys && props.surveys.find(survey => survey.slug === props.slug),

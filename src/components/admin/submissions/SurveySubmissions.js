@@ -33,41 +33,38 @@ const TimeAgoCell = ({ value }) => (
   <td>{value ? <TimeAgo timestamp={value} /> : 'N/A'}</td>
 );
 
-const ActionsCell = ({
-  openDropdown,
-  toggleDropdown,
-  formActions,
-  callFormAction,
-}) => ({ row }) => (
-  <td>
-    <Dropdown
-      toggle={toggleDropdown(row.get('id'))}
-      isOpen={openDropdown === row.get('id')}
-    >
-      <DropdownToggle color="link" className="btn-sm">
-        <span className="fa fa-chevron-down fa-fw" />
-      </DropdownToggle>
-      <DropdownMenu right positionFixed>
-        <DropdownItem tag={Link} to={`${row.get('id')}/details`}>
-          <I18n>View</I18n>
-        </DropdownItem>
-        {formActions.map(el => (
-          <DropdownItem
-            key={el.slug}
-            onClick={() =>
-              callFormAction({
-                formSlug: el.slug,
-                surveySubmission: row.toJS(),
-              })
-            }
-          >
-            <I18n>{el.name}</I18n>
+const ActionsCell =
+  ({ openDropdown, toggleDropdown, formActions, callFormAction }) =>
+  ({ row }) => (
+    <td>
+      <Dropdown
+        toggle={toggleDropdown(row.get('id'))}
+        isOpen={openDropdown === row.get('id')}
+      >
+        <DropdownToggle color="link" className="btn-sm">
+          <span className="fa fa-chevron-down fa-fw" />
+        </DropdownToggle>
+        <DropdownMenu right positionFixed>
+          <DropdownItem tag={Link} to={`${row.get('id')}/details`}>
+            <I18n>View</I18n>
           </DropdownItem>
-        ))}
-      </DropdownMenu>
-    </Dropdown>
-  </td>
-);
+          {formActions.map(el => (
+            <DropdownItem
+              key={el.slug}
+              onClick={() =>
+                callFormAction({
+                  formSlug: el.slug,
+                  surveySubmission: row.toJS(),
+                })
+              }
+            >
+              <I18n>{el.name}</I18n>
+            </DropdownItem>
+          ))}
+        </DropdownMenu>
+      </Dropdown>
+    </td>
+  );
 
 const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   loadingMessage: 'Loading Submissions...',
@@ -279,17 +276,14 @@ const mapDispatchToProps = {
   createTestSubmission: actions.createTestSubmission,
 };
 
-const toggleDropdown = ({
-  setOpenDropdown,
-  openDropdown,
-}) => dropdownSlug => () =>
-  setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug);
+const toggleDropdown =
+  ({ setOpenDropdown, openDropdown }) =>
+  dropdownSlug =>
+  () =>
+    setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug);
 
 export const SurveySubmissions = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('openDropdown', 'setOpenDropdown', ''),
   withState('filterOpen', 'setFilterOpen', false),
   withHandlers({
