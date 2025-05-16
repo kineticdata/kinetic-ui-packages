@@ -76,32 +76,30 @@ export const ApprovalBody = ({ activity }) => {
             </dl>
           </div>
         )}
-        {data.Decision !== 'In Progress' &&
-          data.Decision && (
-            <div className="data-list-row__col">
-              <dl>
-                <dt>
-                  <span className="fa fa-fw fa-code-fork" />
-                  <I18n>Decision</I18n>
-                </dt>
-                <dd>
-                  <I18n>{data.Decision}</I18n>
-                </dd>
-              </dl>
-            </div>
-          )}
-        {data.Status === 'Denied' &&
-          data['Denial Reason'] && (
-            <div className="data-list-row__col">
-              <dl>
-                <dt>
-                  <span className="fa fa-fw fa-window-close" />
-                  <I18n>Denial Reason</I18n>
-                </dt>
-                <dd>{data['Denial Reason']}</dd>
-              </dl>
-            </div>
-          )}
+        {data.Decision !== 'In Progress' && data.Decision && (
+          <div className="data-list-row__col">
+            <dl>
+              <dt>
+                <span className="fa fa-fw fa-code-fork" />
+                <I18n>Decision</I18n>
+              </dt>
+              <dd>
+                <I18n>{data.Decision}</I18n>
+              </dd>
+            </dl>
+          </div>
+        )}
+        {data.Status === 'Denied' && data['Denial Reason'] && (
+          <div className="data-list-row__col">
+            <dl>
+              <dt>
+                <span className="fa fa-fw fa-window-close" />
+                <I18n>Denial Reason</I18n>
+              </dt>
+              <dd>{data['Denial Reason']}</dd>
+            </dl>
+          </div>
+        )}
         {data.Comments && (
           <div className="data-list-row__col">
             <dl>

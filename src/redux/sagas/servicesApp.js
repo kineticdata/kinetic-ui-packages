@@ -5,22 +5,20 @@ import { actions, types } from '../modules/servicesApp';
 export function* fetchAppDataRequestSaga() {
   const kappSlug = yield select(state => state.app.kappSlug);
 
-  const [
-    { categories, error: categoriesError },
-    { forms, error: formsError },
-  ] = yield all([
-    call(fetchCategories, {
-      kappSlug,
-      include:
-        'attributes,categorizations.form,categorizations.form.attributes[Icon],categorizations.form.attributes[Featured Color],categorizations.form.kapp',
-    }),
-    call(fetchForms, {
-      kappSlug,
-      include: 'details,categorizations,attributes,kapp',
-      q: 'category = "home-page-services" AND status = "Active"',
-      limit: 1000,
-    }),
-  ]);
+  const [{ categories, error: categoriesError }, { forms, error: formsError }] =
+    yield all([
+      call(fetchCategories, {
+        kappSlug,
+        include:
+          'attributes,categorizations.form,categorizations.form.attributes[Icon],categorizations.form.attributes[Featured Color],categorizations.form.kapp',
+      }),
+      call(fetchForms, {
+        kappSlug,
+        include: 'details,categorizations,attributes,kapp',
+        q: 'category = "home-page-services" AND status = "Active"',
+        limit: 1000,
+      }),
+    ]);
 
   if (categoriesError || formsError) {
     yield put(actions.fetchAppDataFailure(categoriesError || formsError));

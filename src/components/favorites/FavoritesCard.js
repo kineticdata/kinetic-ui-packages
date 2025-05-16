@@ -55,10 +55,7 @@ const mapDispatchToProps = {
 };
 
 export const FavoritesCard = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     handleRemoveFavorite: props => e => {
       e.preventDefault();

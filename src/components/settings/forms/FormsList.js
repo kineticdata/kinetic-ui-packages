@@ -33,41 +33,43 @@ import { actions } from '../../../redux/modules/settingsForms';
 
 const tableKey = 'services-settings-form-list';
 
-const ActionsCell = ({ deleteForm, toggleModal, processing }) => ({
-  tableOptions: { kappSlug },
-  row,
-  tableKey,
-}) => (
-  <td className="text-right" style={{ width: '1%' }}>
-    {processing.has(row.get('slug')) ? (
-      <button type="button" className="btn btn-sm btn-link" disabled="disabled">
-        <span className="fa fa-spinner fa-spin fa-fw" />
-      </button>
-    ) : (
-      <UncontrolledDropdown className="more-actions">
-        <DropdownToggle tag="button" className="btn btn-sm btn-link">
-          <span className="sr-only">More Actions</span>
-          <span className="fa fa-chevron-down fa-fw" />
-        </DropdownToggle>
-        <DropdownMenu right positionFixed>
-          <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
-            Settings
-          </Link>
-          <DropdownItem onClick={() => toggleModal(row.get('slug'))}>
-            Clone
-          </DropdownItem>
-          <DropdownItem
-            onClick={() =>
-              deleteForm(row.get('slug'), () => refetchTable(tableKey))
-            }
-          >
-            Delete
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    )}
-  </td>
-);
+const ActionsCell =
+  ({ deleteForm, toggleModal, processing }) =>
+  ({ tableOptions: { kappSlug }, row, tableKey }) => (
+    <td className="text-right" style={{ width: '1%' }}>
+      {processing.has(row.get('slug')) ? (
+        <button
+          type="button"
+          className="btn btn-sm btn-link"
+          disabled="disabled"
+        >
+          <span className="fa fa-spinner fa-spin fa-fw" />
+        </button>
+      ) : (
+        <UncontrolledDropdown className="more-actions">
+          <DropdownToggle tag="button" className="btn btn-sm btn-link">
+            <span className="sr-only">More Actions</span>
+            <span className="fa fa-chevron-down fa-fw" />
+          </DropdownToggle>
+          <DropdownMenu right positionFixed>
+            <Link to={`${row.get('slug')}/settings`} className="dropdown-item">
+              Settings
+            </Link>
+            <DropdownItem onClick={() => toggleModal(row.get('slug'))}>
+              Clone
+            </DropdownItem>
+            <DropdownItem
+              onClick={() =>
+                deleteForm(row.get('slug'), () => refetchTable(tableKey))
+              }
+            >
+              Delete
+            </DropdownItem>
+          </DropdownMenu>
+        </UncontrolledDropdown>
+      )}
+    </td>
+  );
 
 const FormNameCell = ({ row, value }) => (
   <td>
@@ -361,10 +363,7 @@ const mapDispatchToProps = {
 
 // Settings Container
 export const FormsList = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('modalOpen', 'setModalOpen', false),
   withState('filterOpen', 'setFilterOpen', false),
   withHandlers({

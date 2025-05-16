@@ -28,10 +28,7 @@ const mapDispatchToProps = {
 };
 
 export const CategorySettings = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   lifecycle({
     componentDidMount() {
       this.props.fetchCategoriesRequest();

@@ -102,22 +102,21 @@ const CatalogComponent = ({
                   </div>
                 </div>
                 <div className="cards">
-                  {homePageItems.map(
-                    item =>
-                      homePageMode === 'Categories' ? (
-                        <CategoryCard
-                          key={item.slug}
-                          category={item}
-                          path={`categories/${item.slug}`}
-                          countOfMatchingForms={item.getTotalFormCount()}
-                        />
-                      ) : (
-                        <ServiceCard
-                          key={item.slug}
-                          form={item}
-                          path={`forms/${item.slug}`}
-                        />
-                      ),
+                  {homePageItems.map(item =>
+                    homePageMode === 'Categories' ? (
+                      <CategoryCard
+                        key={item.slug}
+                        category={item}
+                        path={`categories/${item.slug}`}
+                        countOfMatchingForms={item.getTotalFormCount()}
+                      />
+                    ) : (
+                      <ServiceCard
+                        key={item.slug}
+                        form={item}
+                        path={`forms/${item.slug}`}
+                      />
+                    ),
                   )}
                 </div>
               </div>

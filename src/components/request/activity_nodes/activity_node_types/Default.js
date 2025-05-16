@@ -57,7 +57,9 @@ export const DefaultBody = ({ activity }) => {
             .map(key => ({ key, label: key, value: data[key] }))
             // filter out keys with falsey values
             .filter(({ value }) => value)
-            .map(props => <ActivityDataItem {...props} />)}
+            .map(props => (
+              <ActivityDataItem {...props} />
+            ))}
         </div>
       </div>
     </Fragment>

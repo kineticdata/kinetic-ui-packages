@@ -37,34 +37,29 @@ export const FormSettingsWrapper = compose(
       });
     },
   }),
-)(
-  ({ form, error, kapp }) =>
-    error || !form ? (
-      <div className="page-container">
-        <div className="page-panel">
-          <PageTitle
-            parts={[form && form.name, `Forms`]}
-            settings
-            breadcrumbs={[
-              { label: 'Home', to: '/' },
-              { label: `${kapp.name} Settings`, to: '../..' },
-              { label: 'Forms', to: '..' },
-            ]}
-          />
-          {error ? (
-            <ErrorMessage message={error.message} />
-          ) : (
-            <LoadingMessage />
-          )}
-        </div>
+)(({ form, error, kapp }) =>
+  error || !form ? (
+    <div className="page-container">
+      <div className="page-panel">
+        <PageTitle
+          parts={[form && form.name, `Forms`]}
+          settings
+          breadcrumbs={[
+            { label: 'Home', to: '/' },
+            { label: `${kapp.name} Settings`, to: '../..' },
+            { label: 'Forms', to: '..' },
+          ]}
+        />
+        {error ? <ErrorMessage message={error.message} /> : <LoadingMessage />}
       </div>
-    ) : (
-      <Router>
-        <FormSettings form={form} path="settings" />
-        <FormActivity form={form} path="submissions/:id" />
-        <FormSubmissions form={form} default />
-      </Router>
-    ),
+    </div>
+  ) : (
+    <Router>
+      <FormSettings form={form} path="settings" />
+      <FormActivity form={form} path="submissions/:id" />
+      <FormSubmissions form={form} default />
+    </Router>
+  ),
 );
 
 export const Settings = () => (

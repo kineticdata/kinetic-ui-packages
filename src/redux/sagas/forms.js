@@ -72,9 +72,8 @@ export function* addFavoriteFormSaga({ payload }) {
   try {
     const appActions = yield select(state => state.app.actions);
     const me = yield select(state => state.app.profile);
-    const newFavorites = me.profileAttributesMap['Services Favorites'].concat(
-      payload,
-    );
+    const newFavorites =
+      me.profileAttributesMap['Services Favorites'].concat(payload);
     const { error } = yield call(updateProfile, {
       profile: {
         profileAttributesMap: {

@@ -8,7 +8,7 @@ import { watchSubmissionCounts } from './sagas/submissionCounts';
 import { watchSettingsForms } from './sagas/settingsForms';
 import { watchSettingsCategories } from './sagas/settingsCategories';
 
-export default function*() {
+export default function* () {
   yield all([
     watchApp(),
     watchForms(),

@@ -226,189 +226,195 @@ export const FormSettingsComponent = ({
           transform: result => result.submissions,
         },
       }}
-      addFields={() => ({ form, notifications }) =>
-        form &&
-        notifications && [
-          {
-            name: 'featuredColor',
-            label: 'Featured Card Color',
-            type: 'select',
-            helpText:
-              'Color to use when displaying this form in the Featured Services section.',
-            initialValue: form.getIn(['attributesMap', 'Featured Color', 0]),
-            options: [
-              { label: 'Primary', value: 'primary' },
-              { label: 'Secondary', value: 'secondary' },
-              { label: 'Tertiary', value: 'tertiary' },
-              { label: 'Success (Green)', value: 'success' },
-              { label: 'Danger (Red)', value: 'danger' },
-              { label: 'Warning (Yellow)', value: 'warning' },
-              { label: 'Info (Blue)', value: 'info' },
-              { label: 'Dark Gray', value: 'dark' },
-              { label: 'Subtle Gray', value: 'subtle' },
-              { label: 'Light Gray', value: 'light' },
-            ],
-            visible: ({ values }) =>
-              values.get('categorizations').includes('featured-services'),
-            required: ({ values }) =>
-              values.get('categorizations').includes('featured-services'),
-          },
-          {
-            name: 'icon',
-            label: 'Display Icon',
-            type: 'text',
-            helpText: 'Font Awesome icon to display in Kapp links.',
-            initialValue: form.getIn(['attributesMap', 'Icon', 0]),
-            component: FormComponents.IconField,
-          },
-          {
-            name: 'owningTeam',
-            label: 'Owning Team',
-            type: 'team-multi',
-            helpText: 'Teams responsible for maintaining this form.',
-            initialValue: form
-              .getIn(['attributesMap', 'Owning Team'], List())
-              .map(name => ({ name }))
-              .toJS(),
-          },
-          {
-            name: 'approver',
-            label: 'Approver',
-            type: 'text',
-            helpText:
-              "Options are: Team Name, Individual Name or 'Manager'. If this is set, this form will get approvals sent to the value set here. Defaults to value at Kapp level.",
-            initialValue: form.getIn(['attributesMap', 'Approver', 0]),
-          },
-          {
-            name: 'approvalForm',
-            label: 'Approval Form',
-            type: 'form',
-            helpText:
-              'The Queue kapp form which approvals should be created in. Defaults to value at Kapp level.',
-            initialValue: form
-              .getIn(['attributesMap', 'Approval Form Slug'], List())
-              .map(slug => ({ slug }))
-              .toJS()[0],
-            search: { kappSlug: queueKappSlug },
-          },
-          {
-            name: 'notificationCreate',
-            label: 'Notification Template Name - Create',
-            type: 'select',
-            renderAttributes: { typeahead: true },
-            helpText:
-              "Name of the Notification Template to use when this form's submission is submitted. Defaults to value at Kapp level.",
-            initialValue: form.getIn([
-              'attributesMap',
-              'Notification Template Name - Create',
-              0,
-            ]),
-            options: notifications
-              ? notifications
-                  .map(notification => ({
-                    label: notification.getIn(['values', 'Name']),
-                    value: notification.getIn(['values', 'Name']),
-                    slug: notification.get('id'),
-                  }))
-                  .toJS()
-              : [],
-            component: FormComponents.NotificationField,
-          },
-          {
-            name: 'notificationComplete',
-            label: 'Notification Template Name - Complete',
-            type: 'select',
-            renderAttributes: { typeahead: true },
-            helpText:
-              "Name of the Notification Template to use when this form's submission is completed. Defaults to value at Kapp level.",
-            initialValue: form.getIn([
-              'attributesMap',
-              'Notification Template Name - Complete',
-              0,
-            ]),
-            options: notifications
-              ? notifications
-                  .map(notification => ({
-                    label: notification.getIn(['values', 'Name']),
-                    value: notification.getIn(['values', 'Name']),
-                    slug: notification.get('id'),
-                  }))
-                  .toJS()
-              : [],
-            component: FormComponents.NotificationField,
-          },
-          {
-            name: 'serviceDaysDue',
-            label: 'Service Days Due',
-            type: 'text',
-            helpText:
-              'Number of days until service is expected to be fulfilled this form. Defaults to value at Kapp level.',
-            initialValue: form.getIn(['attributesMap', 'Service Days Due', 0]),
-            component: FormComponents.IntegerField,
-          },
-          {
-            name: 'taskAssigneeTeam',
-            label: 'Task Assignee Team',
-            type: 'team',
-            helpText:
-              'Team to assign tasks to. Defaults to value at Kapp level.',
-            initialValue: form
-              .getIn(['attributesMap', 'Task Assignee Team'], List())
-              .map(name => ({ name }))
-              .toJS()[0],
-          },
-          {
-            name: 'taskForm',
-            label: 'Task Form',
-            type: 'form',
-            helpText:
-              'The Queue kapp form to use when creating a task item. Defaults to value at Kapp level.',
-            initialValue: form
-              .getIn(['attributesMap', 'Task Form Slug'], List())
-              .map(slug => ({ slug }))
-              .toJS()[0],
-            search: { kappSlug: queueKappSlug },
-          },
-          {
-            name: 'createdWorkflow',
-            label: 'Created',
-            type: 'checkbox',
-            helpText: 'If unchecked, default workflow will be used.',
-            initialValue: form
-              .getIn(['attributesMap', 'Custom Submission Workflow'], List())
-              .includes('Created'),
-            component: WorkflowField,
-          },
-          {
-            name: 'submittedWorkflow',
-            label: 'Submitted',
-            type: 'checkbox',
-            helpText: 'If unchecked, default workflow will be used.',
-            initialValue: form
-              .getIn(['attributesMap', 'Custom Submission Workflow'], List())
-              .includes('Submitted'),
-            component: WorkflowField,
-          },
-          {
-            name: 'updatedWorkflow',
-            label: 'Updated',
-            type: 'checkbox',
-            helpText: 'If unchecked, default workflow will be used.',
-            initialValue: form
-              .getIn(['attributesMap', 'Custom Submission Workflow'], List())
-              .includes('Updated'),
-            component: WorkflowField,
-          },
-          {
-            name: 'submissionTableFields',
-            label: 'Submission Table - Fields',
-            type: 'custom',
-            helpText:
-              'Select which field columns should be visible by default when displaying submissions for this form in the settings pages. Drag and drop to change the order in which the columns will appear.',
-            initialValue: buildFormConfigurationObject(form.toJS()).columns,
-            component: FieldsTableField,
-          },
-        ]}
+      addFields={() =>
+        ({ form, notifications }) =>
+          form &&
+          notifications && [
+            {
+              name: 'featuredColor',
+              label: 'Featured Card Color',
+              type: 'select',
+              helpText:
+                'Color to use when displaying this form in the Featured Services section.',
+              initialValue: form.getIn(['attributesMap', 'Featured Color', 0]),
+              options: [
+                { label: 'Primary', value: 'primary' },
+                { label: 'Secondary', value: 'secondary' },
+                { label: 'Tertiary', value: 'tertiary' },
+                { label: 'Success (Green)', value: 'success' },
+                { label: 'Danger (Red)', value: 'danger' },
+                { label: 'Warning (Yellow)', value: 'warning' },
+                { label: 'Info (Blue)', value: 'info' },
+                { label: 'Dark Gray', value: 'dark' },
+                { label: 'Subtle Gray', value: 'subtle' },
+                { label: 'Light Gray', value: 'light' },
+              ],
+              visible: ({ values }) =>
+                values.get('categorizations').includes('featured-services'),
+              required: ({ values }) =>
+                values.get('categorizations').includes('featured-services'),
+            },
+            {
+              name: 'icon',
+              label: 'Display Icon',
+              type: 'text',
+              helpText: 'Font Awesome icon to display in Kapp links.',
+              initialValue: form.getIn(['attributesMap', 'Icon', 0]),
+              component: FormComponents.IconField,
+            },
+            {
+              name: 'owningTeam',
+              label: 'Owning Team',
+              type: 'team-multi',
+              helpText: 'Teams responsible for maintaining this form.',
+              initialValue: form
+                .getIn(['attributesMap', 'Owning Team'], List())
+                .map(name => ({ name }))
+                .toJS(),
+            },
+            {
+              name: 'approver',
+              label: 'Approver',
+              type: 'text',
+              helpText:
+                "Options are: Team Name, Individual Name or 'Manager'. If this is set, this form will get approvals sent to the value set here. Defaults to value at Kapp level.",
+              initialValue: form.getIn(['attributesMap', 'Approver', 0]),
+            },
+            {
+              name: 'approvalForm',
+              label: 'Approval Form',
+              type: 'form',
+              helpText:
+                'The Queue kapp form which approvals should be created in. Defaults to value at Kapp level.',
+              initialValue: form
+                .getIn(['attributesMap', 'Approval Form Slug'], List())
+                .map(slug => ({ slug }))
+                .toJS()[0],
+              search: { kappSlug: queueKappSlug },
+            },
+            {
+              name: 'notificationCreate',
+              label: 'Notification Template Name - Create',
+              type: 'select',
+              renderAttributes: { typeahead: true },
+              helpText:
+                "Name of the Notification Template to use when this form's submission is submitted. Defaults to value at Kapp level.",
+              initialValue: form.getIn([
+                'attributesMap',
+                'Notification Template Name - Create',
+                0,
+              ]),
+              options: notifications
+                ? notifications
+                    .map(notification => ({
+                      label: notification.getIn(['values', 'Name']),
+                      value: notification.getIn(['values', 'Name']),
+                      slug: notification.get('id'),
+                    }))
+                    .toJS()
+                : [],
+              component: FormComponents.NotificationField,
+            },
+            {
+              name: 'notificationComplete',
+              label: 'Notification Template Name - Complete',
+              type: 'select',
+              renderAttributes: { typeahead: true },
+              helpText:
+                "Name of the Notification Template to use when this form's submission is completed. Defaults to value at Kapp level.",
+              initialValue: form.getIn([
+                'attributesMap',
+                'Notification Template Name - Complete',
+                0,
+              ]),
+              options: notifications
+                ? notifications
+                    .map(notification => ({
+                      label: notification.getIn(['values', 'Name']),
+                      value: notification.getIn(['values', 'Name']),
+                      slug: notification.get('id'),
+                    }))
+                    .toJS()
+                : [],
+              component: FormComponents.NotificationField,
+            },
+            {
+              name: 'serviceDaysDue',
+              label: 'Service Days Due',
+              type: 'text',
+              helpText:
+                'Number of days until service is expected to be fulfilled this form. Defaults to value at Kapp level.',
+              initialValue: form.getIn([
+                'attributesMap',
+                'Service Days Due',
+                0,
+              ]),
+              component: FormComponents.IntegerField,
+            },
+            {
+              name: 'taskAssigneeTeam',
+              label: 'Task Assignee Team',
+              type: 'team',
+              helpText:
+                'Team to assign tasks to. Defaults to value at Kapp level.',
+              initialValue: form
+                .getIn(['attributesMap', 'Task Assignee Team'], List())
+                .map(name => ({ name }))
+                .toJS()[0],
+            },
+            {
+              name: 'taskForm',
+              label: 'Task Form',
+              type: 'form',
+              helpText:
+                'The Queue kapp form to use when creating a task item. Defaults to value at Kapp level.',
+              initialValue: form
+                .getIn(['attributesMap', 'Task Form Slug'], List())
+                .map(slug => ({ slug }))
+                .toJS()[0],
+              search: { kappSlug: queueKappSlug },
+            },
+            {
+              name: 'createdWorkflow',
+              label: 'Created',
+              type: 'checkbox',
+              helpText: 'If unchecked, default workflow will be used.',
+              initialValue: form
+                .getIn(['attributesMap', 'Custom Submission Workflow'], List())
+                .includes('Created'),
+              component: WorkflowField,
+            },
+            {
+              name: 'submittedWorkflow',
+              label: 'Submitted',
+              type: 'checkbox',
+              helpText: 'If unchecked, default workflow will be used.',
+              initialValue: form
+                .getIn(['attributesMap', 'Custom Submission Workflow'], List())
+                .includes('Submitted'),
+              component: WorkflowField,
+            },
+            {
+              name: 'updatedWorkflow',
+              label: 'Updated',
+              type: 'checkbox',
+              helpText: 'If unchecked, default workflow will be used.',
+              initialValue: form
+                .getIn(['attributesMap', 'Custom Submission Workflow'], List())
+                .includes('Updated'),
+              component: WorkflowField,
+            },
+            {
+              name: 'submissionTableFields',
+              label: 'Submission Table - Fields',
+              type: 'custom',
+              helpText:
+                'Select which field columns should be visible by default when displaying submissions for this form in the settings pages. Drag and drop to change the order in which the columns will appear.',
+              initialValue: buildFormConfigurationObject(form.toJS()).columns,
+              component: FieldsTableField,
+            },
+          ]
+        }
       alterFields={{
         description: { component: FormComponents.TextAreaField },
         categorizations: {
@@ -502,10 +508,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = { fetchFormRequest: actions.fetchFormRequest };
 
 export const FormSettings = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     onSave: props => () => () => {
       props.fetchFormRequest({
