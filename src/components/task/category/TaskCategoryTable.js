@@ -2,9 +2,7 @@ import { generateTable } from '../../table/Table';
 import { fetchTaskCategories } from '../../../apis';
 import { defineFilter } from '../../../helpers';
 
-const clientSide = defineFilter(true)
-  .startsWith('name', 'name')
-  .end();
+const clientSide = defineFilter(true).startsWith('name', 'name').end();
 
 const dataSource = () => ({
   fn: fetchTaskCategories,

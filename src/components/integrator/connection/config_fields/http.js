@@ -1,52 +1,52 @@
 import { get, getIn, List, Map } from 'immutable';
 import integrationTypes from '../../integrationTypes';
 
-export const serializeHttpConnectionConfigFields = configFields => ({
-  values,
-}) => {
-  return configFields.reduce(
-    (serialization, { name, type, visible, transient }) => {
-      if (
-        // Field must not be transient
-        !transient &&
-        // Field must be visible
-        (typeof visible === 'function'
-          ? visible({ values })
-          : typeof visible === 'undefined' || !!visible)
-      ) {
-        // Set password fields to null if their toggle field is
-        // false, which means the password wasn't changed
-        if (type === 'password' && !values.get(`${name}.toggle`)) {
-          return serialization.setIn(name.split('.'), null);
-        }
-
-        // If auth type is not selected, set the auth property to null
-        if (name === 'auth.authType' && !values.get(name)) {
-          return serialization.setIn(['auth'], null);
-        }
-
-        // Set the following fields to null if they don't have a value
+export const serializeHttpConnectionConfigFields =
+  configFields =>
+  ({ values }) => {
+    return configFields.reduce(
+      (serialization, { name, type, visible, transient }) => {
         if (
-          [
-            'caCert',
-            'auth.caCert',
-            'auth.scope',
-            'auth.token.connection.caCert',
-            'auth.transform',
-          ].includes(name) &&
-          !values.get(name)
+          // Field must not be transient
+          !transient &&
+          // Field must be visible
+          (typeof visible === 'function'
+            ? visible({ values })
+            : typeof visible === 'undefined' || !!visible)
         ) {
-          return serialization.setIn(name.split('.'), null);
-        }
+          // Set password fields to null if their toggle field is
+          // false, which means the password wasn't changed
+          if (type === 'password' && !values.get(`${name}.toggle`)) {
+            return serialization.setIn(name.split('.'), null);
+          }
 
-        // Set the value into the correct structure
-        return serialization.setIn(name.split('.'), values.get(name));
-      }
-      return serialization;
-    },
-    Map(),
-  );
-};
+          // If auth type is not selected, set the auth property to null
+          if (name === 'auth.authType' && !values.get(name)) {
+            return serialization.setIn(['auth'], null);
+          }
+
+          // Set the following fields to null if they don't have a value
+          if (
+            [
+              'caCert',
+              'auth.caCert',
+              'auth.scope',
+              'auth.token.connection.caCert',
+              'auth.transform',
+            ].includes(name) &&
+            !values.get(name)
+          ) {
+            return serialization.setIn(name.split('.'), null);
+          }
+
+          // Set the value into the correct structure
+          return serialization.setIn(name.split('.'), values.get(name));
+        }
+        return serialization;
+      },
+      Map(),
+    );
+  };
 
 export const generateHttpConnectionConfigFields = config => [
   {

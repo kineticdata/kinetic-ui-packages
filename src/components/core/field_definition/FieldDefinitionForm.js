@@ -14,83 +14,90 @@ const dataSources = ({ kappSlug, name }) => ({
   },
 });
 
-const handleSubmit = ({ kappSlug, name }) => (values, { form }) => {
-  const dataType = FIELD_DATA_TYPES.find(
-    fdt => fdt.value === values.get('renderType'),
-  ).dataType;
+const handleSubmit =
+  ({ kappSlug, name }) =>
+  (values, { form }) => {
+    const dataType = FIELD_DATA_TYPES.find(
+      fdt => fdt.value === values.get('renderType'),
+    ).dataType;
 
-  const field = values.set('dataType', dataType);
-  const fields = name
-    ? form.get('fields').map(fd => (fd.get('name') === name ? field : fd))
-    : form.get('fields').push(field);
+    const field = values.set('dataType', dataType);
+    const fields = name
+      ? form.get('fields').map(fd => (fd.get('name') === name ? field : fd))
+      : form.get('fields').push(field);
 
-  return (kappSlug
-    ? updateKapp({ kapp: { fields }, kappSlug })
-    : updateSpace({ space: { fields } })
-  ).then(({ kapp, space, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the field definition';
-    }
-    return kappSlug ? kapp : space;
-  });
-};
+    return (
+      kappSlug
+        ? updateKapp({ kapp: { fields }, kappSlug })
+        : updateSpace({ space: { fields } })
+    ).then(({ kapp, space, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the field definition'
+        );
+      }
+      return kappSlug ? kapp : space;
+    });
+  };
 
-const fields = ({ name }) => ({ form, fieldDefinition }) =>
-  (!name || fieldDefinition) &&
-  form && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-      initialValue: fieldDefinition ? fieldDefinition.get('name') : '',
-    },
-    {
-      name: 'renderType',
-      label: 'Type',
-      type: 'select',
-      required: true,
-      options: FIELD_DATA_TYPES,
-      initialValue: fieldDefinition ? fieldDefinition.get('renderType') : '',
-    },
-    {
-      name: 'createdAt',
-      label: 'Created At',
-      type: 'text',
-      visible: false,
-      initialValue: fieldDefinition
-        ? fieldDefinition.get('createdAt')
-        : '2020-08-24T22:06:20.572Z',
-    },
-    {
-      name: 'createdBy',
-      label: 'Created By',
-      type: 'text',
-      visible: false,
-      initialValue: fieldDefinition
-        ? fieldDefinition.get('createdBy')
-        : 'admin',
-    },
-    {
-      name: 'updatedAt',
-      label: 'Updated At',
-      type: 'text',
-      visible: false,
-      initialValue: fieldDefinition
-        ? fieldDefinition.get('updatedAt')
-        : '2020-08-24T22:06:20.572Z',
-    },
-    {
-      name: 'updatedBy',
-      label: 'Updated By',
-      type: 'text',
-      visible: false,
-      initialValue: fieldDefinition
-        ? fieldDefinition.get('updatedBy')
-        : 'admin',
-    },
-  ];
+const fields =
+  ({ name }) =>
+  ({ form, fieldDefinition }) =>
+    (!name || fieldDefinition) &&
+    form && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        initialValue: fieldDefinition ? fieldDefinition.get('name') : '',
+      },
+      {
+        name: 'renderType',
+        label: 'Type',
+        type: 'select',
+        required: true,
+        options: FIELD_DATA_TYPES,
+        initialValue: fieldDefinition ? fieldDefinition.get('renderType') : '',
+      },
+      {
+        name: 'createdAt',
+        label: 'Created At',
+        type: 'text',
+        visible: false,
+        initialValue: fieldDefinition
+          ? fieldDefinition.get('createdAt')
+          : '2020-08-24T22:06:20.572Z',
+      },
+      {
+        name: 'createdBy',
+        label: 'Created By',
+        type: 'text',
+        visible: false,
+        initialValue: fieldDefinition
+          ? fieldDefinition.get('createdBy')
+          : 'admin',
+      },
+      {
+        name: 'updatedAt',
+        label: 'Updated At',
+        type: 'text',
+        visible: false,
+        initialValue: fieldDefinition
+          ? fieldDefinition.get('updatedAt')
+          : '2020-08-24T22:06:20.572Z',
+      },
+      {
+        name: 'updatedBy',
+        label: 'Updated By',
+        type: 'text',
+        visible: false,
+        initialValue: fieldDefinition
+          ? fieldDefinition.get('updatedBy')
+          : 'admin',
+      },
+    ];
 
 /**
  * @component

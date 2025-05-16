@@ -49,7 +49,7 @@ export {
   useSelector,
 };
 
-export const selectWaiting = function*(selector) {
+export const selectWaiting = function* (selector) {
   while (true) {
     const value = yield select(selector);
     if (value) {

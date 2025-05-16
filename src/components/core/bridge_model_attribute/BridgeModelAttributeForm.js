@@ -29,22 +29,20 @@ const dataSources = ({ modelName, attributeName }) => ({
   },
 });
 
-const handleSubmit = ({ modelName, attributeName }) => (
-  values,
-  { bridgeModel },
-) => {
-  const mappingName = bridgeModel.get('activeMappingName');
-  const name = values.get('name');
-  const structureField = values.get('mapping');
-  return (attributeName
-    ? updateBridgeModelAttribute
-    : createBridgeModelAttribute)({
-    modelName,
-    attributeName,
-    bridgeModelAttribute: { name },
-  })
-    .then(
-      result =>
+const handleSubmit =
+  ({ modelName, attributeName }) =>
+  (values, { bridgeModel }) => {
+    const mappingName = bridgeModel.get('activeMappingName');
+    const name = values.get('name');
+    const structureField = values.get('mapping');
+    return (
+      attributeName ? updateBridgeModelAttribute : createBridgeModelAttribute
+    )({
+      modelName,
+      attributeName,
+      bridgeModelAttribute: { name },
+    })
+      .then(result =>
         result.error
           ? result
           : (attributeName
@@ -55,46 +53,51 @@ const handleSubmit = ({ modelName, attributeName }) => (
               attributeName: name,
               bridgeModelAttributeMapping: { name, structureField },
             }),
-    )
-    .then(({ bridgeModelAttributeMapping, error }) => {
-      if (error) {
-        throw (error.statusCode === 400 && error.message) ||
-          'There was an error saving the attribute';
-      }
-      return bridgeModelAttributeMapping;
-    });
-};
+      )
+      .then(({ bridgeModelAttributeMapping, error }) => {
+        if (error) {
+          throw (
+            (error.statusCode === 400 && error.message) ||
+            'There was an error saving the attribute'
+          );
+        }
+        return bridgeModelAttributeMapping;
+      });
+  };
 
-const fields = ({ modelName, attributeName }) => ({ bridgeModelAttribute }) =>
-  (!attributeName || bridgeModelAttribute) && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-      initialValue: bridgeModelAttribute
-        ? bridgeModelAttribute.get('name')
-        : '',
-    },
-    {
-      name: 'mapping',
-      label: 'Mapping',
-      type: 'code',
-      language: 'js-template',
-      required: true,
-      initialValue:
-        (bridgeModelAttribute && bridgeModelAttribute.get('structureField')) ||
-        '',
-      options: [
-        {
-          label: 'fields',
-          type: 'function',
-          quoteType: 'double',
-          detail: 'Add Field Mapping',
-        },
-      ],
-    },
-  ];
+const fields =
+  ({ modelName, attributeName }) =>
+  ({ bridgeModelAttribute }) =>
+    (!attributeName || bridgeModelAttribute) && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        initialValue: bridgeModelAttribute
+          ? bridgeModelAttribute.get('name')
+          : '',
+      },
+      {
+        name: 'mapping',
+        label: 'Mapping',
+        type: 'code',
+        language: 'js-template',
+        required: true,
+        initialValue:
+          (bridgeModelAttribute &&
+            bridgeModelAttribute.get('structureField')) ||
+          '',
+        options: [
+          {
+            label: 'fields',
+            type: 'function',
+            quoteType: 'double',
+            detail: 'Add Field Mapping',
+          },
+        ],
+      },
+    ];
 
 export const BridgeModelAttributeForm = generateForm({
   formOptions: ['modelName', 'attributeName'],

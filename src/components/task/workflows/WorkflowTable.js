@@ -51,33 +51,37 @@ const filterDataSources = () => ({
     fn: fetchSources,
     params: [],
     transform: result =>
-      result.sources.filter(s => s.name !== '-').map(s => ({
-        label: s.name,
-        value: s.name,
-      })),
+      result.sources
+        .filter(s => s.name !== '-')
+        .map(s => ({
+          label: s.name,
+          value: s.name,
+        })),
   },
 });
 
-const filters = () => ({ sourceTypes }) =>
-  sourceTypes && [
-    { name: 'name', label: 'Name', type: 'text' },
-    { name: 'nameFragment', label: 'Name', type: 'text' },
-    {
-      name: 'sourceName',
-      label: 'Source Name',
-      type: 'select',
-      options: sourceTypes,
-    },
-    { name: 'sourceGroup', label: 'Source Group', type: 'text' },
-    { name: 'sourceGroupFragment', label: 'Source Group', type: 'text' },
-    { name: 'ownerEmail', label: 'Owner Email', type: 'text' },
-    {
-      name: 'status',
-      label: 'Status',
-      type: 'select',
-      options: STATUS_OPTIONS,
-    },
-  ];
+const filters =
+  () =>
+  ({ sourceTypes }) =>
+    sourceTypes && [
+      { name: 'name', label: 'Name', type: 'text' },
+      { name: 'nameFragment', label: 'Name', type: 'text' },
+      {
+        name: 'sourceName',
+        label: 'Source Name',
+        type: 'select',
+        options: sourceTypes,
+      },
+      { name: 'sourceGroup', label: 'Source Group', type: 'text' },
+      { name: 'sourceGroupFragment', label: 'Source Group', type: 'text' },
+      { name: 'ownerEmail', label: 'Owner Email', type: 'text' },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        options: STATUS_OPTIONS,
+      },
+    ];
 
 const columns = [
   {

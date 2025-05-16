@@ -43,14 +43,16 @@ const fields = () => () => [
   },
 ];
 
-const handleSubmit = ({ taskDefinition }) => values =>
-  fetchForm({
-    kappSlug: values.get('kappSlug'),
-    formSlug: values.getIn(['form', 'slug'], ''),
-    include: 'fields,kapp',
-  }).then(({ form }) =>
-    generateSubmissionCreateTaskDefinition(taskDefinition, { form }),
-  );
+const handleSubmit =
+  ({ taskDefinition }) =>
+  values =>
+    fetchForm({
+      kappSlug: values.get('kappSlug'),
+      formSlug: values.getIn(['form', 'slug'], ''),
+      include: 'fields,kapp',
+    }).then(({ form }) =>
+      generateSubmissionCreateTaskDefinition(taskDefinition, { form }),
+    );
 
 export const TaskDefinitionConfigForm = generateForm({
   formOptions: ['taskDefinition'],

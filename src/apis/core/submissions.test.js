@@ -42,12 +42,9 @@ describe('SubmissionSearch', () => {
     });
 
     test('multiple eq implies an and', () => {
-      expect(
-        search
-          .eq('val1', '1')
-          .eq('val2', '2')
-          .build().query,
-      ).toEqual('val1 = "1" AND val2 = "2"');
+      expect(search.eq('val1', '1').eq('val2', '2').build().query).toEqual(
+        'val1 = "1" AND val2 = "2"',
+      );
     });
   });
 
@@ -172,25 +169,15 @@ describe('SubmissionSearch', () => {
     });
 
     test('or separates equalities in its context with OR', () => {
-      expect(
-        search
-          .or()
-          .eq('a', '1')
-          .eq('b', '2')
-          .end()
-          .build().query,
-      ).toEqual('( a = "1" OR b = "2")');
+      expect(search.or().eq('a', '1').eq('b', '2').end().build().query).toEqual(
+        '( a = "1" OR b = "2")',
+      );
     });
 
     test('or following other equalities implies an and', () => {
       expect(
-        search
-          .eq('out', 'outer')
-          .or()
-          .eq('a', '1')
-          .eq('b', '2')
-          .end()
-          .build().query,
+        search.eq('out', 'outer').or().eq('a', '1').eq('b', '2').end().build()
+          .query,
       ).toEqual('out = "outer" AND ( a = "1" OR b = "2")');
     });
 
@@ -379,10 +366,12 @@ describe('#searchSubmissions', () => {
 
     test('does return submissions', () => {
       expect.assertions(2);
-      return searchSubmissions({ search, get: true }).then(({ submissions }) => {
-        expect(submissions).toBeDefined();
-        expect(submissions).toBeInstanceOf(Array);
-      });
+      return searchSubmissions({ search, get: true }).then(
+        ({ submissions }) => {
+          expect(submissions).toBeDefined();
+          expect(submissions).toBeInstanceOf(Array);
+        },
+      );
     });
   });
 });

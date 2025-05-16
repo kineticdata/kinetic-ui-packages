@@ -7,9 +7,7 @@ const STATUS_VALUES = ['Active', 'Handled'].map(s => ({
   label: s,
 }));
 
-const clientSide = defineFilter(true)
-  .equals('status', 'status')
-  .end();
+const clientSide = defineFilter(true).equals('status', 'status').end();
 
 const dataSource = () => ({
   fn: fetchSystemErrors,

@@ -4,63 +4,63 @@
 
 ### Parameters
 
--   `$0` **[Object][1]** 
-    -   `$0.username`  
-    -   `$0.password`  
+- `$0` **[Object][1]**
+  - `$0.username`
+  - `$0.password`
 
 ## fetchCategories
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchForms
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchFormTypes
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchKapps
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createMembership
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchSpace
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchTeams
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchUsers
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchVersion
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchLocales
 
@@ -70,7 +70,7 @@
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchActivity
 
@@ -78,38 +78,38 @@ Fetch submission activity within the system.
 
 ### Parameters
 
--   `options` **[object][1]** fetch parameters (optional, default `{}`)
-    -   `options.kappSlug` **[string][2]** slug of the kapp to scope activity to
+- `options` **[object][1]** fetch parameters (optional, default `{}`)
+  - `options.kappSlug` **[string][2]** slug of the kapp to scope activity to
 
 ## fetchWebhookJobs
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchSpaceWebhookEvents
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchBackgroundJobs
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchBridgeModels
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateSpace
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## logout
 
@@ -117,61 +117,61 @@ Fetch submission activity within the system.
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchTeam
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchAvailableLocales
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchKappWebhookEvents
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchCategory
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchFormType
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateProfile
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchUser
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## coreOauthAuthorizeUrl
 
 ### Parameters
 
--   `clientId`  
+- `clientId`
 
 ## SubmissionSearch
 
 ### Parameters
 
--   `datastore`   (optional, default `false`)
+- `datastore` (optional, default `false`)
 
 ### currentContext
 
@@ -179,7 +179,7 @@ Fetch submission activity within the system.
 
 #### Parameters
 
--   `context`  
+- `context`
 
 ### endContext
 
@@ -191,58 +191,58 @@ Fetch submission activity within the system.
 
 #### Parameters
 
--   `lvalue`  
--   `rvalue`  
+- `lvalue`
+- `rvalue`
 
 ### sw
 
 #### Parameters
 
--   `lvalue`  
--   `rvalue`  
+- `lvalue`
+- `rvalue`
 
 ### gt
 
 #### Parameters
 
--   `lvalue`  
--   `rvalue`  
+- `lvalue`
+- `rvalue`
 
 ### lt
 
 #### Parameters
 
--   `lvalue`  
--   `rvalue`  
+- `lvalue`
+- `rvalue`
 
 ### gteq
 
 #### Parameters
 
--   `lvalue`  
--   `rvalue`  
+- `lvalue`
+- `rvalue`
 
 ### lteq
 
 #### Parameters
 
--   `lvalue`  
--   `rvalue`  
+- `lvalue`
+- `rvalue`
 
 ### between
 
 #### Parameters
 
--   `lvalue`  
--   `rvalue1`  
--   `rvalue2`  
+- `lvalue`
+- `rvalue1`
+- `rvalue2`
 
 ### in
 
 #### Parameters
 
--   `lvalue`  
--   `rvalue`  
+- `lvalue`
+- `rvalue`
 
 ### or
 
@@ -254,85 +254,85 @@ Fetch submission activity within the system.
 
 #### Parameters
 
--   `timeline`  
+- `timeline`
 
 ### sortDirection
 
 #### Parameters
 
--   `direction`  
+- `direction`
 
 ### type
 
 #### Parameters
 
--   `type`  
+- `type`
 
 ### coreState
 
 #### Parameters
 
--   `coreState`  
+- `coreState`
 
 ### startDate
 
 #### Parameters
 
--   `startDate`  
+- `startDate`
 
 ### endDate
 
 #### Parameters
 
--   `endDate`  
+- `endDate`
 
 ### limit
 
 #### Parameters
 
--   `limit`  
+- `limit`
 
 ### pageToken
 
 #### Parameters
 
--   `pageToken`  
+- `pageToken`
 
 ### include
 
 #### Parameters
 
--   `include`  
+- `include`
 
 ### includes
 
 #### Parameters
 
--   `includes`  
+- `includes`
 
 ### index
 
 #### Parameters
 
--   `index`  
+- `index`
 
 ### validateOuter
 
 #### Parameters
 
--   `message`  
+- `message`
 
 ### validateDatastore
 
 #### Parameters
 
--   `datastore`   (optional, default `true`)
+- `datastore` (optional, default `true`)
 
 ### setDatastore
 
 #### Parameters
 
--   `datastore`  
+- `datastore`
 
 ### compileQueryString
 
@@ -340,31 +340,31 @@ Fetch submission activity within the system.
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchForm
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchBridgeModel
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateWebhookJob
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteMembership
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## bridgedResourceUrl
 
@@ -375,289 +375,289 @@ API doesn't support it.
 
 ### Parameters
 
--   `options` **any** properties to build the bridged resource url
-    -   `options.bridgedResourceName` **[string][2]** name of the bridged resource
-    -   `options.formSlug` **[string][2]** form slug where the bridged resource is defined
-    -   `options.kappSlug` **[string][2]** kapp slug where the bridged resource is defined
-    -   `options.attributes` **[Array][3]&lt;[string][2]>?** array of attributes (fields) to return
-    -   `options.limit` **[number][4]?** maximum number of records to retrieve
-    -   `options.offset` **[number][4]?** offset to retrieve as first record
-    -   `options.values` **[object][1]?** hash of value names to values
-    -   `options.metadata` **[object][1]?** hash of metadata names to values
--   `counting`   (optional, default `false`)
+- `options` **any** properties to build the bridged resource url
+  - `options.bridgedResourceName` **[string][2]** name of the bridged resource
+  - `options.formSlug` **[string][2]** form slug where the bridged resource is defined
+  - `options.kappSlug` **[string][2]** kapp slug where the bridged resource is defined
+  - `options.attributes` **[Array][3]&lt;[string][2]>?** array of attributes (fields) to return
+  - `options.limit` **[number][4]?** maximum number of records to retrieve
+  - `options.offset` **[number][4]?** offset to retrieve as first record
+  - `options.values` **[object][1]?** hash of value names to values
+  - `options.metadata` **[object][1]?** hash of metadata names to values
+- `counting` (optional, default `false`)
 
-Returns **[string][2]** 
+Returns **[string][2]**
 
 ## updateKapp
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchSecurityPolicyDefinitions
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchWebhooks
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateTeam
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createBridgeModel
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createFormType
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateUser
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## clearTranslationsCache
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createCategory
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateBackgroundJob
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createForm
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchSecurityPolicyDefinition
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateBridgeModel
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchWebhook
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createKapp
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchStagedTranslations
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateFormType
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchAttributeDefinitions
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createTeam
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createUser
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateCategory
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createWebhook
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createSecurityPolicyDefinition
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteKapp
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateForm
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchAttributeDefinition
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchDefaultLocale
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteBackgroundJob
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteTeam
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteUser
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateWebhook
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## setDefaultLocale
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteFormType
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateSecurityPolicyDefinition
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createAttributeDefinition
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteCategory
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteForm
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteWebhook
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchEnabledLocales
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteSecurityPolicyDefinition
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## enableLocale
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateAttributeDefinition
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## disableLocale
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteAttributeDefinition
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## convertMultipleBridgeRecords
 
 Converts the results from a Bridged Resource response that contains multiple records.
 
 A bridged resource that is configured to return multiple results separates the field names
-from the record data.  This is done to reduce the amount of bandwidth the response uses, but
+from the record data. This is done to reduce the amount of bandwidth the response uses, but
 it is not the ideal format to work with.
 
 This function combines the field names array with the records array to produce an array of
@@ -665,7 +665,7 @@ objects linking the field name to the field value for each record.
 
 ### Parameters
 
--   `responseJsonRecords` **[Object][1]** Kinetic Core bridge response parsed from JSON
+- `responseJsonRecords` **[Object][1]** Kinetic Core bridge response parsed from JSON
 
 Returns **[Array][3]&lt;[Object][1]>** Array of objects linking the field name to the field value of each record.
 
@@ -673,102 +673,99 @@ Returns **[Array][3]&lt;[Object][1]>** Array of objects linking the field name t
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchBridgedResource
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## createContext
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## countBridgedResource
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateContext
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteContext
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchContextKeys
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## updateContextKey
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## fetchTranslations
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## upsertTranslations
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## deleteTranslations
 
 ### Parameters
 
--   `options`   (optional, default `{}`)
+- `options` (optional, default `{}`)
 
 ## searchSubmissions
 
 ### Parameters
 
--   `options`  
+- `options`
 
 ## fetchSubmission
 
 ### Parameters
 
--   `options`  
+- `options`
 
 ## createSubmission
 
 ### Parameters
 
--   `options`  
+- `options`
 
 ## updateSubmission
 
 ### Parameters
 
--   `options`  
+- `options`
 
 ## deleteSubmission
 
 ### Parameters
 
--   `options`  
+- `options`
 
 [1]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-
 [2]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-
 [3]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
-
 [4]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number

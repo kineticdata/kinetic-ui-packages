@@ -1,17 +1,16 @@
 import React from 'react';
 import { Typeahead } from './Typeahead';
 
-const searchOptions = ({ options }) => (field, value, callback) =>
-  callback({
-    suggestions: options
-      .filter(attribute =>
-        attribute
-          .get('name', '')
-          .toLowerCase()
-          .includes(value.toLowerCase()),
-      )
-      .toArray(),
-  });
+const searchOptions =
+  ({ options }) =>
+  (field, value, callback) =>
+    callback({
+      suggestions: options
+        .filter(attribute =>
+          attribute.get('name', '').toLowerCase().includes(value.toLowerCase()),
+        )
+        .toArray(),
+    });
 
 const optionToValue = option => (option && option.get('name')) || '';
 

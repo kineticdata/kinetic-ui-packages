@@ -57,8 +57,10 @@ const handleSubmit = () => values =>
     space: values,
   }).then(({ space, error }) => {
     if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the space';
+      throw (
+        (error.statusCode === 400 && error.message) ||
+        'There was an error saving the space'
+      );
     }
     return space;
   });
@@ -106,345 +108,349 @@ const securityEndpoints = {
   },
 };
 
-const fields = () => ({
-  attributeDefinitions,
-  locales,
-  securityPolicyDefinitions,
-  space,
-  timezones,
-}) =>
-  space &&
-  locales &&
-  timezones &&
-  attributeDefinitions &&
-  securityPolicyDefinitions && [
-    {
-      name: 'afterLogoutPath',
-      label: 'After Logout Path',
-      type: 'text',
-      initialValue: get(space, 'afterLogoutPath'),
-      placeholder: ({ space }) => `/${get(space, 'slug')}`,
-      visible: false,
-    },
-    {
-      name: 'bundlePath',
-      label: 'Bundle Path',
-      type: 'text',
-      initialValue: get(space, 'bundlePath'),
-      visible: false,
-    },
-    {
-      name: 'defaultFormConfirmationPage',
-      label: 'Default Form Confirmation Page',
-      type: 'text',
-      initialValue: get(space, 'defaultFormConfirmationPage'),
-      placeholder: 'confirmation.jsp',
-      visible: false,
-    },
-    {
-      name: 'defaultFormDisplayPage',
-      label: 'Default Form Display Page',
-      type: 'text',
-      initialValue: get(space, 'defaultFormDisplayPage'),
-      placeholder: 'form.jsp',
-      visible: false,
-    },
-    {
-      name: 'defaultLocale',
-      label: 'Default Locale',
-      type: 'text',
-      options: ({ locales }) =>
-        locales.map(locale =>
-          Map({
-            value: locale.get('code'),
-            label: locale.get('name'),
-          }),
-        ),
-      initialValue: get(space, 'defaultLocale') || '',
-    },
-    {
-      name: 'defaultTimezone',
-      label: 'Default Timezone',
-      type: 'text',
-      options: ({ timezones }) =>
-        timezones.map(timezone =>
-          Map({
-            value: timezone.get('id'),
-            label: `${timezone.get('name')} (${timezone.get('id')})`,
-          }),
-        ),
-      initialValue: get(space, 'defaultTimezone') || '',
-    },
-    {
-      name: 'displayType',
-      label: 'Display Type',
-      type: 'select',
-      options: DISPLAY_TYPES.map(displayType => ({
-        value: displayType,
-        label: displayType,
-      })),
-      required: true,
-      initialValue: getInitialDisplayType(get(space, 'displayType')),
-      helpText:
-        'Display Types indicate how the Platform should render your bundle.',
-    },
-    {
-      name: 'displayValueJSP',
-      label: '',
-      type: 'text',
-      transient: true,
-      placeholder: 'space.jsp',
-      visible: ({ values }) => get(values, 'displayType') === 'Display Page',
-      initialValue:
-        get(space, 'displayType') === 'Display Page'
-          ? get(space, 'displayValue')
-          : '',
-    },
-    {
-      name: 'displayValueRedirect',
-      label: 'Redirect URL',
-      type: 'text',
-      transient: true,
-      visible: ({ values }) => get(values, 'displayType') === 'Redirect',
-      required: ({ values }) => get(values, 'displayType') === 'Redirect',
-      requiredMessage:
-        "This field is required, when display type is 'Redirect'",
-      initialValue:
-        get(space, 'displayType') === 'Redirect'
-          ? get(space, 'displayValue')
-          : '',
-    },
-    {
-      name: 'displayValueSPA',
-      label: 'Location',
-      type: 'text',
-      transient: true,
-      visible: ({ values }) => get(values, 'displayType') === 'Custom',
-      required: ({ values }) => get(values, 'displayType') === 'Custom',
-      initialValue:
-        get(space, 'displayType') === 'Single Page App' ||
-        get(space, 'displayType') === 'Custom'
-          ? (get(space, 'displayValue') || '')
-              .replace('spa.jsp', '')
-              .replace('?location=', '')
-          : '',
-      helpText:
-        'Enter the full URL to where your bundle is stored. This must include the index.html in the path.',
-    },
-    {
-      name: 'displayValueHost',
-      label: 'Bundle Slug',
-      type: 'text',
-      transient: true,
-      visible: ({ values }) => get(values, 'displayType') === 'Hosted',
-      required: ({ values }) => get(values, 'displayType') === 'Hosted',
-      initialValue:
-        get(space, 'displayType') === 'Hosted'
-          ? get(space, 'displayValue')
-          : '',
-      helpText:
-        'Enter the full "slug" which corresponds to the directory your hosted bundle is stored in.',
-    },
-    {
-      name: 'displayValue',
-      label: 'Display Value',
-      type: 'text',
-      visible: false,
-      initialValue: get(space, 'displayValue'),
-      serialize: ({ values }) => {
-        const displayType = values.get('displayType');
-        const displayValueSPA = values.get('displayValueSPA');
-        const displayValueHost = values.get('displayValueHost');
-        const displayValueJSP = values.get('displayValueJSP');
-        const displayValueRedirect = values.get('displayValueRedirect');
-        if (get(values, 'displayType') === 'Custom') {
-          return displayValueSPA && displayValueSPA.endsWith('index.html')
-            ? displayValueSPA
-            : `spa.jsp${displayValueSPA && '?location=' + displayValueSPA}`;
-        } else if (get(values, 'displayType') === 'Hosted') {
-          return displayValueHost;
-        } else if (get(values, 'displayType') === 'Platform') {
-          return '';
-        } else {
-          return displayType === 'Redirect'
-            ? displayValueRedirect
-            : displayValueJSP;
-        }
+const fields =
+  () =>
+  ({
+    attributeDefinitions,
+    locales,
+    securityPolicyDefinitions,
+    space,
+    timezones,
+  }) =>
+    space &&
+    locales &&
+    timezones &&
+    attributeDefinitions &&
+    securityPolicyDefinitions && [
+      {
+        name: 'afterLogoutPath',
+        label: 'After Logout Path',
+        type: 'text',
+        initialValue: get(space, 'afterLogoutPath'),
+        placeholder: ({ space }) => `/${get(space, 'slug')}`,
+        visible: false,
       },
-    },
-    {
-      name: 'loginPage',
-      label: 'Login Page',
-      type: 'text',
-      initialValue: get(space, 'loginPage'),
-      placeholder: 'login.jsp',
-      visible: false,
-    },
-    {
-      name: 'name',
-      label: 'Space Name',
-      type: 'text',
-      required: true,
-      initialValue: get(space, 'name'),
-      onChange: ({ values }, { setValue }) => {
-        if (values.get('linked')) {
-          setValue('slug', slugify(values.get('name')), false);
-        }
+      {
+        name: 'bundlePath',
+        label: 'Bundle Path',
+        type: 'text',
+        initialValue: get(space, 'bundlePath'),
+        visible: false,
       },
-      helpText:
-        'User friendly name for space, used throughout the application.',
-    },
-    {
-      name: 'resetPasswordPage',
-      label: 'Reset Password Page',
-      type: 'text',
-      initialValue: get(space, 'resetPasswordPage'),
-      placeholder: 'resetPassword.jsp',
-      visible: false,
-    },
-    {
-      name: 'oauthSigningKey',
-      label: 'OAuth Signing Key',
-      type: 'password',
-      visible: ({ values }) => values.get('changeOAuthSigningKey'),
-      transient: ({ values }) => !values.get('changeOAuthSigningKey'),
-    },
-    {
-      name: 'changeOAuthSigningKey',
-      label: 'Change OAuth Signing Key',
-      type: 'checkbox',
-      transient: true,
-      // in "new" mode we do not show this toggle field and default it to true
-      visible: ({ space }) => !!space,
-      initialValue: !space,
-      onChange: ({ values }, { setValue }) => {
-        if (values.get('oauthSigningKey') !== '') {
-          setValue('oauthSigningKey', '');
-        }
+      {
+        name: 'defaultFormConfirmationPage',
+        label: 'Default Form Confirmation Page',
+        type: 'text',
+        initialValue: get(space, 'defaultFormConfirmationPage'),
+        placeholder: 'confirmation.jsp',
+        visible: false,
       },
-    },
-    {
-      name: 'sessionInactiveLimitInSeconds',
-      label: 'Inactive Session Limit (in seconds)',
-      type: 'text',
-      initialValue: get(space, 'sessionInactiveLimitInSeconds'),
-      helpText:
-        'Users will be logged out automatically if inactive for this amount of time.',
-      serialize: ({ values }) =>
-        parseInt(values.get('sessionInactiveLimitInSeconds')),
-    },
-    {
-      name: 'sharedBundleBase',
-      label: 'Shared Bundle Base',
-      type: 'text',
-      initialValue: get(space, 'sharedBundleBase'),
-      helpText: 'Directory used as path prefix for bundles.',
-      visible: false,
-    },
-    {
-      name: 'slug',
-      label: 'Slug',
-      type: 'text',
-      required: true,
-      initialValue: get(space, 'slug'),
-      onChange: (_bindings, { setValue }) => {
-        setValue('linked', false);
+      {
+        name: 'defaultFormDisplayPage',
+        label: 'Default Form Display Page',
+        type: 'text',
+        initialValue: get(space, 'defaultFormDisplayPage'),
+        placeholder: 'form.jsp',
+        visible: false,
       },
-      helpText: 'Unique name used in the space path.',
-    },
-    {
-      name: 'linked',
-      label: 'Linked',
-      type: 'checkbox',
-      transient: true,
-      initialValue: true,
-      visible: false,
-    },
-    {
-      name: 'trustedFrameDomains',
-      label: 'Trusted Frame Domains',
-      type: 'text-multi',
-      initialValue: get(space, 'trustedFrameDomains'),
-    },
-    {
-      name: 'trustedResourceDomains',
-      label: 'Trusted Resource Domains',
-      type: 'text-multi',
-      initialValue: get(space, 'trustedResourceDomains'),
-    },
-    ...Object.entries(securityEndpoints).map(
-      ([endpointFieldName, endpoint]) => ({
-        name: endpointFieldName,
-        label: endpoint.label,
+      {
+        name: 'defaultLocale',
+        label: 'Default Locale',
+        type: 'text',
+        options: ({ locales }) =>
+          locales.map(locale =>
+            Map({
+              value: locale.get('code'),
+              label: locale.get('name'),
+            }),
+          ),
+        initialValue: get(space, 'defaultLocale') || '',
+      },
+      {
+        name: 'defaultTimezone',
+        label: 'Default Timezone',
+        type: 'text',
+        options: ({ timezones }) =>
+          timezones.map(timezone =>
+            Map({
+              value: timezone.get('id'),
+              label: `${timezone.get('name')} (${timezone.get('id')})`,
+            }),
+          ),
+        initialValue: get(space, 'defaultTimezone') || '',
+      },
+      {
+        name: 'displayType',
+        label: 'Display Type',
         type: 'select',
-        options: ({ securityPolicyDefinitions }) =>
-          securityPolicyDefinitions
-            .filter(definition =>
-              endpoint.types.includes(definition.get('type')),
-            )
-            .map(definition =>
-              Map({
-                value: definition.get('name'),
-                label: definition.get('name'),
-                type: definition.get('type'),
-              }),
-            ),
-        initialValue: space
-          ? space
-              .get('securityPolicies')
-              .find(
-                pol => pol.get('endpoint') === endpoint.endpoint,
-                null,
-                Map({}),
-              )
-              .get('name', '')
-          : '',
+        options: DISPLAY_TYPES.map(displayType => ({
+          value: displayType,
+          label: displayType,
+        })),
+        required: true,
+        initialValue: getInitialDisplayType(get(space, 'displayType')),
+        helpText:
+          'Display Types indicate how the Platform should render your bundle.',
+      },
+      {
+        name: 'displayValueJSP',
+        label: '',
+        type: 'text',
         transient: true,
-      }),
-    ),
-    {
-      name: 'securityPolicies',
-      label: 'Security Policies',
-      type: null,
-      visible: false,
-      serialize: ({ values }) =>
-        Object.entries(securityEndpoints)
-          .map(([endpointFieldName, policy]) => ({
-            endpoint: policy.endpoint,
-            name: values.get(endpointFieldName),
-          }))
-          .filter(endpoint => endpoint.name !== ''),
-      initialValue: get(space, 'securityPolicies'),
-    },
-    {
-      name: 'allowedIps',
-      label: 'Allowed IPs',
-      type: 'select',
-      options: () =>
-        fromJS([
-          { name: 'description', label: 'Description', type: 'text' },
-          { name: 'value', label: 'IP Range', type: 'text' },
-        ]),
-      visible: ({ values }) => values.get('allowedIpsEnabled', false),
-      initialValue: get(space, 'allowedIps', []),
-      serialize: ({ values }) =>
-        values.get('allowedIpsEnabled', false) ? values.get('allowedIps') : [],
-    },
-    {
-      name: 'allowedIpsEnabled',
-      label: 'Allowed IP Restrictions',
-      type: 'checkbox',
-      initialValue: get(space, 'allowedIpsEnabled', false) || false,
-    },
-    {
-      name: 'attributesMap',
-      label: 'Attributes',
-      type: 'attributes',
-      required: false,
-      options: ({ attributeDefinitions }) => attributeDefinitions,
-      initialValue: get(space, 'attributesMap'),
-    },
-  ];
+        placeholder: 'space.jsp',
+        visible: ({ values }) => get(values, 'displayType') === 'Display Page',
+        initialValue:
+          get(space, 'displayType') === 'Display Page'
+            ? get(space, 'displayValue')
+            : '',
+      },
+      {
+        name: 'displayValueRedirect',
+        label: 'Redirect URL',
+        type: 'text',
+        transient: true,
+        visible: ({ values }) => get(values, 'displayType') === 'Redirect',
+        required: ({ values }) => get(values, 'displayType') === 'Redirect',
+        requiredMessage:
+          "This field is required, when display type is 'Redirect'",
+        initialValue:
+          get(space, 'displayType') === 'Redirect'
+            ? get(space, 'displayValue')
+            : '',
+      },
+      {
+        name: 'displayValueSPA',
+        label: 'Location',
+        type: 'text',
+        transient: true,
+        visible: ({ values }) => get(values, 'displayType') === 'Custom',
+        required: ({ values }) => get(values, 'displayType') === 'Custom',
+        initialValue:
+          get(space, 'displayType') === 'Single Page App' ||
+          get(space, 'displayType') === 'Custom'
+            ? (get(space, 'displayValue') || '')
+                .replace('spa.jsp', '')
+                .replace('?location=', '')
+            : '',
+        helpText:
+          'Enter the full URL to where your bundle is stored. This must include the index.html in the path.',
+      },
+      {
+        name: 'displayValueHost',
+        label: 'Bundle Slug',
+        type: 'text',
+        transient: true,
+        visible: ({ values }) => get(values, 'displayType') === 'Hosted',
+        required: ({ values }) => get(values, 'displayType') === 'Hosted',
+        initialValue:
+          get(space, 'displayType') === 'Hosted'
+            ? get(space, 'displayValue')
+            : '',
+        helpText:
+          'Enter the full "slug" which corresponds to the directory your hosted bundle is stored in.',
+      },
+      {
+        name: 'displayValue',
+        label: 'Display Value',
+        type: 'text',
+        visible: false,
+        initialValue: get(space, 'displayValue'),
+        serialize: ({ values }) => {
+          const displayType = values.get('displayType');
+          const displayValueSPA = values.get('displayValueSPA');
+          const displayValueHost = values.get('displayValueHost');
+          const displayValueJSP = values.get('displayValueJSP');
+          const displayValueRedirect = values.get('displayValueRedirect');
+          if (get(values, 'displayType') === 'Custom') {
+            return displayValueSPA && displayValueSPA.endsWith('index.html')
+              ? displayValueSPA
+              : `spa.jsp${displayValueSPA && '?location=' + displayValueSPA}`;
+          } else if (get(values, 'displayType') === 'Hosted') {
+            return displayValueHost;
+          } else if (get(values, 'displayType') === 'Platform') {
+            return '';
+          } else {
+            return displayType === 'Redirect'
+              ? displayValueRedirect
+              : displayValueJSP;
+          }
+        },
+      },
+      {
+        name: 'loginPage',
+        label: 'Login Page',
+        type: 'text',
+        initialValue: get(space, 'loginPage'),
+        placeholder: 'login.jsp',
+        visible: false,
+      },
+      {
+        name: 'name',
+        label: 'Space Name',
+        type: 'text',
+        required: true,
+        initialValue: get(space, 'name'),
+        onChange: ({ values }, { setValue }) => {
+          if (values.get('linked')) {
+            setValue('slug', slugify(values.get('name')), false);
+          }
+        },
+        helpText:
+          'User friendly name for space, used throughout the application.',
+      },
+      {
+        name: 'resetPasswordPage',
+        label: 'Reset Password Page',
+        type: 'text',
+        initialValue: get(space, 'resetPasswordPage'),
+        placeholder: 'resetPassword.jsp',
+        visible: false,
+      },
+      {
+        name: 'oauthSigningKey',
+        label: 'OAuth Signing Key',
+        type: 'password',
+        visible: ({ values }) => values.get('changeOAuthSigningKey'),
+        transient: ({ values }) => !values.get('changeOAuthSigningKey'),
+      },
+      {
+        name: 'changeOAuthSigningKey',
+        label: 'Change OAuth Signing Key',
+        type: 'checkbox',
+        transient: true,
+        // in "new" mode we do not show this toggle field and default it to true
+        visible: ({ space }) => !!space,
+        initialValue: !space,
+        onChange: ({ values }, { setValue }) => {
+          if (values.get('oauthSigningKey') !== '') {
+            setValue('oauthSigningKey', '');
+          }
+        },
+      },
+      {
+        name: 'sessionInactiveLimitInSeconds',
+        label: 'Inactive Session Limit (in seconds)',
+        type: 'text',
+        initialValue: get(space, 'sessionInactiveLimitInSeconds'),
+        helpText:
+          'Users will be logged out automatically if inactive for this amount of time.',
+        serialize: ({ values }) =>
+          parseInt(values.get('sessionInactiveLimitInSeconds')),
+      },
+      {
+        name: 'sharedBundleBase',
+        label: 'Shared Bundle Base',
+        type: 'text',
+        initialValue: get(space, 'sharedBundleBase'),
+        helpText: 'Directory used as path prefix for bundles.',
+        visible: false,
+      },
+      {
+        name: 'slug',
+        label: 'Slug',
+        type: 'text',
+        required: true,
+        initialValue: get(space, 'slug'),
+        onChange: (_bindings, { setValue }) => {
+          setValue('linked', false);
+        },
+        helpText: 'Unique name used in the space path.',
+      },
+      {
+        name: 'linked',
+        label: 'Linked',
+        type: 'checkbox',
+        transient: true,
+        initialValue: true,
+        visible: false,
+      },
+      {
+        name: 'trustedFrameDomains',
+        label: 'Trusted Frame Domains',
+        type: 'text-multi',
+        initialValue: get(space, 'trustedFrameDomains'),
+      },
+      {
+        name: 'trustedResourceDomains',
+        label: 'Trusted Resource Domains',
+        type: 'text-multi',
+        initialValue: get(space, 'trustedResourceDomains'),
+      },
+      ...Object.entries(securityEndpoints).map(
+        ([endpointFieldName, endpoint]) => ({
+          name: endpointFieldName,
+          label: endpoint.label,
+          type: 'select',
+          options: ({ securityPolicyDefinitions }) =>
+            securityPolicyDefinitions
+              .filter(definition =>
+                endpoint.types.includes(definition.get('type')),
+              )
+              .map(definition =>
+                Map({
+                  value: definition.get('name'),
+                  label: definition.get('name'),
+                  type: definition.get('type'),
+                }),
+              ),
+          initialValue: space
+            ? space
+                .get('securityPolicies')
+                .find(
+                  pol => pol.get('endpoint') === endpoint.endpoint,
+                  null,
+                  Map({}),
+                )
+                .get('name', '')
+            : '',
+          transient: true,
+        }),
+      ),
+      {
+        name: 'securityPolicies',
+        label: 'Security Policies',
+        type: null,
+        visible: false,
+        serialize: ({ values }) =>
+          Object.entries(securityEndpoints)
+            .map(([endpointFieldName, policy]) => ({
+              endpoint: policy.endpoint,
+              name: values.get(endpointFieldName),
+            }))
+            .filter(endpoint => endpoint.name !== ''),
+        initialValue: get(space, 'securityPolicies'),
+      },
+      {
+        name: 'allowedIps',
+        label: 'Allowed IPs',
+        type: 'select',
+        options: () =>
+          fromJS([
+            { name: 'description', label: 'Description', type: 'text' },
+            { name: 'value', label: 'IP Range', type: 'text' },
+          ]),
+        visible: ({ values }) => values.get('allowedIpsEnabled', false),
+        initialValue: get(space, 'allowedIps', []),
+        serialize: ({ values }) =>
+          values.get('allowedIpsEnabled', false)
+            ? values.get('allowedIps')
+            : [],
+      },
+      {
+        name: 'allowedIpsEnabled',
+        label: 'Allowed IP Restrictions',
+        type: 'checkbox',
+        initialValue: get(space, 'allowedIpsEnabled', false) || false,
+      },
+      {
+        name: 'attributesMap',
+        label: 'Attributes',
+        type: 'attributes',
+        required: false,
+        options: ({ attributeDefinitions }) => attributeDefinitions,
+        initialValue: get(space, 'attributesMap'),
+      },
+    ];
 
 export const SpaceForm = generateForm({
   formOptions: [],

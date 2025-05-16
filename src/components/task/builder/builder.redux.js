@@ -45,15 +45,10 @@ const remember = (state, treeKey) =>
     .deleteIn(['trees', treeKey, 'redoStack']);
 
 regSaga(
-  takeEvery('TREE_CONFIGURE', function*({ payload }) {
+  takeEvery('TREE_CONFIGURE', function* ({ payload }) {
     try {
-      const {
-        name,
-        sourceGroup,
-        sourceName,
-        treeKey,
-        platformSourceName,
-      } = payload;
+      const { name, sourceGroup, sourceName, treeKey, platformSourceName } =
+        payload;
       const webApiProps = getWebApiProps(payload);
       const workflowProps = getWorkflowProps(payload);
 
@@ -142,13 +137,12 @@ regSaga(
       // Find the operation ids of any integration nodes
       const operationIds =
         treeObject?.treeJson?.nodes
-          ?.map(
-            node =>
-              node.definitionId.startsWith(
-                `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
-              )
-                ? node.parameters.find(p => p.id === 'operation')?.value
-                : null,
+          ?.map(node =>
+            node.definitionId.startsWith(
+              `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
+            )
+              ? node.parameters.find(p => p.id === 'operation')?.value
+              : null,
           )
           .filter(Boolean) || [];
 
@@ -182,7 +176,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_LOAD_CONNECTIONS', function*({ payload }) {
+  takeEvery('TREE_LOAD_CONNECTIONS', function* ({ payload }) {
     try {
       const { treeKey } = payload;
 
@@ -201,7 +195,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_LOAD_OPERATIONS', function*({ payload }) {
+  takeEvery('TREE_LOAD_OPERATIONS', function* ({ payload }) {
     try {
       const { treeKey, connectionId, operationIds = [] } = payload;
 
@@ -231,19 +225,13 @@ const getPlatformItemSlugs = platformItem =>
       : {};
 
 regSaga(
-  takeEvery('TREE_SAVE', function*({ payload }) {
+  takeEvery('TREE_SAVE', function* ({ payload }) {
     try {
       // because of the optimistic locking functionality newName / overwrite can
       // be passed as options to the builder's save function
       const { newName, onError, onSave, overwrite, treeKey } = payload;
-      const {
-        kappSlug,
-        formSlug,
-        lastSave,
-        lastWebApi,
-        tree,
-        webApi,
-      } = yield select(state => state.getIn(['trees', treeKey]));
+      const { kappSlug, formSlug, lastSave, lastWebApi, tree, webApi } =
+        yield select(state => state.getIn(['trees', treeKey]));
       const { name, sourceGroup, sourceName } = lastSave;
       // if a newName was passed we will be creating a new tree with the builder
       // contents, otherwise just an update
@@ -314,7 +302,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_SAVE_ERROR', function*({ payload: { error, onError } }) {
+  takeEvery('TREE_SAVE_ERROR', function* ({ payload: { error, onError } }) {
     try {
       if (isFunction(onError)) {
         yield call(onError, error);
@@ -326,20 +314,21 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_SAVE_SUCCESS', function*({
-    payload: { onSave, previousTree, treeKey, scope },
-  }) {
-    try {
-      if (isFunction(onSave)) {
-        const tree = yield select(state =>
-          state.getIn(['trees', treeKey, 'tree']),
-        );
-        yield call(onSave, tree, previousTree, scope);
+  takeEvery(
+    'TREE_SAVE_SUCCESS',
+    function* ({ payload: { onSave, previousTree, treeKey, scope } }) {
+      try {
+        if (isFunction(onSave)) {
+          const tree = yield select(state =>
+            state.getIn(['trees', treeKey, 'tree']),
+          );
+          yield call(onSave, tree, previousTree, scope);
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  }),
+    },
+  ),
 );
 
 regHandlers({
@@ -381,17 +370,16 @@ regHandlers({
       lastWebApi: webApi,
       loading: false,
       tasks: List(categories)
-        .map(
-          category =>
-            category.name === 'System Controls'
-              ? {
-                  ...category,
-                  handlers: [
-                    ...category.handlers,
-                    tree ? treeReturnTask(tree) : null,
-                  ].filter(Boolean),
-                }
-              : category,
+        .map(category =>
+          category.name === 'System Controls'
+            ? {
+                ...category,
+                handlers: [
+                  ...category.handlers,
+                  tree ? treeReturnTask(tree) : null,
+                ].filter(Boolean),
+              }
+            : category,
         )
         .flatMap(category => [...category.handlers, ...category.trees])
         .sortBy(task => task.name)
@@ -616,13 +604,12 @@ const synchronizeRoutineDefinition = treeBuilderState => {
   const { tree } = treeBuilderState;
   const { definitionId, inputs, outputs } = tree;
   return treeBuilderState.update('tasks', tasks =>
-    tasks.map(
-      (task, taskDefinitionId) =>
-        definitionId === taskDefinitionId
-          ? { ...task, inputs: inputs.toJS(), outputs: outputs.toJS() }
-          : taskDefinitionId === 'system_tree_return_v1'
-            ? treeReturnTask(tree)
-            : task,
+    tasks.map((task, taskDefinitionId) =>
+      definitionId === taskDefinitionId
+        ? { ...task, inputs: inputs.toJS(), outputs: outputs.toJS() }
+        : taskDefinitionId === 'system_tree_return_v1'
+          ? treeReturnTask(tree)
+          : task,
     ),
   );
 };

@@ -114,38 +114,40 @@ const filterDataSources = ({ kappSlug, formSlug }) => ({
   },
 });
 
-const filters = ({ kappSlug, formSlug }) => ({ coreStateOptions }) =>
-  coreStateOptions && [
-    { label: 'Start Date', name: 'startDate', type: 'date' },
-    { label: 'End Date', name: 'endDate', type: 'date' },
-    {
-      label: 'Handle',
-      name: 'handle',
-      pattern: /[A-F0-9]{6}/,
-      patternMessage:
-        'Handles only contain characters A-F and 0-9, and are exactly 6 characters long',
-      type: 'text',
-    },
-    !formSlug && {
-      label: 'Form',
-      name: 'form',
-      type: 'form',
-      search: { kappSlug },
-    },
-    { label: 'Submitted By', name: 'submittedBy', type: 'user' },
-    {
-      label: 'State',
-      name: 'coreState',
-      type: 'select',
-      options: coreStateOptions,
-    },
-    {
-      label: 'Values',
-      name: 'values',
-      type: 'map',
-      options: ({ fieldOptions }) => fieldOptions,
-    },
-  ];
+const filters =
+  ({ kappSlug, formSlug }) =>
+  ({ coreStateOptions }) =>
+    coreStateOptions && [
+      { label: 'Start Date', name: 'startDate', type: 'date' },
+      { label: 'End Date', name: 'endDate', type: 'date' },
+      {
+        label: 'Handle',
+        name: 'handle',
+        pattern: /[A-F0-9]{6}/,
+        patternMessage:
+          'Handles only contain characters A-F and 0-9, and are exactly 6 characters long',
+        type: 'text',
+      },
+      !formSlug && {
+        label: 'Form',
+        name: 'form',
+        type: 'form',
+        search: { kappSlug },
+      },
+      { label: 'Submitted By', name: 'submittedBy', type: 'user' },
+      {
+        label: 'State',
+        name: 'coreState',
+        type: 'select',
+        options: coreStateOptions,
+      },
+      {
+        label: 'Values',
+        name: 'values',
+        type: 'map',
+        options: ({ fieldOptions }) => fieldOptions,
+      },
+    ];
 
 const columns = [
   {

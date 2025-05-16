@@ -32,57 +32,47 @@ const prepareOptions = options =>
   Map.isMap(options)
     ? options
     : options
-        .flatMap(
-          opt =>
-            !opt.get('siblings') || opt.get('siblings').isEmpty()
-              ? List([opt])
-              : opt
-                  .get('siblings')
-                  .map(sib =>
-                    opt.update(
-                      'label',
-                      label => `${label}:${sib.get('label')}`,
-                    ),
-                  ),
+        .flatMap(opt =>
+          !opt.get('siblings') || opt.get('siblings').isEmpty()
+            ? List([opt])
+            : opt
+                .get('siblings')
+                .map(sib =>
+                  opt.update('label', label => `${label}:${sib.get('label')}`),
+                ),
         )
-        .flatMap(
-          opt =>
-            !opt.get('type') ||
-            opt.get('type') === 'constant' ||
-            !opt.get('children') ||
-            opt.get('children').isEmpty()
-              ? List([opt])
-              : opt
-                  .get('children')
-                  .flatMap(
-                    child =>
-                      !fromJS(child).get('siblings') ||
-                      fromJS(child)
+        .flatMap(opt =>
+          !opt.get('type') ||
+          opt.get('type') === 'constant' ||
+          !opt.get('children') ||
+          opt.get('children').isEmpty()
+            ? List([opt])
+            : opt
+                .get('children')
+                .flatMap(child =>
+                  !fromJS(child).get('siblings') ||
+                  fromJS(child).get('siblings').isEmpty()
+                    ? List([child])
+                    : fromJS(child)
                         .get('siblings')
-                        .isEmpty()
-                        ? List([child])
-                        : fromJS(child)
-                            .get('siblings')
-                            .map(sib =>
-                              child.update(
-                                'label',
-                                label => `${label}:${sib.get('label')}`,
-                              ),
-                            ),
-                  )
-                  .map(child =>
-                    fromJS(child).update(
-                      'label',
-                      label =>
-                        opt.get('type') === 'function'
-                          ? `${opt.get('label')}('${label}')`
-                          : opt.get('type') === 'object'
-                            ? `${opt.get('label')}['${label}']`
-                            : opt.get('type') === 'dot-object'
-                              ? `${opt.get('label')}.${label}`
-                              : opt.get('label'),
-                    ),
+                        .map(sib =>
+                          child.update(
+                            'label',
+                            label => `${label}:${sib.get('label')}`,
+                          ),
+                        ),
+                )
+                .map(child =>
+                  fromJS(child).update('label', label =>
+                    opt.get('type') === 'function'
+                      ? `${opt.get('label')}('${label}')`
+                      : opt.get('type') === 'object'
+                        ? `${opt.get('label')}['${label}']`
+                        : opt.get('type') === 'dot-object'
+                          ? `${opt.get('label')}.${label}`
+                          : opt.get('label'),
                   ),
+                ),
         )
         .sortBy(opt => opt.get('label'))
         .toOrderedMap()

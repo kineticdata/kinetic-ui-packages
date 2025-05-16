@@ -3,20 +3,24 @@ import 'prismjs/components/prism-markup-templating.js';
 import 'prismjs/components/prism-ruby.js';
 import { isArray, isString, isUndefined } from 'lodash-es';
 
-const processToken = (...parentTypes) => token => {
-  if (isString(token)) {
-    return [[token, ...parentTypes]];
-  } else if (isString(token.content)) {
-    return isUndefined(token.type)
-      ? [[token.content, ...parentTypes]]
-      : [[token.content, token.type, ...parentTypes]];
-  } else if (isArray(token.content)) {
-    return token.content.flatMap(processToken(token.type, ...parentTypes));
-  }
-};
+const processToken =
+  (...parentTypes) =>
+  token => {
+    if (isString(token)) {
+      return [[token, ...parentTypes]];
+    } else if (isString(token.content)) {
+      return isUndefined(token.type)
+        ? [[token.content, ...parentTypes]]
+        : [[token.content, token.type, ...parentTypes]];
+    } else if (isArray(token.content)) {
+      return token.content.flatMap(processToken(token.type, ...parentTypes));
+    }
+  };
 
-export const processCode = language => (string, ...parentTypes) =>
-  Prism.tokenize(string, language).flatMap(processToken(...parentTypes));
+export const processCode =
+  language =>
+  (string, ...parentTypes) =>
+    Prism.tokenize(string, language).flatMap(processToken(...parentTypes));
 
 export const processJavaScript = processCode(Prism.languages.javascript);
 export const processRuby = processCode(Prism.languages.ruby);

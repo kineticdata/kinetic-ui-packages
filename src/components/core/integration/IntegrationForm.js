@@ -47,18 +47,22 @@ const dataSources = ({ kappSlug, name }) => ({
   },
 });
 
-const handleSubmit = ({ kappSlug, name }) => values =>
-  (name ? updateIntegration : createIntegration)({
-    integration: values.toJS(),
-    kappSlug,
-    name,
-  }).then(({ integration, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the integration';
-    }
-    return integration;
-  });
+const handleSubmit =
+  ({ kappSlug, name }) =>
+  values =>
+    (name ? updateIntegration : createIntegration)({
+      integration: values.toJS(),
+      kappSlug,
+      name,
+    }).then(({ integration, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the integration'
+        );
+      }
+      return integration;
+    });
 
 const securityEndpoints = {
   execution: {
@@ -68,116 +72,118 @@ const securityEndpoints = {
   },
 };
 
-const fields = ({ name }) => ({ integration, connections, operations }) =>
-  (!name || integration) &&
-  connections &&
-  (!integration?.get('connectionId') || operations) && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      pattern: /^[a-z\d-]+[a-z\d\s-]*$/i,
-      patternMessage:
-        'Name can only contain alpha-numeric characters, spaces, and hyphens, and cannot start with spaces.',
-      required: true,
-      initialValue: integration ? integration.get('name') : '',
-    },
-    {
-      name: 'connectionId',
-      label: 'Connection',
-      type: 'select',
-      required: true,
-      initialValue: integration ? integration.get('connectionId') : '',
-      options: ({ connections }) =>
-        connections.map(conn =>
-          Map({
-            value: conn.get('id'),
-            label: conn.get('name'),
-            type: integrationTypes.getLabel(conn.get('type')),
-            detail: getConnectionMetadata(conn)?.optionDetail,
-          }),
-        ),
-      onChange: (bindings, { setValue }) => {
-        setValue('operationId', '');
-        setValue('inputMappings', {});
+const fields =
+  ({ name }) =>
+  ({ integration, connections, operations }) =>
+    (!name || integration) &&
+    connections &&
+    (!integration?.get('connectionId') || operations) && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        pattern: /^[a-z\d-]+[a-z\d\s-]*$/i,
+        patternMessage:
+          'Name can only contain alpha-numeric characters, spaces, and hyphens, and cannot start with spaces.',
+        required: true,
+        initialValue: integration ? integration.get('name') : '',
       },
-    },
-    {
-      name: 'operationId',
-      label: 'Operation',
-      type: 'select',
-      required: true,
-      initialValue: integration ? integration.get('operationId') : '',
-      options: ({ operations, values }) =>
-        (operations || List())
-          // Make sure we only show correct operations while waiting on data to
-          // be fetched
-          .filter(op => op.get('connectionId') === values.get('connectionId'))
-          .map(op =>
+      {
+        name: 'connectionId',
+        label: 'Connection',
+        type: 'select',
+        required: true,
+        initialValue: integration ? integration.get('connectionId') : '',
+        options: ({ connections }) =>
+          connections.map(conn =>
             Map({
-              value: op.get('id'),
-              label: op.get('name'),
-              detail: getOperationMetadata(op)?.optionDetail,
+              value: conn.get('id'),
+              label: conn.get('name'),
+              type: integrationTypes.getLabel(conn.get('type')),
+              detail: getConnectionMetadata(conn)?.optionDetail,
             }),
           ),
-      enabled: ({ values }) => !!values.get('connectionId'),
-      placeholder: ({ values }) =>
-        !values.get('connectionId') ? 'Select a connection' : undefined,
-    },
-    {
-      name: 'inputMappings',
-      label: 'Parameter Mappings',
-      type: 'map',
-      initialValue: integration ? integration.get('inputMappings') : {},
-      enabled: ({ values }) => !!values.get('operationId'),
-    },
-    ...Object.entries(securityEndpoints).map(
-      ([endpointFieldName, endpoint]) => ({
-        name: endpointFieldName,
-        label: endpoint.label,
+        onChange: (bindings, { setValue }) => {
+          setValue('operationId', '');
+          setValue('inputMappings', {});
+        },
+      },
+      {
+        name: 'operationId',
+        label: 'Operation',
         type: 'select',
-        options: ({ securityPolicyDefinitions }) =>
-          securityPolicyDefinitions
-            ? securityPolicyDefinitions
-                .filter(definition =>
-                  endpoint.types.includes(definition.get('type')),
+        required: true,
+        initialValue: integration ? integration.get('operationId') : '',
+        options: ({ operations, values }) =>
+          (operations || List())
+            // Make sure we only show correct operations while waiting on data to
+            // be fetched
+            .filter(op => op.get('connectionId') === values.get('connectionId'))
+            .map(op =>
+              Map({
+                value: op.get('id'),
+                label: op.get('name'),
+                detail: getOperationMetadata(op)?.optionDetail,
+              }),
+            ),
+        enabled: ({ values }) => !!values.get('connectionId'),
+        placeholder: ({ values }) =>
+          !values.get('connectionId') ? 'Select a connection' : undefined,
+      },
+      {
+        name: 'inputMappings',
+        label: 'Parameter Mappings',
+        type: 'map',
+        initialValue: integration ? integration.get('inputMappings') : {},
+        enabled: ({ values }) => !!values.get('operationId'),
+      },
+      ...Object.entries(securityEndpoints).map(
+        ([endpointFieldName, endpoint]) => ({
+          name: endpointFieldName,
+          label: endpoint.label,
+          type: 'select',
+          options: ({ securityPolicyDefinitions }) =>
+            securityPolicyDefinitions
+              ? securityPolicyDefinitions
+                  .filter(definition =>
+                    endpoint.types.includes(definition.get('type')),
+                  )
+                  .map(definition =>
+                    Map({
+                      value: definition.get('name'),
+                      label: definition.get('name'),
+                      type: definition.get('type'),
+                    }),
+                  )
+              : [],
+          initialValue: integration
+            ? integration
+                .get('securityPolicies')
+                .find(
+                  pol => pol.get('endpoint') === endpoint.endpoint,
+                  null,
+                  Map({}),
                 )
-                .map(definition =>
-                  Map({
-                    value: definition.get('name'),
-                    label: definition.get('name'),
-                    type: definition.get('type'),
-                  }),
-                )
-            : [],
-        initialValue: integration
-          ? integration
-              .get('securityPolicies')
-              .find(
-                pol => pol.get('endpoint') === endpoint.endpoint,
-                null,
-                Map({}),
-              )
-              .get('name', '')
-          : '',
-        transient: true,
-      }),
-    ),
-    {
-      name: 'securityPolicies',
-      label: 'Security Policies',
-      type: null,
-      visible: false,
-      serialize: ({ values }) =>
-        Object.entries(securityEndpoints)
-          .map(([endpointFieldName, policy]) => ({
-            endpoint: policy.endpoint,
-            name: values.get(endpointFieldName),
-          }))
-          .filter(endpoint => endpoint.name !== ''),
-      initialValue: integration ? integration.get('securityPolicies') : [],
-    },
-  ];
+                .get('name', '')
+            : '',
+          transient: true,
+        }),
+      ),
+      {
+        name: 'securityPolicies',
+        label: 'Security Policies',
+        type: null,
+        visible: false,
+        serialize: ({ values }) =>
+          Object.entries(securityEndpoints)
+            .map(([endpointFieldName, policy]) => ({
+              endpoint: policy.endpoint,
+              name: values.get(endpointFieldName),
+            }))
+            .filter(endpoint => endpoint.name !== ''),
+        initialValue: integration ? integration.get('securityPolicies') : [],
+      },
+    ];
 
 export const IntegrationForm = generateForm({
   formOptions: ['kappSlug', 'name'],

@@ -2,9 +2,7 @@ import { generateTable } from '../../table/Table';
 import { fetchBridgeModel } from '../../../apis';
 import { defineFilter } from '../../../helpers';
 
-const clientSide = defineFilter(true)
-  .startsWith('name', 'name')
-  .end();
+const clientSide = defineFilter(true).startsWith('name', 'name').end();
 
 // Handles bridge model api response by checking for error and also returning
 // error if active mapping is not present. If valid returns object with the

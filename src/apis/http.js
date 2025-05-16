@@ -135,11 +135,10 @@ export const formDataBuilder = (data, prefix, formData = new FormData()) =>
  *    The options object to validate.
  */
 export const validateOptions = (functionName, requiredOptions, options) => {
-  const missing = requiredOptions.filter(
-    requiredOption =>
-      Array.isArray(requiredOption)
-        ? !requiredOption.some(option => options[option])
-        : !options[requiredOption],
+  const missing = requiredOptions.filter(requiredOption =>
+    Array.isArray(requiredOption)
+      ? !requiredOption.some(option => options[option])
+      : !options[requiredOption],
   );
   if (missing.length > 0) {
     throw new Error(
@@ -150,32 +149,27 @@ export const validateOptions = (functionName, requiredOptions, options) => {
   }
 };
 
-export const apiFunction = ({
-  name,
-  method,
-  dataOption,
-  requiredOptions,
-  url,
-  transform,
-}) => (options = {}) => {
-  validateOptions(
-    name,
-    dataOption ? [...requiredOptions, dataOption] : requiredOptions,
-    options,
-  );
-  const urlPostfix = url(options);
-  return axios({
-    method,
-    url: urlPostfix.startsWith('/app')
-      ? urlPostfix
-      : bundle.apiLocation() + urlPostfix,
-    data: dataOption && options[dataOption],
-    params: paramBuilder(options),
-    headers: headerBuilder(options),
-  })
-    .then(transform)
-    .catch(handleErrors);
-};
+export const apiFunction =
+  ({ name, method, dataOption, requiredOptions, url, transform }) =>
+  (options = {}) => {
+    validateOptions(
+      name,
+      dataOption ? [...requiredOptions, dataOption] : requiredOptions,
+      options,
+    );
+    const urlPostfix = url(options);
+    return axios({
+      method,
+      url: urlPostfix.startsWith('/app')
+        ? urlPostfix
+        : bundle.apiLocation() + urlPostfix,
+      data: dataOption && options[dataOption],
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+      .then(transform)
+      .catch(handleErrors);
+  };
 
 export const apiGroup = ({ dataOption, name, plural, singular }) => ({
   [`fetch${name}s`]: apiFunction({

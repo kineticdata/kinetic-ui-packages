@@ -29,10 +29,7 @@ if (
 }
 
 export const splitTeamName = team => {
-  const [local, ...parents] = team
-    .get('name')
-    .split('::')
-    .reverse();
+  const [local, ...parents] = team.get('name').split('::').reverse();
   return [parents.reverse().join('::'), local];
 };
 
@@ -424,8 +421,10 @@ export * from './SearchBuilder';
 export const handleFormErrors = key => result => {
   const { error } = result;
   if (error) {
-    throw (error.statusCode === 400 && error.message) ||
-      'There was an error while saving.';
+    throw (
+      (error.statusCode === 400 && error.message) ||
+      'There was an error while saving.'
+    );
   }
 
   return key ? result[key] : result;

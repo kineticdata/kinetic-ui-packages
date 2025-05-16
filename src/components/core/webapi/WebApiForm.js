@@ -47,139 +47,145 @@ const dataSources = ({ kappSlug, webApi, cloneParams }) => {
   };
 };
 
-const handleSubmit = ({ slug, kappSlug, webApi }) => async (
-  values,
-  bindings,
-) => {
-  if (!webApi) {
-    const { space } = await fetchSpace({ include: 'platformComponents' });
-    const sourceName = space.platformComponents.task.config.platformSourceName;
-    const sourceGroup = kappSlug ? `WebApis > ${kappSlug}` : 'WebApis';
+const handleSubmit =
+  ({ slug, kappSlug, webApi }) =>
+  async (values, bindings) => {
+    if (!webApi) {
+      const { space } = await fetchSpace({ include: 'platformComponents' });
+      const sourceName =
+        space.platformComponents.task.config.platformSourceName;
+      const sourceGroup = kappSlug ? `WebApis > ${kappSlug}` : 'WebApis';
 
-    const { webApi, error: error1 } = slug
-      ? await updateWebApi({
-          kappSlug,
-          slug,
-          webApi: values.toJS(),
-          include: 'securityPolicies',
-        })
-      : await createWebApi({
-          kappSlug,
-          webApi: values.toJS(),
-          include: 'securityPolicies',
-        });
-    if (error1) {
-      throw (error1.statusCode === 400 && error1.message) ||
-        'There was an error saving the WebAPI';
-    }
+      const { webApi, error: error1 } = slug
+        ? await updateWebApi({
+            kappSlug,
+            slug,
+            webApi: values.toJS(),
+            include: 'securityPolicies',
+          })
+        : await createWebApi({
+            kappSlug,
+            webApi: values.toJS(),
+            include: 'securityPolicies',
+          });
+      if (error1) {
+        throw (
+          (error1.statusCode === 400 && error1.message) ||
+          'There was an error saving the WebAPI'
+        );
+      }
 
-    const { tree, error: error2 } = slug
-      ? await updateTree({
-          sourceName,
-          sourceGroup,
-          name: slug,
-          tree: { sourceName, sourceGroup, name: values.get('slug') },
-        })
-      : await createTree({
-          tree: {
-            sourceGroup,
+      const { tree, error: error2 } = slug
+        ? await updateTree({
             sourceName,
-            name: values.get('slug'),
-            treeJson: bindings.tree && bindings.tree.get('treeJson'), // used when the tree is cloned
-          },
-        });
-    if (error2) {
-      throw (error2.statusCode === 400 && error2.message) ||
-        'There was an error saving the WebAPI tree';
+            sourceGroup,
+            name: slug,
+            tree: { sourceName, sourceGroup, name: values.get('slug') },
+          })
+        : await createTree({
+            tree: {
+              sourceGroup,
+              sourceName,
+              name: values.get('slug'),
+              treeJson: bindings.tree && bindings.tree.get('treeJson'), // used when the tree is cloned
+            },
+          });
+      if (error2) {
+        throw (
+          (error2.statusCode === 400 && error2.message) ||
+          'There was an error saving the WebAPI tree'
+        );
+      }
+
+      return { tree, webApi };
+    } else {
+      return values.toObject();
     }
+  };
 
-    return { tree, webApi };
-  } else {
-    return values.toObject();
-  }
-};
-
-const fields = ({ webApi, tree }) => ({ securityPolicyDefinitions }) =>
-  securityPolicyDefinitions && [
-    {
-      name: 'slug',
-      label: 'Slug',
-      type: 'text',
-      required: true,
-      initialValue: get(webApi, 'slug') || '',
-      pattern: /^[a-z\d-]*$/,
-      patternMessage:
-        'Slug may only contain lowercase letters, numbers, or hyphens.',
-    },
-    {
-      name: 'method',
-      label: 'Method',
-      type: 'select',
-      required: true,
-      options: WEB_API_METHODS.map(el => ({
-        value: el,
-        label: el,
-      })),
-      initialValue: get(webApi, 'method') || '',
-    },
-    ...Object.entries(securityEndpoints).map(
-      ([endpointFieldName, endpoint]) => ({
-        name: endpointFieldName,
-        label: endpoint.label,
+const fields =
+  ({ webApi, tree }) =>
+  ({ securityPolicyDefinitions }) =>
+    securityPolicyDefinitions && [
+      {
+        name: 'slug',
+        label: 'Slug',
+        type: 'text',
+        required: true,
+        initialValue: get(webApi, 'slug') || '',
+        pattern: /^[a-z\d-]*$/,
+        patternMessage:
+          'Slug may only contain lowercase letters, numbers, or hyphens.',
+      },
+      {
+        name: 'method',
+        label: 'Method',
         type: 'select',
-        options: ({ securityPolicyDefinitions }) =>
-          securityPolicyDefinitions
-            ? securityPolicyDefinitions
-                .filter(definition =>
-                  endpoint.types.includes(definition.get('type')),
+        required: true,
+        options: WEB_API_METHODS.map(el => ({
+          value: el,
+          label: el,
+        })),
+        initialValue: get(webApi, 'method') || '',
+      },
+      ...Object.entries(securityEndpoints).map(
+        ([endpointFieldName, endpoint]) => ({
+          name: endpointFieldName,
+          label: endpoint.label,
+          type: 'select',
+          options: ({ securityPolicyDefinitions }) =>
+            securityPolicyDefinitions
+              ? securityPolicyDefinitions
+                  .filter(definition =>
+                    endpoint.types.includes(definition.get('type')),
+                  )
+                  .map(definition =>
+                    Map({
+                      value: definition.get('name'),
+                      label: definition.get('name'),
+                      type: definition.get('type'),
+                    }),
+                  )
+              : [],
+          initialValue: webApi
+            ? webApi
+                .get('securityPolicies')
+                .find(
+                  pol => pol.get('endpoint') === endpoint.endpoint,
+                  null,
+                  Map({}),
                 )
-                .map(definition =>
-                  Map({
-                    value: definition.get('name'),
-                    label: definition.get('name'),
-                    type: definition.get('type'),
-                  }),
-                )
-            : [],
-        initialValue: webApi
-          ? webApi
-              .get('securityPolicies')
-              .find(
-                pol => pol.get('endpoint') === endpoint.endpoint,
-                null,
-                Map({}),
-              )
-              .get('name', '')
-          : '',
-        transient: true,
-      }),
-    ),
-    {
-      name: 'securityPolicies',
-      label: 'Security Policies',
-      type: null,
-      visible: false,
-      serialize: ({ values }) =>
-        Map(securityEndpoints)
-          .map((policy, endpointFieldName) =>
-            Map({
-              endpoint: policy.endpoint,
-              name: values.get(endpointFieldName),
-            }),
-          )
-          .valueSeq()
-          .filter(policy => policy.get('name') !== '')
-          .toList(),
-      initialValue: get(webApi, 'securityPolicies'),
-    },
-    {
-      name: 'ownerEmail',
-      label: 'Process Owner Email',
-      type: 'text',
-      required: false,
-      initialValue: get(tree, 'ownerEmail') || '',
-    },
-  ];
+                .get('name', '')
+            : '',
+          transient: true,
+        }),
+      ),
+      {
+        name: 'securityPolicies',
+        label: 'Security Policies',
+        type: null,
+        visible: false,
+        serialize: ({ values }) =>
+          Map(securityEndpoints)
+            .map((policy, endpointFieldName) =>
+              Map({
+                endpoint: policy.endpoint,
+                name: values.get(endpointFieldName),
+              }),
+            )
+            .valueSeq()
+            .filter(policy => policy.get('name') !== '')
+            .toList(),
+        initialValue: get(webApi, 'securityPolicies'),
+      },
+      {
+        name: 'ownerEmail',
+        label: 'Process Owner Email',
+        type: 'text',
+        required: false,
+        initialValue: get(tree, 'ownerEmail') || '',
+      },
+    ];
 
 export const WebApiForm = generateForm({
   formOptions: ['kappSlug', 'slug', 'webApi', 'tree', 'cloneParams'],

@@ -25,24 +25,26 @@ const dataSource = ({ kappSlug }) => ({
   }),
 });
 
-const filters = ({ kappSlug }) => () => [
-  { name: 'name', label: 'Name', type: 'text' },
-  {
-    name: 'type',
-    label: 'Type',
-    type: 'select',
-    options: () =>
-      kappSlug
-        ? KAPP_SECURITY_DEFINITION_TYPES.map(el => ({
-            value: el,
-            label: el,
-          }))
-        : SPACE_SECURITY_DEFINITION_TYPES.map(el => ({
-            value: el,
-            label: el,
-          })),
-  },
-];
+const filters =
+  ({ kappSlug }) =>
+  () => [
+    { name: 'name', label: 'Name', type: 'text' },
+    {
+      name: 'type',
+      label: 'Type',
+      type: 'select',
+      options: () =>
+        kappSlug
+          ? KAPP_SECURITY_DEFINITION_TYPES.map(el => ({
+              value: el,
+              label: el,
+            }))
+          : SPACE_SECURITY_DEFINITION_TYPES.map(el => ({
+              value: el,
+              label: el,
+            })),
+    },
+  ];
 
 const columns = [
   {

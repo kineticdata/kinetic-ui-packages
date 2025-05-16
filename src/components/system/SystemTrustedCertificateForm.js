@@ -2,11 +2,13 @@ import { generateForm } from '../form/Form';
 import { createTrustedCertificate } from '../../apis/system';
 import { handleFormErrors } from '../form/Form.helpers';
 
-const handleSubmit = ({ spaceSlug }) => values =>
-  createTrustedCertificate({
-    spaceSlug,
-    ...values.toJS(),
-  }).then(handleFormErrors());
+const handleSubmit =
+  ({ spaceSlug }) =>
+  values =>
+    createTrustedCertificate({
+      spaceSlug,
+      ...values.toJS(),
+    }).then(handleFormErrors());
 
 const dataSources = () => ({});
 

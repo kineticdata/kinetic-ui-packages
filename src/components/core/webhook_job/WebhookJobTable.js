@@ -34,29 +34,31 @@ const filterDataSources = ({ kappSlug }) => ({
   },
 });
 
-const filters = () => ({ values, definitions }) =>
-  definitions && [
-    {
-      name: 'name',
-      label: 'Webhook Name',
-      type: 'select',
-      options: ({ definitions }) =>
-        definitions
-          ? List(definitions).map(definition =>
-              Map({
-                label: definition.get('name'),
-                value: definition.get('name'),
-              }),
-            )
-          : List(),
-    },
-    {
-      name: 'status',
-      label: 'Status',
-      type: 'select',
-      options: WORKFLOW_JOB_STATUSES,
-    },
-  ];
+const filters =
+  () =>
+  ({ values, definitions }) =>
+    definitions && [
+      {
+        name: 'name',
+        label: 'Webhook Name',
+        type: 'select',
+        options: ({ definitions }) =>
+          definitions
+            ? List(definitions).map(definition =>
+                Map({
+                  label: definition.get('name'),
+                  value: definition.get('name'),
+                }),
+              )
+            : List(),
+      },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        options: WORKFLOW_JOB_STATUSES,
+      },
+    ];
 
 const columns = [
   {

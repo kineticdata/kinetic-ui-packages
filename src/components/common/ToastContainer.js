@@ -18,10 +18,8 @@ export const ToastState = Record({
 regHandlers({
   // Initialize state for toasts as an OrderedMap so the order doesn't change
   INIT_TOASTS: state =>
-    state.update(
-      'toasts',
-      toasts =>
-        OrderedMap.isOrderedMap(toasts) ? toasts : OrderedMap(toasts || {}),
+    state.update('toasts', toasts =>
+      OrderedMap.isOrderedMap(toasts) ? toasts : OrderedMap(toasts || {}),
     ),
   ADD_TOAST: (state, action) =>
     state.setIn(['toasts', action.payload.toastKey], action.payload),
@@ -35,12 +33,10 @@ regHandlers({
       : state,
   REMOVE_TOAST: (state, action) => state.removeIn(['toasts', action.payload]),
   CLEAR_TOASTS: (state, action) =>
-    state.update(
-      'toasts',
-      toasts =>
-        action.payload
-          ? toasts.filter(toast => toast.containerKey !== action.payload)
-          : OrderedMap(),
+    state.update('toasts', toasts =>
+      action.payload
+        ? toasts.filter(toast => toast.containerKey !== action.payload)
+        : OrderedMap(),
     ),
 });
 
@@ -131,17 +127,14 @@ const ToastContainerComponent = ({
   toasts,
   persistentToasts,
 }) => {
-  useEffect(
-    () => {
-      dispatch('INIT_TOASTS');
-      return () => {
-        if (containerKey) {
-          dispatch('CLEAR_TOASTS', containerKey);
-        }
-      };
-    },
-    [containerKey],
-  );
+  useEffect(() => {
+    dispatch('INIT_TOASTS');
+    return () => {
+      if (containerKey) {
+        dispatch('CLEAR_TOASTS', containerKey);
+      }
+    };
+  }, [containerKey]);
 
   return (
     <ComponentConfigContext.Consumer>
@@ -190,11 +183,8 @@ const mapStateToProps = (state, props) => {
   // Get the toasts for this container
   const containerToasts = state
     .get('toasts', List())
-    .filter(
-      ({ containerKey }) =>
-        props.containerKey
-          ? containerKey === props.containerKey
-          : !containerKey,
+    .filter(({ containerKey }) =>
+      props.containerKey ? containerKey === props.containerKey : !containerKey,
     )
     .toList()
     .reverse();

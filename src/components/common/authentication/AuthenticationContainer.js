@@ -81,7 +81,7 @@ regHandlers({
   TIMEOUT: state => state.setIn(['session', 'token'], null),
 });
 
-regSaga('WATCH_SYSTEM_AUTHENTICATION', function*() {
+regSaga('WATCH_SYSTEM_AUTHENTICATION', function* () {
   yield take('LOGIN');
   const system = yield select(state =>
     state.getIn(['session', 'system'], false),
@@ -121,7 +121,7 @@ regSaga('WATCH_SYSTEM_AUTHENTICATION', function*() {
 });
 
 regSaga(
-  takeEvery('LOGIN', function*({ payload }) {
+  takeEvery('LOGIN', function* ({ payload }) {
     try {
       const system = yield select(state => state.getIn(['session', 'system']));
       const { username, password } = yield select(state => state.get('login'));
@@ -152,7 +152,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('SINGLE_SIGN_ON', function*({ payload: { callback, spaceSlug } }) {
+  takeEvery('SINGLE_SIGN_ON', function* ({ payload: { callback, spaceSlug } }) {
     try {
       const { error } = yield call(singleSignOn, spaceSlug, {
         width: 770,
@@ -176,7 +176,7 @@ regSaga(
 const SYSTEM_TOKEN = 'kd-system';
 
 regSaga(
-  takeEvery('INITIALIZE', function*({ payload: { system, skipInit } }) {
+  takeEvery('INITIALIZE', function* ({ payload: { system, skipInit } }) {
     try {
       if (system) {
         let token;
@@ -226,7 +226,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('LOGOUT_START', function*({ payload }) {
+  takeEvery('LOGOUT_START', function* ({ payload }) {
     const { callback, isSaml } = payload;
     try {
       const system = yield select(state => state.getIn(['session', 'system']));
@@ -246,7 +246,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('SET_AUTHENTICATED', function*({ payload }) {
+  takeEvery('SET_AUTHENTICATED', function* ({ payload }) {
     if (isFunction(payload.callback)) {
       yield call(payload.callback);
     }

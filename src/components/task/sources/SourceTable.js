@@ -27,16 +27,18 @@ const dataSource = () => ({
   clientSide,
 });
 
-const filters = () => ({ sourceTypes }) =>
-  sourceTypes && [
-    { name: 'name', label: 'Name', type: 'text' },
-    {
-      name: 'type',
-      label: 'Type',
-      type: 'select',
-      options: sourceTypes,
-    },
-  ];
+const filters =
+  () =>
+  ({ sourceTypes }) =>
+    sourceTypes && [
+      { name: 'name', label: 'Name', type: 'text' },
+      {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        options: sourceTypes,
+      },
+    ];
 
 const columns = [
   {

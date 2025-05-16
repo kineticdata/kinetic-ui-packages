@@ -2,9 +2,7 @@ import { generateTable } from '../../table/Table';
 import { fetchEnabledLocales } from '../../../apis';
 import { defineFilter } from '../../../helpers';
 
-const clientSide = defineFilter(true)
-  .startsWith('code', 'code')
-  .end();
+const clientSide = defineFilter(true).startsWith('code', 'code').end();
 
 const dataSource = () => ({
   fn: fetchEnabledLocales,

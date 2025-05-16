@@ -30,8 +30,7 @@ describe('securityPolicyDefinitions api', () => {
             {
               message: 'Must be an administrator.',
               name: 'Admins',
-              rule:
-                "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
+              rule: "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
               type: 'Space',
             },
             {
@@ -61,8 +60,7 @@ describe('securityPolicyDefinitions api', () => {
           {
             message: 'Must be an administrator.',
             name: 'Admins',
-            rule:
-              "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
+            rule: "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
             type: 'Space',
           },
           {
@@ -89,8 +87,7 @@ describe('securityPolicyDefinitions api', () => {
             {
               message: 'Must be an administrator.',
               name: 'Admins',
-              rule:
-                "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
+              rule: "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
               type: 'Kapp',
             },
             {
@@ -108,8 +105,7 @@ describe('securityPolicyDefinitions api', () => {
             {
               message: 'Must be the user that created the submission.',
               name: 'Submitter',
-              rule:
-                "(submission('anonymous') && submission('sessionToken') == identity('sessionToken'))\n|| (!submission('anonymous') && submission('createdBy') == identity('username'))",
+              rule: "(submission('anonymous') && submission('sessionToken') == identity('sessionToken'))\n|| (!submission('anonymous') && submission('createdBy') == identity('username'))",
               type: 'Submission',
             },
           ],
@@ -129,8 +125,7 @@ describe('securityPolicyDefinitions api', () => {
           {
             message: 'Must be an administrator.',
             name: 'Admins',
-            rule:
-              "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
+            rule: "/* \n * Space admins are allowed access regardless of the result of security \n * policies.  Returning 'false' denies anyone but a space access. \n */\nfalse",
             type: 'Kapp',
           },
           {
@@ -148,8 +143,7 @@ describe('securityPolicyDefinitions api', () => {
           {
             message: 'Must be the user that created the submission.',
             name: 'Submitter',
-            rule:
-              "(submission('anonymous') && submission('sessionToken') == identity('sessionToken'))\n|| (!submission('anonymous') && submission('createdBy') == identity('username'))",
+            rule: "(submission('anonymous') && submission('sessionToken') == identity('sessionToken'))\n|| (!submission('anonymous') && submission('createdBy') == identity('username'))",
             type: 'Submission',
           },
         ],

@@ -48,16 +48,18 @@ const dataSources = ({ fileResourceSlug }) => ({
   },
 });
 
-const handleSubmit = ({ fileResourceSlug }) => values =>
-  (fileResourceSlug ? updateFileResource : createFileResource)({
-    fileResourceSlug,
-    fileResource: values.toJS(),
-  }).then(
-    handleFormErrors(
-      'fileResource',
-      'There was a problem saving the File Resource.',
-    ),
-  );
+const handleSubmit =
+  ({ fileResourceSlug }) =>
+  values =>
+    (fileResourceSlug ? updateFileResource : createFileResource)({
+      fileResourceSlug,
+      fileResource: values.toJS(),
+    }).then(
+      handleFormErrors(
+        'fileResource',
+        'There was a problem saving the File Resource.',
+      ),
+    );
 
 const securityEndpoints = {
   fileAccess: {
@@ -72,85 +74,83 @@ const securityEndpoints = {
   },
 };
 
-const fields = ({ fileResourceSlug }) => ({
-  fileResource,
-  agents,
-  securityPolicyDefinitions,
-}) =>
-  (!fileResourceSlug || fileResource) &&
-  securityPolicyDefinitions &&
-  agents && [
-    {
-      name: 'slug',
-      label: 'Slug',
-      type: 'text',
-      required: true,
-      initialValue: get(fileResource, 'slug', ''),
-    },
-    {
-      name: 'agentSlug',
-      label: 'Agent Slug',
-      type: 'select',
-      required: true,
-      initialValue: get(fileResource, 'agentSlug', 'system'),
-      options: ({ agents }) => agents,
-      onChange: (_, { setValue }) => setValue('filestoreSlug', ''),
-    },
-    {
-      name: 'filestoreSlug',
-      label: 'Filestore Slug',
-      type: 'select',
-      required: true,
-      initialValue: get(fileResource, 'filestoreSlug', ''),
-      options: ({ filestores }) => filestores,
-    },
-    ...Object.entries(securityEndpoints).map(
-      ([endpointFieldName, endpoint]) => ({
-        name: endpointFieldName,
-        label: endpoint.label,
+const fields =
+  ({ fileResourceSlug }) =>
+  ({ fileResource, agents, securityPolicyDefinitions }) =>
+    (!fileResourceSlug || fileResource) &&
+    securityPolicyDefinitions &&
+    agents && [
+      {
+        name: 'slug',
+        label: 'Slug',
+        type: 'text',
+        required: true,
+        initialValue: get(fileResource, 'slug', ''),
+      },
+      {
+        name: 'agentSlug',
+        label: 'Agent Slug',
         type: 'select',
-        options: ({ securityPolicyDefinitions }) =>
-          securityPolicyDefinitions
-            ? securityPolicyDefinitions
-                .filter(definition =>
-                  endpoint.types.includes(definition.get('type')),
+        required: true,
+        initialValue: get(fileResource, 'agentSlug', 'system'),
+        options: ({ agents }) => agents,
+        onChange: (_, { setValue }) => setValue('filestoreSlug', ''),
+      },
+      {
+        name: 'filestoreSlug',
+        label: 'Filestore Slug',
+        type: 'select',
+        required: true,
+        initialValue: get(fileResource, 'filestoreSlug', ''),
+        options: ({ filestores }) => filestores,
+      },
+      ...Object.entries(securityEndpoints).map(
+        ([endpointFieldName, endpoint]) => ({
+          name: endpointFieldName,
+          label: endpoint.label,
+          type: 'select',
+          options: ({ securityPolicyDefinitions }) =>
+            securityPolicyDefinitions
+              ? securityPolicyDefinitions
+                  .filter(definition =>
+                    endpoint.types.includes(definition.get('type')),
+                  )
+                  .map(definition =>
+                    Map({
+                      value: definition.get('name'),
+                      label: definition.get('name'),
+                      type: definition.get('type'),
+                    }),
+                  )
+              : [],
+          initialValue: fileResource
+            ? fileResource
+                .get('securityPolicies')
+                .find(
+                  pol => pol.get('endpoint') === endpoint.endpoint,
+                  null,
+                  Map({}),
                 )
-                .map(definition =>
-                  Map({
-                    value: definition.get('name'),
-                    label: definition.get('name'),
-                    type: definition.get('type'),
-                  }),
-                )
-            : [],
-        initialValue: fileResource
-          ? fileResource
-              .get('securityPolicies')
-              .find(
-                pol => pol.get('endpoint') === endpoint.endpoint,
-                null,
-                Map({}),
-              )
-              .get('name', '')
-          : '',
-        transient: true,
-      }),
-    ),
-    {
-      name: 'securityPolicies',
-      label: 'Security Policies',
-      type: null,
-      visible: false,
-      serialize: ({ values }) =>
-        Object.entries(securityEndpoints)
-          .map(([endpointFieldName, policy]) => ({
-            endpoint: policy.endpoint,
-            name: values.get(endpointFieldName),
-          }))
-          .filter(endpoint => endpoint.name !== ''),
-      initialValue: get(fileResource, 'securityPolicies'),
-    },
-  ];
+                .get('name', '')
+            : '',
+          transient: true,
+        }),
+      ),
+      {
+        name: 'securityPolicies',
+        label: 'Security Policies',
+        type: null,
+        visible: false,
+        serialize: ({ values }) =>
+          Object.entries(securityEndpoints)
+            .map(([endpointFieldName, policy]) => ({
+              endpoint: policy.endpoint,
+              name: values.get(endpointFieldName),
+            }))
+            .filter(endpoint => endpoint.name !== ''),
+        initialValue: get(fileResource, 'securityPolicies'),
+      },
+    ];
 
 export const FileResourceForm = generateForm({
   formOptions: ['fileResourceSlug'],

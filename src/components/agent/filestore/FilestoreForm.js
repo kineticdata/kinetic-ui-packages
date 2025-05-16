@@ -35,68 +35,73 @@ const dataSources = ({ agentSlug, filestoreSlug, adapterClass }) => ({
   },
 });
 
-const handleSubmit = ({ agentSlug, filestoreSlug }) => values =>
-  (filestoreSlug ? updateFilestore : createFilestore)({
-    agentSlug,
-    filestoreSlug,
-    filestore: values.toJS(),
-  }).then(
-    handleFormErrors('filestore', 'There was a problem saving the filestore.'),
-  );
+const handleSubmit =
+  ({ agentSlug, filestoreSlug }) =>
+  values =>
+    (filestoreSlug ? updateFilestore : createFilestore)({
+      agentSlug,
+      filestoreSlug,
+      filestore: values.toJS(),
+    }).then(
+      handleFormErrors(
+        'filestore',
+        'There was a problem saving the filestore.',
+      ),
+    );
 
-const fields = ({ adapterClass }) => ({
-  filestore,
-  adapters,
-  adapterProperties,
-}) => {
-  if (adapterProperties) {
-    const { propertiesFields, propertiesSerialize } = buildPropertyFields({
-      isNew: !filestore,
-      properties: adapterProperties,
-      getName: property => property.get('name'),
-      getRequired: property => property.get('required'),
-      getSensitive: property => property.get('sensitive'),
-      getOptions: property => property.get('options'),
-      getValue: property =>
-        getIn(filestore, ['properties', property.get('name')], ''),
-    });
+const fields =
+  ({ adapterClass }) =>
+  ({ filestore, adapters, adapterProperties }) => {
+    if (adapterProperties) {
+      const { propertiesFields, propertiesSerialize } = buildPropertyFields({
+        isNew: !filestore,
+        properties: adapterProperties,
+        getName: property => property.get('name'),
+        getRequired: property => property.get('required'),
+        getSensitive: property => property.get('sensitive'),
+        getOptions: property => property.get('options'),
+        getValue: property =>
+          getIn(filestore, ['properties', property.get('name')], ''),
+      });
 
-    return [
-      {
-        name: 'slug',
-        label: 'Filestore Slug',
-        type: 'text',
-        required: true,
-        initialValue: get(filestore, 'slug', ''),
-        pattern: /^[a-z\d-]+$/,
-        patternMessage:
-          'Filestore Slug may only contain letters, numbers, and dashes',
-        helpText: 'Unique name used in the bridge path.',
-      },
-      {
-        name: 'adapterClass',
-        label: 'Adapter Class',
-        type: 'text',
-        enabled: false,
-        required: false,
-        initialValue: filestore ? filestore.get('adapterClass') : adapterClass,
-        options: adapters.map(adapter =>
-          Map({
-            value: adapter.get('class'),
-            label: adapter.get('name'),
-          }),
-        ),
-      },
-      ...propertiesFields,
-      {
-        name: 'properties',
-        visible: false,
-        initialValue: get(filestore, 'properties', {}),
-        serialize: propertiesSerialize,
-      },
-    ];
-  }
-};
+      return [
+        {
+          name: 'slug',
+          label: 'Filestore Slug',
+          type: 'text',
+          required: true,
+          initialValue: get(filestore, 'slug', ''),
+          pattern: /^[a-z\d-]+$/,
+          patternMessage:
+            'Filestore Slug may only contain letters, numbers, and dashes',
+          helpText: 'Unique name used in the bridge path.',
+        },
+        {
+          name: 'adapterClass',
+          label: 'Adapter Class',
+          type: 'text',
+          enabled: false,
+          required: false,
+          initialValue: filestore
+            ? filestore.get('adapterClass')
+            : adapterClass,
+          options: adapters.map(adapter =>
+            Map({
+              value: adapter.get('class'),
+              label: adapter.get('name'),
+            }),
+          ),
+        },
+        ...propertiesFields,
+        {
+          name: 'properties',
+          visible: false,
+          initialValue: get(filestore, 'properties', {}),
+          serialize: propertiesSerialize,
+        },
+      ];
+    }
+  };
 
 export const FilestoreForm = generateForm({
   formOptions: ['filestoreSlug', 'adapterClass', 'agentSlug'],

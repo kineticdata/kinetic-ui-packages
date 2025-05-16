@@ -60,73 +60,82 @@ const buildQuery = (searchFields, value) => {
   return queryBuilder(values);
 };
 
-const searchForms = ({ search = Map() }) => (field, value, callback) => {
-  const searchFields =
-    Map.isMap(search) && search.has('fields') && !search.get('fields').isEmpty()
-      ? search.get('fields').toJS()
-      : fields(search.get('datastore'));
+const searchForms =
+  ({ search = Map() }) =>
+  (field, value, callback) => {
+    const searchFields =
+      Map.isMap(search) &&
+      search.has('fields') &&
+      !search.get('fields').isEmpty()
+        ? search.get('fields').toJS()
+        : fields(search.get('datastore'));
 
-  return fetchForms({
-    datastore: search.get('datastore'),
-    kappSlug: search.get('kappSlug'),
-    q: buildQuery(searchFields, value),
-    include:
-      search.get('include') ||
-      (search.get('datastore') ? '' : 'categorizations.category'),
-    limit: search.get('limit') || 25,
-    public: !!search.get('public'),
-  })
-    .then(({ forms, error, nextPageToken }) => ({
-      suggestions: forms || [],
-      error,
-      nextPageToken,
-    }))
-    .then(callback);
-};
+    return fetchForms({
+      datastore: search.get('datastore'),
+      kappSlug: search.get('kappSlug'),
+      q: buildQuery(searchFields, value),
+      include:
+        search.get('include') ||
+        (search.get('datastore') ? '' : 'categorizations.category'),
+      limit: search.get('limit') || 25,
+      public: !!search.get('public'),
+    })
+      .then(({ forms, error, nextPageToken }) => ({
+        suggestions: forms || [],
+        error,
+        nextPageToken,
+      }))
+      .then(callback);
+  };
 
 const formToValue = form => (form && form.get('slug')) || '';
 
 // Converts a typed in value to an option object. Used when adding custom values
 // when allowNew is true.
-const valueToCustomForm = ({ allowNew }) => value =>
-  value.length > 0
-    ? typeof allowNew !== 'function' || allowNew(value)
-      ? { slug: value }
-      : null
-    : null;
+const valueToCustomForm =
+  ({ allowNew }) =>
+  value =>
+    value.length > 0
+      ? typeof allowNew !== 'function' || allowNew(value)
+        ? { slug: value }
+        : null
+      : null;
 
-const getStatusProps = ({
-  search = Map(),
-  messages: {
-    // Not enough characters have been typed in to trigger a search.
-    short = 'Type to find a form.',
-    // No results found; custom options not allowed.
-    empty = 'No matching forms.',
-    // No results found; custom options allowed.
-    custom = 'No matching forms. Type to enter a custom option.',
-    // Searching in progress.
-    pending = 'Searching...',
-    // Too many results to show all.
-    more = `Too many forms, first ${search.get('limit') ||
-      25} shown. Please refine your search.`,
-    // An error ocurred when searching.
-    error = 'There was an error fetching forms.',
-  } = {},
-}) => props => ({
-  info: props.short ? short : props.pending ? pending : null,
-  warning:
-    props.error || props.empty || props.more
-      ? props.error
-        ? error
-        : props.more
-          ? more
-          : props.empty
-            ? props.custom
-              ? custom
-              : empty
-            : null
-      : null,
-});
+const getStatusProps =
+  ({
+    search = Map(),
+    messages: {
+      // Not enough characters have been typed in to trigger a search.
+      short = 'Type to find a form.',
+      // No results found; custom options not allowed.
+      empty = 'No matching forms.',
+      // No results found; custom options allowed.
+      custom = 'No matching forms. Type to enter a custom option.',
+      // Searching in progress.
+      pending = 'Searching...',
+      // Too many results to show all.
+      more = `Too many forms, first ${
+        search.get('limit') || 25
+      } shown. Please refine your search.`,
+      // An error ocurred when searching.
+      error = 'There was an error fetching forms.',
+    } = {},
+  }) =>
+  props => ({
+    info: props.short ? short : props.pending ? pending : null,
+    warning:
+      props.error || props.empty || props.more
+        ? props.error
+          ? error
+          : props.more
+            ? more
+            : props.empty
+              ? props.custom
+                ? custom
+                : empty
+              : null
+        : null,
+  });
 
 export const FormSelect = props => (
   <Typeahead

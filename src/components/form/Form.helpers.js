@@ -13,9 +13,11 @@ const sameName = field1 => field2 => field1.name === field2.name;
 export const handleFormErrors = (key, message) => results => {
   const { error } = results;
   if (error) {
-    throw (error.statusCode === 400 && error.message) ||
+    throw (
+      (error.statusCode === 400 && error.message) ||
       message ||
-      'There was an error saving.';
+      'There was an error saving.'
+    );
   }
   return key ? results[key] : results;
 };
@@ -66,79 +68,81 @@ export const initializeValue = (
     ? OrderedMap(value).map(value => fromJS(value))
     : fromJS(value);
 
-export const createField = formKey => ({
-  bindings,
-  constraint,
-  constraintMessage,
-  enabled,
-  form,
-  helpText,
-  initialValue,
-  label,
-  language,
-  name,
-  onChange,
-  options,
-  pattern,
-  patternMessage,
-  placeholder,
-  renderAttributes,
-  required,
-  requiredMessage,
-  search,
-  serialize,
-  transient,
-  type,
-  visible,
-}) =>
-  Field({
-    // Derived options
-    id: btoa(`${formKey} ${name}`).replace(/=+$/, ''),
-    initialValue: initializeValue(type, initialValue),
-    renderAttributes: fromJS(renderAttributes),
-    value: initializeValue(type, initialValue),
-    // Options supporting conditional expressions,
-    bindings: typeof bindings === 'function' ? Map() : fromJS(bindings),
-    enabled: typeof enabled === 'function' ? false : enabled,
-    label: typeof label === 'function' ? '' : label,
-    language: typeof language === 'function' ? 'text' : language,
-    options: typeof options === 'function' ? List() : fromJS(options),
-    placeholder: typeof placeholder === 'function' ? '' : placeholder,
-    required: typeof required === 'function' ? false : required,
-    search: typeof search === 'function' ? Map() : fromJS(search),
-    transient: typeof transient === 'function' ? false : transient,
-    visible: typeof visible === 'function' ? false : visible,
-    functions: Map({
-      bindings: typeof bindings === 'function' ? bindings : null,
-      enabled: typeof enabled === 'function' ? enabled : null,
-      label: typeof label === 'function' ? label : null,
-      language: typeof language === 'function' ? language : null,
-      options: typeof options === 'function' ? options : null,
-      placeholder: typeof placeholder === 'function' ? placeholder : null,
-      required: typeof required === 'function' ? required : null,
-      search: typeof search === 'function' ? search : null,
-      transient: typeof transient === 'function' ? transient : null,
-      visible: typeof visible === 'function' ? visible : null,
-    }),
-    // Event handlers
-    eventHandlers: Map({
-      onBlur: onBlur({ formKey, name }),
-      onChange: onChangeHandler({ formKey, type, name }),
-      onFocus: onFocus({ formKey, name }),
-    }),
-    // Pass-through options
+export const createField =
+  formKey =>
+  ({
+    bindings,
     constraint,
     constraintMessage,
+    enabled,
     form,
     helpText,
+    initialValue,
+    label,
+    language,
     name,
     onChange,
+    options,
     pattern,
     patternMessage,
+    placeholder,
+    renderAttributes,
+    required,
     requiredMessage,
+    search,
     serialize,
+    transient,
     type,
-  });
+    visible,
+  }) =>
+    Field({
+      // Derived options
+      id: btoa(`${formKey} ${name}`).replace(/=+$/, ''),
+      initialValue: initializeValue(type, initialValue),
+      renderAttributes: fromJS(renderAttributes),
+      value: initializeValue(type, initialValue),
+      // Options supporting conditional expressions,
+      bindings: typeof bindings === 'function' ? Map() : fromJS(bindings),
+      enabled: typeof enabled === 'function' ? false : enabled,
+      label: typeof label === 'function' ? '' : label,
+      language: typeof language === 'function' ? 'text' : language,
+      options: typeof options === 'function' ? List() : fromJS(options),
+      placeholder: typeof placeholder === 'function' ? '' : placeholder,
+      required: typeof required === 'function' ? false : required,
+      search: typeof search === 'function' ? Map() : fromJS(search),
+      transient: typeof transient === 'function' ? false : transient,
+      visible: typeof visible === 'function' ? false : visible,
+      functions: Map({
+        bindings: typeof bindings === 'function' ? bindings : null,
+        enabled: typeof enabled === 'function' ? enabled : null,
+        label: typeof label === 'function' ? label : null,
+        language: typeof language === 'function' ? language : null,
+        options: typeof options === 'function' ? options : null,
+        placeholder: typeof placeholder === 'function' ? placeholder : null,
+        required: typeof required === 'function' ? required : null,
+        search: typeof search === 'function' ? search : null,
+        transient: typeof transient === 'function' ? transient : null,
+        visible: typeof visible === 'function' ? visible : null,
+      }),
+      // Event handlers
+      eventHandlers: Map({
+        onBlur: onBlur({ formKey, name }),
+        onChange: onChangeHandler({ formKey, type, name }),
+        onFocus: onFocus({ formKey, name }),
+      }),
+      // Pass-through options
+      constraint,
+      constraintMessage,
+      form,
+      helpText,
+      name,
+      onChange,
+      pattern,
+      patternMessage,
+      requiredMessage,
+      serialize,
+      type,
+    });
 
 export const createDataSource = ({ fn, params, transform, errorTransform }) => {
   const paramProp = typeof params === 'function' ? 'paramsFn' : 'params';

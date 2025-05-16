@@ -16,12 +16,12 @@ const dataSources = () => ({
   filestoreAdapters: {
     fn: fetchAdapters,
     params: [{ slug: 'SYSTEM', type: 'filestore' }],
-    transform: (result) => result.adapters,
+    transform: result => result.adapters,
   },
   filestore: {
     fn: fetchSystemFilestore,
     params: [],
-    transform: (result) =>
+    transform: result =>
       result.filestore ? { filestore: result.filestore } : { filestore: null },
   },
   adapterProperties: {
@@ -32,7 +32,7 @@ const dataSources = () => ({
   },
 });
 
-const handleSubmit = () => (values) =>
+const handleSubmit = () => values =>
   updateSystemFilestore({
     filestore: values.toJS(),
   }).then(
@@ -63,7 +63,7 @@ const fields =
           label: 'Filestore Adapter',
           type: 'select',
           required: true,
-          options: filestoreAdapters.map((adapter) =>
+          options: filestoreAdapters.map(adapter =>
             Map({
               label: adapter.get('name'),
               value: adapter.get('class'),

@@ -206,7 +206,10 @@ export const inspectOperation = (options = {}) => {
 export const executeOperation = (options = {}) => {
   validateOptions(
     'executeOperation',
-    [['connection', 'connectionId'], ['operation', 'operationId']],
+    [
+      ['connection', 'connectionId'],
+      ['operation', 'operationId'],
+    ],
     options,
   );
   const {

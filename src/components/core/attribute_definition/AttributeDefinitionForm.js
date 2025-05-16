@@ -17,51 +17,59 @@ const dataSources = ({ kappSlug, attributeType, attributeName }) => ({
   },
 });
 
-const handleSubmit = ({ kappSlug, attributeType, attributeName }) => values =>
-  (attributeName ? updateAttributeDefinition : createAttributeDefinition)({
-    attributeDefinition: values.toJS(),
-    kappSlug,
-    attributeType,
-    attributeName,
-  }).then(({ attributeDefinition, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the attribute definition';
-    }
-    return attributeDefinition;
-  });
+const handleSubmit =
+  ({ kappSlug, attributeType, attributeName }) =>
+  values =>
+    (attributeName ? updateAttributeDefinition : createAttributeDefinition)({
+      attributeDefinition: values.toJS(),
+      kappSlug,
+      attributeType,
+      attributeName,
+    }).then(({ attributeDefinition, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the attribute definition'
+        );
+      }
+      return attributeDefinition;
+    });
 
-const fields = ({ attributeName }) => ({ attributeDefinition }) =>
-  (!attributeName || attributeDefinition) && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-      initialValue: attributeDefinition ? attributeDefinition.get('name') : '',
-      helpText: 'Will be displayed in attribute dropdowns.',
-    },
-    {
-      name: 'description',
-      label: 'Description',
-      type: 'text',
-      required: false,
-      initialValue: attributeDefinition
-        ? attributeDefinition.get('description')
-        : '',
-    },
-    {
-      name: 'allowsMultiple',
-      label: 'Allow multiple attributes?',
-      type: 'checkbox',
-      required: false,
-      initialValue: attributeDefinition
-        ? attributeDefinition.get('allowsMultiple')
-        : false,
-      helpText:
-        'Determines whether multiple values can be assigned to this attribute.',
-    },
-  ];
+const fields =
+  ({ attributeName }) =>
+  ({ attributeDefinition }) =>
+    (!attributeName || attributeDefinition) && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        initialValue: attributeDefinition
+          ? attributeDefinition.get('name')
+          : '',
+        helpText: 'Will be displayed in attribute dropdowns.',
+      },
+      {
+        name: 'description',
+        label: 'Description',
+        type: 'text',
+        required: false,
+        initialValue: attributeDefinition
+          ? attributeDefinition.get('description')
+          : '',
+      },
+      {
+        name: 'allowsMultiple',
+        label: 'Allow multiple attributes?',
+        type: 'checkbox',
+        required: false,
+        initialValue: attributeDefinition
+          ? attributeDefinition.get('allowsMultiple')
+          : false,
+        helpText:
+          'Determines whether multiple values can be assigned to this attribute.',
+      },
+    ];
 
 /**
  * @component

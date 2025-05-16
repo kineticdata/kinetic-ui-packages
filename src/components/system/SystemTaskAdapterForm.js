@@ -29,42 +29,46 @@ const dataSources = () => ({
   },
 });
 
-const handleSubmit = () => (values, { fileFields, values: rawValues }) => {
-  const type = values.get('type');
-  const fileFieldsForType = fileFields.get(type);
-  // Only include values for file fields if the toggle field is true
-  const filterFn = (value, key) =>
-    !fileFieldsForType.includes(key) ||
-    !!rawValues.get(`${type}_change_${key}`);
+const handleSubmit =
+  () =>
+  (values, { fileFields, values: rawValues }) => {
+    const type = values.get('type');
+    const fileFieldsForType = fileFields.get(type);
+    // Only include values for file fields if the toggle field is true
+    const filterFn = (value, key) =>
+      !fileFieldsForType.includes(key) ||
+      !!rawValues.get(`${type}_change_${key}`);
 
-  const adapter = {
-    type,
-    properties: adapterProperties(values, null, type, filterFn),
+    const adapter = {
+      type,
+      properties: adapterProperties(values, null, type, filterFn),
+    };
+
+    return updateSystemDefaultSQLDbAdapter({
+      adapter,
+      multipart: Object.entries(adapter.properties).some(
+        ([name, value]) => value instanceof File,
+      ),
+    }).then(
+      handleFormErrors('adapter', 'There was an error saving the Adapter.'),
+    );
   };
 
-  return updateSystemDefaultSQLDbAdapter({
-    adapter,
-    multipart: Object.entries(adapter.properties).some(
-      ([name, value]) => value instanceof File,
-    ),
-  }).then(
-    handleFormErrors('adapter', 'There was an error saving the Adapter.'),
-  );
-};
-
-const fields = () => ({ defaultSQLDatabaseAdapter }) =>
-  (defaultSQLDatabaseAdapter || defaultSQLDatabaseAdapter === null) && [
-    {
-      name: 'type',
-      label: 'Database Adapter',
-      type: 'select',
-      options: VALIDATE_DB_ADAPTERS,
-      initialValue: getIn(defaultSQLDatabaseAdapter, ['type'], ''),
-    },
-    ...MSSQL_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
-    ...ORACLE_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
-    ...POSTGRES_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
-  ];
+const fields =
+  () =>
+  ({ defaultSQLDatabaseAdapter }) =>
+    (defaultSQLDatabaseAdapter || defaultSQLDatabaseAdapter === null) && [
+      {
+        name: 'type',
+        label: 'Database Adapter',
+        type: 'select',
+        options: VALIDATE_DB_ADAPTERS,
+        initialValue: getIn(defaultSQLDatabaseAdapter, ['type'], ''),
+      },
+      ...MSSQL_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
+      ...ORACLE_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
+      ...POSTGRES_FIELDS('type', defaultSQLDatabaseAdapter, [], null),
+    ];
 
 export const SystemTaskAdapterForm = generateForm({
   formOptions: [],

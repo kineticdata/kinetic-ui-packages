@@ -4,9 +4,7 @@ import { defineFilter } from '../../../helpers';
 
 const filters = () => () => [{ name: 'name', label: 'Name', type: 'text' }];
 
-const clientSide = defineFilter(true)
-  .matches('name', 'name')
-  .end();
+const clientSide = defineFilter(true).matches('name', 'name').end();
 
 const dataSource = ({ connectionId }) => ({
   fn: fetchOperations,

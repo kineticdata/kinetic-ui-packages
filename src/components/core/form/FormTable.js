@@ -21,29 +21,31 @@ const filterDataSources = ({ kappSlug }) => ({
   },
 });
 
-const filters = ({ kappSlug }) => ({ types }) =>
-  (!kappSlug || types) && [
-    { name: 'name', label: 'Name', type: 'text' },
-    { name: 'slug', label: 'Slug', type: 'text' },
-    kappSlug && {
-      name: 'type',
-      label: 'Type',
-      type: 'select',
-      options: types,
-    },
-    {
-      name: 'status',
-      label: 'Status',
-      type: 'select',
-      options: () => VALID_FORM_STATUES,
-    },
-    {
-      name: 'updatedBy',
-      label: 'Updated By',
-      type: 'user',
-      serialize: ({ values }) => values.getIn(['updatedBy', 'username']),
-    },
-  ];
+const filters =
+  ({ kappSlug }) =>
+  ({ types }) =>
+    (!kappSlug || types) && [
+      { name: 'name', label: 'Name', type: 'text' },
+      { name: 'slug', label: 'Slug', type: 'text' },
+      kappSlug && {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        options: types,
+      },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        options: () => VALID_FORM_STATUES,
+      },
+      {
+        name: 'updatedBy',
+        label: 'Updated By',
+        type: 'user',
+        serialize: ({ values }) => values.getIn(['updatedBy', 'username']),
+      },
+    ];
 
 const formQuery = defineKqlQuery()
   .matches('name', 'name')

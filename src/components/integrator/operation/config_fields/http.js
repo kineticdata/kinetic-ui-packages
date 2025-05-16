@@ -1,27 +1,27 @@
 import { get, getIn, List, Map } from 'immutable';
 import integrationTypes from '../../integrationTypes';
 
-export const serializeHttpOperationConfigFields = configFields => ({
-  values,
-}) => {
-  return configFields.reduce(
-    (serialization, { name, type, visible, transient }) => {
-      if (
-        // Field must not be transient
-        !transient &&
-        // Field must be visible
-        (typeof visible === 'function'
-          ? visible({ values })
-          : typeof visible === 'undefined' || !!visible)
-      ) {
-        // Set the value into the correct structure
-        return serialization.setIn(name.split('.'), values.get(name));
-      }
-      return serialization;
-    },
-    Map(),
-  );
-};
+export const serializeHttpOperationConfigFields =
+  configFields =>
+  ({ values }) => {
+    return configFields.reduce(
+      (serialization, { name, type, visible, transient }) => {
+        if (
+          // Field must not be transient
+          !transient &&
+          // Field must be visible
+          (typeof visible === 'function'
+            ? visible({ values })
+            : typeof visible === 'undefined' || !!visible)
+        ) {
+          // Set the value into the correct structure
+          return serialization.setIn(name.split('.'), values.get(name));
+        }
+        return serialization;
+      },
+      Map(),
+    );
+  };
 
 export const generateHttpOperationConfigFields = config => [
   {

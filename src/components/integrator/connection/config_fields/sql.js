@@ -1,38 +1,38 @@
 import { get, Map } from 'immutable';
 import integrationTypes from '../../integrationTypes';
 
-export const serializeSQLConnectionConfigFields = configFields => ({
-  values,
-}) => {
-  return configFields.reduce(
-    (serialization, { name, type, visible, transient }) => {
-      if (
-        // Field must not be transient
-        !transient &&
-        // Field must be visible
-        (typeof visible === 'function'
-          ? visible({ values })
-          : typeof visible === 'undefined' || !!visible)
-      ) {
-        // Set password fields to null if their toggle field is
-        // false, which means the password wasn't changed
-        if (type === 'password' && !values.get(`${name}.toggle`)) {
-          return serialization.setIn(name.split('.'), null);
-        }
+export const serializeSQLConnectionConfigFields =
+  configFields =>
+  ({ values }) => {
+    return configFields.reduce(
+      (serialization, { name, type, visible, transient }) => {
+        if (
+          // Field must not be transient
+          !transient &&
+          // Field must be visible
+          (typeof visible === 'function'
+            ? visible({ values })
+            : typeof visible === 'undefined' || !!visible)
+        ) {
+          // Set password fields to null if their toggle field is
+          // false, which means the password wasn't changed
+          if (type === 'password' && !values.get(`${name}.toggle`)) {
+            return serialization.setIn(name.split('.'), null);
+          }
 
-        // Set the following fields to null if they don't have a value
-        if (['caCert'].includes(name) && !values.get(name)) {
-          return serialization.setIn(name.split('.'), null);
-        }
+          // Set the following fields to null if they don't have a value
+          if (['caCert'].includes(name) && !values.get(name)) {
+            return serialization.setIn(name.split('.'), null);
+          }
 
-        // Set the value into the correct structure
-        return serialization.setIn(name.split('.'), values.get(name));
-      }
-      return serialization;
-    },
-    Map(),
-  );
-};
+          // Set the value into the correct structure
+          return serialization.setIn(name.split('.'), values.get(name));
+        }
+        return serialization;
+      },
+      Map(),
+    );
+  };
 
 export const generateSQLConnectionConfigFields = (config, type) => [
   {

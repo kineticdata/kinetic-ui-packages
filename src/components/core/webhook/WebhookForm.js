@@ -38,18 +38,22 @@ const dataSources = ({ kappSlug, name }) => ({
   },
 });
 
-const handleSubmit = ({ kappSlug, name }) => values =>
-  (name ? updateWebhook : createWebhook)({
-    webhook: values.toJS(),
-    kappSlug,
-    webhookName: name,
-  }).then(({ webhook, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the webhook';
-    }
-    return webhook;
-  });
+const handleSubmit =
+  ({ kappSlug, name }) =>
+  values =>
+    (name ? updateWebhook : createWebhook)({
+      webhook: values.toJS(),
+      kappSlug,
+      webhookName: name,
+    }).then(({ webhook, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the webhook'
+        );
+      }
+      return webhook;
+    });
 
 const generateCodeBindings = ({ space, kapp, values }) =>
   buildCodeEditorBindings({
@@ -76,71 +80,73 @@ const generateCodeBindings = ({ space, kapp, values }) =>
       kapp?.get('fields').size > 0 && { data: kapp.get('fields') },
   });
 
-const fields = ({ name }) => ({ webhook }) =>
-  (!name || webhook) && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-      initialValue: webhook ? webhook.get('name') : '',
-      helpText:
-        'User friendly name for the webhook. Generally a combination of Type and Event.',
-    },
-    {
-      name: 'type',
-      label: 'Type',
-      type: 'select',
-      required: true,
-      initialValue: webhook ? webhook.get('type') : '',
-      helpText: 'Where the webhook is triggered from.',
-      options: ({ events }) =>
-        events
-          ? events
-              .keySeq()
-              .sort()
-              .map(type => Map({ label: type, value: type }))
-          : List(),
-      onChange: (bindings, { setValue }) => {
-        setValue('event', '');
+const fields =
+  ({ name }) =>
+  ({ webhook }) =>
+    (!name || webhook) && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        initialValue: webhook ? webhook.get('name') : '',
+        helpText:
+          'User friendly name for the webhook. Generally a combination of Type and Event.',
       },
-    },
-    {
-      name: 'event',
-      label: 'Event',
-      type: 'select',
-      required: true,
-      initialValue: webhook ? webhook.get('event') : '',
-      helpText: 'The event triggering the webhook.',
-      options: ({ values, events }) =>
-        values && events
-          ? events
-              .get(values.get('type'), List())
-              .map(event => Map({ label: event, value: event }))
-          : List(),
-    },
-    {
-      name: 'filter',
-      label: 'Filter',
-      type: 'code',
-      language: 'js-expression',
-      initialValue: webhook ? webhook.get('filter') : '',
-      helpText:
-        'Optional parameters limiting the events than can trigger a webhook. Click the </> button to see available insert values.',
-      options: generateCodeBindings,
-    },
-    {
-      name: 'url',
-      label: 'URL',
-      type: 'code',
-      language: 'js-template',
-      required: true,
-      initialValue: webhook ? webhook.get('url') : '',
-      helpText:
-        'Location of the platform workflow or external system to pass information to. Click the </> button to see available insert values.',
-      options: generateCodeBindings,
-    },
-  ];
+      {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        required: true,
+        initialValue: webhook ? webhook.get('type') : '',
+        helpText: 'Where the webhook is triggered from.',
+        options: ({ events }) =>
+          events
+            ? events
+                .keySeq()
+                .sort()
+                .map(type => Map({ label: type, value: type }))
+            : List(),
+        onChange: (bindings, { setValue }) => {
+          setValue('event', '');
+        },
+      },
+      {
+        name: 'event',
+        label: 'Event',
+        type: 'select',
+        required: true,
+        initialValue: webhook ? webhook.get('event') : '',
+        helpText: 'The event triggering the webhook.',
+        options: ({ values, events }) =>
+          values && events
+            ? events
+                .get(values.get('type'), List())
+                .map(event => Map({ label: event, value: event }))
+            : List(),
+      },
+      {
+        name: 'filter',
+        label: 'Filter',
+        type: 'code',
+        language: 'js-expression',
+        initialValue: webhook ? webhook.get('filter') : '',
+        helpText:
+          'Optional parameters limiting the events than can trigger a webhook. Click the </> button to see available insert values.',
+        options: generateCodeBindings,
+      },
+      {
+        name: 'url',
+        label: 'URL',
+        type: 'code',
+        language: 'js-template',
+        required: true,
+        initialValue: webhook ? webhook.get('url') : '',
+        helpText:
+          'Location of the platform workflow or external system to pass information to. Click the </> button to see available insert values.',
+        options: generateCodeBindings,
+      },
+    ];
 
 export const WebhookForm = generateForm({
   formOptions: ['kappSlug', 'name'],

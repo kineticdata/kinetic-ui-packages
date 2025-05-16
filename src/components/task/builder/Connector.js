@@ -207,14 +207,8 @@ export class Connector extends Component {
   };
 
   render() {
-    const {
-      connector,
-      headNode,
-      highlighted,
-      primary,
-      selected,
-      tailNode,
-    } = this.props;
+    const { connector, headNode, highlighted, primary, selected, tailNode } =
+      this.props;
     const { condition, id, label, type } = connector;
     const invalid = condition && !label;
     const loop =

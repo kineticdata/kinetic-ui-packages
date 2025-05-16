@@ -58,9 +58,7 @@ export default class AuthInterceptor {
       return new Promise((resolve, reject) => {
         this.authPromise
           .then(() => {
-            axios(error.response.config)
-              .then(resolve)
-              .catch(reject);
+            axios(error.response.config).then(resolve).catch(reject);
           })
           .catch(() => {
             reject(error);

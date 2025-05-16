@@ -151,14 +151,8 @@ export class Node extends Component {
   }
 
   render() {
-    const {
-      node,
-      highlighted,
-      primary,
-      selected,
-      connections,
-      tasks,
-    } = this.props;
+    const { node, highlighted, primary, selected, connections, tasks } =
+      this.props;
     const { defers, definitionId, id, name } = node;
     const tempNode = typeof id !== 'number';
     const isRoutine =

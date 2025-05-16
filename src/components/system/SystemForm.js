@@ -16,31 +16,34 @@ const dataSources = () => ({
   },
 });
 
-const fields = () => ({ system }) =>
-  system && [
-    {
-      name: 'system-display-type',
-      label: 'Application Home Page Display Type',
-      type: 'select',
-      options: DISPLAY_TYPES.map(displayType => ({
-        value: displayType,
-        label: displayType,
-      })),
-      required: true,
-      initialValue: get(system, 'system-display-type') || 'Display Page',
-      helpText:
-        'Determines how the application works. For kinops, Single Page App is used.',
-    },
-    {
-      name: 'system-display-value',
-      label: 'Application Home Page Display Value',
-      type: 'text',
-      initialValue: get(system, 'system-display-value') || '',
-      visible: ({ values }) => get(values, 'system-display-type') !== 'Default',
-      required: ({ values }) =>
-        get(values, 'system-display-type') !== 'Default',
-    },
-  ];
+const fields =
+  () =>
+  ({ system }) =>
+    system && [
+      {
+        name: 'system-display-type',
+        label: 'Application Home Page Display Type',
+        type: 'select',
+        options: DISPLAY_TYPES.map(displayType => ({
+          value: displayType,
+          label: displayType,
+        })),
+        required: true,
+        initialValue: get(system, 'system-display-type') || 'Display Page',
+        helpText:
+          'Determines how the application works. For kinops, Single Page App is used.',
+      },
+      {
+        name: 'system-display-value',
+        label: 'Application Home Page Display Value',
+        type: 'text',
+        initialValue: get(system, 'system-display-value') || '',
+        visible: ({ values }) =>
+          get(values, 'system-display-type') !== 'Default',
+        required: ({ values }) =>
+          get(values, 'system-display-type') !== 'Default',
+      },
+    ];
 
 export const SystemForm = generateForm({
   formOptions: [],

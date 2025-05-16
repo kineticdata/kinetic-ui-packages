@@ -54,7 +54,7 @@ const selectField = (formKey, fieldName) => state =>
   state.getIn(['forms', formKey, 'fields', fieldName]);
 
 regSaga(
-  takeEvery('CONFIGURE_SIMPLE_FORM', function*({ payload: { formKey } }) {
+  takeEvery('CONFIGURE_SIMPLE_FORM', function* ({ payload: { formKey } }) {
     const formState = yield select(selectForm(formKey));
     if (
       formState &&
@@ -67,71 +67,83 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('SIMPLE_FORM_FOCUS_FIELD', function*({
-    payload: { formKey, name, bindings },
-  }) {
-    const { onFocus } = yield select(selectField(formKey, name));
-    if (typeof onFocus === 'function') {
-      onFocus(bindings);
-    }
-  }),
+  takeEvery(
+    'SIMPLE_FORM_FOCUS_FIELD',
+    function* ({ payload: { formKey, name, bindings } }) {
+      const { onFocus } = yield select(selectField(formKey, name));
+      if (typeof onFocus === 'function') {
+        onFocus(bindings);
+      }
+    },
+  ),
 );
 
 regSaga(
-  takeEvery('SIMPLE_FORM_CHANGE_FIELD', function*({
-    payload: { formKey, name, value, bindings },
-  }) {
-    const { onChange } = yield select(selectField(formKey, name));
-    if (typeof onChange === 'function') {
-      onChange(value, bindings);
+  takeEvery(
+    'SIMPLE_FORM_CHANGE_FIELD',
+    function* ({ payload: { formKey, name, value, bindings } }) {
+      const { onChange } = yield select(selectField(formKey, name));
+      if (typeof onChange === 'function') {
+        onChange(value, bindings);
+      } else {
+        console.error('Field is missing onChange event:', name);
+      }
+    },
+  ),
+);
+
+regSaga(
+  takeEvery(
+    'SIMPLE_FORM_BLUR_FIELD',
+    function* ({ payload: { formKey, name, bindings } }) {
+      const { onBlur } = yield select(selectField(formKey, name));
+      if (typeof onBlur === 'function') {
+        onBlur(bindings);
+      }
+    },
+  ),
+);
+
+export const onFocus =
+  ({ formKey, name }) =>
+  bindings =>
+  () => {
+    dispatch('SIMPLE_FORM_FOCUS_FIELD', { formKey, name, bindings });
+  };
+
+export const onBlur =
+  ({ formKey, name }) =>
+  bindings =>
+  () => {
+    dispatch('SIMPLE_FORM_BLUR_FIELD', { formKey, name, bindings });
+  };
+
+export const onChange =
+  ({ formKey, type, name }) =>
+  bindings =>
+  event => {
+    let value;
+    if (type === 'checkbox' && event && event.target) {
+      value = event.target.checked;
+    } else if (type === 'checkbox-multi') {
+      value = event.target.value;
+    } else if (
+      type === 'select-multi' &&
+      event &&
+      event.target &&
+      event.target.options
+    ) {
+      value = List(event.target.options)
+        .filter(o => o.selected)
+        .map(o => o.value);
+    } else if (event && event.target) {
+      value = event.target.value;
     } else {
-      console.error('Field is missing onChange event:', name);
+      value = event;
     }
-  }),
-);
 
-regSaga(
-  takeEvery('SIMPLE_FORM_BLUR_FIELD', function*({
-    payload: { formKey, name, bindings },
-  }) {
-    const { onBlur } = yield select(selectField(formKey, name));
-    if (typeof onBlur === 'function') {
-      onBlur(bindings);
-    }
-  }),
-);
-
-export const onFocus = ({ formKey, name }) => bindings => () => {
-  dispatch('SIMPLE_FORM_FOCUS_FIELD', { formKey, name, bindings });
-};
-
-export const onBlur = ({ formKey, name }) => bindings => () => {
-  dispatch('SIMPLE_FORM_BLUR_FIELD', { formKey, name, bindings });
-};
-
-export const onChange = ({ formKey, type, name }) => bindings => event => {
-  let value;
-  if (type === 'checkbox' && event && event.target) {
-    value = event.target.checked;
-  } else if (type === 'checkbox-multi') {
-    value = event.target.value;
-  } else if (
-    type === 'select-multi' &&
-    event &&
-    event.target &&
-    event.target.options
-  ) {
-    value = List(event.target.options)
-      .filter(o => o.selected)
-      .map(o => o.value);
-  } else if (event && event.target) {
-    value = event.target.value;
-  } else {
-    value = event;
-  }
-
-  dispatch('SIMPLE_FORM_CHANGE_FIELD', { formKey, name, value, bindings });
-};
+    dispatch('SIMPLE_FORM_CHANGE_FIELD', { formKey, name, value, bindings });
+  };
 
 export const mountSimpleForm = formKey =>
   dispatch('MOUNT_SIMPLE_FORM', { formKey });

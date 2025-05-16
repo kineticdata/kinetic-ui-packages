@@ -53,7 +53,7 @@ regHandlers({
 });
 
 regSaga(
-  takeLatest('INIT_PREFERENCES', function*({ payload: loggedIn }) {
+  takeLatest('INIT_PREFERENCES', function* ({ payload: loggedIn }) {
     // Create preferences map
     let preferences = Map();
     if (loggedIn) {
@@ -94,42 +94,44 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('SET_PREFERENCE_PERSISTENT', function*({
-    payload: { prefix, key, value },
-  }) {
-    if (typeof value === 'string') {
-      // Persist the preference in the database
-      yield call(upsertUserPreference, {
-        userPreference: {
-          key: `${prefix}----${key}`,
-          value,
-        },
-      });
-    } else {
-      console.error(
-        `User preference values must be strings. The value for key '${key}' was of type '${typeof value}'.`,
-      );
-    }
-  }),
+  takeEvery(
+    'SET_PREFERENCE_PERSISTENT',
+    function* ({ payload: { prefix, key, value } }) {
+      if (typeof value === 'string') {
+        // Persist the preference in the database
+        yield call(upsertUserPreference, {
+          userPreference: {
+            key: `${prefix}----${key}`,
+            value,
+          },
+        });
+      } else {
+        console.error(
+          `User preference values must be strings. The value for key '${key}' was of type '${typeof value}'.`,
+        );
+      }
+    },
+  ),
 );
 
 regSaga(
-  takeEvery('SET_PREFERENCE_SESSION', function*({
-    payload: { prefix, key, value },
-  }) {
-    if (typeof value === 'string') {
-      // Persist the preference in session storage
-      yield call(
-        [sessionStorage, sessionStorage.setItem],
-        `${prefix}----${key}`,
-        value,
-      );
-    } else {
-      console.error(
-        `User preference values must be strings. The value for key '${key}' was of type '${typeof value}'.`,
-      );
-    }
-  }),
+  takeEvery(
+    'SET_PREFERENCE_SESSION',
+    function* ({ payload: { prefix, key, value } }) {
+      if (typeof value === 'string') {
+        // Persist the preference in session storage
+        yield call(
+          [sessionStorage, sessionStorage.setItem],
+          `${prefix}----${key}`,
+          value,
+        );
+      } else {
+        console.error(
+          `User preference values must be strings. The value for key '${key}' was of type '${typeof value}'.`,
+        );
+      }
+    },
+  ),
 );
 
 /**
@@ -299,12 +301,9 @@ const usePreferences = (prefix = '', keys) => {
 export { usePreferences, setPreference };
 
 export const PreferencesProvider = ({ loggedIn, children }) => {
-  useEffect(
-    () => {
-      dispatch('INIT_PREFERENCES', loggedIn);
-    },
-    [loggedIn],
-  );
+  useEffect(() => {
+    dispatch('INIT_PREFERENCES', loggedIn);
+  }, [loggedIn]);
 
   return children;
 };

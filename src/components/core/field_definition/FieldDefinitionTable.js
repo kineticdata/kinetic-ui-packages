@@ -12,9 +12,7 @@ export const FIELD_DATA_TYPES = [
   { value: 'time', label: 'Time', dataType: 'string' },
 ];
 
-const clientSide = defineFilter(true)
-  .startsWith('name', 'name')
-  .end();
+const clientSide = defineFilter(true).startsWith('name', 'name').end();
 
 const dataSource = ({ kappSlug }) => ({
   fn: kappSlug ? fetchKapp : fetchSpace,

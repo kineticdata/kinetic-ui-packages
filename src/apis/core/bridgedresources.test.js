@@ -166,7 +166,10 @@ describe('bridged resource api', () => {
             data: {
               records: {
                 fields: ['Field A', 'Field B'],
-                records: [['Value A1', 'Value B1'], ['Value A2', 'Value B2']],
+                records: [
+                  ['Value A1', 'Value B1'],
+                  ['Value A2', 'Value B2'],
+                ],
                 metadata: {
                   size: 2,
                   nextPageToken: null,

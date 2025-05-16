@@ -32,30 +32,32 @@ const filterDataSources = () => ({
   },
 });
 
-const filters = () => ({ kapps }) =>
-  kapps && [
-    {
-      name: 'context',
-      label: 'Context Type',
-      type: 'select',
-      options: ['Kapp', 'Custom'].map(el => ({
-        value: el,
-        label: el === 'Kapp' ? 'Form' : el,
-      })),
-      onChange: (_bindings, { setValue }) => {
-        setValue('kapp', '');
-        setValue('form', '');
+const filters =
+  () =>
+  ({ kapps }) =>
+    kapps && [
+      {
+        name: 'context',
+        label: 'Context Type',
+        type: 'select',
+        options: ['Kapp', 'Custom'].map(el => ({
+          value: el,
+          label: el === 'Kapp' ? 'Form' : el,
+        })),
+        onChange: (_bindings, { setValue }) => {
+          setValue('kapp', '');
+          setValue('form', '');
+        },
       },
-    },
-    {
-      name: 'kapp',
-      label: 'Kapp Slug',
-      type: 'select',
-      enabled: ({ values }) => values.get('context') === 'Kapp',
-      options: kapps,
-    },
-    { name: 'form', label: 'Form Slug', type: 'text' },
-  ];
+      {
+        name: 'kapp',
+        label: 'Kapp Slug',
+        type: 'select',
+        enabled: ({ values }) => values.get('context') === 'Kapp',
+        options: kapps,
+      },
+      { name: 'form', label: 'Form Slug', type: 'text' },
+    ];
 
 const columns = [
   {

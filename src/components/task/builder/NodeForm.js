@@ -56,8 +56,9 @@ const dataSources = ({ tasks, tree, node, connections }) => ({
   },
   operation: {
     fn: node => {
-      const connectionId = node.parameters.find(p => p.id === 'connection')
-        ?.value;
+      const connectionId = node.parameters.find(
+        p => p.id === 'connection',
+      )?.value;
       const id = node.parameters.find(p => p.id === 'operation')?.value;
       return (
         connections?.getIn([connectionId, 'operations', id]) ||
@@ -123,137 +124,142 @@ const checkDependsOn = parameter =>
     values.get(`parameter_${parameter.dependsOnId}`) ===
     parameter.dependsOnValue);
 
-const fields = ({ tree, node }) => ({ bindings }) =>
-  bindings && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      initialValue: node.name,
-      required: true,
-      constraint: ({ values }) =>
-        tree.nodes.some(
-          other => other.name === values.get('name') && other.id !== node.id,
-        )
-          ? 'This name is already used by another node'
-          : values.get('name').length > 128
-            ? 'Name cannot exceed 128 characters'
-            : true,
-      pattern: /^[^'"]*$/,
-      patternMessage: 'Node names may not contain apostrophes or quotes',
-    },
-    {
-      name: 'deferrable',
-      label: 'Deferrable',
-      type: 'checkbox',
-      initialValue: node.deferrable,
-      visible: false,
-    },
-    node.deferrable && {
-      name: 'defers',
-      label: 'Defers',
-      type: 'checkbox',
-      initialValue: node.defers,
-    },
-    {
-      name: 'visible',
-      label: 'Visible',
-      type: 'checkbox',
-      initialValue: node.visible,
-    },
-    {
-      name: 'definitionId',
-      label: 'Task Definition Id',
-      type: 'text',
-      initialValue: node.definitionId,
-      enabled: false,
-    },
-    {
-      name: 'id',
-      label: 'Id',
-      type: 'text',
-      enabled: false,
-      initialValue: node.id,
-    },
-    ...node.parameters.map(parameter => ({
-      name: `parameter_${parameter.id}`,
-      label: parameter.label,
-      type: parameter.menu ? 'select' : 'code',
-      language: parameter.menu ? null : 'ruby-template',
-      helpText: parameter.description,
-      initialValue: parameter.value,
-      options: parameter.menu ? getOptions(parameter.menu) : bindings,
-      transient: true,
-      visible:
-        checkDependsOn(parameter) &&
-        checkOmittedParametersForAdvancedHandlers(node, parameter),
-    })),
-    {
-      name: 'parameters',
-      type: null,
-      visible: false,
-      serialize: ({ values }) =>
-        node.parameters.map(parameter =>
-          parameter.set('value', values.get(`parameter_${parameter.id}`)),
-        ),
-    },
-    {
-      name: 'message_Create',
-      label: 'Create Message',
-      type: 'code',
-      initialValue: node.messages
-        .filter(message => message.type === 'Create')
-        .map(message => message.value)
-        .first(''),
-      language: 'ruby-template',
-      options: bindings,
-      transient: true,
-      visible: ({ values }) => values.get('defers', false),
-    },
-    {
-      name: 'message_Update',
-      label: 'Update Message',
-      type: 'code',
-      initialValue: node.messages
-        .filter(message => message.type === 'Update')
-        .map(message => message.value)
-        .first(''),
-      language: 'ruby-template',
-      options: bindings,
-      transient: true,
-      visible: ({ values }) => values.get('defers', false),
-    },
-    {
-      name: 'message_Complete',
-      label: 'Complete Message',
-      type: 'code',
-      initialValue: node.messages
-        .filter(message => message.type === 'Complete')
-        .map(message => message.value)
-        .first(''),
-      language: 'ruby-template',
-      options: bindings,
-      transient: true,
-    },
-    {
-      name: 'messages',
-      type: null,
-      visible: false,
-      serialize: ({ values }) =>
-        List(
-          values.get('defers')
-            ? ['Create', 'Update', 'Complete']
-            : ['Complete'],
-        )
-          .map(type =>
-            NodeMessage({ type, value: values.get(`message_${type}`) }),
+const fields =
+  ({ tree, node }) =>
+  ({ bindings }) =>
+    bindings && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        initialValue: node.name,
+        required: true,
+        constraint: ({ values }) =>
+          tree.nodes.some(
+            other => other.name === values.get('name') && other.id !== node.id,
           )
-          // Do not serialize empty messages.
-          .filter(message => !!message.value),
-    },
-  ];
+            ? 'This name is already used by another node'
+            : values.get('name').length > 128
+              ? 'Name cannot exceed 128 characters'
+              : true,
+        pattern: /^[^'"]*$/,
+        patternMessage: 'Node names may not contain apostrophes or quotes',
+      },
+      {
+        name: 'deferrable',
+        label: 'Deferrable',
+        type: 'checkbox',
+        initialValue: node.deferrable,
+        visible: false,
+      },
+      node.deferrable && {
+        name: 'defers',
+        label: 'Defers',
+        type: 'checkbox',
+        initialValue: node.defers,
+      },
+      {
+        name: 'visible',
+        label: 'Visible',
+        type: 'checkbox',
+        initialValue: node.visible,
+      },
+      {
+        name: 'definitionId',
+        label: 'Task Definition Id',
+        type: 'text',
+        initialValue: node.definitionId,
+        enabled: false,
+      },
+      {
+        name: 'id',
+        label: 'Id',
+        type: 'text',
+        enabled: false,
+        initialValue: node.id,
+      },
+      ...node.parameters.map(parameter => ({
+        name: `parameter_${parameter.id}`,
+        label: parameter.label,
+        type: parameter.menu ? 'select' : 'code',
+        language: parameter.menu ? null : 'ruby-template',
+        helpText: parameter.description,
+        initialValue: parameter.value,
+        options: parameter.menu ? getOptions(parameter.menu) : bindings,
+        transient: true,
+        visible:
+          checkDependsOn(parameter) &&
+          checkOmittedParametersForAdvancedHandlers(node, parameter),
+      })),
+      {
+        name: 'parameters',
+        type: null,
+        visible: false,
+        serialize: ({ values }) =>
+          node.parameters.map(parameter =>
+            parameter.set('value', values.get(`parameter_${parameter.id}`)),
+          ),
+      },
+      {
+        name: 'message_Create',
+        label: 'Create Message',
+        type: 'code',
+        initialValue: node.messages
+          .filter(message => message.type === 'Create')
+          .map(message => message.value)
+          .first(''),
+        language: 'ruby-template',
+        options: bindings,
+        transient: true,
+        visible: ({ values }) => values.get('defers', false),
+      },
+      {
+        name: 'message_Update',
+        label: 'Update Message',
+        type: 'code',
+        initialValue: node.messages
+          .filter(message => message.type === 'Update')
+          .map(message => message.value)
+          .first(''),
+        language: 'ruby-template',
+        options: bindings,
+        transient: true,
+        visible: ({ values }) => values.get('defers', false),
+      },
+      {
+        name: 'message_Complete',
+        label: 'Complete Message',
+        type: 'code',
+        initialValue: node.messages
+          .filter(message => message.type === 'Complete')
+          .map(message => message.value)
+          .first(''),
+        language: 'ruby-template',
+        options: bindings,
+        transient: true,
+      },
+      {
+        name: 'messages',
+        type: null,
+        visible: false,
+        serialize: ({ values }) =>
+          List(
+            values.get('defers')
+              ? ['Create', 'Update', 'Complete']
+              : ['Complete'],
+          )
+            .map(type =>
+              NodeMessage({ type, value: values.get(`message_${type}`) }),
+            )
+            // Do not serialize empty messages.
+            .filter(message => !!message.value),
+      },
+    ];
 
-const handleSubmit = ({ node }) => values => node.merge(values);
+const handleSubmit =
+  ({ node }) =>
+  values =>
+    node.merge(values);
 
 export const NodeForm = generateForm({
   formOptions: ['connections', 'node', 'tasks', 'tree'],
