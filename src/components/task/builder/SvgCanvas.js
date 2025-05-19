@@ -1,6 +1,5 @@
 import React, { createRef, Component } from 'react';
 import { throttle } from 'lodash-es';
-import { isIE11 } from './helpers';
 import * as constants from './constants';
 import { Point } from './models';
 
@@ -190,22 +189,10 @@ export class SvgCanvas extends Component {
 
   setTransform(duration, ease = '') {
     const { scale, x, y } = this.viewport;
-    if (isIE11) {
-      // this.transformer.current.setAttribute(
-      //   'transform',
-      //   `translate(${x} ${y}) scale(${scale})`,
-      // );
-      this.transformer.current.transform = `translate(${x} ${y}) scale(${scale})`;
-    } else {
-      const transition = duration ? `transform ${duration}ms ${ease}` : '';
-      // this.transformer.current.setAttribute(
-      //   'style',
-      //   `transform: translate(${x}px, ${y}px) scale(${scale});${transition}`,
-      // );
+    const transition = duration ? `transform ${duration}ms ${ease}` : '';
+    this.transformer.current.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+    this.transformer.current.style.transition = transition;
 
-      this.transformer.current.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-      this.transformer.current.style.transition = transition;
-    }
     if (
       this.viewport.scale < 0.26 &&
       this.transformer.current.className.baseVal !== 'min-detail'

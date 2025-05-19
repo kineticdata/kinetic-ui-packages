@@ -21,8 +21,6 @@ import {
   NEW_TASK_DY,
 } from './constants';
 
-export const isIE11 = document.documentMode === 11;
-
 export const getRectIntersections = ({
   dragging,
   head,
@@ -48,9 +46,12 @@ export const getRectIntersections = ({
   const tailShape = getNodeShape(tailType, tail);
   const headIntersection = Intersection.intersect(headShape, line).points[0];
   const tailIntersection = Intersection.intersect(tailShape, line).points[0];
+  const nodeIntersection = Intersection.intersect(headShape, tailShape);
   return [
     dragging === 'tail' ? tail : tailIntersection || tailCenter,
     dragging === 'head' ? head : headIntersection || headCenter,
+    // Return a boolean for whether the two nodes overlap
+    dragging ? false : nodeIntersection?.points?.length > 0,
   ];
 };
 

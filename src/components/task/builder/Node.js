@@ -3,7 +3,7 @@ import { isArray, isFunction } from 'lodash-es';
 import classNames from 'classnames';
 import { dispatch } from '../../../store';
 import * as constants from './constants';
-import { getNodeType, isIE11 } from './helpers';
+import { getNodeType } from './helpers';
 import { Point } from './models';
 import { SvgText } from './SvgText';
 import plusIcon from '../../../../assets/task/icons/plus_small.svg';
@@ -133,21 +133,9 @@ export class Node extends Component {
    ****************************************************************************/
 
   draw() {
-    // const attribute = isIE11 ? 'transform' : 'style';
-    // const value = isIE11
-    //   ? `translate(${this.position.x} ${this.position.y})`
-    //   : `transform: translate(${this.position.x}px,  ${this.position.y}px)`;
-    // this.el.current.setAttribute(attribute, value);
-
-    if (isIE11) {
-      this.el.current.transform = `translate(${this.position.x} ${
-        this.position.y
-      })`;
-    } else {
-      this.el.current.style.transform = `translate(${this.position.x}px,  ${
-        this.position.y
-      }px)`;
-    }
+    this.el.current.style.transform = `translate(${this.position.x}px,  ${
+      this.position.y
+    }px)`;
   }
 
   render() {
