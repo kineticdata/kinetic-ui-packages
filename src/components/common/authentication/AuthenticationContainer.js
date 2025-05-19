@@ -50,6 +50,7 @@ regHandlers({
     state
       .mergeIn(['session'], {
         loggedIn: true,
+        timedOut: false,
         token: action.payload.token,
       })
       .set('login', defaultLoginProps),
@@ -59,6 +60,7 @@ regHandlers({
         csrfToken: action.payload.csrfToken,
         initialized: true,
         loggedIn: !!action.payload.token,
+        timedOut: false,
         securityStrategies: action.payload.securityStrategies,
         spaceSlug: action.payload.spaceSlug,
         token: action.payload.token,
@@ -79,6 +81,7 @@ regHandlers({
   SINGLE_SIGN_ON: state =>
     state.mergeIn(['login'], { error: null, pending: true }),
   TIMEOUT: state => state.setIn(['session', 'token'], null),
+  TIMEOUT_SESSION: state => state.setIn(['session', 'timedOut'], true),
 });
 
 regSaga('WATCH_SYSTEM_AUTHENTICATION', function* () {
@@ -169,6 +172,30 @@ regSaga(
       }
     } catch (e) {
       console.error(e);
+    }
+  }),
+);
+
+regSaga(
+  takeEvery('TIMEOUT', function* () {
+    const system = yield select(state => state.getIn(['session', 'system']));
+    if (system) {
+      // System doesn't use JWT so time it out immediately
+      yield put(action('TIMEOUT_SESSION'));
+    } else {
+      try {
+        // When a TIMEOUT is triggered, try retrieving the JWT again. If a token
+        // is not returned, then time out the session
+        const token = yield call(retrieveJwt);
+        if (token) {
+          yield put(action('SET_AUTHENTICATED', { token }));
+        } else {
+          yield put(action('TIMEOUT_SESSION'));
+        }
+      } catch (e) {
+        yield put(action('TIMEOUT_SESSION'));
+        console.error(e);
+      }
     }
   }),
 );
@@ -291,17 +318,17 @@ export class AuthenticationComponent extends Component {
     const {
       initialized,
       loggedIn,
+      timedOut,
       login,
       securityStrategies,
       serverError,
       spaceSlug,
-      token,
     } = this.props;
 
     const content = this.props.children({
       serverError,
       initialized: initialized,
-      timedOut: loggedIn && !token,
+      timedOut: loggedIn && timedOut,
       loggedIn: loggedIn,
       loginProps: {
         onChangeUsername,
@@ -330,6 +357,7 @@ export class AuthenticationComponent extends Component {
 const mapStateToProps = state => ({
   initialized: state.getIn(['session', 'initialized'], false),
   loggedIn: state.getIn(['session', 'loggedIn'], false),
+  timedOut: state.getIn(['session', 'timedOut'], false),
   token: state.getIn(['session', 'token'], null),
   login: state.get('login', defaultLoginProps),
   spaceSlug: state.getIn(['session', 'spaceSlug'], ''),
