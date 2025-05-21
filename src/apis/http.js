@@ -171,9 +171,15 @@ export const apiFunction =
       .catch(handleErrors);
   };
 
-export const apiGroup = ({ dataOption, name, plural, singular }) => ({
-  [`fetch${name}s`]: apiFunction({
-    name: `fetch${name}s`,
+export const apiGroup = ({
+  dataOption,
+  name,
+  pluralName,
+  plural,
+  singular,
+}) => ({
+  [`fetch${pluralName || `${name}s`}`]: apiFunction({
+    name: `fetch${pluralName || `${name}s`}`,
     method: 'get',
     ...plural,
   }),

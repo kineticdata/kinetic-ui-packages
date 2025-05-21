@@ -133,6 +133,7 @@ export { SecurityDefinitionTable } from './core/security_definition/SecurityDefi
 export { SpaceForm } from './core/space/SpaceForm';
 export { SubmissionTable } from './core/submission/SubmissionTable';
 export { SubmissionForm } from './core/submission/SubmissionForm';
+export { SubmissionActivityForm } from './core/submission/SubmissionActivityForm';
 export { DatastoreSubmissionTable } from './core/submission/DatastoreSubmissionTable';
 export { TeamForm } from './core/team/TeamForm';
 export { TeamTable } from './core/team/TeamTable';

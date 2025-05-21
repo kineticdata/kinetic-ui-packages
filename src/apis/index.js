@@ -28,6 +28,7 @@ export * from './core/profile';
 export * from './core/securityPolicyDefinitions';
 export * from './core/space';
 export * from './core/submissions';
+export * from './core/submissionActivities';
 export * from './core/teams';
 export * from './core/translations';
 export * from './core/users';

@@ -3,6 +3,7 @@ import {
   fetchForm,
   fetchSubmission,
   saveSubmissionMultipart,
+  fetchSubmissionActivities,
 } from '../../../apis';
 import { generateForm } from '../../form/Form';
 import moment from 'moment';
@@ -19,6 +20,11 @@ const dataSources = ({ kappSlug, formSlug, submissionId }) => ({
       },
     ],
     transform: result => result.submission,
+  },
+  activities: {
+    fn: fetchSubmissionActivities,
+    params: submissionId && [{ submissionId, include: 'details' }],
+    transform: result => result.activities,
   },
   form: {
     fn: fetchForm,
