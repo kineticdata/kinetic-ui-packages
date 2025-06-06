@@ -390,6 +390,18 @@ export const searchSubmissions = options => {
   return promise;
 };
 
+/**
+ * Fetches a submission by ID.
+ *
+ * @param {Object} options - Options for the fetch.
+ * @param {string} options.id - The ID of the submission to fetch.
+ * @param {boolean} [options.datastore] - Whether to fetch from the datastore API.
+ * @param {Object} [options.params] - Additional query parameters to include.
+ * @param {Object} [options.headers] - Additional headers to include.
+ *
+ * @returns {Promise<{submission: Object}>}
+ */
+
 export const fetchSubmission = options => {
   const { id } = options;
 
@@ -414,6 +426,20 @@ export const fetchSubmission = options => {
       .catch(handleErrors)
   );
 };
+
+/**
+ * Creates a new submission for the specified form in either a kapp or the datastore.
+ *
+ * @param {Object} options - Options for creating the submission.
+ * @param {string} [options.kappSlug] - The slug of the kapp. Defaults to bundle.kappSlug().
+ * @param {string} options.formSlug - The slug of the form to submit to.
+ * @param {Object} options.values - The values to submit.
+ * @param {boolean} [options.completed=true] - Whether the submission should be marked completed.
+ * @param {string} [options.coreState] - The core state of the submission.
+ * @param {string} [options.parent] - The ID of the parent submission, if applicable.
+ *
+ * @returns {Promise<{submission: Object}>}
+ */
 
 export const createSubmission = options => {
   const {
@@ -452,6 +478,16 @@ export const createSubmission = options => {
   );
 };
 
+/**
+ * Clones an existing submission by ID.
+ *
+ * @param {Object} options - Options for cloning the submission.
+ * @param {string} options.id - The ID of the submission to clone.
+ * @param {boolean} [options.completed=false] - Whether the cloned submission should be marked as completed.
+ * @param {Object} [options.submission={}] - Optional values to override in the cloned submission.
+ * @returns {Promise<{submission: Object}>}
+ */
+
 export const cloneSubmission = options => {
   const { id, completed = false, submission = {}, files = [] } = options;
 
@@ -477,6 +513,17 @@ export const cloneSubmission = options => {
       .catch(handleErrors)
   );
 };
+
+/**
+ * Updates an existing submission in either a kapp or the datastore.
+ *
+ * @param {Object} options - Options for updating the submission.
+ * @param {string} options.id - The ID of the submission to update.
+ * @param {Object} options.values - The values to update on the submission.
+ * @param {boolean} [options.datastore] - Whether the submission is in the datastore.
+ *
+ * @returns {Promise<{submission: Object}>}
+ */
 
 export const updateSubmission = options => {
   const { id, values } = options;
@@ -555,6 +602,16 @@ export const submitSubmission = options => {
       .catch(handleErrors)
   );
 };
+
+/**
+ * Deletes an existing submission from either a kapp or the datastore.
+ *
+ * @param {Object} options - Options for deleting the submission.
+ * @param {string} options.id - The ID of the submission to delete.
+ * @param {boolean} [options.datastore] - Whether the submission is in the datastore.
+ *
+ * @returns {Promise<{submission: Object}>}
+ */
 
 export const deleteSubmission = options => {
   const { id } = options;
