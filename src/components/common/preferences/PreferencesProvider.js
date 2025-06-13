@@ -1,6 +1,6 @@
 import { regHandlers } from '../../../reducer';
 import { regSaga } from '../../../saga';
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects';
 import { action, dispatch, useSelector } from '../../../store';
 import { useEffect, useMemo } from 'react';
 import { Map } from 'immutable';
@@ -45,11 +45,17 @@ regHandlers({
   INIT_PREFERENCES: state => state.set('preferences', Map()),
   LOAD_PREFERENCES: (state, { payload }) => state.set('preferences', payload),
   SET_PREFERENCE_PERSISTENT: (state, { payload: { prefix, key, value } }) =>
-    state.setIn(['preferences', prefix, key], value),
+    typeof value === 'function'
+      ? state.updateIn(['preferences', prefix, key], value)
+      : state.setIn(['preferences', prefix, key], value),
   SET_PREFERENCE_SESSION: (state, { payload: { prefix, key, value } }) =>
-    state.setIn(['preferences', prefix, key], value),
+    typeof value === 'function'
+      ? state.updateIn(['preferences', prefix, key], value)
+      : state.setIn(['preferences', prefix, key], value),
   SET_PREFERENCE_TEMP: (state, { payload: { prefix, key, value } }) =>
-    state.setIn(['preferences', prefix, key], value),
+    typeof value === 'function'
+      ? state.updateIn(['preferences', prefix, key], value)
+      : state.setIn(['preferences', prefix, key], value),
 });
 
 regSaga(
@@ -96,18 +102,18 @@ regSaga(
 regSaga(
   takeEvery(
     'SET_PREFERENCE_PERSISTENT',
-    function* ({ payload: { prefix, key, value } }) {
-      if (typeof value === 'string') {
+    function* ({ payload: { prefix, key } }) {
+      const updatedValue = yield select(state =>
+        state.getIn(['preferences', prefix, key]),
+      );
+      if (typeof updatedValue === 'string') {
         // Persist the preference in the database
         yield call(upsertUserPreference, {
-          userPreference: {
-            key: `${prefix}----${key}`,
-            value,
-          },
+          userPreference: { key: `${prefix}----${key}`, value: updatedValue },
         });
       } else {
         console.error(
-          `User preference values must be strings. The value for key '${key}' was of type '${typeof value}'.`,
+          `User preference values must be strings. The value for key '${key}' was of type '${typeof updatedValue}'.`,
         );
       }
     },
@@ -115,30 +121,31 @@ regSaga(
 );
 
 regSaga(
-  takeEvery(
-    'SET_PREFERENCE_SESSION',
-    function* ({ payload: { prefix, key, value } }) {
-      if (typeof value === 'string') {
-        // Persist the preference in session storage
-        yield call(
-          [sessionStorage, sessionStorage.setItem],
-          `${prefix}----${key}`,
-          value,
-        );
-      } else {
-        console.error(
-          `User preference values must be strings. The value for key '${key}' was of type '${typeof value}'.`,
-        );
-      }
-    },
-  ),
+  takeEvery('SET_PREFERENCE_SESSION', function* ({ payload: { prefix, key } }) {
+    const updatedValue = yield select(state =>
+      state.getIn(['preferences', prefix, key]),
+    );
+    if (typeof updatedValue === 'string') {
+      // Persist the preference in session storage
+      yield call(
+        [sessionStorage, sessionStorage.setItem],
+        `${prefix}----${key}`,
+        updatedValue,
+      );
+    } else {
+      console.error(
+        `User preference values must be strings. The value for key '${key}' was of type '${typeof updatedValue}'.`,
+      );
+    }
+  }),
 );
 
 /**
  * Sets a preference value for a given prefix and key
  * @param {String} prefix The prefix part of the preference key.
  * @param {String} key The key(suffix) part of the preference key.
- * @param {String} value The value to store for the preference key.
+ * @param {String|Function} value The value to store for the preference key, or
+ *  an updater function that receives the previous value as a parameter.
  * @param {('persist'|'session'|'temp')} duration How long to store the
  *  preference for. Defaults to `session`.
  *  - `persist` will store it forever.
@@ -153,6 +160,26 @@ const setPreference = (prefix, key, value, duration) =>
         ? 'SET_PREFERENCE_TEMP'
         : 'SET_PREFERENCE_SESSION',
     { prefix, key, value },
+  );
+
+const setPreferenceBool = (prefix, key, value, duration) =>
+  setPreference(
+    prefix,
+    key,
+    typeof value === 'function'
+      ? stateValue => toBooleanString(value(fromBooleanString(stateValue)))
+      : toBooleanString(value),
+    duration,
+  );
+
+const setPreferenceJSON = (prefix, key, value, duration) =>
+  setPreference(
+    prefix,
+    key,
+    typeof value === 'function'
+      ? stateValue => toJSONString(value(fromJSONString(stateValue)))
+      : toJSONString(value),
+    duration,
   );
 
 /**
@@ -298,7 +325,7 @@ const usePreferences = (prefix = '', keys) => {
   );
 };
 
-export { usePreferences, setPreference };
+export { usePreferences, setPreference, setPreferenceBool, setPreferenceJSON };
 
 export const PreferencesProvider = ({ loggedIn, children }) => {
   useEffect(() => {

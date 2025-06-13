@@ -73,7 +73,7 @@ regSaga(
         // Fetch task categories
         call(fetchTaskCategories, {
           include:
-            'handlers.results,handlers.parameters,trees.parameters,trees.inputs,trees.outputs',
+            'handlers.results,handlers.parameters,handlers.details,trees.parameters,trees.inputs,trees.outputs,trees.details',
         }),
         // Fetch connections
         call(fetchConnections),
