@@ -8,7 +8,11 @@ exports[`dataSources simple 1`] = `
   data-props="{
   \\"formKey\\": \\"test\\",
   \\"formOptions\\": {},
+  \\"fieldSet\\": [
+    \\"test\\"
+  ],
   \\"dirty\\": false,
+  \\"submit\\": \\"() => {}\\",
   \\"bindings\\": {
     \\"dependency\\": \\"Test Arg\\",
     \\"message\\": \\"Hello World!\\",
@@ -18,6 +22,10 @@ exports[`dataSources simple 1`] = `
   },
   \\"meta\\": {
     \\"test\\": {
+      \\"label\\": \\"\\",
+      \\"value\\": \\"Hello World!\\",
+      \\"options\\": [],
+      \\"type\\": \\"text\\",
       \\"visible\\": true,
       \\"hasErrors\\": false
     }
@@ -3267,7 +3275,11 @@ exports[`handleSubmit happy path 1`] = `
   \\"formOptions\\": {
     \\"testOption\\": \\"Foo\\"
   },
+  \\"fieldSet\\": [
+    \\"test2\\"
+  ],
   \\"dirty\\": false,
+  \\"submit\\": \\"() => {}\\",
   \\"bindings\\": {
     \\"values\\": {
       \\"test2\\": \\"\\"
@@ -3275,6 +3287,10 @@ exports[`handleSubmit happy path 1`] = `
   },
   \\"meta\\": {
     \\"test2\\": {
+      \\"label\\": \\"\\",
+      \\"value\\": \\"\\",
+      \\"options\\": [],
+      \\"type\\": \\"text\\",
       \\"visible\\": true,
       \\"hasErrors\\": false
     }
@@ -3395,7 +3411,11 @@ exports[`handleSubmit happy path 2`] = `
   \\"formOptions\\": {
     \\"testOption\\": \\"Foo\\"
   },
+  \\"fieldSet\\": [
+    \\"test2\\"
+  ],
   \\"dirty\\": false,
+  \\"submit\\": \\"() => {}\\",
   \\"bindings\\": {
     \\"values\\": {
       \\"test2\\": \\"\\"
@@ -3403,6 +3423,10 @@ exports[`handleSubmit happy path 2`] = `
   },
   \\"meta\\": {
     \\"test2\\": {
+      \\"label\\": \\"\\",
+      \\"value\\": \\"\\",
+      \\"options\\": [],
+      \\"type\\": \\"text\\",
       \\"visible\\": true,
       \\"hasErrors\\": false
     }
@@ -3565,7 +3589,9 @@ exports[`handleSubmit submit error 1`] = `
   data-props="{
   \\"formKey\\": \\"test\\",
   \\"formOptions\\": {},
+  \\"fieldSet\\": [],
   \\"dirty\\": false,
+  \\"submit\\": \\"() => {}\\",
   \\"bindings\\": {
     \\"values\\": {}
   },
@@ -3627,7 +3653,9 @@ exports[`handleSubmit submit unexpected error, we expect the promise to reject w
   data-props="{
   \\"formKey\\": \\"test\\",
   \\"formOptions\\": {},
+  \\"fieldSet\\": [],
   \\"dirty\\": false,
+  \\"submit\\": \\"() => {}\\",
   \\"bindings\\": {
     \\"values\\": {}
   },

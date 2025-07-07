@@ -23,7 +23,7 @@ const dataSource = () => ({
 });
 
 const filters = () => () => [
-  { name: 'id', label: 'ID', type: 'text' },
+  // { name: 'id', label: 'ID', type: 'text' },
   { name: 'name', label: 'Name', type: 'text' },
   {
     name: 'status',
@@ -34,9 +34,9 @@ const filters = () => () => [
       { label: 'Paused', value: 'Paused' },
     ],
   },
-  { name: 'definitionId', label: 'Definition ID', type: 'text' },
-  { name: 'definitionName', label: 'Definition Name', type: 'text' },
-  { name: 'definitionVersion', label: 'Definition Version', type: 'text' },
+  // { name: 'definitionId', label: 'Definition ID', type: 'text' },
+  // { name: 'definitionName', label: 'Definition Name', type: 'text' },
+  // { name: 'definitionVersion', label: 'Definition Version', type: 'text' },
 ];
 
 const columns = [

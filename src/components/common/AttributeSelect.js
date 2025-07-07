@@ -50,6 +50,7 @@ export const AttributeSelect = props => (
     onBlur={props.onBlur}
     placeholder={props.placeholder}
     id={props.id}
+    name={props.name}
     form={props.form}
     invalid={props.invalid}
     action={actionOptions(props)}

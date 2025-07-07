@@ -227,6 +227,7 @@ export class Typeahead extends React.Component {
                 selection: this.props.value,
                 placeholder: this.props.placeholder,
                 id: this.props.id,
+                name: this.props.name,
                 form: this.props.form,
               }}
               onSuggestionHighlighted={this.onHighlight}
@@ -362,6 +363,7 @@ function renderSelections() {
       value,
       placeholder,
       id,
+      name,
       form,
       invalid,
       minSearchLength,
@@ -381,6 +383,7 @@ function renderSelections() {
         suggestionValue={suggestionValue}
         placeholder={!multiple ? placeholder : null}
         id={!multiple ? id : null}
+        name={name}
         invalid={invalid}
         form={form}
         minSearchLength={minSearchLength}

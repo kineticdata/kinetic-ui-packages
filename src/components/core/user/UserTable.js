@@ -42,8 +42,8 @@ const filters = () => () => [
     label: 'Enabled?',
     type: 'select',
     options: [
-      { label: 'Yes', value: true },
-      { label: 'No', value: false },
+      { label: 'Yes', value: 'true' },
+      { label: 'No', value: 'false' },
     ],
   },
   {
@@ -51,8 +51,8 @@ const filters = () => () => [
     label: 'Space Admin?',
     type: 'select',
     options: [
-      { label: 'Yes', value: true },
-      { label: 'No', value: false },
+      { label: 'Yes', value: 'true' },
+      { label: 'No', value: 'false' },
     ],
   },
 ];

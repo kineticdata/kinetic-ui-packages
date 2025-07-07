@@ -49,51 +49,117 @@ defaultTabPref.setJSON(newValueObject, duration);
 
 ## Preferences In Use
 
-The below table lists all the preferences that are currently used within the application. The `${...}` syntax in the prefixes means the prefix is dynamic based on the provided value.
+The below tables list all the preferences that are currently used within the application. The `${...}` syntax in the prefixes means the prefix is dynamic based on the provided value.
 
-| Prefix                                                                                                                                                               | Key               | Type      | Duration  |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | --------- | --------- |
-| **Attribute Definitions Table**                                                                                                                                      |                   |           |           |
-| `space-attribute-definitions-${attributeType}-table`<br>`kapp-${kappSlug}-attribute-definitions-${attributeType}-table`                                              | `filter-toggle`   | `Boolean` | `persist` |
-|                                                                                                                                                                      | `initial-filters` | `Object`  | `session` |
-|                                                                                                                                                                      | `column-set`      | `Array`   | `persist` |
-|                                                                                                                                                                      | `column-sort`     | `Object`  | `session` |
-| **Categories Table**                                                                                                                                                 |                   |           |           |
-| `kapp-${kappSlug}-categories-table`                                                                                                                                  | `filter-toggle`   | `Boolean` | `persist` |
-|                                                                                                                                                                      | `initial-filters` | `Object`  | `session` |
-|                                                                                                                                                                      | `column-set`      | `Array`   | `persist` |
-|                                                                                                                                                                      | `column-sort`     | `Object`  | `session` |
-| **Index Definitions Table**                                                                                                                                          |                   |           |           |
-| `kapp-${kappSlug}-indexes-definitions-table`<br>`kapp-${kappSlug}-form-${formSlug}-indexes-definitions-table`<br>`kapp-${kappSlug}-shared-indexes-definitions-table` | `column-set`      | `Array`   | `persist` |
-|                                                                                                                                                                      | `column-sort`     | `Object`  | `session` |
-| **Index Fields Table**                                                                                                                                               |                   |           |           |
-| `kapp-${kappSlug}-indexes-fields-table`                                                                                                                              | `column-set`      | `Array`   | `persist` |
-|                                                                                                                                                                      | `column-sort`     | `Object`  | `session` |
-| **Form Types Table**                                                                                                                                                 |                   |           |           |
-| `kapp-${kappSlug}-form-types-table`                                                                                                                                  | `filter-toggle`   | `Boolean` | `persist` |
-|                                                                                                                                                                      | `initial-filters` | `Object`  | `session` |
-|                                                                                                                                                                      | `column-set`      | `Array`   | `persist` |
-|                                                                                                                                                                      | `column-sort`     | `Object`  | `session` |
-| **Forms Table**                                                                                                                                                      |                   |           |           |
-| `kapp-${kappSlug}-forms-table`                                                                                                                                       | `filter-toggle`   | `Boolean` | `persist` |
-|                                                                                                                                                                      | `initial-filters` | `Object`  | `session` |
-|                                                                                                                                                                      | `column-set`      | `Array`   | `persist` |
-|                                                                                                                                                                      | `column-sort`     | `Object`  | `session` |
-| **Security Definitions Table**                                                                                                                                       |                   |           |           |
-| `space-security-definitions-table`<br>`kapp-${kappSlug}-security-definitions-table`                                                                                  | `filter-toggle`   | `Boolean` | `persist` |
-|                                                                                                                                                                      | `initial-filters` | `Object`  | `session` |
-|                                                                                                                                                                      | `column-set`      | `Array`   | `persist` |
-|                                                                                                                                                                      | `column-sort`     | `Object`  | `session` |
-| **Submissions Table**                                                                                                                                                |                   |           |           |
-| `kapp-${kappSlug}-submissions-table`<br>`kapp-${kappSlug}-form-${formSlug}-submissions-table`                                                                        | `initial-filters` | `Object`  | `session` |
-|                                                                                                                                                                      | `column-set`      | `Object`  | `persist` |
-| **Workflow New Node Tasks List**                                                                                                                                     |                   |           |           |
-| `workflow-tasks-list`                                                                                                                                                | `initial-tab`     | `String`  | `session` |
-|                                                                                                                                                                      | `list-sort`       | `String`  | `session` |
-|                                                                                                                                                                      | `recents`         | `Array`   | `persist` |
-|                                                                                                                                                                      | `favorites`       | `Array`   | `persist` |
-| **Webhooks Table**                                                                                                                                                   |                   |           |           |
-| `space-webhooks-table`<br>`kapp-${kappSlug}-webhooks-table`                                                                                                          | `filter-toggle`   | `Boolean` | `persist` |
-|                                                                                                                                                                      | `initial-filters` | `Object`  | `session` |
-|                                                                                                                                                                      | `column-set`      | `Array`   | `persist` |
-|                                                                                                                                                                      | `column-sort`     | `Object`  | `session` |
+### Table Preferences
+
+All tables have (mostly) identical preferences that are saved for them. This first table below shows what those preferences are, and the second table below shows the prefixes that use those preferences.
+
+**Table Preference Keys**
+
+| Key               | Type     | Duration  |
+| ----------------- | -------- | --------- |
+| `initial-filters` | `Object` | `session` |
+| `column-set`      | `Array`  | `persist` |
+| `column-sort`     | `Object` | `session` |
+
+**Table Preference Prefixes**
+
+| Prefix                                                          | Comments                      |
+| --------------------------------------------------------------- | ----------------------------- |
+| **Agent Handlers Table**                                        |                               |
+| `space-plugins-agent-handlers-table`                            |                               |
+| **Attribute Definitions Table**                                 |                               |
+| `space-attribute-definitions-${attributeType}-table`            |                               |
+| `kapp-${kappSlug}-attribute-definitions-${attributeType}-table` |                               |
+| **Bridges Table**                                               |                               |
+| `space-plugins-bridges-table`                                   |                               |
+| **Categories Table**                                            |                               |
+| `kapp-${kappSlug}-categories-table`                             |                               |
+| **Connections Table**                                           |                               |
+| `space-plugins-connections-table`                               |                               |
+| **Errors Table**                                                |                               |
+| `space-activity-errors-table`                                   |                               |
+| **Index Definitions Table**                                     | Doesn't use `initial-filters` |
+| `kapp-${kappSlug}-indexes-definitions-table`                    |                               |
+| `kapp-${kappSlug}-form-${formSlug}-indexes-definitions-table`   |                               |
+| `kapp-${kappSlug}-shared-indexes-definitions-table`             |                               |
+| **Index Fields Table**                                          | Doesn't use `initial-filters` |
+| `kapp-${kappSlug}-indexes-fields-table`                         |                               |
+| **File Resources Table**                                        |                               |
+| `space-file-resource-table`                                     |                               |
+| **Form Types Table**                                            |                               |
+| `kapp-${kappSlug}-form-types-table`                             |                               |
+| **Filestores Table**                                            |                               |
+| `space-plugins-filestores-table`                                |                               |
+| **Forms Table**                                                 |                               |
+| `kapp-${kappSlug}-forms-table`                                  |                               |
+| **Handlers Table**                                              |                               |
+| `space-plugins-handlers-table`                                  |                               |
+| **Kapps Table**                                                 |                               |
+| `space-kapps-table`                                             |                               |
+| **Logs Table**                                                  | Doesn't use `column-sort`     |
+| `space-logs-table`                                              |                               |
+| **Missing Handler Usage Table**                                 |                               |
+| `space-missing-handler-usage-table`                             |                               |
+| **Missing Routine Usage Table**                                 |                               |
+| `space-missing-routine-usage-table`                             |                               |
+| **Models Table**                                                |                               |
+| `space-bridge-model-table`                                      |                               |
+| **Kapp Integrations Table**                                     |                               |
+| `kapp-${kappSlug}-integrations-table`                           |                               |
+| **Operations Table**                                            |                               |
+| `space-plugins-operations-table`                                |                               |
+| **Routines Table**                                              |                               |
+| `space-workflow-routines-table`                                 |                               |
+| **Runs Table**                                                  |                               |
+| `space-activity-runs-table`                                     |                               |
+| **Security Definitions Table**                                  |                               |
+| `space-security-definitions-table`                              |                               |
+| `kapp-${kappSlug}-security-definitions-table`                   |                               |
+| **Sources Table**                                               |                               |
+| `space-plugins-sources-table`                                   |                               |
+| **Submissions Table**                                           | Doesn't use `column-sort`     |
+| `kapp-${kappSlug}-submissions-table`                            |                               |
+| `kapp-${kappSlug}-form-${formSlug}-submissions-table`           |                               |
+| **System Errors Table**                                         |                               |
+| `space-workflow-system-errors-table`                            |                               |
+| **Teams Table**                                                 |                               |
+| `space-teams-table`                                             |                               |
+| **Translation Contexts Table**                                  |                               |
+| `space-translations-contexts-table`                             |                               |
+| **Translations Shared Table**                                   |                               |
+| `space-translations-shared-table`                               |                               |
+| **Translations Staged Table**                                   |                               |
+| `space-translations-staged-table`                               |                               |
+| **Trees Table**                                                 |                               |
+| `space-workflow-trees-table`                                    |                               |
+| **Triggers Table**                                              |                               |
+| `space-${triggerStatus}-activity-triggers-table`                |                               |
+| **Users Table**                                                 |                               |
+| `space-users-table`                                             |                               |
+| **WebAPIs Table**                                               |                               |
+| `space-workflow-webapi-table`                                   |                               |
+| `kapp-${kappSlug}-workflow-webapi-table`                        |                               |
+| **Webhook Jobs Table**                                          |                               |
+| `space-activity-webhook-jobs-table`                             |                               |
+| `kapp-${kappSlug}-activity-webhook-jobs-table`                  |                               |
+| **Webhooks Table**                                              |                               |
+| `space-webhooks-table`                                          |                               |
+| `kapp-${kappSlug}-webhooks-table`                               |                               |
+| **Workflows Table**                                             |                               |
+| `space-workflow-table`                                          |                               |
+| `kapp-${kappSlug}-workflow-table`                               |                               |
+| `kapp-${kappSlug}-form-${formSlug}-workflow-table`              |                               |
+
+### Other Preferences
+
+The below table lists other preferences used within the app.
+
+| Prefix                           | Key           | Type     | Duration  |
+| -------------------------------- | ------------- | -------- | --------- |
+| **Workflow New Node Tasks List** |               |          |           |
+| `workflow-tasks-list`            | `initial-tab` | `String` | `session` |
+|                                  | `list-sort`   | `String` | `session` |
+|                                  | `recents`     | `Array`  | `persist` |
+|                                  | `favorites`   | `Array`  | `persist` |

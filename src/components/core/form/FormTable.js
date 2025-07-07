@@ -97,7 +97,6 @@ const columns = [
     value: 'type',
     title: 'Type',
     sortable: true,
-    filter: 'startsWith',
     type: 'text',
     toggleable: true,
   },

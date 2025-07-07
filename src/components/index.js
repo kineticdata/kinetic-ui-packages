@@ -40,6 +40,7 @@ export {
   submitForm,
   unmountForm,
   validateForm,
+  setValue as setFormValue,
   // Don't keep.
   generateForm,
 } from './form/Form';
@@ -55,6 +56,8 @@ export {
   refetchTable,
   reloadTablePage,
   clearFilters,
+  resetFilterForm,
+  toggleFilterField,
   isValueEmpty,
   hasTableFiltersApplied,
   findTableKey,

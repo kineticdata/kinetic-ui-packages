@@ -12,6 +12,7 @@ import {
 } from './Table.redux';
 import { generateKey } from '../../helpers';
 import { generateForm } from '../form/Form';
+import { FormState } from '../form/FormState';
 
 const fromColumnSet = (columns, columnSet) =>
   columnSet.map(cs => columns.find(c => c.get('value') === cs));
@@ -35,9 +36,15 @@ const TableComponent = props => {
     } = props;
 
     const columnControl = buildColumnControl(props);
+    const filterControl = buildFilterControl(props);
     const table = buildTable({ ...props, columnControl });
     const filter = components.FilterForm
-      ? buildFilterForm(props)
+      ? buildFilterForm({
+          ...props,
+          renderers: {
+            filterControl: args => buildFilterControl({ args, ...props }),
+          },
+        })
       : buildFilterLayout(props);
     const pagination = buildPaginationControl(props);
 
@@ -49,6 +56,7 @@ const TableComponent = props => {
       appliedFilters,
       pagination,
       columnControl,
+      filterControl,
       initializing,
       loading,
       rows,
@@ -143,6 +151,7 @@ const buildFilterForm = props => {
       formKey={props.filterFormKey}
       tableKey={props.tableKey}
       components={components}
+      renderers={props.renderers}
       alterFields={props.alterFilters}
       fieldSet={props.filterSet}
       onSave={props.onSearch}
@@ -385,6 +394,45 @@ const buildColumnControl = props => {
       tableOptions={tableOptions}
       extraData={extraData}
     />
+  );
+};
+
+const buildFilterControl = ({
+  tableKey,
+  filterSet,
+  appliedFilters,
+  components,
+  args = {},
+}) => {
+  const FilterControl = components.FilterControl;
+
+  return (
+    <FormState
+      formKey={filterFormKey(tableKey)}
+      selector={formState => ({
+        filterFields: formState?.fields
+          ?.map((field, name) =>
+            Map({
+              name,
+              label: field.get('label'),
+              value: field.get('value'),
+              options: field.get('options'),
+              checked: filterSet?.includes(name),
+              toggle: onToggleFilter(tableKey, name),
+            }),
+          )
+          ?.toList(),
+      })}
+    >
+      {({ filterFields }) => (
+        <FilterControl
+          {...args}
+          tableKey={tableKey}
+          filterFields={filterFields}
+          filterCount={appliedFilters?.filter(Boolean)?.size}
+        />
+      )}
+    </FormState>
   );
 };
 
@@ -653,6 +701,11 @@ const onSortColumn = (tableKey, column) => () =>
 const onToggleColumn = (tableKey, column) => () =>
   dispatch('TOGGLE_COLUMN', { tableKey, column });
 
+const onToggleFilter =
+  (tableKey, ...filters) =>
+  () =>
+    dispatch('TOGGLE_FILTER', { tableKey, filters });
+
 const mapStateToProps = () => (state, props) =>
   state.getIn(['tables', props.tableKey], Map()).toObject();
 
@@ -783,7 +836,7 @@ export const generateTable =
           .map(initialValue => ({ initialValue }))
           .toObject(),
       ),
-      filterSet: props.filterSet,
+      filterSet: props.filterSet || [],
       filterAutoFocus: props.filterAutoFocus,
       columnSet: props.columnSet,
       columnSetOrder: props.columnSetOrder,

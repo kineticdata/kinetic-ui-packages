@@ -77,9 +77,9 @@ const filters =
         type: 'select',
         options: sourceTypes,
       },
-      { name: 'sourceGroup', label: 'Group', type: 'text' },
+      // { name: 'sourceGroup', label: 'Group', type: 'text' },
       { name: 'sourceGroupFragment', label: 'Group', type: 'text' },
-      { name: 'tree', label: 'Name', type: 'text' },
+      // { name: 'tree', label: 'Name', type: 'text' },
       { name: 'treeFragment', label: 'Name', type: 'text' },
       {
         name: 'includeSystemRuns',

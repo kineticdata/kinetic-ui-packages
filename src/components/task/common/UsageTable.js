@@ -24,8 +24,13 @@ const dataSource = ({
   }),
 });
 
+const RUN_TYPES = ['Tree', 'Global Routine'].map(v => ({
+  label: v,
+  value: v,
+}));
+
 const filters = () => () => [
-  { name: 'type', label: 'Type', type: 'text' },
+  { name: 'type', label: 'Type', type: 'select', options: RUN_TYPES },
   { name: 'source', label: 'Source', type: 'text' },
   { name: 'group', label: 'Group', type: 'text' },
   { name: 'name', label: 'Name', type: 'text' },

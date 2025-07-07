@@ -8,6 +8,9 @@ import {
   generatePaginationParams,
   generateSortParams,
 } from '../../../apis/http';
+import { defineFilter } from '../../../helpers';
+
+const clientSide = defineFilter(true).startsWith('name', 'name').end();
 
 const fetchIntegrationsWithSupportingData = options =>
   fetchIntegrations(options).then(({ integrations, ...response }) => {
@@ -41,6 +44,7 @@ const fetchIntegrationsWithSupportingData = options =>
 
 const dataSource = ({ kappSlug }) => ({
   fn: fetchIntegrationsWithSupportingData,
+  clientSide,
   params: paramData => [
     {
       include: 'details',

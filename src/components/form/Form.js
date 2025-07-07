@@ -673,7 +673,7 @@ const computeFieldSet = (fields, fieldSetProp) => {
       ? defaultFieldSet
       : typeof fieldSetProp === 'function'
         ? fieldSetProp(defaultFieldSet)
-        : fieldSetProp,
+        : fieldSetProp.filter(field => defaultFieldSet.has(field)),
   );
 };
 
@@ -735,6 +735,7 @@ class FormImplComponent extends Component {
       alterFields,
       autoFocus,
       components,
+      renderers,
       fields: fieldsFn,
       fieldSet,
       formKey,
@@ -791,10 +792,12 @@ class FormImplComponent extends Component {
               ) : null,
             ];
           })}
+          fieldSet={computedFieldSet.toJS()}
           dirty={dirty}
           error={
             error && <FormError error={error} clear={clearError(formKey)} />
           }
+          submit={onSubmit(formKey, fieldSet)}
           buttons={
             !readOnlyResult && (
               <FormButtons
@@ -813,10 +816,18 @@ class FormImplComponent extends Component {
           bindings={bindings}
           meta={fields.map(field =>
             Map({
+              label: field.label,
+              value:
+                (typeof field.serialize === 'function' &&
+                  field.serialize({ values: fields.map(f => f.value) })) ||
+                field.value,
+              options: field.options,
+              type: field.type,
               visible: field.visible,
               hasErrors: field.errors?.size > 0,
             }),
           )}
+          renderers={renderers}
         />
       );
     }
@@ -852,6 +863,7 @@ export const generateForm =
       onLoad={configurationProps.onLoad}
       uncontrolled={configurationProps.uncontrolled}
       readOnly={configurationProps.readOnly}
+      renderers={configurationProps.renderers}
     >
       {configurationProps.children}
     </Form>

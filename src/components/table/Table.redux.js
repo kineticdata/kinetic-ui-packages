@@ -10,7 +10,8 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 import { action, dispatch, regHandlers, regSaga, store } from '../../store';
-import { mountForm, unmountForm } from '..';
+import { mountForm, submitForm, unmountForm } from '..';
+import { setValue } from '../form/Form';
 
 export const hasData = data => isarray(data) || data instanceof List;
 const noop = () => null;
@@ -123,7 +124,6 @@ export const generateFilters = (tableKey, columns) =>
               column,
             }),
           ),
-
         Map(),
       ),
   );
@@ -158,6 +158,7 @@ regHandlers({
         tableOptions,
         onValidateFilters,
         filterForm,
+        filterSet,
         onFetch,
         onColumnSort,
         onColumnToggle,
@@ -196,6 +197,7 @@ regHandlers({
 
               // Filtering
               filterForm,
+              filterSet,
               filters: generateFilters(tableKey, columns),
               appliedFilters: generateFilters(tableKey, columns),
               validFilters: true,
@@ -225,6 +227,18 @@ regHandlers({
         )
         // Map to columns values to get the new columnSet
         .map(c => c.get('value')),
+    ),
+  TOGGLE_FILTER: (state, { payload: { tableKey, filters } }) =>
+    state.updateIn(['tables', tableKey, 'filterSet'], filterSet =>
+      !filterSet
+        ? filters
+        : filters.reduce(
+            (set, filter) =>
+              set.includes(filter)
+                ? set.filter(f => f !== filter)
+                : [...set, filter],
+            filterSet,
+          ),
     ),
   SET_ROWS: (
     state,
@@ -522,6 +536,35 @@ regSaga(
   }),
 );
 
+regSaga(
+  takeEvery('TOGGLE_FILTER', function* ({ payload: { tableKey, filters } }) {
+    const [filterSet, appliedFilters] = yield select(state => [
+      state.getIn(['tables', tableKey, 'filterSet']),
+      state.getIn(['tables', tableKey, 'appliedFilters']),
+    ]);
+
+    // Determine filters that were removed
+    const filtersToRemove = filters.filter(
+      filter => !filterSet.includes(filter),
+    );
+    // If any filters were removed from the set
+    if (filtersToRemove.length > 0) {
+      for (const filter of filtersToRemove) {
+        // Clear the filter field value in the form
+        yield call(setValue, filterFormKey(tableKey), filter, null);
+      }
+
+      // If any of the removed filters were applied
+      if (filtersToRemove.some(filter => appliedFilters.get(filter))) {
+        // Submit the filter form to redo the query
+        yield call(submitForm, filterFormKey(tableKey), {
+          fieldSet: filterSet,
+        });
+      }
+    }
+  }),
+);
+
 export const operations = Map({
   includes: (cv, v) => cv.toLocaleLowerCase().includes(v.toLocaleLowerCase()),
   startsWith: (cv, v) =>
@@ -703,6 +746,10 @@ export const reloadTablePage = tableKey =>
   dispatch('RELOAD_PAGE', { tableKey });
 export const clearFilters = tableKey =>
   dispatch('CLEAR_TABLE_FILTERS', { tableKey });
+export const resetFilterForm = tableKey =>
+  dispatch('APPLY_FILTER_FORM', { tableKey, appliedFilters: Map() });
+export const toggleFilterField = (tableKey, ...filters) =>
+  dispatch('TOGGLE_FILTER', { tableKey, filters });
 
 export const hasTableFiltersApplied = tableKey =>
   store

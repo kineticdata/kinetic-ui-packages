@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { fromJS, get, List, Map } from 'immutable';
 import { capitalize } from 'lodash-es';
 
@@ -448,3 +449,15 @@ export const TIMELINES = [
 ].sort();
 
 export const MAX_PART_LENGTH = 10;
+
+export function usePrevious(value) {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef();
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
+}

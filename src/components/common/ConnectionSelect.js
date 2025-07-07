@@ -67,6 +67,7 @@ export const ConnectionSelect = props => (
     onBlur={props.onBlur}
     placeholder={props.placeholder}
     id={props.id}
+    name={props.name}
     form={props.form}
   />
 );

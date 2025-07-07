@@ -104,6 +104,13 @@ exports[`<Table /> render dataSource dataSource resolves 1`] = `
       Next
     </button>
   </div>
+  <div
+    data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"filterCount\\": 0
+}"
+    data-testid="FilterControlMock"
+  />
   <form
     data-props="{
   \\"appliedFilters\\": {},
@@ -151,7 +158,9 @@ exports[`<Table /> render filters filter form 1`] = `
   \\"formOptions\\": {
     \\"tableKey\\": \\"mock-table-key\\"
   },
+  \\"fieldSet\\": [],
   \\"dirty\\": false,
+  \\"submit\\": \\"() => {}\\",
   \\"bindings\\": {
     \\"values\\": {
       \\"name\\": \\"\\",
@@ -160,13 +169,24 @@ exports[`<Table /> render filters filter form 1`] = `
   },
   \\"meta\\": {
     \\"name\\": {
+      \\"label\\": \\"Name\\",
+      \\"value\\": \\"\\",
+      \\"options\\": [],
+      \\"type\\": \\"text\\",
       \\"visible\\": true,
       \\"hasErrors\\": false
     },
     \\"status\\": {
+      \\"label\\": \\"Status\\",
+      \\"value\\": \\"\\",
+      \\"options\\": [],
+      \\"type\\": \\"text\\",
       \\"visible\\": true,
       \\"hasErrors\\": false
     }
+  },
+  \\"renderers\\": {
+    \\"filterControl\\": \\"() => {}\\"
   }
 }"
   data-testid="FormLayoutMock"
@@ -599,6 +619,13 @@ exports[`<Table /> render kitchen sink 1`] = `
       Next
     </button>
   </div>
+  <div
+    data-props="{
+  \\"tableKey\\": \\"mock-table-key\\",
+  \\"filterCount\\": 2
+}"
+    data-testid="FilterControlMock"
+  />
   <form
     data-props="{
   \\"appliedFilters\\": {
