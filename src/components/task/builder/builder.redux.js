@@ -1,5 +1,5 @@
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
-import { fromJS, List, OrderedMap } from 'immutable';
+import { fromJS, List, Map, OrderedMap } from 'immutable';
 import { isFunction } from 'lodash-es';
 import { action, dispatch, regHandlers, regSaga } from '../../../store';
 import {
@@ -135,13 +135,17 @@ regSaga(
       const loadError = workflowObjectError || treeError || webApiError;
 
       // Find the operation ids of any integration nodes
-      const operationIds =
+      const operations =
         treeObject?.treeJson?.nodes
           ?.map(node =>
             node.definitionId.startsWith(
               `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
             )
-              ? node.parameters.find(p => p.id === 'operation')?.value
+              ? {
+                  id: node.parameters.find(p => p.id === 'operation')?.value,
+                  connectionId: node.parameters.find(p => p.id === 'connection')
+                    ?.value,
+                }
               : null,
           )
           .filter(Boolean) || [];
@@ -165,8 +169,8 @@ regSaga(
             error: loadError ? loadError.message || loadError : null,
           }),
         ),
-        operationIds.length > 0
-          ? put(action('TREE_LOAD_OPERATIONS', { treeKey, operationIds }))
+        operations.length > 0
+          ? put(action('TREE_LOAD_OPERATIONS', { treeKey, operations }))
           : null,
       ]);
     } catch (e) {
@@ -197,14 +201,32 @@ regSaga(
 regSaga(
   takeEvery('TREE_LOAD_OPERATIONS', function* ({ payload }) {
     try {
-      const { treeKey, connectionId, operationIds = [] } = payload;
-
+      const {
+        treeKey,
+        connectionId,
+        operationIds = [],
+        operations: operationsToLoad,
+      } = payload;
       const { operations = [] } = yield connectionId
         ? call(fetchOperations, { connectionId })
-        : call(fetchBulkOperations, { ids: operationIds });
+        : call(fetchBulkOperations, {
+            ids: operationsToLoad
+              ? operationsToLoad.map(op => op.id)
+              : operationIds,
+          });
+      const loadedOperationIds = operations.reduce(
+        (ids, op) => ({
+          ...ids,
+          [op.id]: true,
+        }),
+        {},
+      );
 
       yield put(
         action('TREE_INTEGRATION_DATA_LOADED', {
+          missing: operationsToLoad
+            ? operationsToLoad.filter(op => !loadedOperationIds[op.id])
+            : null,
           operations,
           treeKey,
         }),
@@ -393,7 +415,7 @@ regHandlers({
     }),
   TREE_INTEGRATION_DATA_LOADED: (
     state,
-    { payload: { treeKey, connections, operations } },
+    { payload: { treeKey, connections, operations, missing } },
   ) =>
     state.updateIn(['trees', treeKey, 'connections'], connectionsMap => {
       // Update connections map in state if data was provided
@@ -415,7 +437,7 @@ regHandlers({
         : connectionsMap;
 
       // Update the operations maps in each connection if data was provided
-      return operations
+      const newConnectionsWithOperationsMap = operations
         ? fromJS(operations).reduce(
             (map, op) =>
               map.setIn(
@@ -425,6 +447,20 @@ regHandlers({
             newConnectionsMap,
           )
         : newConnectionsMap;
+
+      // Update the operations maps in each connection to set missing values
+      return missing
+        ? fromJS(missing).reduce(
+            (map, op) =>
+              map.has(op.get('connectionId'))
+                ? map.setIn(
+                    [op.get('connectionId'), 'operations', op.get('id')],
+                    null,
+                  )
+                : map,
+            newConnectionsWithOperationsMap,
+          )
+        : newConnectionsWithOperationsMap;
     }),
   TREE_SAVE: (state, { payload: { treeKey } }) =>
     state.mergeIn(['trees', treeKey], {

@@ -330,10 +330,17 @@ const addNewTaskNext = ({
         if (operationId) {
           dispatch('TREE_LOAD_OPERATIONS', {
             treeKey,
-            operationIds: [operationId],
+            operations: [
+              {
+                id: operationId,
+                connectionId: node.parameters.find(p => p.id === 'connection')
+                  ?.value,
+              },
+            ],
           });
         }
       }
+
       return dispatch('TREE_UPDATE', {
         treeKey,
         tree: stagedTree
@@ -564,4 +571,26 @@ export const checkOmittedParametersForAdvancedHandlers = (node, parameter) => {
   } else {
     return true;
   }
+};
+
+export const isNodeMissingIntegration = (node, connections) => {
+  // Only check integration data if the node is an integration node
+  if (node.definitionId.startsWith(`${ADVANCED_HANDLER_NAME_INTEGRATION}_v`)) {
+    // If connection doesn't exist in the list, return true
+    if (
+      connections &&
+      !connections.has(node.parameters.find(p => p.id === 'connection')?.value)
+    ) {
+      return true;
+    }
+    // If operation is null, return true. Undefined is fine because it means
+    // the data has not yet been fetched, so we don't want to error yet.
+    const operation = connections?.getIn([
+      node.parameters.find(p => p.id === 'connection')?.value,
+      'operations',
+      node.parameters.find(p => p.id === 'operation')?.value,
+    ]);
+    return operation === null;
+  }
+  return false;
 };

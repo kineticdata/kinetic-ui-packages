@@ -8,6 +8,7 @@ import {
   isPointInNode,
   generateIntegrationTaskDefinition,
   generateSubmissionCreateTaskDefinition,
+  isNodeMissingIntegration,
 } from './helpers';
 import { Connector as ConnectorModel, Node as NodeModel } from './models';
 import { SvgCanvas } from './SvgCanvas';
@@ -356,8 +357,11 @@ export class TreeBuilderComponent extends Component {
                     }
                     primary={selected.getIn([0, 'nodeId']) === node.id}
                     selected={selected.some(({ nodeId }) => nodeId === node.id)}
+                    missingIntegration={isNodeMissingIntegration(
+                      node,
+                      connections,
+                    )}
                     onSelect={this.props.onSelectNode}
-                    connections={connections}
                     tasks={tasks}
                     tree={tree}
                   />
@@ -368,7 +372,6 @@ export class TreeBuilderComponent extends Component {
                   ref={this.newNode}
                   treeKey={treeKey}
                   node={this.state.newNode}
-                  connections={connections}
                   tasks={tasks}
                   tree={tree}
                 />

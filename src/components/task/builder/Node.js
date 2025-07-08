@@ -111,7 +111,8 @@ export class Node extends Component {
       !this.props.node.equals(nextProps.node) ||
       this.props.primary !== nextProps.primary ||
       this.props.selected !== nextProps.selected ||
-      this.props.highlighted !== nextProps.highlighted
+      this.props.highlighted !== nextProps.highlighted ||
+      this.props.missingIntegration !== nextProps.missingIntegration
     );
   }
 
@@ -139,7 +140,7 @@ export class Node extends Component {
   }
 
   render() {
-    const { node, highlighted, primary, selected, connections, tasks } =
+    const { node, highlighted, primary, selected, missingIntegration, tasks } =
       this.props;
     const { defers, definitionId, id, name } = node;
     const tempNode = typeof id !== 'number';
@@ -154,10 +155,7 @@ export class Node extends Component {
         !tasks.has(node.definitionId) &&
         !node.definitionId.startsWith('system_tree_return_v') &&
         !node.definitionId.startsWith('system_start_v')) ||
-      (isIntegration &&
-        !connections.get(
-          node.parameters.find(p => p.id === 'connection')?.value,
-        ));
+      missingIntegration;
     const invalid =
       missing ||
       (!tempNode && !name) ||

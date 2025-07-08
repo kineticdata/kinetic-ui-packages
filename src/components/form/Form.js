@@ -819,7 +819,7 @@ class FormImplComponent extends Component {
               label: field.label,
               value:
                 (typeof field.serialize === 'function' &&
-                  field.serialize({ values: fields.map(f => f.value) })) ||
+                  field.serialize(bindings)) ||
                 field.value,
               options: field.options,
               type: field.type,
