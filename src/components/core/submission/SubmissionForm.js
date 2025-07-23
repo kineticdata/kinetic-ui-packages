@@ -137,9 +137,9 @@ const getInitialValue = (submission, element, type) => {
   }
 
   return type === 'datetime' && value
-    ? moment(value).format('yyyy-MM-DDTHH:mm')
+    ? moment(value).format('YYYY-MM-DDTHH:mm')
     : type === 'date' && value
-      ? moment(value).format('yyyy-MM-DD')
+      ? moment(value).format('YYYY-MM-DD')
       : value;
 };
 
