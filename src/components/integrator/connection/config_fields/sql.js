@@ -68,6 +68,17 @@ export const generateSQLConnectionConfigFields = (config, type) => [
     required: true,
   },
   {
+    name: 'poolSize',
+    label: 'Connection Pool',
+    type: 'number',
+    initialValue: get(config, 'poolSize') || 5,
+    required: true,
+    constraint: ({ values }) =>
+      typeof values.get('poolSize') === 'number' && values.get('poolSize') > 0,
+    constraintMessage:
+      'Connection Pool must be numeric and must be greater than 0',
+  },
+  {
     name: 'username',
     label: 'Username',
     type: 'text',
