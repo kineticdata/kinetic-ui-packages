@@ -75,6 +75,33 @@ export const deleteConnection = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const exportConnection = (options = {}) => {
+  validateOptions('exportConnection', ['id'], options);
+  const { id, ...params } = options;
+  return axios
+    .get(
+      `${bundle.spaceLocation()}/app/integrator/api/export/connections/${id}`,
+      {
+        params,
+      },
+    )
+    .then(response => ({ connection: response.data }))
+    .catch(handleErrors);
+};
+
+export const importConnection = (options = {}) => {
+  validateOptions('importConnection', ['connection'], options);
+  const { connection, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/import/connections`,
+      connection,
+      { params },
+    )
+    .then(response => ({ connection: response.data }))
+    .catch(handleErrors);
+};
+
 export const testConnection = (options = {}) => {
   validateOptions('testConnection', ['connection'], options);
   const { connection, id, ...params } = options;
@@ -174,6 +201,19 @@ export const deleteOperation = (options = {}) => {
       },
     )
     .then(response => ({ operation: response.data }))
+    .catch(handleErrors);
+};
+
+export const importOperations = (options = {}) => {
+  validateOptions('importOperations', ['connectionId', 'operations'], options);
+  const { connectionId, operations, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/import/connections/${connectionId}/operations`,
+      operations,
+      { params },
+    )
+    .then(response => ({ connection: response.data }))
     .catch(handleErrors);
 };
 

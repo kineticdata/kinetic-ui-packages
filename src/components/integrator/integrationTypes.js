@@ -21,6 +21,7 @@ export const getConnectionMetadata = connection => {
       return {
         // Details content to render for each option in a list of connections
         optionDetail: getIn(connection, ['config', 'baseUrl']),
+        optionDetailLabel: 'Base URL',
         // Documentation link
         docsLink: getIn(connection, ['documentationLink']),
         // Properties to list in page/modal headings
@@ -73,6 +74,8 @@ export const getOperationMetadata = operation => {
       return {
         // Details content to render for each option in a list of operations
         optionDetail: getIn(operation, ['config', 'method']),
+        optionDetailLabel: 'Method',
+        optionDetailComponent: HTTPMethod,
         // Documentation link
         docsLink: getIn(operation, ['documentationLink']),
         // Properties to list in page/modal headings
@@ -98,4 +101,7 @@ const HTTPMethodCell = ({ row }) => (
   <td>
     <span className="badge badge-info">{row.getIn(['config', 'method'])}</span>
   </td>
+);
+const HTTPMethod = ({ value }) => (
+  <span className="badge badge-info">{value}</span>
 );
