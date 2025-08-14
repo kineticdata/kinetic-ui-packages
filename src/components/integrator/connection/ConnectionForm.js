@@ -1,9 +1,10 @@
-import { get, getIn } from 'immutable';
+import { get, getIn, fromJS } from 'immutable';
 import { generateForm } from '../../form/Form';
 import {
   fetchConnection,
   createConnection,
   updateConnection,
+  importConnection,
 } from '../../../apis';
 import integrationTypes from '../integrationTypes';
 import {
@@ -15,20 +16,34 @@ import {
   serializeSQLConnectionConfigFields,
 } from './config_fields/sql';
 
-const dataSources = ({ id }) => ({
-  connection: {
-    fn: fetchConnection,
-    params: id && [{ id }],
-    transform: result => result.connection,
-  },
+const dataSources = ({ id, clone, importData, importOverwrite }) => ({
+  connection:
+    // If importing and overwriting an existing connection, set the import data
+    // into the bindings. Otherwise, fetch the connection if an id is provided.
+    importData && importOverwrite === true
+      ? { fn: () => importData, params: [] }
+      : {
+          fn: fetchConnection,
+          params: id && [{ id }],
+          transform: result => result.connection,
+        },
+  isClone: { fn: () => clone, params: [] },
 });
 
 const handleSubmit =
-  ({ id, clone }) =>
+  ({ id, clone, importData, importOverwrite }) =>
   values =>
-    (id && !clone ? updateConnection : createConnection)({
-      id,
-      connection: values.toJS(),
+    (importData
+      ? importConnection
+      : id && !clone
+        ? updateConnection
+        : createConnection)({
+      id: importData ? undefined : id,
+      connection:
+        importData && importOverwrite !== false
+          ? values.set('id', importData.id).toJS()
+          : values.toJS(),
+      force: importData ? importOverwrite : undefined,
     }).then(({ connection, error }) => {
       if (error) {
         throw (
@@ -39,11 +54,12 @@ const handleSubmit =
       return connection;
     });
 
-const getFieldConfigByType = (type, connection) => {
+const getFieldConfigByType = (type, connection, options) => {
   switch (type) {
     case 'http':
       const configFieldsHTTP = generateHttpConnectionConfigFields(
         get(connection, 'config'),
+        options,
       );
       return [
         configFieldsHTTP,
@@ -54,6 +70,7 @@ const getFieldConfigByType = (type, connection) => {
       const configFieldsSQL = generateSQLConnectionConfigFields(
         get(connection, 'config'),
         type,
+        options,
       );
       return [
         configFieldsSQL,
@@ -65,14 +82,19 @@ const getFieldConfigByType = (type, connection) => {
 };
 
 const fields =
-  ({ id, type, clone }) =>
+  ({ id, type, clone, importData, importOverwrite }) =>
   ({ connection }) => {
     // Must provide an id of an existing connection, or a type
-    if (id ? connection : type) {
-      const typeValue = getIn(connection, ['config', 'configType']) || type;
+    if (importData || (id ? connection : type)) {
+      const record = connection || fromJS(importData);
+      const typeValue = getIn(record, ['config', 'configType']) || type;
       const [configFields, configSerialize] = getFieldConfigByType(
         typeValue,
-        connection,
+        record,
+        {
+          isClone: clone,
+          isNewImport: importData && importOverwrite === false,
+        },
       );
 
       return [
@@ -80,11 +102,11 @@ const fields =
           name: 'name',
           label: 'Connection Name',
           type: 'text',
-          initialValue: !clone ? get(connection, 'name') : '',
+          initialValue: !clone ? get(record, 'name') : '',
           required: true,
           placeholder: !clone
             ? 'Enter a name to find your connection easily'
-            : `Clone of ${get(connection, 'name')}`,
+            : `Clone of ${get(record, 'name')}`,
         },
         {
           name: 'type',
@@ -99,21 +121,21 @@ const fields =
           name: 'documentationLink',
           label: 'API Documentation Link',
           type: 'text',
-          initialValue: get(connection, 'documentationLink') || '',
+          initialValue: get(record, 'documentationLink') || '',
           placeholder: 'Optional (but recommended)',
         },
         {
           name: 'description',
           label: 'Description',
           type: 'text',
-          initialValue: get(connection, 'description') || '',
+          initialValue: get(record, 'description') || '',
           placeholder: 'Enter a short description for the connection',
         },
         {
           name: 'secrets',
           label: 'Secrets',
           type: 'map',
-          initialValue: get(connection, 'secrets') || {},
+          initialValue: get(record, 'secrets') || {},
           placeholder: 'Secret Key',
           helpText:
             'Secrets are key-value pairs that define sensitive values that will be hidden from view, but can be referenced in other parts of the connection by their keys.',
@@ -123,7 +145,7 @@ const fields =
           label: 'Config',
           type: null,
           visible: false,
-          initialValue: get(connection, 'config'),
+          initialValue: get(record, 'config'),
           // Serialize the transient config fields into a single config object
           serialize: configSerialize,
         },
@@ -134,7 +156,7 @@ const fields =
   };
 
 export const ConnectionForm = generateForm({
-  formOptions: ['id', 'type', 'clone'],
+  formOptions: ['id', 'type', 'clone', 'importData', 'importOverwrite'],
   dataSources,
   fields,
   handleSubmit,

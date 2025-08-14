@@ -48,7 +48,7 @@ export const serializeHttpConnectionConfigFields =
     );
   };
 
-export const generateHttpConnectionConfigFields = config => [
+export const generateHttpConnectionConfigFields = (config, options) => [
   {
     name: 'configType',
     label: 'Type',
@@ -80,10 +80,10 @@ export const generateHttpConnectionConfigFields = config => [
     type: 'text',
     initialValue: get(config, 'caCert') || '',
   },
-  ...generateHttpConnectionConfigAuthFields(get(config, 'auth'), !config),
+  ...generateHttpConnectionConfigAuthFields(get(config, 'auth'), options),
 ];
 
-const generateHttpConnectionConfigAuthFields = auth => [
+const generateHttpConnectionConfigAuthFields = (auth, options) => [
   {
     name: 'auth.authType',
     label: 'Authentication',
@@ -114,11 +114,16 @@ const generateHttpConnectionConfigAuthFields = auth => [
     type: 'toggle',
     // Set to true if there is no auth config or if the current auth config is
     // set to a different type
-    initialValue: !auth || get(auth, 'authType') !== 'basic',
+    initialValue:
+      !auth ||
+      options.isClone ||
+      options.isNewImport ||
+      get(auth, 'authType') !== 'basic',
     // Show if we're editing a connection and the selected auth type matches
     // the currently saved auth type
     visible: ({ values, connection }) =>
       !!connection &&
+      !options.isClone &&
       values.get('auth.authType') === 'basic' &&
       connection.getIn(['config', 'auth', 'authType']) === 'basic',
   },
@@ -130,10 +135,11 @@ const generateHttpConnectionConfigAuthFields = auth => [
     visible: ({ values }) => values.get('auth.authType') === 'basic',
     // Enable if we're creating a new connection or the change toggle is true
     enabled: ({ values, connection }) =>
-      !connection || !!values.get('auth.password.toggle'),
+      !connection || options.isClone || !!values.get('auth.password.toggle'),
     // Show the placeholder if there is a connection and it matches the saved type
     placeholder: ({ values, connection }) =>
       !!connection &&
+      !options.isClone &&
       connection.getIn(['config', 'auth', 'authType']) === 'basic' &&
       !values.get('auth.password.toggle')
         ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022'
@@ -168,11 +174,16 @@ const generateHttpConnectionConfigAuthFields = auth => [
     type: 'toggle',
     // Set to true if there is no auth config or if the current auth config is
     // set to a different type
-    initialValue: !auth || get(auth, 'authType') !== 'client_credentials',
+    initialValue:
+      !auth ||
+      options.isClone ||
+      options.isNewImport ||
+      get(auth, 'authType') !== 'client_credentials',
     // Show if we're editing a connection and the selected auth type matches
     // the currently saved auth type
     visible: ({ values, connection }) =>
       !!connection &&
+      !options.isClone &&
       values.get('auth.authType') === 'client_credentials' &&
       connection.getIn(['config', 'auth', 'authType']) === 'client_credentials',
   },
@@ -184,10 +195,13 @@ const generateHttpConnectionConfigAuthFields = auth => [
       values.get('auth.authType') === 'client_credentials',
     // Enable if we're creating a new connection or the change toggle is true
     enabled: ({ values, connection }) =>
-      !connection || !!values.get('auth.clientSecret.toggle'),
+      !connection ||
+      options.isClone ||
+      !!values.get('auth.clientSecret.toggle'),
     // Show the placeholder if there is a connection and it matches the saved type
     placeholder: ({ values, connection }) =>
       !!connection &&
+      !options.isClone &&
       connection.getIn(['config', 'auth', 'authType']) ===
         'client_credentials' &&
       !values.get('auth.clientSecret.toggle')
@@ -261,11 +275,16 @@ const generateHttpConnectionConfigAuthFields = auth => [
     type: 'toggle',
     // Set to true if there is no auth config or if the current auth config is
     // set to a different type
-    initialValue: !auth || get(auth, 'authType') !== 'raw_bearer_token',
+    initialValue:
+      !auth ||
+      options.isClone ||
+      options.isNewImport ||
+      get(auth, 'authType') !== 'raw_bearer_token',
     // Show if we're editing a connection and the selected auth type matches
     // the currently saved auth type
     visible: ({ values, connection }) =>
       !!connection &&
+      !options.isClone &&
       values.get('auth.authType') === 'raw_bearer_token' &&
       connection.getIn(['config', 'auth', 'authType']) === 'raw_bearer_token',
   },
@@ -277,10 +296,11 @@ const generateHttpConnectionConfigAuthFields = auth => [
     visible: ({ values }) => values.get('auth.authType') === 'raw_bearer_token',
     // Enable if we're creating a new connection or the change toggle is true
     enabled: ({ values, connection }) =>
-      !connection || !!values.get('auth.token.toggle'),
+      !connection || options.isClone || !!values.get('auth.token.toggle'),
     // Show the placeholder if there is a connection and it matches the saved type
     placeholder: ({ values, connection }) =>
       !!connection &&
+      !options.isClone &&
       connection.getIn(['config', 'auth', 'authType']) === 'raw_bearer_token' &&
       !values.get('auth.token.toggle')
         ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022'
@@ -288,6 +308,7 @@ const generateHttpConnectionConfigAuthFields = auth => [
   },
   ...generateHttpConnectionConfigAuthTokenOperationFields(
     getIn(auth, ['token', 'operation']),
+    options,
   ),
   {
     name: 'auth.tokenHttpConn',
@@ -300,6 +321,7 @@ const generateHttpConnectionConfigAuthFields = auth => [
   },
   ...generateHttpConnectionConfigAuthTokenConnectionFields(
     getIn(auth, ['token', 'connection']),
+    options,
   ),
   {
     name: 'auth.token.tokenOutput',
@@ -339,7 +361,10 @@ const generateHttpConnectionConfigAuthFields = auth => [
   },
 ];
 
-const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
+const generateHttpConnectionConfigAuthTokenOperationFields = (
+  operation,
+  options,
+) => [
   {
     name: 'auth.token.operation.configType',
     label: 'Type',
@@ -512,7 +537,10 @@ const generateHttpConnectionConfigAuthTokenOperationFields = operation => [
   },
 ];
 
-const generateHttpConnectionConfigAuthTokenConnectionFields = connection => [
+const generateHttpConnectionConfigAuthTokenConnectionFields = (
+  connection,
+  options,
+) => [
   {
     name: 'auth.token.connection.baseUrl',
     label: 'Token Base URL',

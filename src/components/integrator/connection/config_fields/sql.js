@@ -34,7 +34,7 @@ export const serializeSQLConnectionConfigFields =
     );
   };
 
-export const generateSQLConnectionConfigFields = (config, type) => [
+export const generateSQLConnectionConfigFields = (config, type, options) => [
   {
     name: 'configType',
     label: 'Type',
@@ -90,9 +90,9 @@ export const generateSQLConnectionConfigFields = (config, type) => [
     transient: true,
     label: 'Modify Password',
     type: 'toggle',
-    initialValue: !config,
+    initialValue: !config || !!options.isClone || !!options.isNewImport,
     // Show if we're editing a connection
-    visible: ({ connection }) => !!connection,
+    visible: ({ connection }) => !!connection && !options.isClone,
   },
   {
     name: 'password',
@@ -101,10 +101,10 @@ export const generateSQLConnectionConfigFields = (config, type) => [
     initialValue: '',
     // Enable if we're creating a new connection or the change toggle is true
     enabled: ({ values, connection }) =>
-      !connection || !!values.get('password.toggle'),
+      !connection || options.isClone || !!values.get('password.toggle'),
     // Show the placeholder if there is a connection
     placeholder: ({ values, connection }) =>
-      !!connection && !values.get('password.toggle')
+      !!connection && !options.isClone && !values.get('password.toggle')
         ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022'
         : undefined,
   },
