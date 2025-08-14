@@ -1,5 +1,4 @@
 import axios from 'axios';
-import createError from 'axios/lib/core/createError';
 import {
   fetchSecurityPolicyDefinitions,
   fetchSecurityPolicyDefinition,
@@ -152,9 +151,13 @@ describe('securityPolicyDefinitions api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchSecurityPolicyDefinitions();

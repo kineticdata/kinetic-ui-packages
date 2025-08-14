@@ -1,5 +1,4 @@
 import axios from 'axios';
-import createError from 'axios/lib/core/createError';
 import { fetchSpace, updateSpace } from './space';
 
 jest.mock('axios');
@@ -115,10 +114,14 @@ describe('space api', () => {
 
     test('bad request', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 400', null, 400, null, {
-          status: 400,
-          statusText: 'Bad Request',
-          data: { error: 'Invalid space' },
+        Object.assign(new Error('Request failed with status code 400'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 400,
+            statusText: 'Bad Request',
+            data: { error: 'Invalid space' },
+          },
         }),
       );
       const { space, error } = await updateSpace({
@@ -135,10 +138,13 @@ describe('space api', () => {
 
     test('serverError', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
-          data: {},
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const { space, error } = await updateSpace({

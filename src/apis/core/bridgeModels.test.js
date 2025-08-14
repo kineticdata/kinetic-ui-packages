@@ -1,5 +1,4 @@
 import axios from 'axios';
-import createError from 'axios/lib/core/createError';
 import {
   fetchBridgeModels,
   fetchBridgeModel,
@@ -46,9 +45,13 @@ describe('bridgeModels api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchBridgeModels({ include: 'attributes' });
@@ -112,9 +115,13 @@ describe('bridgeModels api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchBridgeModel({
@@ -182,10 +189,14 @@ describe('bridgeModels api', () => {
 
     test('bad request', async () => {
       axios.post.mockRejectedValue(
-        createError('Request failed with status code 400', null, 400, null, {
-          status: 400,
-          statusText: 'Bad Request',
-          data: { error: 'Invalid Bridge Model' },
+        Object.assign(new Error('Request failed with status code 400'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 400,
+            statusText: 'Bad Request',
+            data: { error: 'Invalid Bridge Model' },
+          },
         }),
       );
       const result = await createBridgeModel({
@@ -204,9 +215,13 @@ describe('bridgeModels api', () => {
 
     test('forbidden', async () => {
       axios.post.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await createBridgeModel({
@@ -274,10 +289,14 @@ describe('bridgeModels api', () => {
 
     test('bad request', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 400', null, 400, null, {
-          status: 400,
-          statusText: 'Bad Request',
-          data: { error: 'Invalid Bridge Model' },
+        Object.assign(new Error('Request failed with status code 400'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 400,
+            statusText: 'Bad Request',
+            data: { error: 'Invalid Bridge Model' },
+          },
         }),
       );
       const result = await updateBridgeModel({
@@ -297,9 +316,13 @@ describe('bridgeModels api', () => {
 
     test('forbidden', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await updateBridgeModel({
