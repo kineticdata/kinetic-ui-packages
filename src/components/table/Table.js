@@ -836,7 +836,7 @@ export const generateTable =
           .map(initialValue => ({ initialValue }))
           .toObject(),
       ),
-      filterSet: props.filterSet || [],
+      filterSet: props.filterSet,
       filterAutoFocus: props.filterAutoFocus,
       columnSet: props.columnSet,
       columnSetOrder: props.columnSetOrder,
