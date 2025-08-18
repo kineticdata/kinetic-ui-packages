@@ -158,7 +158,10 @@ exports[`<Table /> render filters filter form 1`] = `
   \\"formOptions\\": {
     \\"tableKey\\": \\"mock-table-key\\"
   },
-  \\"fieldSet\\": [],
+  \\"fieldSet\\": [
+    \\"name\\",
+    \\"status\\"
+  ],
   \\"dirty\\": false,
   \\"submit\\": \\"() => {}\\",
   \\"bindings\\": {
