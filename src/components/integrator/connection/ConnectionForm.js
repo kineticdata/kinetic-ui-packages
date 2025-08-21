@@ -93,7 +93,7 @@ const fields =
         record,
         {
           isClone: clone,
-          isNewImport: importData && importOverwrite === false,
+          isNewImport: importData && importOverwrite !== true,
         },
       );
 
