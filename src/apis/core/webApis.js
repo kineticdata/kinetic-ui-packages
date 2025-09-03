@@ -1,4 +1,6 @@
-import { apiGroup } from '../http';
+import { apiGroup, handleErrors, validateOptions } from '../http';
+import axios from 'axios';
+import { bundle } from '../../helpers';
 
 export const {
   fetchWebApis,
@@ -26,3 +28,28 @@ export const {
     }),
   },
 });
+
+export const exportWebApi = (options = {}) => {
+  validateOptions('exportWebApi', ['slug'], options);
+  const { slug, kappSlug } = options;
+
+  return axios
+    .get(
+      `${bundle.apiLocation()}${kappSlug ? `/kapps/${kappSlug}` : ''}/webApis/${slug}/export`,
+    )
+    .then(response => ({ webApi: response.data }))
+    .catch(handleErrors);
+};
+
+export const importWebApi = (options = {}) => {
+  validateOptions('importWebApi', ['webApi'], options);
+  const { webApi, kappSlug, ...params } = options;
+  return axios
+    .post(
+      `${bundle.apiLocation()}${kappSlug ? `/kapps/${kappSlug}` : ''}/webApiImport`,
+      webApi,
+      { params },
+    )
+    .then(response => ({ webApi: response.data }))
+    .catch(handleErrors);
+};
