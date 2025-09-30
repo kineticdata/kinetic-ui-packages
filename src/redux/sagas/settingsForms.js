@@ -131,14 +131,15 @@ export function* fetchAllSubmissionsSaga(action) {
     searcher.pageToken(pageToken);
   }
 
-  const { submissions, nextPageToken = null, error } = yield call(
-    searchSubmissions,
-    {
-      search: searcher.build(),
-      form: formSlug,
-      kapp: kappSlug,
-    },
-  );
+  const {
+    submissions,
+    nextPageToken = null,
+    error,
+  } = yield call(searchSubmissions, {
+    search: searcher.build(),
+    form: formSlug,
+    kapp: kappSlug,
+  });
 
   // Update the action with the new results
   action = {

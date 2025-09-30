@@ -72,10 +72,7 @@ const mapDispatchToProps = {
 };
 
 export const ServiceCard = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     handleAddFavorite: props => e => {
       e.preventDefault();

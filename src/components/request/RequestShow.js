@@ -174,59 +174,58 @@ export const RequestShow = ({
         />
       )}
       {!error && !submission && <LoadingMessage />}
-      {!error &&
-        submission && (
-          <>
-            {mode === 'confirmation' && (
-              <div className="alert alert-primary alert-bar">
-                <RequestShowConfirmationContainer submission={submission} />
-              </div>
-            )}
-
-            <div className="submission-tabs p-0">
-              <ul className="nav nav-tabs" role="tablist">
-                <li role="tab" className="nav-item">
-                  <Link
-                    to={getSubmissionPath(
-                      appLocation,
-                      submission,
-                      null,
-                      listType,
-                    )}
-                    getProps={isActiveClass('nav-link')}
-                  >
-                    <I18n>Timeline</I18n>
-                  </Link>
-                </li>
-
-                <li role="tab" className="nav-item">
-                  <Link
-                    to={`${getSubmissionPath(
-                      appLocation,
-                      submission,
-                      'review',
-                      listType,
-                    )}`}
-                    getProps={isActiveClass('nav-link')}
-                  >
-                    <I18n>Review Request</I18n>
-                  </Link>
-                </li>
-              </ul>
-              <div className="submission-tabs__content">
-                {mode === 'review' ? (
-                  <I18n
-                    context={`kapps.${kappSlug}.forms.${submission.form.slug}`}
-                  >
-                    <CoreForm submission={submission.id} review />
-                  </I18n>
-                ) : (
-                  <RequestActivityList submission={submission} />
-                )}
-              </div>
+      {!error && submission && (
+        <>
+          {mode === 'confirmation' && (
+            <div className="alert alert-primary alert-bar">
+              <RequestShowConfirmationContainer submission={submission} />
             </div>
-          </>
-        )}
+          )}
+
+          <div className="submission-tabs p-0">
+            <ul className="nav nav-tabs" role="tablist">
+              <li role="tab" className="nav-item">
+                <Link
+                  to={getSubmissionPath(
+                    appLocation,
+                    submission,
+                    null,
+                    listType,
+                  )}
+                  getProps={isActiveClass('nav-link')}
+                >
+                  <I18n>Timeline</I18n>
+                </Link>
+              </li>
+
+              <li role="tab" className="nav-item">
+                <Link
+                  to={`${getSubmissionPath(
+                    appLocation,
+                    submission,
+                    'review',
+                    listType,
+                  )}`}
+                  getProps={isActiveClass('nav-link')}
+                >
+                  <I18n>Review Request</I18n>
+                </Link>
+              </li>
+            </ul>
+            <div className="submission-tabs__content">
+              {mode === 'review' ? (
+                <I18n
+                  context={`kapps.${kappSlug}.forms.${submission.form.slug}`}
+                >
+                  <CoreForm submission={submission.id} review />
+                </I18n>
+              ) : (
+                <RequestActivityList submission={submission} />
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   </div>
 );

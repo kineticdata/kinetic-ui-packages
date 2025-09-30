@@ -109,7 +109,8 @@ export const CategoriesComponent = ({
               disabled={!dirty}
               onClick={onSave}
             >
-              <span className="fa fa-check fa-fw" />Save
+              <span className="fa fa-check fa-fw" />
+              Save
             </button>
             <button
               type="button"
@@ -185,10 +186,7 @@ const serializeTreeHierarchy = tree =>
     .toJS();
 
 export const Categories = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('openDropdown', 'setOpenDropdown', ''),
   withState('categoryTree', 'setCategoryTree', null),
   withState('dirty', 'setDirty', false),
@@ -198,16 +196,28 @@ export const Categories = compose(
       : null,
   })),
   withHandlers({
-    toggleDropdown: ({ openDropdown, setOpenDropdown }) => dropdownSlug => () =>
-      setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug),
-    onChange: ({ setCategoryTree }) => newTree =>
-      setCategoryTree(updateTreeHierarchy(newTree)),
-    onSave: ({ categoryTree, updateCategoriesRequest }) => () =>
-      updateCategoriesRequest(serializeTreeHierarchy(categoryTree)),
-    reset: ({ setCategoryTree, originalCategoryTree }) => () =>
-      originalCategoryTree && setCategoryTree(originalCategoryTree.toJS()),
-    handleDelete: ({ categoryTree, setCategoryTree }) => slug => () =>
-      setCategoryTree(removeFromTree(categoryTree, slug)),
+    toggleDropdown:
+      ({ openDropdown, setOpenDropdown }) =>
+      dropdownSlug =>
+      () =>
+        setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug),
+    onChange:
+      ({ setCategoryTree }) =>
+      newTree =>
+        setCategoryTree(updateTreeHierarchy(newTree)),
+    onSave:
+      ({ categoryTree, updateCategoriesRequest }) =>
+      () =>
+        updateCategoriesRequest(serializeTreeHierarchy(categoryTree)),
+    reset:
+      ({ setCategoryTree, originalCategoryTree }) =>
+      () =>
+        originalCategoryTree && setCategoryTree(originalCategoryTree.toJS()),
+    handleDelete:
+      ({ categoryTree, setCategoryTree }) =>
+      slug =>
+      () =>
+        setCategoryTree(removeFromTree(categoryTree, slug)),
   }),
   lifecycle({
     componentDidMount() {

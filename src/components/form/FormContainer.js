@@ -111,10 +111,7 @@ export const mapDispatchToProps = {
 };
 
 const enhance = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('form', 'setForm', props => props.form),
   withState('page', 'setPage', ''),
   withHandlers({

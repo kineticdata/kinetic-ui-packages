@@ -37,40 +37,38 @@ const CategoryComponent = ({
         />
 
         <div className="column-container">
-          {subcategories &&
-            subcategories.size > 0 && (
-              <section
-                className={classNames('column-panel column-panel--one-third', {
-                  'order-lg-1': services && services.size > 0,
+          {subcategories && subcategories.size > 0 && (
+            <section
+              className={classNames('column-panel column-panel--one-third', {
+                'order-lg-1': services && services.size > 0,
+              })}
+            >
+              {services && services.size > 0 && (
+                <div className="section__title">
+                  <span className="title">
+                    <I18n>Subcategories</I18n>
+                  </span>
+                </div>
+              )}
+              <div
+                className={classNames('cards', {
+                  'cards--thirds': !services || services.size === 0,
                 })}
               >
-                {services &&
-                  services.size > 0 && (
-                    <div className="section__title">
-                      <span className="title">
-                        <I18n>Subcategories</I18n>
-                      </span>
-                    </div>
-                  )}
-                <div
-                  className={classNames('cards', {
-                    'cards--thirds': !services || services.size === 0,
-                  })}
-                >
-                  {category
-                    .getChildren()
-                    .filterNot(c => c.isEmpty())
-                    .map(childCategory => (
-                      <CategoryCard
-                        key={childCategory.slug}
-                        category={childCategory}
-                        path={`../${childCategory.slug}`}
-                        countOfMatchingForms={childCategory.getTotalFormCount()}
-                      />
-                    ))}
-                </div>
-              </section>
-            )}
+                {category
+                  .getChildren()
+                  .filterNot(c => c.isEmpty())
+                  .map(childCategory => (
+                    <CategoryCard
+                      key={childCategory.slug}
+                      category={childCategory}
+                      path={`../${childCategory.slug}`}
+                      countOfMatchingForms={childCategory.getTotalFormCount()}
+                    />
+                  ))}
+              </div>
+            </section>
+          )}
 
           {((services && services.size > 0) ||
             !subcategories ||
@@ -92,7 +90,9 @@ const CategoryComponent = ({
                     path: form.slug,
                     key: form.slug,
                   }))
-                  .map(props => <ServiceCard {...props} />)}
+                  .map(props => (
+                    <ServiceCard {...props} />
+                  ))}
                 {category.formCount === 0 && (
                   <EmptyMessage title="There are no services in this category." />
                 )}

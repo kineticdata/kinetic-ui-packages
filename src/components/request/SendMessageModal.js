@@ -67,10 +67,7 @@ const submit = props => () => {
 };
 
 export const SendMessageModal = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('comment', 'setComment', ''),
   withHandlers({ close, submit }),
   lifecycle({

@@ -46,29 +46,33 @@ export const CategoryComponent = ({
         components: { Link },
       }),
     }}
-    addFields={() => ({ category }) => [
-      {
-        name: 'icon',
-        label: 'Display Icon',
-        type: 'text',
-        helpText: 'Font Awesome icon to display in in category cards.',
-        initialValue: category
-          ? category.getIn(['attributesMap', constants.ATTRIBUTE_ICON, 0])
-          : '',
-        component: FormComponents.IconField,
-      },
-      {
-        name: 'hidden',
-        label: 'Hidden',
-        type: 'checkbox',
-        helpText: 'Should this category be hidden from users.',
-        initialValue: category
-          ? category.getIn(['attributesMap', constants.ATTRIBUTE_HIDDEN, 0]) ===
-            'True'
-          : false,
-        component: FormComponents.CheckboxField,
-      },
-    ]}
+    addFields={() =>
+      ({ category }) => [
+        {
+          name: 'icon',
+          label: 'Display Icon',
+          type: 'text',
+          helpText: 'Font Awesome icon to display in in category cards.',
+          initialValue: category
+            ? category.getIn(['attributesMap', constants.ATTRIBUTE_ICON, 0])
+            : '',
+          component: FormComponents.IconField,
+        },
+        {
+          name: 'hidden',
+          label: 'Hidden',
+          type: 'checkbox',
+          helpText: 'Should this category be hidden from users.',
+          initialValue: category
+            ? category.getIn([
+                'attributesMap',
+                constants.ATTRIBUTE_HIDDEN,
+                0,
+              ]) === 'True'
+            : false,
+          component: FormComponents.CheckboxField,
+        },
+      ]}
     alterFields={{
       attributesMap: {
         serialize: ({ values }) => ({
@@ -146,10 +150,7 @@ const mapDispatchToProps = {
 };
 
 export const Category = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
     onSave: props => () => () => {
       props.reloadApp();

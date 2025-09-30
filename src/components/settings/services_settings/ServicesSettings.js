@@ -99,138 +99,141 @@ export const ServicesSettingsComponent = ({
         transform: result => result.submissions,
       },
     }}
-    addFields={() => ({ kapp, notifications }) =>
-      kapp &&
-      notifications && [
-        {
-          name: 'icon',
-          label: 'Display Icon',
-          type: 'text',
-          helpText: 'Font Awesome icon to display in Kapp links.',
-          initialValue: kapp.getIn(['attributesMap', 'Icon', 0]),
-          component: FormComponents.IconField,
-        },
-        {
-          name: 'recordSearchHistory',
-          label: 'Record Search History',
-          type: 'select',
-          helpText: 'Controls when searches made from this kapp are recorded.',
-          initialValue: kapp.getIn(
-            ['attributesMap', 'Record Search History', 0],
-            'Off',
-          ),
-          placeholder: 'Off (never recorded)',
-          options: [
-            { label: 'All (always recorded)', value: 'All' },
-            {
-              label: 'None (only recorded if no results found)',
-              value: 'None',
-            },
-          ],
-        },
-        {
-          name: 'defaultServiceDaysDue',
-          label: 'Default Service Days Due',
-          type: 'text',
-          helpText:
-            'Number of days until service is expected to be fulfilled for forms in this Kapp - This attribute is overridden if set at the form level.',
-          initialValue: kapp.getIn(['attributesMap', 'Service Days Due', 0]),
-          component: FormComponents.IntegerField,
-        },
-        {
-          name: 'defaultKappApprover',
-          label: 'Default Kapp Approver',
-          type: 'text',
-          helpText:
-            "Options are: Team Name, Individual Name or 'Manager'. If this is set, all forms in this kapp will get approvals sent to the value set here unless specified in a form.",
-          initialValue: kapp.getIn(['attributesMap', 'Approver', 0]),
-        },
-        {
-          name: 'defaultTaskAssigneeTeam',
-          label: 'Default Kapp Task Assignee Team',
-          type: 'team',
-          helpText: 'Team to assign tasks to if not defined in a form.',
-          initialValue: kapp.hasIn(['attributesMap', 'Task Assignee Team', 0])
-            ? { name: kapp.getIn(['attributesMap', 'Task Assignee Team', 0]) }
-            : null,
-        },
-        {
-          name: 'defaultApprovalForm',
-          label: 'Approval Form',
-          type: 'form',
-          helpText:
-            'The Queue kapp form which approvals should be created in (Overridden by Form attributes)',
-          initialValue: initialFormValue(kapp, 'Approval Form Slug'),
-          search: { kappSlug: queueKappSlug },
-        },
-        {
-          name: 'defaultTaskForm',
-          label: 'Default Task Form',
-          type: 'form',
-          helpText:
-            'The Queue kapp form to use when creating a task item (Overridden by Form attributes)',
-          initialValue: initialFormValue(kapp, 'Task Form Slug'),
-          search: { kappSlug: queueKappSlug },
-        },
-        {
-          name: 'sharedBridgedResourceForm',
-          label: 'Shared Bridged Resource Form',
-          type: 'form',
-          helpText:
-            'Slug of the form that exposes shared bridged resources in this kapp (typically shared-resources).',
-          initialValue: initialFormValue(
-            kapp,
-            'Shared Bridged Resource Form Slug',
-          ),
-          search: { kappSlug: currentKapp.slug },
-        },
-        {
-          name: 'notificationCreate',
-          label: 'Default Notification Template Name - Create',
-          type: 'select',
-          renderAttributes: { typeahead: true },
-          helpText:
-            "Name of the Notification Template to use when this kapp's submissions are submitted.",
-          initialValue: kapp.getIn([
-            'attributesMap',
-            'Notification Template Name - Create',
-            0,
-          ]),
-          options: notifications
-            ? notifications
-                .map(notification => ({
-                  label: notification.getIn(['values', 'Name']),
-                  value: notification.getIn(['values', 'Name']),
-                  slug: notification.get('id'),
-                }))
-                .toJS()
-            : [],
-          component: FormComponents.NotificationField,
-        },
-        {
-          name: 'notificationComplete',
-          label: 'Default Notification Template Name - Complete',
-          type: 'select',
-          renderAttributes: { typeahead: true },
-          helpText:
-            "Name of the Notification Template to use when this kapp's submissions are completed.",
-          initialValue: kapp.getIn([
-            'attributesMap',
-            'Notification Template Name - Complete',
-            0,
-          ]),
-          options: notifications
-            ? notifications
-                .map(notification => ({
-                  label: notification.getIn(['values', 'Name']),
-                  value: notification.getIn(['values', 'Name']),
-                  slug: notification.get('id'),
-                }))
-                .toJS()
-            : [],
-          component: FormComponents.NotificationField,
-        },
-      ]}
+    addFields={() =>
+      ({ kapp, notifications }) =>
+        kapp &&
+        notifications && [
+          {
+            name: 'icon',
+            label: 'Display Icon',
+            type: 'text',
+            helpText: 'Font Awesome icon to display in Kapp links.',
+            initialValue: kapp.getIn(['attributesMap', 'Icon', 0]),
+            component: FormComponents.IconField,
+          },
+          {
+            name: 'recordSearchHistory',
+            label: 'Record Search History',
+            type: 'select',
+            helpText:
+              'Controls when searches made from this kapp are recorded.',
+            initialValue: kapp.getIn(
+              ['attributesMap', 'Record Search History', 0],
+              'Off',
+            ),
+            placeholder: 'Off (never recorded)',
+            options: [
+              { label: 'All (always recorded)', value: 'All' },
+              {
+                label: 'None (only recorded if no results found)',
+                value: 'None',
+              },
+            ],
+          },
+          {
+            name: 'defaultServiceDaysDue',
+            label: 'Default Service Days Due',
+            type: 'text',
+            helpText:
+              'Number of days until service is expected to be fulfilled for forms in this Kapp - This attribute is overridden if set at the form level.',
+            initialValue: kapp.getIn(['attributesMap', 'Service Days Due', 0]),
+            component: FormComponents.IntegerField,
+          },
+          {
+            name: 'defaultKappApprover',
+            label: 'Default Kapp Approver',
+            type: 'text',
+            helpText:
+              "Options are: Team Name, Individual Name or 'Manager'. If this is set, all forms in this kapp will get approvals sent to the value set here unless specified in a form.",
+            initialValue: kapp.getIn(['attributesMap', 'Approver', 0]),
+          },
+          {
+            name: 'defaultTaskAssigneeTeam',
+            label: 'Default Kapp Task Assignee Team',
+            type: 'team',
+            helpText: 'Team to assign tasks to if not defined in a form.',
+            initialValue: kapp.hasIn(['attributesMap', 'Task Assignee Team', 0])
+              ? { name: kapp.getIn(['attributesMap', 'Task Assignee Team', 0]) }
+              : null,
+          },
+          {
+            name: 'defaultApprovalForm',
+            label: 'Approval Form',
+            type: 'form',
+            helpText:
+              'The Queue kapp form which approvals should be created in (Overridden by Form attributes)',
+            initialValue: initialFormValue(kapp, 'Approval Form Slug'),
+            search: { kappSlug: queueKappSlug },
+          },
+          {
+            name: 'defaultTaskForm',
+            label: 'Default Task Form',
+            type: 'form',
+            helpText:
+              'The Queue kapp form to use when creating a task item (Overridden by Form attributes)',
+            initialValue: initialFormValue(kapp, 'Task Form Slug'),
+            search: { kappSlug: queueKappSlug },
+          },
+          {
+            name: 'sharedBridgedResourceForm',
+            label: 'Shared Bridged Resource Form',
+            type: 'form',
+            helpText:
+              'Slug of the form that exposes shared bridged resources in this kapp (typically shared-resources).',
+            initialValue: initialFormValue(
+              kapp,
+              'Shared Bridged Resource Form Slug',
+            ),
+            search: { kappSlug: currentKapp.slug },
+          },
+          {
+            name: 'notificationCreate',
+            label: 'Default Notification Template Name - Create',
+            type: 'select',
+            renderAttributes: { typeahead: true },
+            helpText:
+              "Name of the Notification Template to use when this kapp's submissions are submitted.",
+            initialValue: kapp.getIn([
+              'attributesMap',
+              'Notification Template Name - Create',
+              0,
+            ]),
+            options: notifications
+              ? notifications
+                  .map(notification => ({
+                    label: notification.getIn(['values', 'Name']),
+                    value: notification.getIn(['values', 'Name']),
+                    slug: notification.get('id'),
+                  }))
+                  .toJS()
+              : [],
+            component: FormComponents.NotificationField,
+          },
+          {
+            name: 'notificationComplete',
+            label: 'Default Notification Template Name - Complete',
+            type: 'select',
+            renderAttributes: { typeahead: true },
+            helpText:
+              "Name of the Notification Template to use when this kapp's submissions are completed.",
+            initialValue: kapp.getIn([
+              'attributesMap',
+              'Notification Template Name - Complete',
+              0,
+            ]),
+            options: notifications
+              ? notifications
+                  .map(notification => ({
+                    label: notification.getIn(['values', 'Name']),
+                    value: notification.getIn(['values', 'Name']),
+                    slug: notification.get('id'),
+                  }))
+                  .toJS()
+              : [],
+            component: FormComponents.NotificationField,
+          },
+        ]
+      }
     alterFields={{
       name: {
         helpText: 'The name of the Kapp referenced throughout the Kapp.',
