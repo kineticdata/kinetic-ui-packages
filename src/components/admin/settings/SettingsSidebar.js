@@ -43,7 +43,8 @@ export const SettingsSidebarComponent = ({
       <p>And the resulting list of surveys might look like this:</p>
       <p>
         mary_manager@kineticdata.com’s survey for ticket 23456
-        <br />tommy_user@kineticdata.com’s survey for ticket 34956
+        <br />
+        tommy_user@kineticdata.com’s survey for ticket 34956
       </p>
     </Fragment>
   ) : tab === '2' ? (
@@ -79,9 +80,8 @@ export const SettingsSidebarComponent = ({
         If desired, you can clone these notification template to create your own
         custom notification. Be sure to rename your newly created template,
         update its content, and set its status to "Active." If your survey
-        allows users to Opt Out, start from the "{
-          defaultOptOutTemplate.values['Name']
-        }" template.
+        allows users to Opt Out, start from the "
+        {defaultOptOutTemplate.values['Name']}" template.
       </p>
       <p>
         <Link to="/settings/notifications/templates" target="_blank">
@@ -198,10 +198,7 @@ export const mapDispatchToProps = {
 };
 
 export const SettingsSidebar = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(props => ({
     defaultTemplate:
       props.templates &&

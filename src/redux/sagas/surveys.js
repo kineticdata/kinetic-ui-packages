@@ -94,8 +94,10 @@ export function* fetchFormSaga({ payload }) {
             title: 'Error Saving Tree',
             message: newError.message,
           });
-          throw (newError.statusCode === 400 && newError.message) ||
-            'There was an error saving the workflow';
+          throw (
+            (newError.statusCode === 400 && newError.message) ||
+            'There was an error saving the workflow'
+          );
         }
       }
     } else yield put(actions.fetchFormSuccess(form));
@@ -268,14 +270,15 @@ export function* fetchAllSubmissionsSaga(action) {
     searcher.pageToken(pageToken);
   }
 
-  const { submissions, nextPageToken = null, error } = yield call(
-    searchSubmissions,
-    {
-      search: searcher.build(),
-      form: formSlug,
-      kapp: kappSlug,
-    },
-  );
+  const {
+    submissions,
+    nextPageToken = null,
+    error,
+  } = yield call(searchSubmissions, {
+    search: searcher.build(),
+    form: formSlug,
+    kapp: kappSlug,
+  });
 
   // Update the action with the new results
   action = {

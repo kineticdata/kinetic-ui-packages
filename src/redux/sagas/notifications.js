@@ -37,11 +37,10 @@ export function* fetchNotificationsSaga() {
               sub.values['Type'] === 'Template' &&
               sub.values['Status'] === 'Active',
           )
-          .sort(
-            (a, b) =>
-              a.values['Name'].toUpperCase() > b.values['Name'].toUpperCase()
-                ? 1
-                : -1,
+          .sort((a, b) =>
+            a.values['Name'].toUpperCase() > b.values['Name'].toUpperCase()
+              ? 1
+              : -1,
           ),
       ),
     );

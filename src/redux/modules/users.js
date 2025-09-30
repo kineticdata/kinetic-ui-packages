@@ -30,18 +30,16 @@ export const reducer = (state = State(), { type, payload }) => {
       return state.set('fetchingUsers', true).set('users', []);
     case types.SET_USERS:
       return state
-        .update(
-          'users',
-          users => (payload.error ? [] : users.concat(payload.data)),
+        .update('users', users =>
+          payload.error ? [] : users.concat(payload.data),
         )
         .set('fetchingUsers', !payload.completed && !payload.error);
     case types.FETCH_TEAMS:
       return state.set('fetchingTeams', true).set('teams', []);
     case types.SET_TEAMS:
       return state
-        .update(
-          'teams',
-          teams => (payload.error ? [] : teams.concat(payload.data)),
+        .update('teams', teams =>
+          payload.error ? [] : teams.concat(payload.data),
         )
         .set('fetchingTeams', !payload.completed && !payload.error);
 
