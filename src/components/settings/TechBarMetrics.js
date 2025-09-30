@@ -146,11 +146,7 @@ export const TechBarMetricsComponent = ({
               onClick={() => {
                 fetchMetricsReset();
                 setSelectedRange('singleDay');
-                setSelectedDate(
-                  moment()
-                    .add(-1, 'day')
-                    .format(DATE_FORMAT),
-                );
+                setSelectedDate(moment().add(-1, 'day').format(DATE_FORMAT));
               }}
             >
               <I18n>Export</I18n>
@@ -175,12 +171,8 @@ export const TechBarMetricsComponent = ({
                         setSelectedRange(e.target.value);
                         setSelectedDate(
                           e.target.value === 'singleMonth'
-                            ? moment()
-                                .startOf('month')
-                                .format(DATE_FORMAT)
-                            : moment()
-                                .add(-1, 'day')
-                                .format(DATE_FORMAT),
+                            ? moment().startOf('month').format(DATE_FORMAT)
+                            : moment().add(-1, 'day').format(DATE_FORMAT),
                         );
                         fetchMetricsReset();
                       }}
@@ -288,7 +280,7 @@ export const TechBarMetricsComponent = ({
               formatDate={date =>
                 moment(date).format(
                   selectedRange === 'last12Months' ||
-                  selectedRange === 'yearToDate'
+                    selectedRange === 'yearToDate'
                     ? 'MMM, YYYY'
                     : 'll',
                 )
@@ -375,35 +367,35 @@ export const mapDispatchToProps = {
   fetchMetricsReset: actions.fetchMetricsReset,
 };
 
-const handleFetch = ({
-  fetchMetricsReset,
-  fetchMetricsRequest,
-  schedulerId,
-  techBars = [],
-  dateRanges,
-  selectedRange,
-  selectedDate,
-}) => () => {
-  fetchMetricsReset();
-  const dates = dateRanges[selectedRange]
-    ? dateRanges[selectedRange]
-    : selectedRange === 'singleMonth'
-      ? buildDateRangeForSelectedMonth(selectedDate)
-      : [selectedDate];
-  fetchMetricsRequest({
-    schedulerIds: schedulerId
-      ? [schedulerId]
-      : techBars.toJS().map(techBar => techBar.values['Id']),
-    monthly: selectedRange === 'last12Months' || selectedRange === 'yearToDate',
-    dates,
-  });
-};
+const handleFetch =
+  ({
+    fetchMetricsReset,
+    fetchMetricsRequest,
+    schedulerId,
+    techBars = [],
+    dateRanges,
+    selectedRange,
+    selectedDate,
+  }) =>
+  () => {
+    fetchMetricsReset();
+    const dates = dateRanges[selectedRange]
+      ? dateRanges[selectedRange]
+      : selectedRange === 'singleMonth'
+        ? buildDateRangeForSelectedMonth(selectedDate)
+        : [selectedDate];
+    fetchMetricsRequest({
+      schedulerIds: schedulerId
+        ? [schedulerId]
+        : techBars.toJS().map(techBar => techBar.values['Id']),
+      monthly:
+        selectedRange === 'last12Months' || selectedRange === 'yearToDate',
+      dates,
+    });
+  };
 
 export const TechBarMetrics = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(({ mode = 'summary' }) => ({
     tabMode: ['summary', 'trend', 'export'].includes(mode) ? mode : 'summary',
   })),
@@ -414,9 +406,7 @@ export const TechBarMetrics = compose(
   withState(
     'selectedDate',
     'setSelectedDate',
-    moment()
-      .add(-1, 'day')
-      .format(DATE_FORMAT),
+    moment().add(-1, 'day').format(DATE_FORMAT),
   ),
   withHandlers({ handleFetch }),
   withProps(({ schedulerId, metrics }) => {

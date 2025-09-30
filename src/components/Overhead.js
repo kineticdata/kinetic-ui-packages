@@ -137,29 +137,24 @@ export const mapDispatchToProps = {
   fetchTodayWalkInsRequest: walkInActions.fetchTodayWalkInsRequest,
 };
 
-const fetchData = ({
-  techBarId,
-  fetchTodayAppointmentsRequest,
-  fetchTodayWalkInsRequest,
-}) => () => {
-  fetchTodayAppointmentsRequest({
-    schedulerId: techBarId,
-    status: ['Checked In', 'In Progress'],
-  });
-  fetchTodayWalkInsRequest({
-    schedulerId: techBarId,
-    status: ['Checked In', 'In Progress'],
-  });
-};
+const fetchData =
+  ({ techBarId, fetchTodayAppointmentsRequest, fetchTodayWalkInsRequest }) =>
+  () => {
+    fetchTodayAppointmentsRequest({
+      schedulerId: techBarId,
+      status: ['Checked In', 'In Progress'],
+    });
+    fetchTodayWalkInsRequest({
+      schedulerId: techBarId,
+      status: ['Checked In', 'In Progress'],
+    });
+  };
 
 export const Overhead = compose(
   withProps(({ techBar }) => ({
     techBarId: techBar.values['Id'],
   })),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('poller', 'setPoller', null),
   withHandlers({
     fetchData,

@@ -252,41 +252,36 @@ export const mapDispatchToProps = {
 };
 
 export const TechBar = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(({ appointmentDate }) => ({
     isToday:
       appointmentDate.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD'),
   })),
   withHandlers({
-    handlePreviousDay: ({
-      appointmentDate,
-      setAppointmentsListDate,
-      techBar,
-    }) => () => {
-      setAppointmentsListDate({
-        date: appointmentDate.add(-1, 'day'),
-        schedulerId: techBar.values['Id'],
-      });
-    },
-    handleNextDay: ({
-      appointmentDate,
-      setAppointmentsListDate,
-      techBar,
-    }) => () => {
-      setAppointmentsListDate({
-        date: appointmentDate.add(1, 'day'),
-        schedulerId: techBar.values['Id'],
-      });
-    },
-    handleToday: ({ setAppointmentsListDate, techBar }) => () => {
-      setAppointmentsListDate({
-        date: moment(),
-        schedulerId: techBar.values['Id'],
-      });
-    },
+    handlePreviousDay:
+      ({ appointmentDate, setAppointmentsListDate, techBar }) =>
+      () => {
+        setAppointmentsListDate({
+          date: appointmentDate.add(-1, 'day'),
+          schedulerId: techBar.values['Id'],
+        });
+      },
+    handleNextDay:
+      ({ appointmentDate, setAppointmentsListDate, techBar }) =>
+      () => {
+        setAppointmentsListDate({
+          date: appointmentDate.add(1, 'day'),
+          schedulerId: techBar.values['Id'],
+        });
+      },
+    handleToday:
+      ({ setAppointmentsListDate, techBar }) =>
+      () => {
+        setAppointmentsListDate({
+          date: moment(),
+          schedulerId: techBar.values['Id'],
+        });
+      },
   }),
   lifecycle({
     componentDidMount() {

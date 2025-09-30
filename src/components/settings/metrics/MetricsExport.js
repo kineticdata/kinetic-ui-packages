@@ -310,103 +310,93 @@ export const MetricsExportComponent = ({
   );
 };
 
-export const processExport = ({
-  fetchExportSubmissionsRequest,
-  schedulerId,
-  eventType,
-  selectedDate,
-  techBars,
-}) => (formSlug, month) => {
-  const date = moment(selectedDate);
-  const schedulerIds = schedulerId
-    ? [schedulerId]
-    : techBars.toJS().map(techBar => techBar.values['Id']);
-  switch (formSlug) {
-    case APPOINTMENT_FORM_SLUG:
-    case WALK_IN_FORM_SLUG:
-      const isAppointment = formSlug === APPOINTMENT_FORM_SLUG;
-      const dates = month
-        ? Array(date.daysInMonth())
-            .fill()
-            .map((v, i) =>
-              date
-                .clone()
-                .startOf('month')
-                .add(i, 'day')
-                .format(DATE_FORMAT),
-            )
-        : [selectedDate];
-      fetchExportSubmissionsRequest({
-        formSlug,
-        schedulerIds,
-        eventType,
-        dates,
-        dateFieldName: isAppointment ? 'Event Date' : 'Date',
-        queryBuilder: searcher => {
-          searcher.coreState('Closed');
-        },
-      });
-      break;
-    case FEEDBACK_FORM_SLUG:
-    case GENERAL_FEEDBACK_FORM_SLUG:
-      fetchExportSubmissionsRequest({
-        formSlug,
-        schedulerIds,
-        queryBuilder: searcher => {
-          if (month) {
-            searcher.startDate(date.startOf('month').toDate());
-            searcher.endDate(
-              date
-                .add(1, 'month')
-                .startOf('month')
-                .toDate(),
-            );
-          } else {
-            searcher.startDate(date.startOf('day').toDate());
-            searcher.endDate(
-              date
-                .add(1, 'day')
-                .startOf('day')
-                .toDate(),
+export const processExport =
+  ({
+    fetchExportSubmissionsRequest,
+    schedulerId,
+    eventType,
+    selectedDate,
+    techBars,
+  }) =>
+  (formSlug, month) => {
+    const date = moment(selectedDate);
+    const schedulerIds = schedulerId
+      ? [schedulerId]
+      : techBars.toJS().map(techBar => techBar.values['Id']);
+    switch (formSlug) {
+      case APPOINTMENT_FORM_SLUG:
+      case WALK_IN_FORM_SLUG:
+        const isAppointment = formSlug === APPOINTMENT_FORM_SLUG;
+        const dates = month
+          ? Array(date.daysInMonth())
+              .fill()
+              .map((v, i) =>
+                date.clone().startOf('month').add(i, 'day').format(DATE_FORMAT),
+              )
+          : [selectedDate];
+        fetchExportSubmissionsRequest({
+          formSlug,
+          schedulerIds,
+          eventType,
+          dates,
+          dateFieldName: isAppointment ? 'Event Date' : 'Date',
+          queryBuilder: searcher => {
+            searcher.coreState('Closed');
+          },
+        });
+        break;
+      case FEEDBACK_FORM_SLUG:
+      case GENERAL_FEEDBACK_FORM_SLUG:
+        fetchExportSubmissionsRequest({
+          formSlug,
+          schedulerIds,
+          queryBuilder: searcher => {
+            if (month) {
+              searcher.startDate(date.startOf('month').toDate());
+              searcher.endDate(date.add(1, 'month').startOf('month').toDate());
+            } else {
+              searcher.startDate(date.startOf('day').toDate());
+              searcher.endDate(date.add(1, 'day').startOf('day').toDate());
+            }
+          },
+        });
+        break;
+      default:
+    }
+  };
+
+export const downloadFile =
+  ({ data, filename, setExportStatus }) =>
+  () => {
+    const csv = papaparse.unparse(
+      data.reduce((csv, submission) => {
+        let submissionValues = submission.values;
+        submission.form.fields.forEach(field => {
+          // If older submissions don't have a new field then add it with a value of null.
+          if (!submissionValues.hasOwnProperty(field.name)) {
+            submissionValues[field.name] = null;
+          }
+          // Checkbox Array values must be stringifyed to retain their array brackets.
+          else if (Array.isArray(submissionValues[field.name])) {
+            submissionValues[field.name] = JSON.stringify(
+              submissionValues[field.name],
             );
           }
-        },
-      });
-      break;
-    default:
-  }
-};
-
-export const downloadFile = ({ data, filename, setExportStatus }) => () => {
-  const csv = papaparse.unparse(
-    data.reduce((csv, submission) => {
-      let submissionValues = submission.values;
-      submission.form.fields.forEach(field => {
-        // If older submissions don't have a new field then add it with a value of null.
-        if (!submissionValues.hasOwnProperty(field.name)) {
-          submissionValues[field.name] = null;
-        }
-        // Checkbox Array values must be stringifyed to retain their array brackets.
-        else if (Array.isArray(submissionValues[field.name])) {
-          submissionValues[field.name] = JSON.stringify(
-            submissionValues[field.name],
-          );
-        }
-      });
-      csv.push({
-        'Property: id': submission.id,
-        'Property: createdAt': submission.createdAt,
-        'Property: createdBy': submission.createdBy,
-        'Property: closedAt': submission.closedAt,
-        'Property: closedBy': submission.closedBy,
-        ...submissionValues,
-      });
-      return csv;
-    }, []),
-  );
-  downloadjs(csv, filename, 'text/csv');
-  setExportStatus('Completed');
-};
+        });
+        csv.push({
+          'Property: id': submission.id,
+          'Property: createdAt': submission.createdAt,
+          'Property: createdBy': submission.createdBy,
+          'Property: closedAt': submission.closedAt,
+          'Property: closedBy': submission.closedBy,
+          ...submissionValues,
+        });
+        return csv;
+      }, []),
+    );
+    downloadjs(csv, filename, 'text/csv');
+    setExportStatus('Completed');
+  };
 
 export const mapStateToProps = (state, props) => ({
   scheduler: state.techBarApp.schedulers.find(
@@ -422,10 +412,7 @@ export const mapDispatchToProps = {
 };
 
 export const MetricsExport = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('exportStatus', 'setExportStatus', null), // Exporting, Empty, Completed
   withState('exportMessage', 'setExportMessage', null),
   withState('filename', 'setFilename', ''),

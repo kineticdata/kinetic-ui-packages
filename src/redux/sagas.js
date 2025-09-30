@@ -6,7 +6,7 @@ import { watchWalkIns } from './sagas/walkIns';
 import { watchMetrics } from './sagas/metrics';
 import { watchExport } from './sagas/export';
 
-export default function*() {
+export default function* () {
   yield all([
     watchApp(),
     watchAppointments(),

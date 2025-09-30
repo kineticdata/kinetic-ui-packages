@@ -883,142 +883,151 @@ const TrendSummary = (dates = [], techBars) => {
   };
 };
 
-const buildTrend = ({
-  setTrend,
-  schedulerId,
-  eventType,
-  metrics,
-  dates,
-  techBars,
-  selectedDuration,
-  setSelectedDuration,
-}) => () => {
-  if (!metrics) {
-    return;
-  }
-  const records = schedulerId
-    ? metrics.filter(m => m.schedulerId === schedulerId)
-    : metrics;
-  const trend = records.reduce(
-    (trend, { data, period, schedulerId: techBarId }) => {
-      // Add total available minutes
-      trend.utilization.available[period] += toInt(data.totalMinutesAvailable);
-      // If event type is not specified, add feedback results not associated to events
-      if (!eventType) {
-        trend.feedback.positive[period] += toInt(data.feedback.Positive);
-        trend.feedback.negative[period] += toInt(data.feedback.Negative);
-        trend.feedback.total[period] +=
-          toInt(data.feedback.Positive) + toInt(data.feedback.Negative);
-      }
-      // Iterate through all the event types
-      return (
-        data.eventTypes
-          // If event type is selected, filter to only that type
-          .filter(event => !eventType || eventType === event.type)
-          .reduce((t, event) => {
-            // Add appointment counts
-            t.appointments.scheduled[period] += toInt(
-              event.scheduledAppointments,
-            );
-            t.appointments.walkins[period] += toInt(event.walkins);
-            t.appointments.sameDay[period] += toInt(event.sameDayAppointments);
-            t.appointments.total[period] +=
-              toInt(event.scheduledAppointments) + toInt(event.walkins);
-            // Add feedback counts
-            t.feedback.positive[period] += toInt(event.feedback.Positive);
-            t.feedback.negative[period] += toInt(event.feedback.Negative);
-            t.feedback.total[period] +=
-              toInt(event.feedback.Positive) + toInt(event.feedback.Negative);
-            // Add total scheduled minutes and actual minutes
-            t.utilization.scheduled[period] +=
-              parseInt(event.scheduledAppointments, 10) * toInt(event.duration);
-            t.utilization.actual[period] += toInt(event.scheduledTotalDuration);
-            // Add time of visit counts for scheduled appointments
-            Object.keys(event.scheduledAppointmentTimes).forEach(time => {
-              t.timeOfVisit.scheduled[period][toInt(time)] += toInt(
-                event.scheduledAppointmentTimes[time],
+const buildTrend =
+  ({
+    setTrend,
+    schedulerId,
+    eventType,
+    metrics,
+    dates,
+    techBars,
+    selectedDuration,
+    setSelectedDuration,
+  }) =>
+  () => {
+    if (!metrics) {
+      return;
+    }
+    const records = schedulerId
+      ? metrics.filter(m => m.schedulerId === schedulerId)
+      : metrics;
+    const trend = records.reduce(
+      (trend, { data, period, schedulerId: techBarId }) => {
+        // Add total available minutes
+        trend.utilization.available[period] += toInt(
+          data.totalMinutesAvailable,
+        );
+        // If event type is not specified, add feedback results not associated to events
+        if (!eventType) {
+          trend.feedback.positive[period] += toInt(data.feedback.Positive);
+          trend.feedback.negative[period] += toInt(data.feedback.Negative);
+          trend.feedback.total[period] +=
+            toInt(data.feedback.Positive) + toInt(data.feedback.Negative);
+        }
+        // Iterate through all the event types
+        return (
+          data.eventTypes
+            // If event type is selected, filter to only that type
+            .filter(event => !eventType || eventType === event.type)
+            .reduce((t, event) => {
+              // Add appointment counts
+              t.appointments.scheduled[period] += toInt(
+                event.scheduledAppointments,
               );
-            });
-            Object.keys(event.walkinAppointmentTimes).forEach(time => {
-              t.timeOfVisit.walkins[period][toInt(time)] += toInt(
-                event.walkinAppointmentTimes[time],
+              t.appointments.walkins[period] += toInt(event.walkins);
+              t.appointments.sameDay[period] += toInt(
+                event.sameDayAppointments,
               );
-            });
-            t.timeOfVisit.max = Math.max(
-              t.timeOfVisit.max,
-              ...(t.timeOfVisit.scheduled[period] || []),
-              ...(t.timeOfVisit.walkins[period] || []),
-            );
-            // Add duration info
-            if (t.durations.data[techBarId]) {
-              if (!t.durations.data[techBarId].eventTypes[event.type]) {
-                t.durations.data[techBarId].eventTypes[event.type] = {
-                  duration: event.duration,
-                  data: t.durations.datesMap
-                    .map(() => ({
-                      quantity: 0,
-                      actual: 0,
-                      waitTime: 0,
-                    }))
-                    .toJS(),
-                };
-              }
-              const currentDuration =
-                t.durations.data[techBarId].eventTypes[event.type];
-              currentDuration.data[period].quantity +=
+              t.appointments.total[period] +=
                 toInt(event.scheduledAppointments) + toInt(event.walkins);
-              currentDuration.data[period].actual +=
-                toInt(event.walkinTotalDuration) +
-                toInt(event.scheduledTotalDuration);
-              currentDuration.data[period].waitTime +=
-                toInt(event.walkinTotalWaitTime) +
-                toInt(event.scheduledTotalWaitTime);
-            }
-            return t;
-          }, trend)
-      );
-    },
-    TrendSummary(
-      dates,
-      techBars.filter(t => !schedulerId || t.values['Id'] === schedulerId),
-    ),
-  );
+              // Add feedback counts
+              t.feedback.positive[period] += toInt(event.feedback.Positive);
+              t.feedback.negative[period] += toInt(event.feedback.Negative);
+              t.feedback.total[period] +=
+                toInt(event.feedback.Positive) + toInt(event.feedback.Negative);
+              // Add total scheduled minutes and actual minutes
+              t.utilization.scheduled[period] +=
+                parseInt(event.scheduledAppointments, 10) *
+                toInt(event.duration);
+              t.utilization.actual[period] += toInt(
+                event.scheduledTotalDuration,
+              );
+              // Add time of visit counts for scheduled appointments
+              Object.keys(event.scheduledAppointmentTimes).forEach(time => {
+                t.timeOfVisit.scheduled[period][toInt(time)] += toInt(
+                  event.scheduledAppointmentTimes[time],
+                );
+              });
+              Object.keys(event.walkinAppointmentTimes).forEach(time => {
+                t.timeOfVisit.walkins[period][toInt(time)] += toInt(
+                  event.walkinAppointmentTimes[time],
+                );
+              });
+              t.timeOfVisit.max = Math.max(
+                t.timeOfVisit.max,
+                ...(t.timeOfVisit.scheduled[period] || []),
+                ...(t.timeOfVisit.walkins[period] || []),
+              );
+              // Add duration info
+              if (t.durations.data[techBarId]) {
+                if (!t.durations.data[techBarId].eventTypes[event.type]) {
+                  t.durations.data[techBarId].eventTypes[event.type] = {
+                    duration: event.duration,
+                    data: t.durations.datesMap
+                      .map(() => ({
+                        quantity: 0,
+                        actual: 0,
+                        waitTime: 0,
+                      }))
+                      .toJS(),
+                  };
+                }
+                const currentDuration =
+                  t.durations.data[techBarId].eventTypes[event.type];
+                currentDuration.data[period].quantity +=
+                  toInt(event.scheduledAppointments) + toInt(event.walkins);
+                currentDuration.data[period].actual +=
+                  toInt(event.walkinTotalDuration) +
+                  toInt(event.scheduledTotalDuration);
+                currentDuration.data[period].waitTime +=
+                  toInt(event.walkinTotalWaitTime) +
+                  toInt(event.scheduledTotalWaitTime);
+              }
+              return t;
+            }, trend)
+        );
+      },
+      TrendSummary(
+        dates,
+        techBars.filter(t => !schedulerId || t.values['Id'] === schedulerId),
+      ),
+    );
 
-  // Build options for duration select
-  trend.durations.options = Object.keys(trend.durations.data).reduce(
-    (options, techBarId) => {
-      Object.keys(trend.durations.data[techBarId].eventTypes).forEach(
-        eventType => {
-          options.push({
-            value: `${techBarId}||${eventType}`,
-            techBarId,
-            techBarName: trend.durations.data[techBarId].name,
-            eventType,
-          });
-        },
-      );
-      return options;
-    },
-    [],
-  );
-  // Updated selectedDuration value if only a single value exists
-  if (
-    trend.durations.options.length === 1 &&
-    (!selectedDuration ||
-      selectedDuration.value !== trend.durations.options[0].value)
-  ) {
-    setSelectedDuration(trend.durations.options[0]);
-  }
-  // If selectedDuration value is no longer valid, clear the value
-  else if (
-    selectedDuration &&
-    !trend.durations.options.find(o => o.value === selectedDuration.value)
-  ) {
-    setSelectedDuration(null);
-  }
+    // Build options for duration select
+    trend.durations.options = Object.keys(trend.durations.data).reduce(
+      (options, techBarId) => {
+        Object.keys(trend.durations.data[techBarId].eventTypes).forEach(
+          eventType => {
+            options.push({
+              value: `${techBarId}||${eventType}`,
+              techBarId,
+              techBarName: trend.durations.data[techBarId].name,
+              eventType,
+            });
+          },
+        );
+        return options;
+      },
+      [],
+    );
+    // Updated selectedDuration value if only a single value exists
+    if (
+      trend.durations.options.length === 1 &&
+      (!selectedDuration ||
+        selectedDuration.value !== trend.durations.options[0].value)
+    ) {
+      setSelectedDuration(trend.durations.options[0]);
+    }
+    // If selectedDuration value is no longer valid, clear the value
+    else if (
+      selectedDuration &&
+      !trend.durations.options.find(o => o.value === selectedDuration.value)
+    ) {
+      setSelectedDuration(null);
+    }
 
-  setTrend(trend);
-};
+    setTrend(trend);
+  };
 
 export const MetricsTrend = compose(
   connect(mapStateToProps),

@@ -226,94 +226,94 @@ export const mapDispatchToProps = {
   fetchTodayWalkInsRequest: walkInActions.fetchTodayWalkInsRequest,
 };
 
-const getFilteredAppointments = ({ input, records }) => () =>
-  records.filter(
-    appt =>
-      appt.username.toLowerCase().includes(input.toLowerCase()) ||
-      appt.displayName.toLowerCase().includes(input.toLowerCase()),
-  );
+const getFilteredAppointments =
+  ({ input, records }) =>
+  () =>
+    records.filter(
+      appt =>
+        appt.username.toLowerCase().includes(input.toLowerCase()) ||
+        appt.displayName.toLowerCase().includes(input.toLowerCase()),
+    );
 
-const resetExperience = ({
-  experience,
-  setExperience,
-  input,
-  setInput,
-}) => () => {
-  setExperience('');
-  setInput('');
-};
+const resetExperience =
+  ({ experience, setExperience, input, setInput }) =>
+  () => {
+    setExperience('');
+    setInput('');
+  };
 
-const handleExperienceClick = ({
-  feedbackIdentityAvailable,
-  setExperience,
-  handleSubmitFeedback,
-  techBarId,
-  fetchTodayAppointmentsRequest,
-  fetchTodayWalkInsRequest,
-}) => value => {
-  if (feedbackIdentityAvailable) {
-    setExperience(value);
-    fetchTodayAppointmentsRequest({ schedulerId: techBarId });
-    fetchTodayWalkInsRequest({ schedulerId: techBarId });
-  } else {
-    handleSubmitFeedback({ Experience: value });
-  }
-};
-
-const handleSubmitFeedback = ({
-  kapp,
-  techBarId,
-  experience,
-  appointment,
-  resetExperience,
-  setDisabled,
-}) => values => {
-  createSubmission({
-    kappSlug: kapp.slug,
-    formSlug: FEEDBACK_FORM_SLUG,
-    values: values
-      ? {
-          ...values,
-          'Scheduler Id': techBarId,
-        }
-      : {
-          Experience: experience,
-          'Scheduler Id': techBarId,
-          ...(appointment
-            ? {
-                'Appointment Id': appointment.id,
-                'Event Type': appointment.eventType,
-                'Event Date': appointment.eventDate,
-              }
-            : {}),
-        },
-    completed: true,
-  }).then(({ submission, error }) => {
-    if (error) {
-      addToastAlert({
-        message:
-          'There was an error while submitting your feedback. Please consult an administrator.',
-        duration: 5000,
-      });
+const handleExperienceClick =
+  ({
+    feedbackIdentityAvailable,
+    setExperience,
+    handleSubmitFeedback,
+    techBarId,
+    fetchTodayAppointmentsRequest,
+    fetchTodayWalkInsRequest,
+  }) =>
+  value => {
+    if (feedbackIdentityAvailable) {
+      setExperience(value);
+      fetchTodayAppointmentsRequest({ schedulerId: techBarId });
+      fetchTodayWalkInsRequest({ schedulerId: techBarId });
     } else {
-      addToastAlert({
-        title: 'Thank You',
-        message: 'Your feedback has been submitted.',
-        severity: 'success',
-        duration: 4000,
-      });
-      setDisabled(true);
-      setTimeout(() => setDisabled(false), 4000);
+      handleSubmitFeedback({ Experience: value });
     }
-    resetExperience();
-  });
-};
+  };
+
+const handleSubmitFeedback =
+  ({
+    kapp,
+    techBarId,
+    experience,
+    appointment,
+    resetExperience,
+    setDisabled,
+  }) =>
+  values => {
+    createSubmission({
+      kappSlug: kapp.slug,
+      formSlug: FEEDBACK_FORM_SLUG,
+      values: values
+        ? {
+            ...values,
+            'Scheduler Id': techBarId,
+          }
+        : {
+            Experience: experience,
+            'Scheduler Id': techBarId,
+            ...(appointment
+              ? {
+                  'Appointment Id': appointment.id,
+                  'Event Type': appointment.eventType,
+                  'Event Date': appointment.eventDate,
+                }
+              : {}),
+          },
+      completed: true,
+    }).then(({ submission, error }) => {
+      if (error) {
+        addToastAlert({
+          message:
+            'There was an error while submitting your feedback. Please consult an administrator.',
+          duration: 5000,
+        });
+      } else {
+        addToastAlert({
+          title: 'Thank You',
+          message: 'Your feedback has been submitted.',
+          severity: 'success',
+          duration: 4000,
+        });
+        setDisabled(true);
+        setTimeout(() => setDisabled(false), 4000);
+      }
+      resetExperience();
+    });
+  };
 
 export const Feedback = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withProps(({ techBar, kapp }) => {
     return {
       techBarId: techBar.values['Id'],

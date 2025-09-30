@@ -107,22 +107,16 @@ export const mapDispatchToProps = {
 };
 
 export const TechBarSettingsForm = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withHandlers({
-    handleSaved: ({
-      navigate,
-      kapp,
-      techBarId,
-      updateTechBarSettingsSuccess,
-    }) => ({ submission }) => {
-      updateTechBarSettingsSuccess({
-        techBarId,
-        submission,
-      });
-      navigate(`../`);
-    },
+    handleSaved:
+      ({ navigate, kapp, techBarId, updateTechBarSettingsSuccess }) =>
+      ({ submission }) => {
+        updateTechBarSettingsSuccess({
+          techBarId,
+          submission,
+        });
+        navigate(`../`);
+      },
   }),
 )(TechBarSettingsFormComponent);
