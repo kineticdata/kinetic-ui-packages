@@ -23,14 +23,23 @@ describe('reducer', () => {
       const filter1 = Filter({ name: 'Filter 1' });
       const filter2 = Filter({ name: 'Filter 2' });
       const state = State({
-        lists: Map([[filter1, List()], [filter2, List()]]),
-        statuses: Map([[filter1, 'error'], [filter2, 'error']]),
+        lists: Map([
+          [filter1, List()],
+          [filter2, List()],
+        ]),
+        statuses: Map([
+          [filter1, 'error'],
+          [filter2, 'error'],
+        ]),
         previewItem: null,
       });
       const queueItems = [{ id: 'foo' }, { id: 'bar' }, { id: 'baz' }];
       const action = actions.setListItems(filter1, queueItems);
       expect(reducer(state, action).lists).toEqualImmutable(
-        Map([[filter1, List(queueItems)], [filter2, List()]]),
+        Map([
+          [filter1, List(queueItems)],
+          [filter2, List()],
+        ]),
       );
       expect(reducer(state, action).statuses.get(filter1)).toBeNull();
     });

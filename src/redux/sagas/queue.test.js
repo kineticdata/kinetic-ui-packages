@@ -36,10 +36,7 @@ const findQuery = (searcher, value) =>
 
 // Helper that performs the date transformation we expect to be done by the
 // combination of prepareDateRangeFilter and SubmissionSearch.
-const expectedDateFn = date =>
-  moment(date)
-    .toDate()
-    .toISOString();
+const expectedDateFn = date => moment(date).toDate().toISOString();
 
 describe('queue saga', () => {
   describe('filter assembling functions', () => {
@@ -151,16 +148,9 @@ describe('queue saga', () => {
       let submissions;
 
       const today = () => new Date().toISOString();
-      const weekAgo = () =>
-        moment()
-          .subtract(7, 'days')
-          .toDate()
-          .toISOString();
+      const weekAgo = () => moment().subtract(7, 'days').toDate().toISOString();
       const fiveDaysAgo = () =>
-        moment()
-          .subtract(5, 'days')
-          .toDate()
-          .toISOString();
+        moment().subtract(5, 'days').toDate().toISOString();
 
       beforeEach(() => {
         submissions = [

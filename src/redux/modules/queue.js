@@ -174,12 +174,8 @@ export const reducer = (state = State(), { type, payload }) => {
           .set('previousPageTokens', List())
           .update(updatePageMetadata)
           // Clear selection mode when filter changes
-          .update(
-            'selectedList',
-            selectedList =>
-              !payload || !is(payload, state.currentFilter)
-                ? null
-                : selectedList,
+          .update('selectedList', selectedList =>
+            !payload || !is(payload, state.currentFilter) ? null : selectedList,
           )
       );
     case types.UPDATE_LIST_LIMIT:
@@ -208,11 +204,11 @@ export const reducer = (state = State(), { type, payload }) => {
           .set(
             'name',
             payload.name &&
-            (payload.type === 'custom' ||
-              is(
-                payload.delete('sortDirection'),
-                state.currentFilter.delete('sortDirection'),
-              ))
+              (payload.type === 'custom' ||
+                is(
+                  payload.delete('sortDirection'),
+                  state.currentFilter.delete('sortDirection'),
+                ))
               ? payload.name
               : '',
           )
@@ -232,21 +228,19 @@ export const reducer = (state = State(), { type, payload }) => {
       return state.set('newItemMenuOpen', false).remove('newItemMenuOptions');
 
     case types.TOGGLE_SELECTION_MODE:
-      return state.update(
-        'selectedList',
-        selectedList =>
-          typeof payload.open === 'boolean'
-            ? payload.open
-              ? Array.isArray(payload.items)
-                ? payload.items.reduce(
-                    (map, item) => map.set(item.id, item),
-                    OrderedMap(),
-                  )
-                : OrderedMap()
-              : null
-            : selectedList === null
-              ? OrderedMap()
-              : null,
+      return state.update('selectedList', selectedList =>
+        typeof payload.open === 'boolean'
+          ? payload.open
+            ? Array.isArray(payload.items)
+              ? payload.items.reduce(
+                  (map, item) => map.set(item.id, item),
+                  OrderedMap(),
+                )
+              : OrderedMap()
+            : null
+          : selectedList === null
+            ? OrderedMap()
+            : null,
       );
     case types.TOGGLE_SELECTED_ITEM:
       return (
@@ -286,50 +280,52 @@ export const reducer = (state = State(), { type, payload }) => {
   }
 };
 
-const updateSelectedItems = ({ item, shift }, data) => selectedList => {
-  if (selectedList) {
-    // If shift key is pressed when an item is clicked, select or deselect all
-    // items between the current one and the last one clicked
-    if (shift) {
-      // Get last item and index of last item in current data set
-      const lastItem = selectedList._lastSelectedItem;
-      const lastIndex = lastItem
-        ? data.findIndex(d => d.id === lastItem.id)
-        : -1;
-      // Get index of the current clicked item
-      const currentIndex = data.findIndex(d => d.id === item.id);
-      // Check is the currently clicked item is being added or removed, and
-      // replicate the same action for all items in the range
-      const isAdd = !selectedList.has(item.id);
+const updateSelectedItems =
+  ({ item, shift }, data) =>
+  selectedList => {
+    if (selectedList) {
+      // If shift key is pressed when an item is clicked, select or deselect all
+      // items between the current one and the last one clicked
+      if (shift) {
+        // Get last item and index of last item in current data set
+        const lastItem = selectedList._lastSelectedItem;
+        const lastIndex = lastItem
+          ? data.findIndex(d => d.id === lastItem.id)
+          : -1;
+        // Get index of the current clicked item
+        const currentIndex = data.findIndex(d => d.id === item.id);
+        // Check is the currently clicked item is being added or removed, and
+        // replicate the same action for all items in the range
+        const isAdd = !selectedList.has(item.id);
 
-      if (currentIndex >= 0 && lastIndex >= 0 && currentIndex !== lastIndex) {
-        // Create a range between the two items and fill it with the indexes of
-        // all the items in that range
-        return Array(Math.abs(currentIndex - lastIndex) + 1)
-          .fill()
-          .map((v, i) => i + Math.min(currentIndex, lastIndex))
-          .reduce((list, index) => {
-            // Reduce the list of indexes and update the selected list by adding
-            //or removing the relevant items
-            const dataItem = data.get(index);
-            if (isAdd && !list.has(dataItem.id)) {
-              return list.set(dataItem.id, dataItem);
-            } else if (!isAdd && list.has(dataItem.id)) {
-              return list.delete(dataItem.id);
-            }
-            return list;
-          }, selectedList);
+        if (currentIndex >= 0 && lastIndex >= 0 && currentIndex !== lastIndex) {
+          // Create a range between the two items and fill it with the indexes of
+          // all the items in that range
+          return Array(Math.abs(currentIndex - lastIndex) + 1)
+            .fill()
+            .map((v, i) => i + Math.min(currentIndex, lastIndex))
+            .reduce((list, index) => {
+              // Reduce the list of indexes and update the selected list by adding
+              //or removing the relevant items
+              const dataItem = data.get(index);
+              if (isAdd && !list.has(dataItem.id)) {
+                return list.set(dataItem.id, dataItem);
+              } else if (!isAdd && list.has(dataItem.id)) {
+                return list.delete(dataItem.id);
+              }
+              return list;
+            }, selectedList);
+        }
+      }
+
+      // If only a single item was clicked (without shift), add or remove it
+      if (selectedList.has(item.id)) {
+        return selectedList.delete(item.id);
+      } else {
+        return selectedList.set(item.id, item);
       }
     }
 
-    // If only a single item was clicked (without shift), add or remove it
-    if (selectedList.has(item.id)) {
-      return selectedList.delete(item.id);
-    } else {
-      return selectedList.set(item.id, item);
-    }
-  }
-
-  // Return the initial list if none of the above cases apply
-  return selectedList;
-};
+    // Return the initial list if none of the above cases apply
+    return selectedList;
+  };

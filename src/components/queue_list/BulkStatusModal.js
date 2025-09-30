@@ -231,10 +231,7 @@ const mapDispatchToProps = {
 };
 
 export const BulkStatusModal = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('keepSelection', 'setKeepSelection', 'none'),
   withProps(props => ({
     label: props.status.type === 'assign' ? 'Assigning' : 'Working',

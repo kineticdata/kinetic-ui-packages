@@ -242,9 +242,8 @@ export const reducer = (state = State(), { type, payload }) => {
       return state; //.set('loading', true);
     case types.FETCH_FORM_REQUEST:
       return state
-        .update(
-          'currentForm',
-          form => (form && form.slug === payload.formSlug ? form : null),
+        .update('currentForm', form =>
+          form && form.slug === payload.formSlug ? form : null,
         )
         .set('errors', null);
     case types.FETCH_FORM_SUCCESS:

@@ -46,6 +46,9 @@ export const ViewOriginalRequest = compose(
     originId: props.queueItem.origin.id,
   })),
   withHandlers({
-    toggleOpen: ({ setIsOpen, isOpen }) => () => setIsOpen(!isOpen),
+    toggleOpen:
+      ({ setIsOpen, isOpen }) =>
+      () =>
+        setIsOpen(!isOpen),
   }),
 )(ViewOriginalRequestComponent);

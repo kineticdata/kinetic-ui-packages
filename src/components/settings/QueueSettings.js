@@ -72,64 +72,66 @@ export const QueueSettingsComponent = ({ currentKapp, onSave }) => (
         transform: result => result.submissions,
       },
     }}
-    addFields={() => ({ kapp, notifications }) =>
-      kapp &&
-      notifications && [
-        {
-          name: 'icon',
-          label: 'Display Icon',
-          type: 'text',
-          helpText: 'Font Awesome icon to display in Kapp links.',
-          initialValue: kapp.getIn(['attributesMap', 'Icon', 0]),
-          component: FormComponents.IconField,
-        },
-        {
-          name: 'notificationComplete',
-          label: 'Default Request Submitted Notification Template',
-          type: 'select',
-          renderAttributes: { typeahead: true },
-          helpText:
-            "Name of the Notification Template to use when this kapp's submissions are completed.",
-          initialValue: kapp.getIn([
-            'attributesMap',
-            'Notification Template Name - Complete',
-            0,
-          ]),
-          options: notifications
-            ? notifications
-                .map(notification => ({
-                  label: notification.getIn(['values', 'Name']),
-                  value: notification.getIn(['values', 'Name']),
-                  slug: notification.get('id'),
-                }))
-                .toJS()
-            : [],
-          component: FormComponents.NotificationField,
-        },
-        {
-          name: 'notificationCreate',
-          label: 'Default Request Created Notification Template',
-          type: 'select',
-          renderAttributes: { typeahead: true },
-          helpText:
-            "Name of the Notification Template to use when this kapp's submissions are submitted.",
-          initialValue: kapp.getIn([
-            'attributesMap',
-            'Notification Template Name - Create',
-            0,
-          ]),
-          options: notifications
-            ? notifications
-                .map(notification => ({
-                  label: notification.getIn(['values', 'Name']),
-                  value: notification.getIn(['values', 'Name']),
-                  slug: notification.get('id'),
-                }))
-                .toJS()
-            : [],
-          component: FormComponents.NotificationField,
-        },
-      ]}
+    addFields={() =>
+      ({ kapp, notifications }) =>
+        kapp &&
+        notifications && [
+          {
+            name: 'icon',
+            label: 'Display Icon',
+            type: 'text',
+            helpText: 'Font Awesome icon to display in Kapp links.',
+            initialValue: kapp.getIn(['attributesMap', 'Icon', 0]),
+            component: FormComponents.IconField,
+          },
+          {
+            name: 'notificationComplete',
+            label: 'Default Request Submitted Notification Template',
+            type: 'select',
+            renderAttributes: { typeahead: true },
+            helpText:
+              "Name of the Notification Template to use when this kapp's submissions are completed.",
+            initialValue: kapp.getIn([
+              'attributesMap',
+              'Notification Template Name - Complete',
+              0,
+            ]),
+            options: notifications
+              ? notifications
+                  .map(notification => ({
+                    label: notification.getIn(['values', 'Name']),
+                    value: notification.getIn(['values', 'Name']),
+                    slug: notification.get('id'),
+                  }))
+                  .toJS()
+              : [],
+            component: FormComponents.NotificationField,
+          },
+          {
+            name: 'notificationCreate',
+            label: 'Default Request Created Notification Template',
+            type: 'select',
+            renderAttributes: { typeahead: true },
+            helpText:
+              "Name of the Notification Template to use when this kapp's submissions are submitted.",
+            initialValue: kapp.getIn([
+              'attributesMap',
+              'Notification Template Name - Create',
+              0,
+            ]),
+            options: notifications
+              ? notifications
+                  .map(notification => ({
+                    label: notification.getIn(['values', 'Name']),
+                    value: notification.getIn(['values', 'Name']),
+                    slug: notification.get('id'),
+                  }))
+                  .toJS()
+              : [],
+            component: FormComponents.NotificationField,
+          },
+        ]
+      }
     alterFields={{
       name: {
         helpText: 'The name of the Kapp referenced throughout the Kapp.',

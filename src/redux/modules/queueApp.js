@@ -168,10 +168,8 @@ export const reducer = (state = State(), { type, payload }) => {
                   .set('type', 'team')
                   .update('name', name => name || team.name)
                   .update('icon', icon => icon || Utils.getIcon(team, 'users'))
-                  .update(
-                    'teams',
-                    teams =>
-                      teams.includes(team.name) ? teams : teams.push(team.name),
+                  .update('teams', teams =>
+                    teams.includes(team.name) ? teams : teams.push(team.name),
                   );
               } else {
                 return Filter({
@@ -204,7 +202,10 @@ export const reducer = (state = State(), { type, payload }) => {
       return state.update('myFilters', filters => filters.push(payload));
     case types.UPDATE_PERSONAL_FILTER:
       return state.update('myFilters', filters =>
-        filters.set(filters.findIndex(f => f.name === payload.name), payload),
+        filters.set(
+          filters.findIndex(f => f.name === payload.name),
+          payload,
+        ),
       );
     case types.REMOVE_PERSONAL_FILTER:
       return state.update('myFilters', myFilters =>

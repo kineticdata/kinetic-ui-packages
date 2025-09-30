@@ -53,25 +53,24 @@ export const WorkMenu = ({
           />
         </I18n>
       </ModalBody>
-      {mode === 'Work' &&
-        !complete && (
-          <ModalFooter>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleSaveClick}
+      {mode === 'Work' && !complete && (
+        <ModalFooter>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleSaveClick}
+          >
+            <I18n>Save</I18n>{' '}
+            <I18n
+              context={`kapps.${queueItem.form.kapp.slug}.forms.${
+                queueItem.form.slug
+              }`}
             >
-              <I18n>Save</I18n>{' '}
-              <I18n
-                context={`kapps.${queueItem.form.kapp.slug}.forms.${
-                  queueItem.form.slug
-                }`}
-              >
-                {queueItem.form.name}
-              </I18n>
-            </button>
-          </ModalFooter>
-        )}
+              {queueItem.form.name}
+            </I18n>
+          </button>
+        </ModalFooter>
+      )}
     </Modal>
   );
 
@@ -84,10 +83,7 @@ export const mapDispatchToProps = {
 };
 
 export const WorkMenuContainer = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('complete', 'setComplete', false),
   withProps(({ queueItem }) => ({
     mode: queueItem && queueItem.coreState === 'Draft' ? 'Work' : 'Review',
