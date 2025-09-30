@@ -38,23 +38,26 @@ const filterDataSources = () => ({
   },
 });
 
-const filters = () => ({ locales }) => [
-  {
-    name: 'locale',
-    label: 'Locale',
-    type: 'select',
-    options: ({ locales }) =>
-      locales &&
-      locales.map(loc => {
-        return Map({
-          value: loc.get('code'),
-          label: loc.get('code'),
-        });
-      }),
-  },
-  { name: 'context', label: 'Context', type: 'text' },
-  { name: 'key', label: 'Key', type: 'text' },
-];
+const filters =
+  ({ shared }) =>
+  ({ locales }) =>
+    [
+      {
+        name: 'locale',
+        label: 'Locale',
+        type: 'select',
+        options: ({ locales }) =>
+          locales &&
+          locales.map(loc => {
+            return Map({
+              value: loc.get('code'),
+              label: loc.get('code'),
+            });
+          }),
+      },
+      !shared && { name: 'context', label: 'Context', type: 'text' },
+      { name: 'key', label: 'Key', type: 'text' },
+    ].filter(Boolean);
 
 const columns = [
   {

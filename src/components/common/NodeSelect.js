@@ -1,18 +1,20 @@
 import React from 'react';
 import { Typeahead } from './Typeahead';
 
-const searchNodes = ({ nodes, tasks }) => (field, value, callback) =>
-  callback({
-    suggestions: nodes
-      .toList()
-      .map(node => [node, tasks.get(node.definitionId)])
-      .filter(
-        ([node, task]) =>
-          node.name.toLowerCase().includes(value.toLowerCase()) ||
-          (task && task.name.toLowerCase().includes(value.toLowerCase())),
-      )
-      .toArray(),
-  });
+const searchNodes =
+  ({ nodes, tasks }) =>
+  (field, value, callback) =>
+    callback({
+      suggestions: nodes
+        .toList()
+        .map(node => [node, tasks.get(node.definitionId)])
+        .filter(
+          ([node, task]) =>
+            node.name.toLowerCase().includes(value.toLowerCase()) ||
+            (task && task.name.toLowerCase().includes(value.toLowerCase())),
+        )
+        .toArray(),
+    });
 
 const pairToValue = ([node, task] = []) => (node && node.name) || '';
 
@@ -46,6 +48,7 @@ export const NodeSelect = props => (
     onBlur={props.onBlur}
     placeholder={props.placeholder}
     id={props.id}
+    name={props.name}
     form={props.form}
   />
 );

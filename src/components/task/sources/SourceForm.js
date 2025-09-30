@@ -40,80 +40,84 @@ const dataSources = ({ sourceName, sourceType }) => ({
   },
 });
 
-const handleSubmit = ({ sourceName }) => values =>
-  (sourceName ? updateSource : createSource)({
-    sourceName,
-    source: values.toJS(),
-  }).then(({ source, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the source';
-    }
-    return source;
-  });
-
-const fields = ({ sourceName, sourceType }) => ({
-  adapterProperties,
-  source,
-  sourceAdapters,
-}) => {
-  if (adapterProperties) {
-    const { propertiesFields, propertiesSerialize } = buildPropertyFields({
-      isNew: !source,
-      properties: adapterProperties,
-      getName: property => property.get('name'),
-      getRequired: property => property.get('required'),
-      getSensitive: property => property.get('sensitive'),
-      getValue: property =>
-        getIn(source, ['properties', property.get('name')], ''),
+const handleSubmit =
+  ({ sourceName }) =>
+  values =>
+    (sourceName ? updateSource : createSource)({
+      sourceName,
+      source: values.toJS(),
+    }).then(({ source, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the source'
+        );
+      }
+      return source;
     });
-    return [
-      {
-        name: 'type',
-        label: 'Type',
-        required: true,
-        enabled: false,
-        initialValue: sourceType ? sourceType : get(source, 'type', ''),
-      },
-      {
-        name: 'name',
-        label: 'Name',
-        required: true,
-        initialValue: get(source, 'name', ''),
-        type: 'text',
-      },
-      {
-        name: 'policyRules',
-        label: 'Policy Rules',
-        type: 'select-multi',
-        required: false,
-        options: ({ policyRules }) =>
-          policyRules
-            ? policyRules.map(policyRule =>
-                Map({
-                  label: policyRule.get('name'),
-                  value: policyRule.get('name'),
-                }),
-              )
+
+const fields =
+  ({ sourceName, sourceType }) =>
+  ({ adapterProperties, source, sourceAdapters }) => {
+    if (adapterProperties) {
+      const { propertiesFields, propertiesSerialize } = buildPropertyFields({
+        isNew: !source,
+        properties: adapterProperties,
+        getName: property => property.get('name'),
+        getRequired: property => property.get('required'),
+        getSensitive: property => property.get('sensitive'),
+        getValue: property =>
+          getIn(source, ['properties', property.get('name')], ''),
+      });
+      return [
+        {
+          name: 'type',
+          label: 'Type',
+          required: true,
+          enabled: false,
+          initialValue: sourceType ? sourceType : get(source, 'type', ''),
+        },
+        {
+          name: 'name',
+          label: 'Name',
+          required: true,
+          initialValue: get(source, 'name', ''),
+          type: 'text',
+        },
+        {
+          name: 'policyRules',
+          label: 'Policy Rules',
+          type: 'select-multi',
+          required: false,
+          options: ({ policyRules }) =>
+            policyRules
+              ? policyRules.map(policyRule =>
+                  Map({
+                    label: policyRule.get('name'),
+                    value: policyRule.get('name'),
+                  }),
+                )
+              : [],
+          initialValue: source
+            ? source
+                .get('policyRules')
+                .map(policyRule => policyRule.get('name'))
             : [],
-        initialValue: source
-          ? source.get('policyRules').map(policyRule => policyRule.get('name'))
-          : [],
-        serialize: ({ values }) =>
-          values
-            .get('policyRules')
-            .map(name => ({ type: 'API Access', name: name })),
-      },
-      {
-        name: 'properties',
-        visible: false,
-        initialValue: get(source, 'properties', []),
-        serialize: propertiesSerialize,
-      },
-      ...propertiesFields,
-    ];
-  }
-};
+          serialize: ({ values }) =>
+            values
+              .get('policyRules')
+              .map(name => ({ type: 'API Access', name: name })),
+        },
+        {
+          name: 'properties',
+          visible: false,
+          initialValue: get(source, 'properties', []),
+          serialize: propertiesSerialize,
+        },
+        ...propertiesFields,
+      ];
+    }
+  };
 
 export const SourceForm = generateForm({
   formOptions: ['sourceName', 'sourceType'],

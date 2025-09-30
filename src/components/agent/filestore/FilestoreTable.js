@@ -2,9 +2,7 @@ import { defineFilter } from '../../../helpers';
 import { fetchFilestores } from '../../../apis';
 import { generateTable } from '../../table/Table';
 
-const clientSide = defineFilter(true)
-  .startsWith('slug', 'slug')
-  .end();
+const clientSide = defineFilter(true).startsWith('slug', 'slug').end();
 
 const dataSource = ({ agentSlug }) => ({
   fn: fetchFilestores,

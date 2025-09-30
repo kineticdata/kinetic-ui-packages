@@ -58,40 +58,44 @@ const filterDataSources = () => ({
     fn: fetchSources,
     params: [],
     transform: result =>
-      result.sources.filter(s => s.name !== '-').map(s => ({
-        label: s.name,
-        value: s.name,
-      })),
+      result.sources
+        .filter(s => s.name !== '-')
+        .map(s => ({
+          label: s.name,
+          value: s.name,
+        })),
   },
 });
 
-const filters = () => ({ sourceTypes }) =>
-  sourceTypes && [
-    {
-      name: 'sourceName',
-      label: 'Source',
-      type: 'select',
-      options: sourceTypes,
-    },
-    { name: 'sourceGroup', label: 'Group', type: 'text' },
-    { name: 'sourceGroupFragment', label: 'Group', type: 'text' },
-    { name: 'tree', label: 'Name', type: 'text' },
-    { name: 'treeFragment', label: 'Name', type: 'text' },
-    {
-      name: 'includeSystemRuns',
-      label: 'Include System Runs',
-      type: 'checkbox',
-    },
-    {
-      name: 'type',
-      label: 'Type',
-      type: 'select',
-      options: RUN_TYPES,
-      initialValue: 'Tree',
-    },
-    { name: 'sourceId', label: 'Source ID', type: 'text' },
-    { name: 'id', label: 'Run ID', type: 'text' },
-  ];
+const filters =
+  () =>
+  ({ sourceTypes }) =>
+    sourceTypes && [
+      {
+        name: 'sourceName',
+        label: 'Source',
+        type: 'select',
+        options: sourceTypes,
+      },
+      // { name: 'sourceGroup', label: 'Group', type: 'text' },
+      { name: 'sourceGroupFragment', label: 'Group', type: 'text' },
+      // { name: 'tree', label: 'Name', type: 'text' },
+      { name: 'treeFragment', label: 'Name', type: 'text' },
+      {
+        name: 'includeSystemRuns',
+        label: 'Include System Runs',
+        type: 'checkbox',
+      },
+      {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        options: RUN_TYPES,
+        initialValue: 'Tree',
+      },
+      { name: 'sourceId', label: 'Source ID', type: 'text' },
+      { name: 'id', label: 'Run ID', type: 'text' },
+    ];
 
 const columns = [
   {

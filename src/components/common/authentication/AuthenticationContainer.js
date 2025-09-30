@@ -27,6 +27,7 @@ import {
   systemLogin,
 } from '../../../apis';
 import { refreshSystemToken } from '../../../apis';
+import { PreferencesProvider } from '../preferences/PreferencesProvider';
 
 const defaultLoginProps = {
   error: null,
@@ -49,6 +50,7 @@ regHandlers({
     state
       .mergeIn(['session'], {
         loggedIn: true,
+        timedOut: false,
         token: action.payload.token,
       })
       .set('login', defaultLoginProps),
@@ -58,6 +60,7 @@ regHandlers({
         csrfToken: action.payload.csrfToken,
         initialized: true,
         loggedIn: !!action.payload.token,
+        timedOut: false,
         securityStrategies: action.payload.securityStrategies,
         spaceSlug: action.payload.spaceSlug,
         token: action.payload.token,
@@ -78,9 +81,10 @@ regHandlers({
   SINGLE_SIGN_ON: state =>
     state.mergeIn(['login'], { error: null, pending: true }),
   TIMEOUT: state => state.setIn(['session', 'token'], null),
+  TIMEOUT_SESSION: state => state.setIn(['session', 'timedOut'], true),
 });
 
-regSaga('WATCH_SYSTEM_AUTHENTICATION', function*() {
+regSaga('WATCH_SYSTEM_AUTHENTICATION', function* () {
   yield take('LOGIN');
   const system = yield select(state =>
     state.getIn(['session', 'system'], false),
@@ -120,7 +124,7 @@ regSaga('WATCH_SYSTEM_AUTHENTICATION', function*() {
 });
 
 regSaga(
-  takeEvery('LOGIN', function*({ payload }) {
+  takeEvery('LOGIN', function* ({ payload }) {
     try {
       const system = yield select(state => state.getIn(['session', 'system']));
       const { username, password } = yield select(state => state.get('login'));
@@ -151,7 +155,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('SINGLE_SIGN_ON', function*({ payload: { callback, spaceSlug } }) {
+  takeEvery('SINGLE_SIGN_ON', function* ({ payload: { callback, spaceSlug } }) {
     try {
       const { error } = yield call(singleSignOn, spaceSlug, {
         width: 770,
@@ -172,10 +176,34 @@ regSaga(
   }),
 );
 
+regSaga(
+  takeEvery('TIMEOUT', function* () {
+    const system = yield select(state => state.getIn(['session', 'system']));
+    if (system) {
+      // System doesn't use JWT so time it out immediately
+      yield put(action('TIMEOUT_SESSION'));
+    } else {
+      try {
+        // When a TIMEOUT is triggered, try retrieving the JWT again. If a token
+        // is not returned, then time out the session
+        const token = yield call(retrieveJwt);
+        if (token) {
+          yield put(action('SET_AUTHENTICATED', { token }));
+        } else {
+          yield put(action('TIMEOUT_SESSION'));
+        }
+      } catch (e) {
+        yield put(action('TIMEOUT_SESSION'));
+        console.error(e);
+      }
+    }
+  }),
+);
+
 const SYSTEM_TOKEN = 'kd-system';
 
 regSaga(
-  takeEvery('INITIALIZE', function*({ payload: { system, skipInit } }) {
+  takeEvery('INITIALIZE', function* ({ payload: { system, skipInit } }) {
     try {
       if (system) {
         let token;
@@ -225,7 +253,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('LOGOUT_START', function*({ payload }) {
+  takeEvery('LOGOUT_START', function* ({ payload }) {
     const { callback, isSaml } = payload;
     try {
       const system = yield select(state => state.getIn(['session', 'system']));
@@ -245,7 +273,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('SET_AUTHENTICATED', function*({ payload }) {
+  takeEvery('SET_AUTHENTICATED', function* ({ payload }) {
     if (isFunction(payload.callback)) {
       yield call(payload.callback);
     }
@@ -290,16 +318,17 @@ export class AuthenticationComponent extends Component {
     const {
       initialized,
       loggedIn,
+      timedOut,
       login,
       securityStrategies,
       serverError,
       spaceSlug,
-      token,
     } = this.props;
-    return this.props.children({
+
+    const content = this.props.children({
       serverError,
       initialized: initialized,
-      timedOut: loggedIn && !token,
+      timedOut: loggedIn && timedOut,
       loggedIn: loggedIn,
       loginProps: {
         onChangeUsername,
@@ -307,17 +336,28 @@ export class AuthenticationComponent extends Component {
         onLogin,
         onSso:
           securityStrategies && securityStrategies.length > 0
-            ? callback => dispatch('SINGLE_SIGN_ON', { callback, spaceSlug })
+            ? callback =>
+                dispatch('SINGLE_SIGN_ON', {
+                  callback,
+                  spaceSlug,
+                })
             : null,
         ...login,
       },
     });
+
+    return this.props.preferences ? (
+      <PreferencesProvider loggedIn={loggedIn}>{content}</PreferencesProvider>
+    ) : (
+      content
+    );
   }
 }
 
 const mapStateToProps = state => ({
   initialized: state.getIn(['session', 'initialized'], false),
   loggedIn: state.getIn(['session', 'loggedIn'], false),
+  timedOut: state.getIn(['session', 'timedOut'], false),
   token: state.getIn(['session', 'token'], null),
   login: state.get('login', defaultLoginProps),
   spaceSlug: state.getIn(['session', 'spaceSlug'], ''),

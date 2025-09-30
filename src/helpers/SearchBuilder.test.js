@@ -8,9 +8,7 @@ describe('defineFilter', () => {
   };
 
   test('equals', () => {
-    const fn = defineFilter()
-      .equals('firstName', 'name')
-      .end();
+    const fn = defineFilter().equals('firstName', 'name').end();
     expect(fn(person, { name: 'Alex' })).toBe(true);
     expect(fn(person, { name: 'ALEX' })).toBe(false);
     expect(fn(person, { name: 'Ale' })).toBe(false);
@@ -22,9 +20,7 @@ describe('defineFilter', () => {
   // With non-empty filter values and object values it should behave the same
   // as the `equals` without strict.
   test('equals strict', () => {
-    const fn = defineFilter()
-      .equals('firstName', 'name', true)
-      .end();
+    const fn = defineFilter().equals('firstName', 'name', true).end();
     expect(fn(person, { name: 'Alex' })).toBe(true);
     expect(fn(person, { name: 'ALEX' })).toBe(false);
     expect(fn(person, { name: 'Ale' })).toBe(false);
@@ -32,17 +28,13 @@ describe('defineFilter', () => {
   });
 
   test('equals coerces', () => {
-    const fn = defineFilter()
-      .equals('value', 'filterValue', true)
-      .end();
+    const fn = defineFilter().equals('value', 'filterValue', true).end();
     expect(fn({ value: 2 }, { filterValue: '2' })).toBe(true);
     expect(fn({ value: true }, { filterValue: 'true' })).toBe(true);
   });
 
   test('equals caseInsensitive', () => {
-    const fn = defineFilter(true)
-      .equals('firstName', 'name')
-      .end();
+    const fn = defineFilter(true).equals('firstName', 'name').end();
     expect(fn(person, { name: 'Alex' })).toBe(true);
     expect(fn(person, { name: 'ALEX' })).toBe(true);
     expect(fn(person, { name: 'Ale' })).toBe(false);
@@ -59,9 +51,7 @@ describe('defineFilter', () => {
   });
 
   test('startsWith', () => {
-    const fn = defineFilter()
-      .startsWith('firstName', 'name')
-      .end();
+    const fn = defineFilter().startsWith('firstName', 'name').end();
     expect(fn(person, { name: 'Alex' })).toBe(true);
     expect(fn(person, { name: 'Ale' })).toBe(true);
     expect(fn(person, { name: 'ALE' })).toBe(false);
@@ -71,9 +61,7 @@ describe('defineFilter', () => {
   });
 
   test('startsWith caseInsensitive', () => {
-    const fn = defineFilter(true)
-      .startsWith('firstName', 'name')
-      .end();
+    const fn = defineFilter(true).startsWith('firstName', 'name').end();
     expect(fn(person, { name: 'Alex' })).toBe(true);
     expect(fn(person, { name: 'Ale' })).toBe(true);
     expect(fn(person, { name: 'ALE' })).toBe(true);
@@ -81,9 +69,7 @@ describe('defineFilter', () => {
   });
 
   test('in', () => {
-    const fn = defineFilter()
-      .in('firstName', 'names')
-      .end();
+    const fn = defineFilter().in('firstName', 'names').end();
     expect(fn(person, { names: ['Alex', 'Sam'] })).toBe(true);
     expect(fn(person, { names: ['ALEX', 'Same'] })).toBe(false);
     expect(fn(person, { names: ['Ale', 'Same'] })).toBe(false);
@@ -94,35 +80,27 @@ describe('defineFilter', () => {
   // With non-empty filter values and object values it should behave the same
   // as the `in` without strict.
   test('in strict', () => {
-    const fn = defineFilter()
-      .in('firstName', 'names', true)
-      .end();
+    const fn = defineFilter().in('firstName', 'names', true).end();
     expect(fn(person, { names: ['Alex', 'Sam'] })).toBe(true);
     expect(fn(person, { names: ['ALEX', 'Same'] })).toBe(false);
     expect(fn(person, { names: ['Ale', 'Same'] })).toBe(false);
   });
 
   test('in coerces', () => {
-    const fn = defineFilter()
-      .in('value', 'filterValue')
-      .end();
+    const fn = defineFilter().in('value', 'filterValue').end();
     expect(fn({ value: 2 }, { filterValue: ['2'] })).toBe(true);
     expect(fn({ value: true }, { filterValue: ['true'] })).toBe(true);
   });
 
   test('in caseInsensitive', () => {
-    const fn = defineFilter(true)
-      .in('firstName', 'names')
-      .end();
+    const fn = defineFilter(true).in('firstName', 'names').end();
     expect(fn(person, { names: ['Alex', 'Sam'] })).toBe(true);
     expect(fn(person, { names: ['ALEX', 'Same'] })).toBe(true);
     expect(fn(person, { names: ['Ale', 'Same'] })).toBe(false);
   });
 
   test('in invalid filter value type', () => {
-    const fn = defineFilter()
-      .in('firstName', 'names')
-      .end();
+    const fn = defineFilter().in('firstName', 'names').end();
     expect(() => {
       fn(person, { names: 'Invalid' });
     }).toThrowErrorMatchingInlineSnapshot(
@@ -136,9 +114,7 @@ describe('defineFilter', () => {
   });
 
   test('greaterThan', () => {
-    const fn = defineFilter()
-      .greaterThan('firstName', 'min')
-      .end();
+    const fn = defineFilter().greaterThan('firstName', 'min').end();
     expect(fn(person, { min: 'Aa' })).toBe(true);
     // "aa" > "Alex"
     expect(fn(person, { min: 'aa' })).toBe(false);
@@ -151,9 +127,7 @@ describe('defineFilter', () => {
   // With non-empty filter values and object values it should behave the same
   // as the `greaterThan` without strict.
   test('greaterThan strict', () => {
-    const fn = defineFilter()
-      .greaterThan('firstName', 'min', true)
-      .end();
+    const fn = defineFilter().greaterThan('firstName', 'min', true).end();
     expect(fn(person, { min: 'Aa' })).toBe(true);
     // "aa" > "Alex"
     expect(fn(person, { min: 'aa' })).toBe(false);
@@ -162,9 +136,7 @@ describe('defineFilter', () => {
   });
 
   test('greaterThan coerces', () => {
-    const fn = defineFilter()
-      .greaterThan('value', 'filterValue')
-      .end();
+    const fn = defineFilter().greaterThan('value', 'filterValue').end();
     expect(fn({ value: 2 }, { filterValue: '1' })).toBe(true);
     expect(fn({ value: 2 }, { filterValue: '2' })).toBe(false);
     expect(fn({ value: true }, { filterValue: 'false' })).toBe(true);
@@ -172,9 +144,7 @@ describe('defineFilter', () => {
   });
 
   test('greaterThan caseInsensitive', () => {
-    const fn = defineFilter(true)
-      .greaterThan('firstName', 'min')
-      .end();
+    const fn = defineFilter(true).greaterThan('firstName', 'min').end();
     expect(fn(person, { min: 'Aa' })).toBe(true);
     // "aa" > "Alex" but "alex" > "aa"
     expect(fn(person, { min: 'aa' })).toBe(true);
@@ -183,9 +153,7 @@ describe('defineFilter', () => {
   });
 
   test('greaterThanOrEquals', () => {
-    const fn = defineFilter()
-      .greaterThanOrEquals('firstName', 'min')
-      .end();
+    const fn = defineFilter().greaterThanOrEquals('firstName', 'min').end();
     expect(fn(person, { min: 'Aa' })).toBe(true);
     // "aa" > "Alex"
     expect(fn(person, { min: 'aa' })).toBe(false);
@@ -211,9 +179,7 @@ describe('defineFilter', () => {
   });
 
   test('greaterThanOrEquals coerces', () => {
-    const fn = defineFilter()
-      .greaterThanOrEquals('value', 'filterValue')
-      .end();
+    const fn = defineFilter().greaterThanOrEquals('value', 'filterValue').end();
     expect(fn({ value: 2 }, { filterValue: '1' })).toBe(true);
     expect(fn({ value: 2 }, { filterValue: '2' })).toBe(true);
     expect(fn({ value: 2 }, { filterValue: '3' })).toBe(false);
@@ -223,9 +189,7 @@ describe('defineFilter', () => {
   });
 
   test('greaterThanOrEquals caseInsensitive', () => {
-    const fn = defineFilter(true)
-      .greaterThanOrEquals('firstName', 'min')
-      .end();
+    const fn = defineFilter(true).greaterThanOrEquals('firstName', 'min').end();
     expect(fn(person, { min: 'Aa' })).toBe(true);
     // "aa" > "Alex" but "alex" > "aa"
     expect(fn(person, { min: 'aa' })).toBe(true);
@@ -235,9 +199,7 @@ describe('defineFilter', () => {
   });
 
   test('lessThan', () => {
-    const fn = defineFilter()
-      .lessThan('firstName', 'max')
-      .end();
+    const fn = defineFilter().lessThan('firstName', 'max').end();
     expect(fn(person, { max: 'Az' })).toBe(true);
     // "AZ" < "Alex"
     expect(fn(person, { max: 'AZ' })).toBe(false);
@@ -250,9 +212,7 @@ describe('defineFilter', () => {
   // With non-empty filter values and object values it should behave the same
   // as the `lessThan` without strict.
   test('lessThan strict', () => {
-    const fn = defineFilter()
-      .lessThan('firstName', 'max', true)
-      .end();
+    const fn = defineFilter().lessThan('firstName', 'max', true).end();
     expect(fn(person, { max: 'Az' })).toBe(true);
     // "AZ" < "Alex"
     expect(fn(person, { max: 'AZ' })).toBe(false);
@@ -261,9 +221,7 @@ describe('defineFilter', () => {
   });
 
   test('lessThan coerces', () => {
-    const fn = defineFilter()
-      .lessThan('value', 'filterValue')
-      .end();
+    const fn = defineFilter().lessThan('value', 'filterValue').end();
     expect(fn({ value: 2 }, { filterValue: '3' })).toBe(true);
     expect(fn({ value: 2 }, { filterValue: '2' })).toBe(false);
     expect(fn({ value: 2 }, { filterValue: '1' })).toBe(false);
@@ -273,9 +231,7 @@ describe('defineFilter', () => {
   });
 
   test('lessThan caseInsensitive', () => {
-    const fn = defineFilter(true)
-      .lessThan('firstName', 'max')
-      .end();
+    const fn = defineFilter(true).lessThan('firstName', 'max').end();
     expect(fn(person, { max: 'Az' })).toBe(true);
     // "AZ" < "Alex"
     expect(fn(person, { max: 'AZ' })).toBe(true);
@@ -284,9 +240,7 @@ describe('defineFilter', () => {
   });
 
   test('lessThanOrEquals', () => {
-    const fn = defineFilter()
-      .lessThanOrEquals('firstName', 'max')
-      .end();
+    const fn = defineFilter().lessThanOrEquals('firstName', 'max').end();
     expect(fn(person, { max: 'Az' })).toBe(true);
     // "aa" > "Alex"
     expect(fn(person, { max: 'aa' })).toBe(true);
@@ -299,9 +253,7 @@ describe('defineFilter', () => {
   // With non-empty filter values and object values it should behave the same
   // as the `lessThanOrEquals` without strict.
   test('lessThanOrEquals strict', () => {
-    const fn = defineFilter()
-      .lessThanOrEquals('firstName', 'max', true)
-      .end();
+    const fn = defineFilter().lessThanOrEquals('firstName', 'max', true).end();
     expect(fn(person, { max: 'Az' })).toBe(true);
     // "aa" > "Alex"
     expect(fn(person, { max: 'aa' })).toBe(true);
@@ -310,9 +262,7 @@ describe('defineFilter', () => {
   });
 
   test('lessThanOrEquals coerces', () => {
-    const fn = defineFilter()
-      .lessThanOrEquals('value', 'filterValue')
-      .end();
+    const fn = defineFilter().lessThanOrEquals('value', 'filterValue').end();
     expect(fn({ value: 2 }, { filterValue: '3' })).toBe(true);
     expect(fn({ value: 2 }, { filterValue: '2' })).toBe(true);
     expect(fn({ value: 2 }, { filterValue: '1' })).toBe(false);
@@ -322,9 +272,7 @@ describe('defineFilter', () => {
   });
 
   test('lessThanOrEquals caseInsensitive', () => {
-    const fn = defineFilter(true)
-      .lessThanOrEquals('firstName', 'max')
-      .end();
+    const fn = defineFilter(true).lessThanOrEquals('firstName', 'max').end();
     expect(fn(person, { max: 'Az' })).toBe(true);
     // "aa" < "alex"
     expect(fn(person, { max: 'aa' })).toBe(false);
@@ -333,9 +281,7 @@ describe('defineFilter', () => {
   });
 
   test('between', () => {
-    const fn = defineFilter()
-      .between('firstName', 'min', 'max')
-      .end();
+    const fn = defineFilter().between('firstName', 'min', 'max').end();
     expect(fn(person, { min: 'Aa', max: 'Az' })).toBe(true);
     // min inclusive
     expect(fn(person, { min: 'Alex', max: 'Az' })).toBe(true);
@@ -353,9 +299,7 @@ describe('defineFilter', () => {
   // With non-empty filter values and object values it should behave the same
   // as the `between` without strict.
   test('between', () => {
-    const fn = defineFilter()
-      .between('firstName', 'min', 'max', true)
-      .end();
+    const fn = defineFilter().between('firstName', 'min', 'max', true).end();
     expect(fn(person, { min: 'Aa', max: 'Az' })).toBe(true);
     // min inclusive
     expect(fn(person, { min: 'Alex', max: 'Az' })).toBe(true);
@@ -367,9 +311,7 @@ describe('defineFilter', () => {
   });
 
   test('between coerces', () => {
-    const fn = defineFilter()
-      .between('value', 'min', 'max')
-      .end();
+    const fn = defineFilter().between('value', 'min', 'max').end();
     expect(fn({ value: 1 }, { min: '1', max: '3' })).toBe(true);
     expect(fn({ value: 2 }, { min: '1', max: '3' })).toBe(true);
     expect(fn({ value: 3 }, { min: '1', max: '3' })).toBe(false);
@@ -383,9 +325,7 @@ describe('defineFilter', () => {
   });
 
   test('between caseInsensitive', () => {
-    const fn = defineFilter(true)
-      .between('firstName', 'min', 'max')
-      .end();
+    const fn = defineFilter(true).between('firstName', 'min', 'max').end();
     expect(fn(person, { min: 'Aa', max: 'Az' })).toBe(true);
     expect(fn(person, { min: 'aa', max: 'az' })).toBe(true);
     expect(fn(person, { min: 'Aa', max: 'Ab' })).toBe(false);
@@ -397,9 +337,7 @@ describe('defineFilter', () => {
   });
 
   test('between invalid', () => {
-    const fn = defineFilter(true)
-      .between('firstName', 'min', 'max')
-      .end();
+    const fn = defineFilter(true).between('firstName', 'min', 'max').end();
     expect(() => {
       fn(person, { min: 'z', max: 'a' });
     }).toThrowErrorMatchingInlineSnapshot(
@@ -460,7 +398,7 @@ describe('defineFilter', () => {
     );
   });
 
-  describe('empty values / filters', function() {
+  describe('empty values / filters', function () {
     const emptyPerson = { firstName: '' };
     const nullPerson = { firstName: null };
     const undefinedPerson = {};
@@ -471,9 +409,7 @@ describe('defineFilter', () => {
     const nullInFilter = { names: null };
 
     test('equals', () => {
-      const fn = defineFilter()
-        .equals('firstName', 'name')
-        .end();
+      const fn = defineFilter().equals('firstName', 'name').end();
       // No matter the object value, when the filter value is
       // undefined, null, or empty the filter is ignored.
       expect(fn(person, undefinedFilter)).toBe(true);
@@ -495,9 +431,7 @@ describe('defineFilter', () => {
     });
 
     test('equals strict', () => {
-      const fn = defineFilter()
-        .equals('firstName', 'name', true)
-        .end();
+      const fn = defineFilter().equals('firstName', 'name', true).end();
       expect(fn(person, undefinedFilter)).toBe(false);
       expect(fn(person, nullFilter)).toBe(false);
       expect(fn(person, emptyFilter)).toBe(false);
@@ -507,9 +441,7 @@ describe('defineFilter', () => {
     });
 
     test('in', () => {
-      const fn = defineFilter()
-        .in('firstName', 'names')
-        .end();
+      const fn = defineFilter().in('firstName', 'names').end();
       // No matter the object value, when the filter value is undefined, null,
       // or empty array the filter is ignored
       expect(fn(person, emptyInFilter)).toBe(true);
@@ -539,9 +471,7 @@ describe('defineFilter', () => {
     });
 
     test('in strict', () => {
-      const fn = defineFilter()
-        .in('firstName', 'names', true)
-        .end();
+      const fn = defineFilter().in('firstName', 'names', true).end();
       // When strict and given [], null, undefined nothing can be a member of
       // those empty sets so false should always be returned.
       expect(fn(person, emptyInFilter)).toBe(false);
@@ -559,9 +489,7 @@ describe('defineFilter', () => {
     });
 
     test('startsWith', () => {
-      const fn = defineFilter()
-        .startsWith('firstName', 'name')
-        .end();
+      const fn = defineFilter().startsWith('firstName', 'name').end();
       expect(fn(person, {})).toBe(true);
       expect(fn(person, { name: '' })).toBe(true);
       expect(fn(person, { name: null })).toBe(true);
@@ -581,9 +509,7 @@ describe('defineFilter', () => {
     });
 
     test('greaterThan', () => {
-      const fn = defineFilter()
-        .greaterThan('firstName', 'min')
-        .end();
+      const fn = defineFilter().greaterThan('firstName', 'min').end();
       // No matter the object value, when the filter value is undefined, null,
       // or empty array the filter is ignored
       expect(fn(person, {})).toBe(true);
@@ -605,9 +531,7 @@ describe('defineFilter', () => {
     });
 
     test('greaterThan strict', () => {
-      const fn = defineFilter()
-        .greaterThan('firstName', 'min', true)
-        .end();
+      const fn = defineFilter().greaterThan('firstName', 'min', true).end();
       // 'A' > '' > null > undefined
       expect(fn(undefinedPerson, {})).toBe(false);
       expect(fn(nullPerson, {})).toBe(true);
@@ -621,9 +545,7 @@ describe('defineFilter', () => {
     });
 
     test('greaterThanOrEquals', () => {
-      const fn = defineFilter()
-        .greaterThanOrEquals('firstName', 'min')
-        .end();
+      const fn = defineFilter().greaterThanOrEquals('firstName', 'min').end();
       // No matter the object value, when the filter value is undefined, null,
       // or empty array the filter is ignored
       expect(fn(person, {})).toBe(true);
@@ -664,9 +586,7 @@ describe('defineFilter', () => {
     });
 
     test('lessThan', () => {
-      const fn = defineFilter()
-        .lessThan('firstName', 'max')
-        .end();
+      const fn = defineFilter().lessThan('firstName', 'max').end();
       // No matter the object value, when the filter value is undefined, null,
       // or empty array the filter is ignored
       expect(fn(person, {})).toBe(true);
@@ -688,9 +608,7 @@ describe('defineFilter', () => {
     });
 
     test('lessThan strict', () => {
-      const fn = defineFilter()
-        .lessThan('firstName', 'max', true)
-        .end();
+      const fn = defineFilter().lessThan('firstName', 'max', true).end();
       // 'A' > '' > null > undefined
       expect(fn(undefinedPerson, {})).toBe(false);
       expect(fn(undefinedPerson, { max: null })).toBe(true);
@@ -707,9 +625,7 @@ describe('defineFilter', () => {
     });
 
     test('lessThanOrEquals', () => {
-      const fn = defineFilter()
-        .lessThanOrEquals('firstName', 'max')
-        .end();
+      const fn = defineFilter().lessThanOrEquals('firstName', 'max').end();
       // No matter the object value, when the filter value is undefined, null,
       // or empty array the filter is ignored
       expect(fn(person, {})).toBe(true);
@@ -750,9 +666,7 @@ describe('defineFilter', () => {
     });
 
     test('between', () => {
-      const fn = defineFilter()
-        .between('firstName', 'min', 'max')
-        .end();
+      const fn = defineFilter().between('firstName', 'min', 'max').end();
       expect(fn(person, {})).toBe(true);
       expect(fn(person, { min: '', max: 'z' })).toBe(true);
       expect(fn(person, { min: null, max: 'z' })).toBe(true);
@@ -780,9 +694,7 @@ describe('defineFilter', () => {
     });
 
     test('between strict', () => {
-      const fn = defineFilter()
-        .between('firstName', 'min', 'max', true)
-        .end();
+      const fn = defineFilter().between('firstName', 'min', 'max', true).end();
       // 'Alex' > 'A'
       expect(fn(person, { min: undefined, max: 'A' })).toBe(false);
       expect(fn(person, { min: undefined, max: 'z' })).toBe(true);
@@ -801,9 +713,7 @@ describe('defineFilter', () => {
     });
 
     test('between strict invalid', () => {
-      const fn = defineFilter()
-        .between('firstName', 'min', 'max', true)
-        .end();
+      const fn = defineFilter().between('firstName', 'min', 'max', true).end();
 
       expect(() => {
         fn(person, { min: 'a', max: undefined });
@@ -932,18 +842,14 @@ describe('defineKqlQuery', () => {
   });
 
   test('in', () => {
-    const query = defineKqlQuery()
-      .in('name', 'names')
-      .end();
+    const query = defineKqlQuery().in('name', 'names').end();
 
     expect(query).toBeDefined();
     expect(query(values)).toBe(`name IN ("Bob", "Matt")`);
   });
 
   test('in strict', () => {
-    const query = defineKqlQuery()
-      .in('name', 'names', true)
-      .end();
+    const query = defineKqlQuery().in('name', 'names', true).end();
 
     expect(query).toBeDefined();
     expect(query(values)).toBe(`name IN ("Bob", "Matt", "", "", "")`);

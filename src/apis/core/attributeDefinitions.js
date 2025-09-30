@@ -62,6 +62,15 @@ const buildEndpoint = ({ kappSlug, attributeType: at, attributeName: an }) => {
   return an ? `${basePath}/${attributeName}` : basePath;
 };
 
+/**
+ * Fetches all attribute definitions of a given type.
+ *
+ * @param {Object} options - Options for fetching attribute definitions.
+ * @param {string} options.attributeType - The type of attribute definitions to fetch.
+ * @param {string} [options.kappSlug] - The slug of the kapp.
+ * @returns {Promise<{attributeDefinitions: Object[]}>}
+ */
+
 export const fetchAttributeDefinitions = (options = {}) => {
   const { attributeType } = options;
   validateOptions('fetchAttributeDefinitions', ['attributeType'], options);
@@ -73,6 +82,16 @@ export const fetchAttributeDefinitions = (options = {}) => {
     .then(response => ({ attributeDefinitions: response.data[attributeType] }))
     .catch(handleErrors);
 };
+
+/**
+ * Fetches a single attribute definition by name.
+ *
+ * @param {Object} options - Options for fetching the attribute definition.
+ * @param {string} options.attributeType - The type of attribute definition.
+ * @param {string} options.attributeName - The name of the attribute definition to fetch.
+ * @param {string} [options.kappSlug] - The slug of the kapp.
+ * @returns {Promise<{attributeDefinition: Object}>}
+ */
 
 export const fetchAttributeDefinition = (options = {}) => {
   const { attributeType } = options;
@@ -103,6 +122,16 @@ export const fetchAttributeDefinition = (options = {}) => {
     .catch(handleErrors);
 };
 
+/**
+ * Creates a new attribute definition.
+ *
+ * @param {Object} options - Options for creating the attribute definition.
+ * @param {string} options.attributeType - The type of attribute definition.
+ * @param {Object} options.attributeDefinition - The attribute definition object to create.
+ * @param {string} [options.kappSlug] - The slug of the kapp.
+ * @returns {Promise<{attributeDefinition: Object}>}
+ */
+
 export const createAttributeDefinition = (options = {}) => {
   const { kappSlug, attributeType, attributeDefinition } = options;
   validateOptions(
@@ -123,6 +152,17 @@ export const createAttributeDefinition = (options = {}) => {
     .catch(handleErrors);
 };
 
+/**
+ * Updates an existing attribute definition.
+ *
+ * @param {Object} options - Options for updating the attribute definition.
+ * @param {string} options.attributeType - The type of attribute definition.
+ * @param {string} options.attributeName - The name of the attribute definition to update.
+ * @param {Object} options.attributeDefinition - The updated attribute definition object.
+ * @param {string} [options.kappSlug] - The slug of the kapp.
+ * @returns {Promise<{attributeDefinition: Object}>}
+ */
+
 export const updateAttributeDefinition = (options = {}) => {
   const { attributeType, attributeDefinition } = options;
   validateOptions(
@@ -141,6 +181,16 @@ export const updateAttributeDefinition = (options = {}) => {
     }))
     .catch(handleErrors);
 };
+
+/**
+ * Deletes an attribute definition.
+ *
+ * @param {Object} options - Options for deleting the attribute definition.
+ * @param {string} options.attributeType - The type of attribute definition.
+ * @param {string} options.attributeName - The name of the attribute definition to delete.
+ * @param {string} [options.kappSlug] - The slug of the kapp.
+ * @returns {Promise<{attributeDefinition: Object}>}
+ */
 
 export const deleteAttributeDefinition = (options = {}) => {
   const { attributeType } = options;

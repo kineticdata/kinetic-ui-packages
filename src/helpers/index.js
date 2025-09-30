@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { fromJS, get, List, Map } from 'immutable';
 import { capitalize } from 'lodash-es';
 
@@ -29,10 +30,7 @@ if (
 }
 
 export const splitTeamName = team => {
-  const [local, ...parents] = team
-    .get('name')
-    .split('::')
-    .reverse();
+  const [local, ...parents] = team.get('name').split('::').reverse();
   return [parents.reverse().join('::'), local];
 };
 
@@ -139,6 +137,7 @@ const STATIC_IDENTITY_BINDINGS = [
   { label: 'authenticated' },
   { label: 'sessionToken' },
   { label: 'spaceAdmin' },
+  { label: 'teams' },
 ];
 
 const STATIC_FILE_BINDINGS = [
@@ -423,8 +422,10 @@ export * from './SearchBuilder';
 export const handleFormErrors = key => result => {
   const { error } = result;
   if (error) {
-    throw (error.statusCode === 400 && error.message) ||
-      'There was an error while saving.';
+    throw (
+      (error.statusCode === 400 && error.message) ||
+      'There was an error while saving.'
+    );
   }
 
   return key ? result[key] : result;
@@ -448,3 +449,15 @@ export const TIMELINES = [
 ].sort();
 
 export const MAX_PART_LENGTH = 10;
+
+export function usePrevious(value) {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef();
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
+}

@@ -111,33 +111,34 @@ const NON_CLONABLE_KEYS = [
   'versionId',
 ];
 
-const handleSubmit = ({ kappSlug, formSlug, workflowId, cloneGuid }) => (
-  values,
-  { cloneTree },
-) => {
-  const submitFn = workflowId ? updateWorkflow : createWorkflow;
-  const workflow = cloneGuid
-    ? cloneTree
-        .filter((_v, key) => !NON_CLONABLE_KEYS.includes(key))
-        .set('name', values.get('name'))
-        .set('event', values.get('event'))
-        .toJS()
-    : values.toJS();
-  const targetKappSlug = cloneGuid ? values.get('newKappSlug') : kappSlug;
-  const targetFormSlug = cloneGuid ? values.get('newFormSlug') : formSlug;
-  return submitFn({
-    kappSlug: targetKappSlug,
-    formSlug: targetFormSlug,
-    workflowId,
-    workflow,
-  }).then(({ workflow, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the workflow';
-    }
-    return { workflow, targetKappSlug, targetFormSlug };
-  });
-};
+const handleSubmit =
+  ({ kappSlug, formSlug, workflowId, cloneGuid }) =>
+  (values, { cloneTree }) => {
+    const submitFn = workflowId ? updateWorkflow : createWorkflow;
+    const workflow = cloneGuid
+      ? cloneTree
+          .filter((_v, key) => !NON_CLONABLE_KEYS.includes(key))
+          .set('name', values.get('name'))
+          .set('event', values.get('event'))
+          .toJS()
+      : values.toJS();
+    const targetKappSlug = cloneGuid ? values.get('newKappSlug') : kappSlug;
+    const targetFormSlug = cloneGuid ? values.get('newFormSlug') : formSlug;
+    return submitFn({
+      kappSlug: targetKappSlug,
+      formSlug: targetFormSlug,
+      workflowId,
+      workflow,
+    }).then(({ workflow, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the workflow'
+        );
+      }
+      return { workflow, targetKappSlug, targetFormSlug };
+    });
+  };
 
 const isCloneReady = (cloneTree, kapps, scope) =>
   cloneTree && (scope !== 'Space' ? kapps : true);
@@ -164,71 +165,70 @@ const initialEvent = (cloneGuid, cloneTree, workflow, possibleEvents) => {
   return legacyEvent || '';
 };
 
-const fields = ({ kappSlug, formSlug, cloneGuid, scope }) => ({
-  workflow,
-  cloneTree,
-  possibleEvents,
-  kapps,
-}) =>
-  possibleEvents &&
-  (!cloneGuid || isCloneReady(cloneTree, kapps, scope)) && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-      initialValue: cloneGuid ? '' : get(workflow, 'name') || '',
-    },
-    {
-      name: 'event',
-      label: 'Event',
-      type: 'select',
-      required: true,
-      enabled: !cloneGuid || !get(cloneTree, 'event', ''),
-      options: possibleEvents.map(event => Map({ label: event, value: event })),
-      initialValue: initialEvent(
-        cloneGuid,
-        cloneTree,
-        workflow,
-        possibleEvents,
-      ),
-    },
-    {
-      name: 'newKappSlug',
-      label: 'Kapp',
-      type: 'select',
-      required: cloneGuid && scope !== 'Space',
-      options: ({ kapps }) =>
-        cloneGuid &&
-        scope !== 'Space' &&
-        kapps &&
-        kapps.map(kapp =>
-          Map({ label: kapp.get('name'), value: kapp.get('slug') }),
-        ),
-      initialValue: kappSlug || '',
-    },
-    {
-      name: 'newFormSlug',
-      label: 'Form',
-      type: 'select',
-      required: cloneGuid && scope === 'Form',
-      options: ({ forms }) => {
-        return forms
-          ? forms.map(form =>
-              Map({ label: form.get('name'), value: form.get('slug') }),
-            )
-          : List();
+const fields =
+  ({ kappSlug, formSlug, cloneGuid, scope }) =>
+  ({ workflow, cloneTree, possibleEvents, kapps }) =>
+    possibleEvents &&
+    (!cloneGuid || isCloneReady(cloneTree, kapps, scope)) && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        initialValue: cloneGuid ? '' : get(workflow, 'name') || '',
       },
-      initialValue: formSlug || '',
-    },
-    {
-      name: 'treeXml',
-      label: 'Tree XML',
-      type: 'text',
-      required: false,
-      initialValue: '',
-    },
-  ];
+      {
+        name: 'event',
+        label: 'Event',
+        type: 'select',
+        required: true,
+        enabled: !cloneGuid || !get(cloneTree, 'event', ''),
+        options: possibleEvents.map(event =>
+          Map({ label: event, value: event }),
+        ),
+        initialValue: initialEvent(
+          cloneGuid,
+          cloneTree,
+          workflow,
+          possibleEvents,
+        ),
+      },
+      {
+        name: 'newKappSlug',
+        label: 'Kapp',
+        type: 'select',
+        required: cloneGuid && scope !== 'Space',
+        options: ({ kapps }) =>
+          cloneGuid &&
+          scope !== 'Space' &&
+          kapps &&
+          kapps.map(kapp =>
+            Map({ label: kapp.get('name'), value: kapp.get('slug') }),
+          ),
+        initialValue: kappSlug || '',
+      },
+      {
+        name: 'newFormSlug',
+        label: 'Form',
+        type: 'select',
+        required: cloneGuid && scope === 'Form',
+        options: ({ forms }) => {
+          return forms
+            ? forms.map(form =>
+                Map({ label: form.get('name'), value: form.get('slug') }),
+              )
+            : List();
+        },
+        initialValue: formSlug || '',
+      },
+      {
+        name: 'treeXml',
+        label: 'Tree XML',
+        type: 'text',
+        required: false,
+        initialValue: '',
+      },
+    ];
 
 export const LinkedWorkflowForm = generateForm({
   formOptions: ['kappSlug', 'formSlug', 'workflowId', 'cloneGuid', 'scope'],

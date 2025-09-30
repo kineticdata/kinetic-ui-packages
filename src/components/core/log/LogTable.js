@@ -18,9 +18,7 @@ export const generateLogQuery = appliedFilters => {
   let startDate, endDate;
   if (preset && preset !== 'custom') {
     const minutes = Number.parseInt(preset, 10);
-    startDate = moment()
-      .subtract(minutes, 'minutes')
-      .format();
+    startDate = moment().subtract(minutes, 'minutes').format();
     endDate = '';
   } else {
     startDate = appliedFilters.get('startTime', '');
@@ -29,13 +27,9 @@ export const generateLogQuery = appliedFilters => {
 
   const start =
     startDate === '' && endDate === ''
-      ? moment()
-          .subtract(60, 'minutes')
-          .toISOString()
+      ? moment().subtract(60, 'minutes').toISOString()
       : startDate === '' && endDate !== ''
-        ? moment(endDate)
-            .subtract(60, 'minutes')
-            .toISOString()
+        ? moment(endDate).subtract(60, 'minutes').toISOString()
         : moment(startDate).toISOString();
   const end =
     endDate === '' ? moment().toISOString() : moment(endDate).toISOString();

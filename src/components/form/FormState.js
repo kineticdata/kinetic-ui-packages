@@ -10,7 +10,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const FormStateComopnent = props =>
-  props.children(selectFormState(props.formState));
+  props.children((props.selector || selectFormState)(props.formState));
 
 const FormState = connect(mapStateToProps)(FormStateComopnent);
 

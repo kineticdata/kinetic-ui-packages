@@ -1,5 +1,4 @@
 import axios from 'axios';
-import createError from 'axios/lib/core/createError';
 import {
   fetchAvailableLocales,
   clearTranslationsCache,
@@ -78,9 +77,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchAvailableLocales();
@@ -127,9 +130,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.delete.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await clearTranslationsCache();
@@ -196,9 +203,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchStagedTranslations();
@@ -245,9 +256,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchDefaultLocale();
@@ -303,9 +318,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await setDefaultLocale({ localeCode: 'en' });
@@ -353,9 +372,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchEnabledLocales();
@@ -411,9 +434,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.post.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await enableLocale({ localeCode: 'en' });
@@ -469,9 +496,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.delete.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await disableLocale({ localeCode: 'en' });
@@ -583,10 +614,14 @@ describe('translations api', () => {
 
     test('failure fetch tooManyFlags', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 400', null, 400, null, {
-          status: 400,
-          statusText:
-            'The custom, expected, and unexpected flags can only be specified independently.',
+        Object.assign(new Error('Request failed with status code 400'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 400,
+            statusText:
+              'The custom, expected, and unexpected flags can only be specified independently.',
+          },
         }),
       );
       const result = await fetchContexts({ expected: true, unexpected: true });
@@ -612,9 +647,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchContexts();
@@ -670,9 +709,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.post.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await createContext({ context: {} });
@@ -740,9 +783,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await updateContext({
@@ -801,9 +848,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.delete.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await deleteContext({ contextName: 'custom.test' });
@@ -858,9 +909,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchContextKeys({ contextName: 'custom.test' });
@@ -936,9 +991,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await updateContextKey({
@@ -1107,9 +1166,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.get.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await fetchTranslations();
@@ -1229,9 +1292,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.post.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await upsertTranslations({
@@ -1340,9 +1407,13 @@ describe('translations api', () => {
 
     test('forbidden', async () => {
       axios.delete.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const result = await deleteTranslations();

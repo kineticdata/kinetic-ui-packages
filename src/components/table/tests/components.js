@@ -84,6 +84,9 @@ export const mockTableConfig = {
       <button type="submit">Search</button>
     </form>
   ),
+  FilterControl: props => (
+    <div data-testid="FilterControlMock" data-props={stringifyProps(props)} />
+  ),
   TextFilter: props => (
     <div data-testid="TextFilterMock" data-props={stringifyProps(props)} />
   ),
@@ -105,12 +108,14 @@ export const TableViewMock = ({
   table,
   pagination,
   filter,
+  filterControl,
   columnControl,
   ...props
 }) => (
   <div data-testid="TableViewMock" data-props={stringifyProps(props)}>
     {table}
     {pagination}
+    {filterControl}
     {filter}
     {columnControl}
   </div>

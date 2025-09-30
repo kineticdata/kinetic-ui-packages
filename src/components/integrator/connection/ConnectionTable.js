@@ -16,11 +16,7 @@ const clientSide = defineFilter(true)
 const dataSource = () => ({
   fn: fetchConnections,
   clientSide,
-  params: paramData => [
-    {
-      ...paramData.filters.filter(Boolean).toJS(),
-    },
-  ],
+  params: () => [],
   transform: result => ({
     data: result.connections,
   }),
@@ -34,6 +30,7 @@ const columns = [
   },
   {
     value: 'type',
+    valueTransform: (_value, row) => row.getIn(['config', 'configType']),
     title: 'Type',
     sortable: true,
     toggleable: true,

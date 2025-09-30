@@ -46,66 +46,63 @@ const handleSubmit = () => values => {
   );
 };
 
-const fields = ({ locale, contextName, keyHash }) => ({
-  contexts,
-  keys,
-  locales,
-  entry,
-}) => {
-  return (
-    contexts &&
-    keys &&
-    locales && [
-      {
-        name: 'context',
-        label: 'Context',
-        type: 'text',
-        required: true,
-        initialValue: contextName && contextName,
-        enabled: !contextName,
-        options: ({ contexts }) =>
-          contexts &&
-          contexts.map(con => {
-            return Map({
-              value: con.get('name'),
-              label: con.get('name'),
-            });
-          }),
-      },
-      {
-        name: 'locale',
-        label: 'Locale',
-        type: 'text',
-        required: true,
-        initialValue: locale && locale,
-        enabled: !locale,
-        options: ({ locales }) =>
-          locales &&
-          locales.map(loc => {
-            return Map({
-              value: loc.get('code'),
-              label: loc.get('code'),
-            });
-          }),
-      },
-      {
-        name: 'key',
-        label: 'Key',
-        type: 'text',
-        enabled: !keyHash,
-        initialValue: keys && keys.get(0) && keys.get(0).get('name'),
-        required: true,
-      },
-      {
-        name: 'value',
-        label: 'Value',
-        type: 'text',
-        initialValue: entry ? entry : '',
-        required: true,
-      },
-    ]
-  );
-};
+const fields =
+  ({ locale, contextName, keyHash }) =>
+  ({ contexts, keys, locales, entry }) => {
+    return (
+      contexts &&
+      keys &&
+      locales && [
+        {
+          name: 'context',
+          label: 'Context',
+          type: 'text',
+          required: true,
+          initialValue: contextName && contextName,
+          enabled: !contextName,
+          options: ({ contexts }) =>
+            contexts &&
+            contexts.map(con => {
+              return Map({
+                value: con.get('name'),
+                label: con.get('name'),
+              });
+            }),
+        },
+        {
+          name: 'locale',
+          label: 'Locale',
+          type: 'text',
+          required: true,
+          initialValue: locale && locale,
+          enabled: !locale,
+          options: ({ locales }) =>
+            locales &&
+            locales.map(loc => {
+              return Map({
+                value: loc.get('code'),
+                label: loc.get('code'),
+              });
+            }),
+        },
+        {
+          name: 'key',
+          label: 'Key',
+          type: 'text',
+          enabled: !keyHash,
+          initialValue: keys && keys.get(0) && keys.get(0).get('name'),
+          required: true,
+        },
+        {
+          name: 'value',
+          label: 'Value',
+          type: 'text',
+          initialValue: entry ? entry : '',
+          required: true,
+        },
+      ]
+    );
+  };
 
 export const EntryForm = generateForm({
   formOptions: ['tab', 'locale', 'contextName', 'keyHash'],

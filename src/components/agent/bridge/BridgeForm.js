@@ -34,72 +34,74 @@ const dataSources = ({ bridgeSlug, agentSlug, adapterClass }) => ({
   },
 });
 
-const handleSubmit = ({ bridgeSlug, agentSlug }) => values =>
-  (bridgeSlug ? updateBridge : createBridge)({
-    bridgeSlug,
-    agentSlug,
-    bridge: values.toJS(),
-  }).then(({ bridge, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the bridge';
-    }
-    return bridge;
-  });
-
-const fields = ({ bridgeSlug, adapterClass }) => ({
-  bridge,
-  adapters,
-  adapterProperties,
-}) => {
-  if (adapterProperties) {
-    const { propertiesFields, propertiesSerialize } = buildPropertyFields({
-      isNew: !bridge,
-      properties: adapterProperties,
-      getName: property => property.get('name'),
-      getRequired: property => property.get('required'),
-      getSensitive: property => property.get('sensitive'),
-      getOptions: property => property.get('options'),
-      getValue: property =>
-        getIn(bridge, ['properties', property.get('name')], ''),
+const handleSubmit =
+  ({ bridgeSlug, agentSlug }) =>
+  values =>
+    (bridgeSlug ? updateBridge : createBridge)({
+      bridgeSlug,
+      agentSlug,
+      bridge: values.toJS(),
+    }).then(({ bridge, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the bridge'
+        );
+      }
+      return bridge;
     });
 
-    return [
-      {
-        name: 'slug',
-        label: 'Bridge Slug',
-        type: 'text',
-        required: true,
-        initialValue: get(bridge, 'slug', ''),
-        pattern: /^[a-z\d-]+$/,
-        patternMessage:
-          'Bridge Slug may only contain letters, numbers, and dashes',
-        helpText: 'Unique name used in the bridge path.',
-      },
-      {
-        name: 'adapterClass',
-        label: 'Adapter Class',
-        type: 'text',
-        enabled: false,
-        required: false,
-        initialValue: bridge ? bridge.get('adapterClass') : adapterClass,
-        options: adapters.map(adapter =>
-          Map({
-            value: adapter.get('class'),
-            label: adapter.get('name'),
-          }),
-        ),
-      },
-      ...propertiesFields,
-      {
-        name: 'properties',
-        visible: false,
-        initialValue: get(bridge, 'properties', {}),
-        serialize: propertiesSerialize,
-      },
-    ];
-  }
-};
+const fields =
+  ({ bridgeSlug, adapterClass }) =>
+  ({ bridge, adapters, adapterProperties }) => {
+    if (adapterProperties) {
+      const { propertiesFields, propertiesSerialize } = buildPropertyFields({
+        isNew: !bridge,
+        properties: adapterProperties,
+        getName: property => property.get('name'),
+        getRequired: property => property.get('required'),
+        getSensitive: property => property.get('sensitive'),
+        getOptions: property => property.get('options'),
+        getValue: property =>
+          getIn(bridge, ['properties', property.get('name')], ''),
+      });
+
+      return [
+        {
+          name: 'slug',
+          label: 'Bridge Slug',
+          type: 'text',
+          required: true,
+          initialValue: get(bridge, 'slug', ''),
+          pattern: /^[a-z\d-]+$/,
+          patternMessage:
+            'Bridge Slug may only contain letters, numbers, and dashes',
+          helpText: 'Unique name used in the bridge path.',
+        },
+        {
+          name: 'adapterClass',
+          label: 'Adapter Class',
+          type: 'text',
+          enabled: false,
+          required: false,
+          initialValue: bridge ? bridge.get('adapterClass') : adapterClass,
+          options: adapters.map(adapter =>
+            Map({
+              value: adapter.get('class'),
+              label: adapter.get('name'),
+            }),
+          ),
+        },
+        ...propertiesFields,
+        {
+          name: 'properties',
+          visible: false,
+          initialValue: get(bridge, 'properties', {}),
+          serialize: propertiesSerialize,
+        },
+      ];
+    }
+  };
 
 export const BridgeForm = generateForm({
   formOptions: ['bridgeSlug', 'adapterClass', 'agentSlug'],

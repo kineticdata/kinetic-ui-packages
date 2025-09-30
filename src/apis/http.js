@@ -14,11 +14,16 @@ export const handleErrors = error => {
   // handle a javascript runtime exception by re-throwing it, this is in case we
   // make a mistake in a `then` block in one of our api functions.
   if (error instanceof Error && !error.response) {
+    if (error.name === 'AxiosError') {
+      return {
+        error: { message: error.message || 'An unexpected error occurred.' },
+      };
+    }
     throw error;
   }
 
   if (axios.isCancel(error)) {
-    return { error: 'Canceled by user request.' };
+    return { error: { message: 'Canceled by user request.' } };
   }
 
   // Destructure out the information needed.
@@ -63,6 +68,7 @@ export const paramBuilder = options => {
   if (options.export) params.export = options.export;
   if (options.days) params.days = options.days;
   if (options.count) params.count = options.count;
+  if (options.force) params.force = options.force;
 
   return params;
 };
@@ -130,11 +136,10 @@ export const formDataBuilder = (data, prefix, formData = new FormData()) =>
  *    The options object to validate.
  */
 export const validateOptions = (functionName, requiredOptions, options) => {
-  const missing = requiredOptions.filter(
-    requiredOption =>
-      Array.isArray(requiredOption)
-        ? !requiredOption.some(option => options[option])
-        : !options[requiredOption],
+  const missing = requiredOptions.filter(requiredOption =>
+    Array.isArray(requiredOption)
+      ? !requiredOption.some(option => options[option])
+      : !options[requiredOption],
   );
   if (missing.length > 0) {
     throw new Error(
@@ -145,36 +150,37 @@ export const validateOptions = (functionName, requiredOptions, options) => {
   }
 };
 
-export const apiFunction = ({
-  name,
-  method,
-  dataOption,
-  requiredOptions,
-  url,
-  transform,
-}) => (options = {}) => {
-  validateOptions(
-    name,
-    dataOption ? [...requiredOptions, dataOption] : requiredOptions,
-    options,
-  );
-  const urlPostfix = url(options);
-  return axios({
-    method,
-    url: urlPostfix.startsWith('/app')
-      ? urlPostfix
-      : bundle.apiLocation() + urlPostfix,
-    data: dataOption && options[dataOption],
-    params: paramBuilder(options),
-    headers: headerBuilder(options),
-  })
-    .then(transform)
-    .catch(handleErrors);
-};
+export const apiFunction =
+  ({ name, method, dataOption, requiredOptions, url, transform }) =>
+  (options = {}) => {
+    validateOptions(
+      name,
+      dataOption ? [...requiredOptions, dataOption] : requiredOptions,
+      options,
+    );
+    const urlPostfix = url(options);
+    return axios({
+      method,
+      url: urlPostfix.startsWith('/app')
+        ? urlPostfix
+        : bundle.apiLocation() + urlPostfix,
+      data: dataOption && options[dataOption],
+      params: paramBuilder(options),
+      headers: headerBuilder(options),
+    })
+      .then(transform)
+      .catch(handleErrors);
+  };
 
-export const apiGroup = ({ dataOption, name, plural, singular }) => ({
-  [`fetch${name}s`]: apiFunction({
-    name: `fetch${name}s`,
+export const apiGroup = ({
+  dataOption,
+  name,
+  pluralName,
+  plural,
+  singular,
+}) => ({
+  [`fetch${pluralName || `${name}s`}`]: apiFunction({
+    name: `fetch${pluralName || `${name}s`}`,
     method: 'get',
     ...plural,
   }),

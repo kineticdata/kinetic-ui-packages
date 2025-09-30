@@ -38,6 +38,7 @@ const clientId = process.env.REACT_APP_OAUTH_CLIENT_ID
 
 export const retrieveJwt = () =>
   new Promise(resolve => {
+    const postParentMessage = window.postMessage;
     const iframe = document.createElement('iframe');
     iframe.src =
       bundle.spaceLocation() +
@@ -45,9 +46,20 @@ export const retrieveJwt = () =>
       clientId;
     iframe.title = 'oauth jwt iframe';
     iframe.style.cssText = 'display: none';
+    // If iframe is redirected to the login page, then JWT fetch failed
+    iframe.onload = function () {
+      if (iframe.contentWindow.location.pathname.endsWith('/app/login')) {
+        postParentMessage({ type: 'nosession' }, '*');
+      }
+    };
 
     const listener = e => {
-      if (e.origin === checkedOrigin && e.data.token) {
+      if (
+        e.origin === checkedOrigin &&
+        (e.data.token || e.data.type === 'nosession')
+      ) {
+        // If a token is returned, or a 'nosession' message is received, close
+        // the iframe and return the token (or lack thereof)
         window.removeEventListener('message', listener);
         document.body.removeChild(iframe);
         resolve(e.data.token);

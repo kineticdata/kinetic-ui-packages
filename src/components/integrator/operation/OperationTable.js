@@ -4,20 +4,12 @@ import { defineFilter } from '../../../helpers';
 
 const filters = () => () => [{ name: 'name', label: 'Name', type: 'text' }];
 
-const clientSide = defineFilter(true)
-  .matches('name', 'name')
-  .end();
+const clientSide = defineFilter(true).matches('name', 'name').end();
 
 const dataSource = ({ connectionId }) => ({
   fn: fetchOperations,
   clientSide,
-  params: paramData =>
-    connectionId && [
-      {
-        connectionId,
-        ...paramData.filters.filter(Boolean).toJS(),
-      },
-    ],
+  params: () => connectionId && [{ connectionId }],
   transform: result => ({
     data: result.operations,
   }),

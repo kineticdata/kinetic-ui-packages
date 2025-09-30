@@ -11,48 +11,45 @@ const getValueFromList = (properties, key, initialValue) => {
   return property ? property.get('value') : initialValue;
 };
 
-export const generateInitialValues = (
-  persistedObject,
-  persistedPath,
-  defaultObject,
-  adapter,
-) => (key, initialValue = '') => {
-  const sameAsTenant =
-    getIn(persistedObject, persistedPath.concat(['type']), '') === adapter;
-  const defaultObjectValue = getValueFromList(
-    get(defaultObject, 'properties', List()),
-    key,
-    initialValue,
-  );
-
-  if (sameAsTenant) {
-    // Get the properties from the persisted object.
-    const properties = getIn(
-      persistedObject,
-      persistedPath.concat(['properties']),
-      List(),
+export const generateInitialValues =
+  (persistedObject, persistedPath, defaultObject, adapter) =>
+  (key, initialValue = '') => {
+    const sameAsTenant =
+      getIn(persistedObject, persistedPath.concat(['type']), '') === adapter;
+    const defaultObjectValue = getValueFromList(
+      get(defaultObject, 'properties', List()),
+      key,
+      initialValue,
     );
-    if (List.isList(properties)) {
-      const property = properties.find(p => p.get('name') === key);
-      return property
-        ? property.get('certificate') || property.get('value')
-        : defaultObjectValue;
-    } else {
-      return get(properties, key, defaultObjectValue);
+
+    if (sameAsTenant) {
+      // Get the properties from the persisted object.
+      const properties = getIn(
+        persistedObject,
+        persistedPath.concat(['properties']),
+        List(),
+      );
+      if (List.isList(properties)) {
+        const property = properties.find(p => p.get('name') === key);
+        return property
+          ? property.get('certificate') || property.get('value')
+          : defaultObjectValue;
+      } else {
+        return get(properties, key, defaultObjectValue);
+      }
+    } else if (get(defaultObject, 'type') === adapter) {
+      const adapterProperty = get(defaultObject, 'properties', List()).find(
+        property => property.get('name') === key,
+      );
+      return get(
+        adapterProperty,
+        'certificate',
+        get(adapterProperty, 'value', defaultObjectValue),
+      );
     }
-  } else if (get(defaultObject, 'type') === adapter) {
-    const adapterProperty = get(defaultObject, 'properties', List()).find(
-      property => property.get('name') === key,
-    );
-    return get(
-      adapterProperty,
-      'certificate',
-      get(adapterProperty, 'value', defaultObjectValue),
-    );
-  }
 
-  return initialValue;
-};
+    return initialValue;
+  };
 
 const generatePasswordFields = (
   adapterName,

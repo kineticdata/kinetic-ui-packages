@@ -1,5 +1,4 @@
 import axios from 'axios';
-import createError from 'axios/lib/core/createError';
 import { fetchKapp, fetchKapps, updateKapp } from './kapps';
 import { KappBuilder } from '../../../tests/utils/kapp_builder';
 import {
@@ -205,10 +204,14 @@ describe('kapps api', () => {
 
     test('bad request', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 400', null, 400, null, {
-          status: 400,
-          statusText: 'Bad Request',
-          data: { error: 'Invalid kapp' },
+        Object.assign(new Error('Request failed with status code 400'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 400,
+            statusText: 'Bad Request',
+            data: { error: 'Invalid kapp' },
+          },
         }),
       );
       const { kapp, error } = await updateKapp({
@@ -225,10 +228,13 @@ describe('kapps api', () => {
 
     test('forbidden', async () => {
       axios.put.mockRejectedValue(
-        createError('Request failed with status code 403', null, 403, null, {
-          status: 403,
-          statusText: 'Forbidden',
-          data: {},
+        Object.assign(new Error('Request failed with status code 403'), {
+          name: 'AxiosError',
+          isAxiosError: true,
+          response: {
+            status: 403,
+            statusText: 'Forbidden',
+          },
         }),
       );
       const { kapp, error } = await updateKapp({

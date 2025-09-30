@@ -107,14 +107,16 @@ describe('dataSources', () => {
           params: messageParams,
         },
       }),
-      fields: () => ({ message }) =>
-        message && [
-          {
-            name: 'test',
-            type: 'text',
-            initialValue: message,
-          },
-        ],
+      fields:
+        () =>
+        ({ message }) =>
+          message && [
+            {
+              name: 'test',
+              type: 'text',
+              initialValue: message,
+            },
+          ],
     });
     expect(getByTestId(result.toJSON(), 'FormLayout')).toMatchSnapshot();
     // should be called once
@@ -200,7 +202,7 @@ describe('dataSources', () => {
 });
 
 describe('fields', () => {
-  describe('constraint', function() {
+  describe('constraint', function () {
     test('given false', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -288,7 +290,7 @@ describe('fields', () => {
     });
   });
 
-  describe('constraintMessage', function() {
+  describe('constraintMessage', function () {
     test('given constraint true and constraintMessage string', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -380,7 +382,7 @@ describe('fields', () => {
     });
   });
 
-  describe('enabled', function() {
+  describe('enabled', function () {
     test('given true', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -454,12 +456,12 @@ describe('fields', () => {
     });
   });
 
-  describe('helpText', function() {
+  describe('helpText', function () {
     test('=<<TODO>>=', async () => {});
   });
 
-  describe('initialValue', function() {
-    describe('initialValue properly converted to immutable', function() {
+  describe('initialValue', function () {
+    describe('initialValue properly converted to immutable', function () {
       test('attributes', async () => {
         const initial = { testkey: 'Hello World!' };
         const result = await mountForm({
@@ -859,23 +861,23 @@ describe('fields', () => {
     });
   });
 
-  describe('language', function() {
+  describe('language', function () {
     test('=<<TODO>>=', async () => {});
   });
 
-  describe('name', function() {
+  describe('name', function () {
     test('=<<TODO>>=', async () => {});
   });
 
-  describe('onChange', function() {
+  describe('onChange', function () {
     test('=<<TODO>>=', async () => {});
   });
 
-  describe('options', function() {
+  describe('options', function () {
     test('=<<TODO>>=', async () => {});
   });
 
-  describe('pattern', function() {
+  describe('pattern', function () {
     test('given regex and matching initialValue', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -939,7 +941,7 @@ describe('fields', () => {
     });
   });
 
-  describe('patternMessage', function() {
+  describe('patternMessage', function () {
     test('given trigger and string message', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1021,7 +1023,7 @@ describe('fields', () => {
     });
   });
 
-  describe('placeholder', function() {
+  describe('placeholder', function () {
     test('given a string value', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1081,7 +1083,7 @@ describe('fields', () => {
     });
   });
 
-  describe('renderAttributes', function() {
+  describe('renderAttributes', function () {
     test('=<<TODO>>=', async () => {});
   });
 
@@ -1174,7 +1176,7 @@ describe('fields', () => {
     });
   });
 
-  describe('requiredMessage', function() {
+  describe('requiredMessage', function () {
     test('given trigger and string message', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1256,15 +1258,15 @@ describe('fields', () => {
     });
   });
 
-  describe('search', function() {
+  describe('search', function () {
     test('=<<TODO>>=', async () => {});
   });
 
-  describe('serialize', function() {
+  describe('serialize', function () {
     test('=<<TODO>>=', async () => {});
   });
 
-  describe('transient', function() {
+  describe('transient', function () {
     test('given true', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1367,7 +1369,7 @@ describe('fields', () => {
   });
 
   describe('type', () => {
-    describe('attributes', function() {
+    describe('attributes', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1390,7 +1392,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('checkbox', function() {
+    describe('checkbox', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1410,7 +1412,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid value type', async () => {});
     });
 
-    describe('code', function() {
+    describe('code', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1433,7 +1435,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('form', function() {
+    describe('form', function () {
       // test('minimal', async () => {
       //   const result = await mountForm({
       //     fields: () => () => [
@@ -1457,7 +1459,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid search', async () => {});
     });
 
-    describe('form-multi', function() {
+    describe('form-multi', function () {
       // test('minimal', async () => {
       //   const result = await mountForm({
       //     fields: () => () => [
@@ -1481,7 +1483,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid search', async () => {});
     });
 
-    describe('password', function() {
+    describe('password', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1501,7 +1503,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid value type', async () => {});
     });
 
-    describe('radio', function() {
+    describe('radio', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1524,7 +1526,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('table', function() {
+    describe('table', function () {
       test('=<<TODO>>=', async () => {});
     });
 
@@ -1551,7 +1553,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('select-multi', function() {
+    describe('select-multi', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1574,7 +1576,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('team', function() {
+    describe('team', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1595,7 +1597,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('team-multi', function() {
+    describe('team-multi', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1639,7 +1641,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('text-multi', function() {
+    describe('text-multi', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1662,7 +1664,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('user', function() {
+    describe('user', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1683,7 +1685,7 @@ describe('fields', () => {
       test('=<<TODO>>= invalid options', async () => {});
     });
 
-    describe('user-multi', function() {
+    describe('user-multi', function () {
       test('minimal', async () => {
         const result = await mountForm({
           fields: () => () => [
@@ -1707,7 +1709,7 @@ describe('fields', () => {
     });
   });
 
-  describe('visible', function() {
+  describe('visible', function () {
     test('given true', async () => {
       const result = await mountForm({
         fields: () => () => [
@@ -1810,7 +1812,7 @@ describe('fields', () => {
   });
 });
 
-describe('setValue', function() {
+describe('setValue', function () {
   test('triggerChange', async () => {
     const onChangeMock = jest.fn();
     const result = await mountForm({

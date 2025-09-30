@@ -1,5 +1,5 @@
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
-import { fromJS, List, OrderedMap } from 'immutable';
+import { fromJS, List, Map, OrderedMap } from 'immutable';
 import { isFunction } from 'lodash-es';
 import { action, dispatch, regHandlers, regSaga } from '../../../store';
 import {
@@ -45,15 +45,10 @@ const remember = (state, treeKey) =>
     .deleteIn(['trees', treeKey, 'redoStack']);
 
 regSaga(
-  takeEvery('TREE_CONFIGURE', function*({ payload }) {
+  takeEvery('TREE_CONFIGURE', function* ({ payload }) {
     try {
-      const {
-        name,
-        sourceGroup,
-        sourceName,
-        treeKey,
-        platformSourceName,
-      } = payload;
+      const { name, sourceGroup, sourceName, treeKey, platformSourceName } =
+        payload;
       const webApiProps = getWebApiProps(payload);
       const workflowProps = getWorkflowProps(payload);
 
@@ -78,7 +73,7 @@ regSaga(
         // Fetch task categories
         call(fetchTaskCategories, {
           include:
-            'handlers.results,handlers.parameters,trees.parameters,trees.inputs,trees.outputs',
+            'handlers.results,handlers.parameters,handlers.details,trees.parameters,trees.inputs,trees.outputs,trees.details',
         }),
         // Fetch connections
         call(fetchConnections),
@@ -140,15 +135,18 @@ regSaga(
       const loadError = workflowObjectError || treeError || webApiError;
 
       // Find the operation ids of any integration nodes
-      const operationIds =
+      const operations =
         treeObject?.treeJson?.nodes
-          ?.map(
-            node =>
-              node.definitionId.startsWith(
-                `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
-              )
-                ? node.parameters.find(p => p.id === 'operation')?.value
-                : null,
+          ?.map(node =>
+            node.definitionId.startsWith(
+              `${ADVANCED_HANDLER_NAME_INTEGRATION}_v`,
+            )
+              ? {
+                  id: node.parameters.find(p => p.id === 'operation')?.value,
+                  connectionId: node.parameters.find(p => p.id === 'connection')
+                    ?.value,
+                }
+              : null,
           )
           .filter(Boolean) || [];
 
@@ -171,8 +169,8 @@ regSaga(
             error: loadError ? loadError.message || loadError : null,
           }),
         ),
-        operationIds.length > 0
-          ? put(action('TREE_LOAD_OPERATIONS', { treeKey, operationIds }))
+        operations.length > 0
+          ? put(action('TREE_LOAD_OPERATIONS', { treeKey, operations }))
           : null,
       ]);
     } catch (e) {
@@ -182,7 +180,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_LOAD_CONNECTIONS', function*({ payload }) {
+  takeEvery('TREE_LOAD_CONNECTIONS', function* ({ payload }) {
     try {
       const { treeKey } = payload;
 
@@ -201,16 +199,34 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_LOAD_OPERATIONS', function*({ payload }) {
+  takeEvery('TREE_LOAD_OPERATIONS', function* ({ payload }) {
     try {
-      const { treeKey, connectionId, operationIds = [] } = payload;
-
+      const {
+        treeKey,
+        connectionId,
+        operationIds = [],
+        operations: operationsToLoad,
+      } = payload;
       const { operations = [] } = yield connectionId
         ? call(fetchOperations, { connectionId })
-        : call(fetchBulkOperations, { ids: operationIds });
+        : call(fetchBulkOperations, {
+            ids: operationsToLoad
+              ? operationsToLoad.map(op => op.id)
+              : operationIds,
+          });
+      const loadedOperationIds = operations.reduce(
+        (ids, op) => ({
+          ...ids,
+          [op.id]: true,
+        }),
+        {},
+      );
 
       yield put(
         action('TREE_INTEGRATION_DATA_LOADED', {
+          missing: operationsToLoad
+            ? operationsToLoad.filter(op => !loadedOperationIds[op.id])
+            : null,
           operations,
           treeKey,
         }),
@@ -231,19 +247,13 @@ const getPlatformItemSlugs = platformItem =>
       : {};
 
 regSaga(
-  takeEvery('TREE_SAVE', function*({ payload }) {
+  takeEvery('TREE_SAVE', function* ({ payload }) {
     try {
       // because of the optimistic locking functionality newName / overwrite can
       // be passed as options to the builder's save function
       const { newName, onError, onSave, overwrite, treeKey } = payload;
-      const {
-        kappSlug,
-        formSlug,
-        lastSave,
-        lastWebApi,
-        tree,
-        webApi,
-      } = yield select(state => state.getIn(['trees', treeKey]));
+      const { kappSlug, formSlug, lastSave, lastWebApi, tree, webApi } =
+        yield select(state => state.getIn(['trees', treeKey]));
       const { name, sourceGroup, sourceName } = lastSave;
       // if a newName was passed we will be creating a new tree with the builder
       // contents, otherwise just an update
@@ -314,7 +324,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_SAVE_ERROR', function*({ payload: { error, onError } }) {
+  takeEvery('TREE_SAVE_ERROR', function* ({ payload: { error, onError } }) {
     try {
       if (isFunction(onError)) {
         yield call(onError, error);
@@ -326,20 +336,21 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('TREE_SAVE_SUCCESS', function*({
-    payload: { onSave, previousTree, treeKey, scope },
-  }) {
-    try {
-      if (isFunction(onSave)) {
-        const tree = yield select(state =>
-          state.getIn(['trees', treeKey, 'tree']),
-        );
-        yield call(onSave, tree, previousTree, scope);
+  takeEvery(
+    'TREE_SAVE_SUCCESS',
+    function* ({ payload: { onSave, previousTree, treeKey, scope } }) {
+      try {
+        if (isFunction(onSave)) {
+          const tree = yield select(state =>
+            state.getIn(['trees', treeKey, 'tree']),
+          );
+          yield call(onSave, tree, previousTree, scope);
+        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  }),
+    },
+  ),
 );
 
 regHandlers({
@@ -381,17 +392,16 @@ regHandlers({
       lastWebApi: webApi,
       loading: false,
       tasks: List(categories)
-        .map(
-          category =>
-            category.name === 'System Controls'
-              ? {
-                  ...category,
-                  handlers: [
-                    ...category.handlers,
-                    tree ? treeReturnTask(tree) : null,
-                  ].filter(Boolean),
-                }
-              : category,
+        .map(category =>
+          category.name === 'System Controls'
+            ? {
+                ...category,
+                handlers: [
+                  ...category.handlers,
+                  tree ? treeReturnTask(tree) : null,
+                ].filter(Boolean),
+              }
+            : category,
         )
         .flatMap(category => [...category.handlers, ...category.trees])
         .sortBy(task => task.name)
@@ -405,7 +415,7 @@ regHandlers({
     }),
   TREE_INTEGRATION_DATA_LOADED: (
     state,
-    { payload: { treeKey, connections, operations } },
+    { payload: { treeKey, connections, operations, missing } },
   ) =>
     state.updateIn(['trees', treeKey, 'connections'], connectionsMap => {
       // Update connections map in state if data was provided
@@ -427,7 +437,7 @@ regHandlers({
         : connectionsMap;
 
       // Update the operations maps in each connection if data was provided
-      return operations
+      const newConnectionsWithOperationsMap = operations
         ? fromJS(operations).reduce(
             (map, op) =>
               map.setIn(
@@ -437,6 +447,20 @@ regHandlers({
             newConnectionsMap,
           )
         : newConnectionsMap;
+
+      // Update the operations maps in each connection to set missing values
+      return missing
+        ? fromJS(missing).reduce(
+            (map, op) =>
+              map.has(op.get('connectionId'))
+                ? map.setIn(
+                    [op.get('connectionId'), 'operations', op.get('id')],
+                    null,
+                  )
+                : map,
+            newConnectionsWithOperationsMap,
+          )
+        : newConnectionsWithOperationsMap;
     }),
   TREE_SAVE: (state, { payload: { treeKey } }) =>
     state.mergeIn(['trees', treeKey], {
@@ -616,13 +640,12 @@ const synchronizeRoutineDefinition = treeBuilderState => {
   const { tree } = treeBuilderState;
   const { definitionId, inputs, outputs } = tree;
   return treeBuilderState.update('tasks', tasks =>
-    tasks.map(
-      (task, taskDefinitionId) =>
-        definitionId === taskDefinitionId
-          ? { ...task, inputs: inputs.toJS(), outputs: outputs.toJS() }
-          : taskDefinitionId === 'system_tree_return_v1'
-            ? treeReturnTask(tree)
-            : task,
+    tasks.map((task, taskDefinitionId) =>
+      definitionId === taskDefinitionId
+        ? { ...task, inputs: inputs.toJS(), outputs: outputs.toJS() }
+        : taskDefinitionId === 'system_tree_return_v1'
+          ? treeReturnTask(tree)
+          : task,
     ),
   );
 };

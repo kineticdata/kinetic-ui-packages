@@ -58,57 +58,57 @@ export class Typeahead extends React.Component {
     }
   };
 
-  onSuggestionsResponse = searchedValue => ({
-    suggestions,
-    error,
-    nextPageToken,
-  }) => {
-    if (searchedValue === this.state.searchValue) {
-      // when multiple mode is enabled we don't want to allow the same
-      // suggestion to be selected twice, we compare existing selections to
-      // suggestions using the getSuggestionValue function that returns a string
-      // this is necessary because one of the objects may have additional fields
-      // but should be treated as equal to an object without those fields.
-      const mappedValues =
-        this.props.multiple &&
-        this.props.value.map(this.props.getSuggestionValue);
-      const filtered = suggestions
-        .map(suggestion => fromJS(suggestion))
-        .filter(
-          suggestion =>
-            !this.props.multiple ||
-            !mappedValues.includes(this.props.getSuggestionValue(suggestion)),
-        );
+  onSuggestionsResponse =
+    searchedValue =>
+    ({ suggestions, error, nextPageToken }) => {
+      if (searchedValue === this.state.searchValue) {
+        // when multiple mode is enabled we don't want to allow the same
+        // suggestion to be selected twice, we compare existing selections to
+        // suggestions using the getSuggestionValue function that returns a string
+        // this is necessary because one of the objects may have additional fields
+        // but should be treated as equal to an object without those fields.
+        const mappedValues =
+          this.props.multiple &&
+          this.props.value.map(this.props.getSuggestionValue);
+        const filtered = suggestions
+          .map(suggestion => fromJS(suggestion))
+          .filter(
+            suggestion =>
+              !this.props.multiple ||
+              !mappedValues.includes(this.props.getSuggestionValue(suggestion)),
+          );
 
-      const customSuggestion =
-        this.props.custom &&
-        // if the current searchValue matches an existing suggestion we do not
-        // include it as a custom option
-        filtered.filter(
-          suggestion =>
-            this.props.getSuggestionValue(suggestion) ===
-            this.state.searchValue,
-        ).length === 0 &&
-        fromJS(this.props.custom(this.state.searchValue));
+        const customSuggestion =
+          this.props.custom &&
+          // if the current searchValue matches an existing suggestion we do not
+          // include it as a custom option
+          filtered.filter(
+            suggestion =>
+              this.props.getSuggestionValue(suggestion) ===
+              this.state.searchValue,
+          ).length === 0 &&
+          fromJS(this.props.custom(this.state.searchValue));
 
-      // If an action object was provided, create a suggestion that will be
-      // used to trigger this action
-      const actionSuggestion =
-        typeof this.props.action?.fn === 'function' &&
-        fromJS({ ...this.props.action, __isAction: true });
+        // If an action object was provided, create a suggestion that will be
+        // used to trigger this action
+        const actionSuggestion =
+          typeof this.props.action?.fn === 'function' &&
+          fromJS({ ...this.props.action, __isAction: true });
 
-      this.setState({
-        result: {
-          error,
-          nextPageToken,
-          suggestions: [...filtered, customSuggestion, actionSuggestion].filter(
-            Boolean,
-          ),
-          customSuggestion,
-        },
-      });
-    }
-  };
+        this.setState({
+          result: {
+            error,
+            nextPageToken,
+            suggestions: [
+              ...filtered,
+              customSuggestion,
+              actionSuggestion,
+            ].filter(Boolean),
+            customSuggestion,
+          },
+        });
+      }
+    };
 
   // Called by Autosuggest when a fetch is requested. With the prop
   // alwaysRenderSuggestions this will be called onFocus, onChange, and even
@@ -201,9 +201,8 @@ export class Typeahead extends React.Component {
   }
 
   render() {
-    const {
-      SelectionsContainer = SelectionsContainerDefault,
-    } = this.props.components;
+    const { SelectionsContainer = SelectionsContainerDefault } =
+      this.props.components;
     return (
       <SelectionsContainer
         disabled={this.props.disabled}
@@ -228,6 +227,7 @@ export class Typeahead extends React.Component {
                 selection: this.props.value,
                 placeholder: this.props.placeholder,
                 id: this.props.id,
+                name: this.props.name,
                 form: this.props.form,
               }}
               onSuggestionHighlighted={this.onHighlight}
@@ -363,6 +363,7 @@ function renderSelections() {
       value,
       placeholder,
       id,
+      name,
       form,
       invalid,
       minSearchLength,
@@ -382,6 +383,7 @@ function renderSelections() {
         suggestionValue={suggestionValue}
         placeholder={!multiple ? placeholder : null}
         id={!multiple ? id : null}
+        name={name}
         invalid={invalid}
         form={form}
         minSearchLength={minSearchLength}

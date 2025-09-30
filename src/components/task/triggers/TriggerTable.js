@@ -44,25 +44,29 @@ const filterDataSources = () => ({
     fn: fetchSources,
     params: [],
     transform: result =>
-      result.sources.filter(s => s.name !== '-').map(s => ({
-        label: s.name,
-        value: s.name,
-      })),
+      result.sources
+        .filter(s => s.name !== '-')
+        .map(s => ({
+          label: s.name,
+          value: s.name,
+        })),
   },
 });
 
-const filters = () => ({ sourceTypes }) =>
-  sourceTypes && [
-    {
-      name: 'sourceName',
-      label: 'Source Name',
-      type: 'select',
-      options: sourceTypes,
-    },
-    { name: 'sourceGroup', label: 'Group', type: 'text' },
-    { name: 'tree', label: 'Tree', type: 'text' },
-    { name: 'treeType', label: 'Tree Type', type: 'text' },
-  ];
+const filters =
+  () =>
+  ({ sourceTypes }) =>
+    sourceTypes && [
+      {
+        name: 'sourceName',
+        label: 'Source Name',
+        type: 'select',
+        options: sourceTypes,
+      },
+      { name: 'sourceGroup', label: 'Group', type: 'text' },
+      { name: 'tree', label: 'Tree', type: 'text' },
+      { name: 'treeType', label: 'Tree Type', type: 'text' },
+    ];
 
 const columns = [
   {

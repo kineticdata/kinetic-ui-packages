@@ -6,9 +6,17 @@ const getPath = (kappSlug, formSlug) => {
   const formSuffix = formSlug ? `/${formSlug}` : '';
   return kappSlug
     ? `${bundle.apiLocation()}/kapps/${kappSlug}/forms${formSuffix}`
-    // Default kapp to 'datastore' if not provided to support deprecated datastore functionality
-    : `${bundle.apiLocation()}/kapps/datastore/forms${formSuffix}`;
+    : // Default kapp to 'datastore' if not provided to support deprecated datastore functionality
+      `${bundle.apiLocation()}/kapps/datastore/forms${formSuffix}`;
 };
+
+/**
+ * Retrieves all forms in the specified kapp.
+ *
+ * @param {Object} [options] - Options for the request.
+ * @param {string} [options.kappSlug] - The slug of the kapp. Defaults to 'datastore'.
+ * @returns {Promise<{forms: *, count: number, nextPageToken: string}>}
+ */
 
 // TODO: datastore is deprecated, remove datastore routes from paths.
 export const fetchForms = (options = {}) => {
@@ -30,6 +38,15 @@ export const fetchForms = (options = {}) => {
     .catch(handleErrors);
 };
 
+/**
+ * Retrieves a single form by slug from the specified kapp.
+ *
+ * @param {Object} options - Options for the request.
+ * @param {string} options.formSlug - The slug of the form to retrieve.
+ * @param {string} [options.kappSlug] - The slug of the kapp. Defaults to 'datastore'.
+ * @returns {Promise<{form: *}>}
+ */
+
 export const fetchForm = (options = {}) => {
   const { kappSlug, formSlug } = options;
 
@@ -49,6 +66,15 @@ export const fetchForm = (options = {}) => {
     .catch(handleErrors);
 };
 
+/**
+ * Creates a new form in the specified kapp.
+ *
+ * @param {Object} options - Options for the request.
+ * @param {Object} options.form - The form definition to create.
+ * @param {string} [options.kappSlug] - The slug of the kapp. Defaults to 'datastore'.
+ * @returns {Promise<{form: *}>}
+ */
+
 export const createForm = (options = {}) => {
   const { kappSlug, form } = options;
   if (!form) {
@@ -65,6 +91,16 @@ export const createForm = (options = {}) => {
     .then(response => ({ form: response.data.form }))
     .catch(handleErrors);
 };
+
+/**
+ * Updates an existing form in the specified kapp.
+ *
+ * @param {Object} options - Options for the request.
+ * @param {string} options.formSlug - The slug of the form to update.
+ * @param {Object} options.form - The form object with updated values.
+ * @param {string} [options.kappSlug] - The slug of the kapp. Defaults to 'datastore'.
+ * @returns {Promise<{form: *}>}
+ */
 
 export const updateForm = (options = {}) => {
   const { kappSlug, formSlug, form } = options;
@@ -85,6 +121,15 @@ export const updateForm = (options = {}) => {
     .then(response => ({ form: response.data.form }))
     .catch(handleErrors);
 };
+
+/**
+ * Deletes a form by slug from the specified kapp.
+ *
+ * @param {Object} options - Options for the request.
+ * @param {string} options.formSlug - The slug of the form to delete.
+ * @param {string} [options.kappSlug] - The slug of the kapp. Defaults to 'datastore'.
+ * @returns {Promise<{form: *}>}
+ */
 
 export const deleteForm = (options = {}) => {
   const { kappSlug, formSlug } = options;

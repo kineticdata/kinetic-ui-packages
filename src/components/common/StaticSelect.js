@@ -30,86 +30,93 @@ const buildFilter = searchFields => {
   };
 };
 
-const searchOptions = ({ allowNew, options, search = Map(), messages }) => (
-  field,
-  value,
-  callback,
-) => {
-  // Determine the fields config
-  const searchFields =
-    Map.isMap(search) && search.has('fields') && !search.get('fields').isEmpty()
-      ? search.get('fields').toJS()
-      : fields;
+const searchOptions =
+  ({ allowNew, options, search = Map(), messages }) =>
+  (field, value, callback) => {
+    // Determine the fields config
+    const searchFields =
+      Map.isMap(search) &&
+      search.has('fields') &&
+      !search.get('fields').isEmpty()
+        ? search.get('fields').toJS()
+        : fields;
 
-  if (List.isList(options) && (allowNew || !options.isEmpty())) {
-    // Get or build the filter function
-    const filter =
-      typeof search.get('fn') === 'function'
-        ? search.get('fn')
-        : buildFilter(searchFields);
+    if (List.isList(options) && (allowNew || !options.isEmpty())) {
+      // Get or build the filter function
+      const filter =
+        typeof search.get('fn') === 'function'
+          ? search.get('fn')
+          : buildFilter(searchFields);
 
-    // Filter the options
-    const suggestions = filter(options.toJS(), value);
-    const limit = search.get('limit') || 25;
+      // Filter the options
+      const suggestions = filter(options.toJS(), value);
+      const limit = search.get('limit') || 25;
 
-    // Return the matching suggestions
-    return callback({
-      suggestions: suggestions.slice(0, limit),
-      nextPageToken: suggestions.length > limit,
-    });
-  } else {
-    // If no options provided, return empty message
-    return callback({
-      error: messages.empty || 'No options found.',
-      suggestions: [],
-    });
-  }
-};
+      // Return the matching suggestions
+      return callback({
+        suggestions: suggestions.slice(0, limit),
+        nextPageToken: suggestions.length > limit,
+      });
+    } else {
+      // If no options provided, return empty message
+      return callback({
+        error: messages.empty || 'No options found.',
+        suggestions: [],
+      });
+    }
+  };
 
 // Converts an option object to a single unique value. Used for comparing values
 // and filtering out already selected values for multi selects.
-const optionToValue = ({ valueProp = 'value' }) => option =>
-  (option && option.get(valueProp)) || '';
+const optionToValue =
+  ({ valueProp = 'value' }) =>
+  option =>
+    (option && option.get(valueProp)) || '';
 
 // Converts a typed in value to an option object. Used when adding custom values
 // when allowNew is true.
-const valueToCustomOption = ({ valueProp = 'value', allowNew }) => value =>
-  value.length > 0
-    ? typeof allowNew !== 'function' || allowNew(value)
-      ? { [valueProp]: value }
-      : null
-    : null;
+const valueToCustomOption =
+  ({ valueProp = 'value', allowNew }) =>
+  value =>
+    value.length > 0
+      ? typeof allowNew !== 'function' || allowNew(value)
+        ? { [valueProp]: value }
+        : null
+      : null;
 
-const getStatusProps = ({
-  search = Map(),
-  messages: {
-    // Not enough characters have been typed in to trigger a search.
-    short = 'Type to find an option.',
-    // No results found; custom options not allowed.
-    empty = 'No options found.',
-    // No results found; custom options allowed.
-    custom = 'No options found. Type to enter a custom option.',
-    // Searching in progress.
-    pending = 'Searching...',
-    // Too many results to show all.
-    more = `Too many results, first ${search.get('limit') ||
-      25} shown. Please refine your search.`,
-  } = {},
-}) => props => ({
-  info: props.short ? short : props.pending ? pending : null,
-  warning:
-    props.error || props.empty || props.more
-      ? props.error
+const getStatusProps =
+  ({
+    search = Map(),
+    messages: {
+      // Not enough characters have been typed in to trigger a search.
+      short = 'Type to find an option.',
+      // No results found; custom options not allowed.
+      empty = 'No options found.',
+      // No results found; custom options allowed.
+      custom = 'No options found. Type to enter a custom option.',
+      // Searching in progress.
+      pending = 'Searching...',
+      // Too many results to show all.
+      more = `Too many results, first ${
+        search.get('limit') || 25
+      } shown. Please refine your search.`,
+    } = {},
+  }) =>
+  props => ({
+    info: props.short ? short : props.pending ? pending : null,
+    warning:
+      props.error || props.empty || props.more
         ? props.error
-        : props.more
-          ? more
-          : props.empty
-            ? props.custom
-              ? custom
-              : empty
-            : null
-      : null,
-});
+          ? props.error
+          : props.more
+            ? more
+            : props.empty
+              ? props.custom
+                ? custom
+                : empty
+              : null
+        : null,
+  });
 
 const actionOptions = props =>
   props.onNew
@@ -132,6 +139,7 @@ export const StaticSelect = props => (
     onBlur={props.onBlur}
     placeholder={props.placeholder}
     id={props.id}
+    name={props.name}
     form={props.form}
     invalid={props.invalid}
     action={actionOptions(props)}

@@ -74,18 +74,19 @@ export const availableParts = (
 
     return rangeRemaining.concat(
       rangePart &&
-      rangeRemaining.size === 0 &&
-      values.get('orderby0-part') &&
-      values.get('orderby0-part') !== rangePart
+        rangeRemaining.size === 0 &&
+        values.get('orderby0-part') &&
+        values.get('orderby0-part') !== rangePart
         ? List([])
         : timelinesAvailable || List([]),
     );
   } else if (partType === 'orderBy') {
-    return (rangePart
-      ? List([rangePart])
-      : remainingParts
-          .filter(index => index && index.size > 0)
-          .map(index => index.first())
+    return (
+      rangePart
+        ? List([rangePart])
+        : remainingParts
+            .filter(index => index && index.size > 0)
+            .map(index => index.first())
     )
       .concat(
         TIMELINES.includes(rangePart)

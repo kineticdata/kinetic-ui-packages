@@ -9,8 +9,9 @@ import {
   select,
   takeEvery,
 } from 'redux-saga/effects';
-import { action, dispatch, regHandlers, regSaga } from '../../store';
-import { mountForm, unmountForm } from '..';
+import { action, dispatch, regHandlers, regSaga, store } from '../../store';
+import { mountForm, submitForm, unmountForm } from '..';
+import { setValue } from '../form/Form';
 
 export const hasData = data => isarray(data) || data instanceof List;
 const noop = () => null;
@@ -21,12 +22,12 @@ const getDataSource = tableData => {
   return dataSourceFn(tableOptions);
 };
 
-export const isClientSide = tableData => {
+export const isClientSide = (tableData, ignoreData) => {
   const data = tableData.get('data');
   const dataSource = getDataSource(tableData);
 
   return (
-    hasData(data) &&
+    (hasData(data) || ignoreData) &&
     ((dataSource &&
       (dataSource.clientSideSearch === true || dataSource.clientSide)) ||
       !dataSource)
@@ -95,6 +96,11 @@ const serverSidePrevPage = tableData =>
     .update('pageTokens', pt => pt.pop())
     .update(t => t.set('nextPageToken', t.get('pageTokens').last()));
 
+const serverSideReloadPage = tableData =>
+  tableData
+    .set('loading', true)
+    .set('nextPageToken', tableData.get('pageTokens').last());
+
 // should be '' except if op is between, or in
 const getInitialFilterValue = column =>
   column.has('initial')
@@ -107,18 +113,19 @@ const getInitialFilterValue = column =>
 
 export const generateFilters = (tableKey, columns) =>
   Map(
-    columns.filter(c => c.get('filter')).reduce(
-      (filters, column) =>
-        filters.set(
-          column.get('value'),
-          Map({
-            value: getInitialFilterValue(column),
-            column,
-          }),
-        ),
-
-      Map(),
-    ),
+    columns
+      .filter(c => c.get('filter'))
+      .reduce(
+        (filters, column) =>
+          filters.set(
+            column.get('value'),
+            Map({
+              value: getInitialFilterValue(column),
+              column,
+            }),
+          ),
+        Map(),
+      ),
   );
 
 const evaluateValidFilters = table => {
@@ -151,7 +158,10 @@ regHandlers({
         tableOptions,
         onValidateFilters,
         filterForm,
+        filterSet,
         onFetch,
+        onColumnSort,
+        onColumnToggle,
       },
     },
   ) =>
@@ -187,12 +197,15 @@ regHandlers({
 
               // Filtering
               filterForm,
+              filterSet,
               filters: generateFilters(tableKey, columns),
               appliedFilters: generateFilters(tableKey, columns),
               validFilters: true,
               onValidateFilters,
 
               onFetch,
+              onColumnSort,
+              onColumnToggle,
 
               configured: true,
               initialize: true,
@@ -205,16 +218,27 @@ regHandlers({
         .getIn(['tables', tableKey, 'columns'])
         // Filter to only columns that are toggleable or in the current
         // columnSet, while toggling the current column if it's toggleable
-        .filter(
-          c =>
-            !c.get('toggleable')
-              ? columnSet.includes(c.get('value'))
-              : columnSet.includes(c.get('value'))
-                ? c.get('value') !== column
-                : c.get('value') === column,
+        .filter(c =>
+          !c.get('toggleable')
+            ? columnSet.includes(c.get('value'))
+            : columnSet.includes(c.get('value'))
+              ? c.get('value') !== column
+              : c.get('value') === column,
         )
         // Map to columns values to get the new columnSet
         .map(c => c.get('value')),
+    ),
+  TOGGLE_FILTER: (state, { payload: { tableKey, filters } }) =>
+    state.updateIn(['tables', tableKey, 'filterSet'], filterSet =>
+      !filterSet
+        ? filters
+        : filters.reduce(
+            (set, filter) =>
+              set.includes(filter)
+                ? set.filter(f => f !== filter)
+                : [...set, filter],
+            filterSet,
+          ),
     ),
   SET_ROWS: (
     state,
@@ -247,34 +271,42 @@ regHandlers({
     ),
   NEXT_PAGE: (state, { payload: { tableKey } }) =>
     state
-      .updateIn(
-        ['tables', tableKey],
-        tableData =>
-          isClientSide(tableData)
-            ? clientSideNextPage(tableData)
-            : serverSideNextPage(tableData),
+      .updateIn(['tables', tableKey], tableData =>
+        isClientSide(tableData)
+          ? clientSideNextPage(tableData)
+          : serverSideNextPage(tableData),
       )
       .setIn(['tables', tableKey, 'error'], null),
   PREV_PAGE: (state, { payload: { tableKey } }) =>
     state
-      .updateIn(
-        ['tables', tableKey],
-        tableData =>
-          isClientSide(tableData)
-            ? clientSidePrevPage(tableData)
-            : serverSidePrevPage(tableData),
+      .updateIn(['tables', tableKey], tableData =>
+        isClientSide(tableData)
+          ? clientSidePrevPage(tableData)
+          : serverSidePrevPage(tableData),
       )
       .setIn(['tables', tableKey, 'error'], null),
   GOTO_PAGE: (state, { payload: { tableKey, pageNumber } }) =>
     state
-      .updateIn(
-        ['tables', tableKey],
-        tableData =>
-          isClientSide(tableData)
-            ? clientSideGotoPage(tableData, pageNumber)
-            : serverSideGotoPage(tableData, pageNumber),
+      .updateIn(['tables', tableKey], tableData =>
+        isClientSide(tableData)
+          ? clientSideGotoPage(tableData, pageNumber)
+          : serverSideGotoPage(tableData, pageNumber),
       )
       .setIn(['tables', tableKey, 'error'], null),
+  RELOAD_PAGE: (state, { payload: { tableKey } }) =>
+    state.hasIn(['tables', tableKey])
+      ? state.updateIn(['tables', tableKey], tableData =>
+          tableData.get('configured')
+            ? (isClientSide(tableData)
+                ? tableData
+                : serverSideReloadPage(tableData)
+              )
+                .set('loading', true)
+                .set('data', null)
+                .set('error', null)
+            : tableData,
+        )
+      : state,
   SORT_COLUMN: (state, { payload: { tableKey, column } }) =>
     state.updateIn(['tables', tableKey], t => {
       const sortColumn = t.get('sortColumn');
@@ -329,19 +361,17 @@ regHandlers({
     ),
   REFETCH_TABLE_DATA: (state, { payload: { tableKey } }) =>
     state.hasIn(['tables', tableKey])
-      ? state.updateIn(
-          ['tables', tableKey],
-          tableData =>
-            tableData.get('dataSource')
-              ? tableData
-                  .set('loading', true)
-                  .set('pageOffset', 0)
-                  .set('currentPageToken', null)
-                  .set('nextPageToken', null)
-                  .set('pageTokens', List())
-                  .set('data', null)
-                  .set('error', null)
-              : tableData,
+      ? state.updateIn(['tables', tableKey], tableData =>
+          tableData.get('dataSource')
+            ? tableData
+                .set('loading', true)
+                .set('pageOffset', 0)
+                .set('currentPageToken', null)
+                .set('nextPageToken', null)
+                .set('pageTokens', List())
+                .set('data', null)
+                .set('error', null)
+            : tableData,
         )
       : state,
   CLEAR_TABLE_FILTERS: (state, { payload: { tableKey } }) =>
@@ -356,41 +386,65 @@ regHandlers({
     ),
 });
 
-function* calculateRowsTask({ payload }) {
+function* calculateRowsTask({ type, payload }) {
   try {
     const { tableKey } = payload;
     const tableData = yield select(state => state.getIn(['tables', tableKey]));
 
-    // Skip this process if the table hasn't been mounted yet.
-    if (!tableData) return;
+    // Skip this process if the table hasn't been mounted yet, or trying to
+    // reload the page before it's been configured
+    if (!tableData || (type === 'RELOAD_PAGE' && !tableData.get('configured')))
+      return;
 
     const response = yield call(calculateRows, tableData);
 
-    const { rows, data, nextPageToken, count, error, extraData } = response;
-    const onFetch = tableData.get('onFetch');
+    const isPageEmpty = isClientSide(tableData, true)
+      ? response?.data?.size <= tableData.get('pageOffset') &&
+        tableData.get('pageOffset') > 0
+      : response?.data?.size === 0 && tableData.get('pageTokens').size !== 0;
 
-    if (error) {
+    if (isPageEmpty && !isClientSide(tableData, true)) {
+      // If there is no data and a server side previous page exists, load the
+      // previous page instead of setting the current response into state
       yield put({
-        type: 'SET_ROWS',
-        payload: {
-          tableKey,
-          error,
-          rows: List(),
-          data: List(),
-          nextPageToken: null,
-          count: null,
-          extraData,
-        },
+        type: 'PREV_PAGE',
+        payload: { tableKey },
       });
     } else {
-      yield put({
-        type: 'SET_ROWS',
-        payload: { tableKey, rows, data, nextPageToken, count, extraData },
-      });
-    }
+      const { rows, data, nextPageToken, count, error, extraData } = response;
+      const onFetch = tableData.get('onFetch');
 
-    if (typeof onFetch === 'function') {
-      yield call(onFetch, { tableKey, rows, count, error, extraData });
+      if (error) {
+        yield put({
+          type: 'SET_ROWS',
+          payload: {
+            tableKey,
+            error,
+            rows: List(),
+            data: List(),
+            nextPageToken: null,
+            count: null,
+            extraData,
+          },
+        });
+      } else {
+        yield put({
+          type: 'SET_ROWS',
+          payload: { tableKey, rows, data, nextPageToken, count, extraData },
+        });
+        if (isPageEmpty && isClientSide(tableData, true)) {
+          // If there is no data and a client side previous page exists, load
+          // the previous page after we set the updated data
+          yield put({
+            type: 'PREV_PAGE',
+            payload: { tableKey },
+          });
+        }
+      }
+
+      if (typeof onFetch === 'function') {
+        yield call(onFetch, { tableKey, rows, count, error, extraData });
+      }
     }
   } catch (e) {
     console.error(e);
@@ -436,7 +490,7 @@ function* stopPollingTask({ payload }) {
   }
 }
 
-regSaga('CONFIGURE_TABLE', function*() {
+regSaga('CONFIGURE_TABLE', function* () {
   yield takeEvery('CONFIGURE_TABLE', configureTableTask);
   yield takeEvery('CONFIGURE_TABLE', startPollingTask);
 });
@@ -445,11 +499,71 @@ regSaga(takeEvery('UNMOUNT_TABLE', stopPollingTask));
 regSaga(takeEvery('NEXT_PAGE', calculateRowsTask));
 regSaga(takeEvery('PREV_PAGE', calculateRowsTask));
 regSaga(takeEvery('GOTO_PAGE', calculateRowsTask));
-regSaga(takeEvery('SORT_COLUMN', calculateRowsTask));
-regSaga(takeEvery('SORT_DIRECTION', calculateRowsTask));
+regSaga(takeEvery('RELOAD_PAGE', calculateRowsTask));
 regSaga(takeEvery('APPLY_FILTERS', calculateRowsTask));
 regSaga(takeEvery('APPLY_FILTER_FORM', calculateRowsTask));
 regSaga(takeEvery('REFETCH_TABLE_DATA', calculateRowsTask));
+
+regSaga(
+  takeEvery('SORT_COLUMN', function* (action) {
+    const tableKey = action.payload.tableKey;
+    // Call calculate rows task
+    yield call(calculateRowsTask, action);
+
+    // Get sort data and call callback
+    const [onColumnSort, sortColumn, sortDirection] = yield select(state => [
+      state.getIn(['tables', tableKey, 'onColumnSort']),
+      state.getIn(['tables', tableKey, 'sortColumn', 'value']),
+      state.getIn(['tables', tableKey, 'sortDirection']),
+    ]);
+
+    if (typeof onColumnSort === 'function') {
+      yield call(onColumnSort, { tableKey, sortColumn, sortDirection });
+    }
+  }),
+);
+
+regSaga(
+  takeEvery('TOGGLE_COLUMN', function* ({ payload: { tableKey } }) {
+    const [onColumnToggle, columnSet] = yield select(state => [
+      state.getIn(['tables', tableKey, 'onColumnToggle']),
+      state.getIn(['tables', tableKey, 'columnSet']),
+    ]);
+
+    if (typeof onColumnToggle === 'function') {
+      yield call(onColumnToggle, { tableKey, columnSet });
+    }
+  }),
+);
+
+regSaga(
+  takeEvery('TOGGLE_FILTER', function* ({ payload: { tableKey, filters } }) {
+    const [filterSet, appliedFilters] = yield select(state => [
+      state.getIn(['tables', tableKey, 'filterSet']),
+      state.getIn(['tables', tableKey, 'appliedFilters']),
+    ]);
+
+    // Determine filters that were removed
+    const filtersToRemove = filters.filter(
+      filter => !filterSet.includes(filter),
+    );
+    // If any filters were removed from the set
+    if (filtersToRemove.length > 0) {
+      for (const filter of filtersToRemove) {
+        // Clear the filter field value in the form
+        yield call(setValue, filterFormKey(tableKey), filter, null);
+      }
+
+      // If any of the removed filters were applied
+      if (filtersToRemove.some(filter => appliedFilters.get(filter))) {
+        // Submit the filter form to redo the query
+        yield call(submitForm, filterFormKey(tableKey), {
+          fieldSet: filterSet,
+        });
+      }
+    }
+  }),
+);
 
 export const operations = Map({
   includes: (cv, v) => cv.toLocaleLowerCase().includes(v.toLocaleLowerCase()),
@@ -536,8 +650,8 @@ const applyClientSideFilters = (tableData, data) => {
   return List(data)
     .map(d => Map(d))
     .update(d => d.filter(rowFilter))
-    .update(
-      d => (sortColumn ? d.sortBy(r => r.get(sortColumn.get('value'))) : d),
+    .update(d =>
+      sortColumn ? d.sortBy(r => r.get(sortColumn.get('value'))) : d,
     )
     .update(d => (sortDirection === 'asc' ? d : d.reverse()))
     .update(d => d.slice(startIndex, endIndex));
@@ -557,10 +671,10 @@ const transformData = (data, tableData) =>
 
 const calculateRows = tableData => {
   const dataSource = getDataSource(tableData);
-
   if (isClientSide(tableData)) {
-    const data = transformData(tableData.get('data'), tableData);
-    const rows = applyClientSideFilters(tableData, data);
+    const data = tableData.get('data');
+    const transformedRows = transformData(data, tableData);
+    const rows = applyClientSideFilters(tableData, transformedRows);
 
     return Promise.resolve({
       rows,
@@ -582,10 +696,12 @@ const calculateRows = tableData => {
     return dataSource.fn(...params).then(response => {
       if (response.error) return response;
 
-      const { nextPageToken, data: responseData, count, extraData } = transform(
-        response,
-        paramData,
-      );
+      const {
+        nextPageToken,
+        data: responseData,
+        count,
+        extraData,
+      } = transform(response, paramData);
       const data = fromJS(responseData);
       const transformedRows = transformData(data, tableData);
       const rows =
@@ -626,5 +742,25 @@ export const configureTable = payload => {
 };
 export const refetchTable = tableKey =>
   dispatch('REFETCH_TABLE_DATA', { tableKey });
+export const reloadTablePage = tableKey =>
+  dispatch('RELOAD_PAGE', { tableKey });
 export const clearFilters = tableKey =>
   dispatch('CLEAR_TABLE_FILTERS', { tableKey });
+export const resetFilterForm = tableKey =>
+  dispatch('APPLY_FILTER_FORM', { tableKey, appliedFilters: Map() });
+export const toggleFilterField = (tableKey, ...filters) =>
+  dispatch('TOGGLE_FILTER', { tableKey, filters });
+
+export const hasTableFiltersApplied = tableKey =>
+  store
+    .getState()
+    .getIn(['tables', tableKey, 'appliedFilters'])
+    ?.filter(Boolean)?.size > 0;
+
+export const findTableKey = fn =>
+  store
+    .getState()
+    .get('tables')
+    .keySeq()
+    .toList()
+    .find(fn || (() => true));

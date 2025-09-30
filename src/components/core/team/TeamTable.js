@@ -6,9 +6,7 @@ import {
   generateSortParams,
 } from '../../../apis/http';
 
-const teamQuery = defineKqlQuery()
-  .startsWith('name', 'name')
-  .end();
+const teamQuery = defineKqlQuery().startsWith('name', 'name').end();
 
 const dataSource = () => ({
   fn: fetchTeams,

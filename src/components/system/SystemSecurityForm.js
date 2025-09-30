@@ -16,32 +16,34 @@ const dataSources = () => ({
   },
 });
 
-const fields = () => ({ systemSecurity }) =>
-  systemSecurity && [
-    {
-      name: 'allowedSystemIps',
-      label: 'Allowed IPs',
-      type: 'select',
-      options: () =>
-        fromJS([
-          { name: 'description', label: 'Description', type: 'text' },
-          { name: 'value', label: 'IP Range', type: 'text' },
-        ]),
-      visible: ({ values }) => values.get('allowedSystemIpsEnabled', false),
-      initialValue: get(systemSecurity, 'allowedSystemIps', List()),
-      serialize: ({ values }) =>
-        values.get('allowedSystemIpsEnabled', false)
-          ? values.get('allowedSystemIps')
-          : [],
-    },
-    {
-      name: 'allowedSystemIpsEnabled',
-      label: 'Allowed IP Restrictions',
-      type: 'checkbox',
-      initialValue: get(systemSecurity, 'allowedSystemIps', List()).size > 0,
-      transient: true,
-    },
-  ];
+const fields =
+  () =>
+  ({ systemSecurity }) =>
+    systemSecurity && [
+      {
+        name: 'allowedSystemIps',
+        label: 'Allowed IPs',
+        type: 'select',
+        options: () =>
+          fromJS([
+            { name: 'description', label: 'Description', type: 'text' },
+            { name: 'value', label: 'IP Range', type: 'text' },
+          ]),
+        visible: ({ values }) => values.get('allowedSystemIpsEnabled', false),
+        initialValue: get(systemSecurity, 'allowedSystemIps', List()),
+        serialize: ({ values }) =>
+          values.get('allowedSystemIpsEnabled', false)
+            ? values.get('allowedSystemIps')
+            : [],
+      },
+      {
+        name: 'allowedSystemIpsEnabled',
+        label: 'Allowed IP Restrictions',
+        type: 'checkbox',
+        initialValue: get(systemSecurity, 'allowedSystemIps', List()).size > 0,
+        transient: true,
+      },
+    ];
 
 export const SystemSecurityForm = generateForm({
   formOptions: [],

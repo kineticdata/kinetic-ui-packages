@@ -12,6 +12,7 @@ import {
 } from './Table.redux';
 import { generateKey } from '../../helpers';
 import { generateForm } from '../form/Form';
+import { FormState } from '../form/FormState';
 
 const fromColumnSet = (columns, columnSet) =>
   columnSet.map(cs => columns.find(c => c.get('value') === cs));
@@ -35,9 +36,15 @@ const TableComponent = props => {
     } = props;
 
     const columnControl = buildColumnControl(props);
+    const filterControl = buildFilterControl(props);
     const table = buildTable({ ...props, columnControl });
     const filter = components.FilterForm
-      ? buildFilterForm(props)
+      ? buildFilterForm({
+          ...props,
+          renderers: {
+            filterControl: args => buildFilterControl({ args, ...props }),
+          },
+        })
       : buildFilterLayout(props);
     const pagination = buildPaginationControl(props);
 
@@ -49,6 +56,7 @@ const TableComponent = props => {
       appliedFilters,
       pagination,
       columnControl,
+      filterControl,
       initializing,
       loading,
       rows,
@@ -137,13 +145,13 @@ const buildFilterForm = props => {
   const FilterForm = props.components.FilterForm;
   // Build the form filter components.
   const components = filtersToFields(props.components);
-
   return (
     <FilterForm
       {...props.tableOptions}
       formKey={props.filterFormKey}
       tableKey={props.tableKey}
       components={components}
+      renderers={props.renderers}
       alterFields={props.alterFilters}
       fieldSet={props.filterSet}
       onSave={props.onSearch}
@@ -386,6 +394,45 @@ const buildColumnControl = props => {
       tableOptions={tableOptions}
       extraData={extraData}
     />
+  );
+};
+
+const buildFilterControl = ({
+  tableKey,
+  filterSet,
+  appliedFilters,
+  components,
+  args = {},
+}) => {
+  const FilterControl = components.FilterControl;
+
+  return (
+    <FormState
+      formKey={filterFormKey(tableKey)}
+      selector={formState => ({
+        filterFields: formState?.fields
+          ?.map((field, name) =>
+            Map({
+              name,
+              label: field.get('label'),
+              value: field.get('value'),
+              options: field.get('options'),
+              checked: filterSet?.includes(name),
+              toggle: onToggleFilter(tableKey, name),
+            }),
+          )
+          ?.toList(),
+      })}
+    >
+      {({ filterFields }) => (
+        <FilterControl
+          {...args}
+          tableKey={tableKey}
+          filterFields={filterFields}
+          filterCount={appliedFilters?.filter(Boolean)?.size}
+        />
+      )}
+    </FormState>
   );
 };
 
@@ -654,6 +701,11 @@ const onSortColumn = (tableKey, column) => () =>
 const onToggleColumn = (tableKey, column) => () =>
   dispatch('TOGGLE_COLUMN', { tableKey, column });
 
+const onToggleFilter =
+  (tableKey, ...filters) =>
+  () =>
+    dispatch('TOGGLE_FILTER', { tableKey, filters });
+
 const mapStateToProps = () => (state, props) =>
   state.getIn(['tables', props.tableKey], Map()).toObject();
 
@@ -688,13 +740,12 @@ export const generateColumns = (columns, addColumns = [], alterColumns = {}) =>
 export const sortColumns = (columns, columnSet) =>
   columns
     // First sort columns by the columnOrder value if provided
-    .sortBy(
-      column =>
-        column.get('columnOrder') === 'first'
-          ? -1
-          : column.get('columnOrder') === 'last'
-            ? 1
-            : 0,
+    .sortBy(column =>
+      column.get('columnOrder') === 'first'
+        ? -1
+        : column.get('columnOrder') === 'last'
+          ? 1
+          : 0,
     )
     // Next reduce the columns list into a list of groups, starting a new group
     // each time we get to a column that's in the columnSet. This will result in
@@ -704,9 +755,8 @@ export const sortColumns = (columns, columnSet) =>
       (list, column) =>
         columnSet.includes(column.get('value'))
           ? list.push(List([column]))
-          : list.update(
-              -1,
-              group => (group ? group.push(column) : List([column])),
+          : list.update(-1, group =>
+              group ? group.push(column) : List([column]),
             ),
       List(),
     )
@@ -731,79 +781,85 @@ export const extractColumnComponents = columns =>
       Map(),
     );
 
-export const generateTable = ({
-  tableOptions = [],
-  filterDataSources = () => ({}),
-  filters,
-  columns,
-  dataSource,
-  sortable,
-  onValidateFilters,
-}) => props => {
-  const tableOptionProps = tableOptions
-    ? tableOptions.reduce((to, opt) => {
-        to[opt] = props[opt];
-        return to;
-      }, {})
-    : {};
-
-  let FilterForm;
-  if (filters) {
-    FilterForm = generateForm({
-      dataSources: filterDataSources,
-      fields: filters,
-      formOptions: ['tableKey', ...tableOptions],
-      handleSubmit: ({ tableKey }) => values => {
-        dispatch('APPLY_FILTER_FORM', { tableKey, appliedFilters: values });
-        return { values };
-      },
-    });
-  }
-
-  const setProps = {
-    // Passed in to `generateTable`
+export const generateTable =
+  ({
+    tableOptions = [],
+    filterDataSources = () => ({}),
+    filters,
     columns,
     dataSource,
+    sortable,
     onValidateFilters,
-    // Calculated from props and tableOptions.
-    tableOptions: { ...tableOptionProps },
-    // Add FilterForm to the components that are passed.
-    components: { ...props.components, FilterForm },
-    // Sortable can be enabled or disabled for an entire table.
-    sortable: typeof sortable !== 'undefined' ? sortable : props.sortable,
-    // Explicitly allowed props.
-    tableKey: props.tableKey,
-    filterFormKey: filterFormKey(props.tableKey),
-    addColumns: props.addColumns,
-    alterColumns: props.alterColumns,
-    alterFilters: mergeDeep(
-      props.alterFilters || {},
-      Map(props.initialFilterValues)
-        .map(initialValue => ({ initialValue }))
-        .toObject(),
-    ),
-    filterSet: props.filterSet,
-    filterAutoFocus: props.filterAutoFocus,
-    columnSet: props.columnSet,
-    columnSetOrder: props.columnSetOrder,
-    pageSize: props.pageSize,
-    defaultSortColumn: props.defaultSortColumn,
-    defaultSortDirection: props.defaultSortDirection,
-    omitHeader: props.omitHeader,
-    includeFooter: props.includeFooter,
-    refreshInterval: props.refreshInterval,
-    renderOptions: props.renderOptions,
-    uncontrolled: props.uncontrolled,
-    // For full client-side tables, with no datasource.
-    data: props.data,
-    filterForm: !!filters,
-    initialFilterValues: props.initialFilterValues || {},
-    onSearch: props.onSearch,
-    onFetch: props.onFetch,
-  };
+  }) =>
+  props => {
+    const tableOptionProps = tableOptions
+      ? tableOptions.reduce((to, opt) => {
+          to[opt] = props[opt];
+          return to;
+        }, {})
+      : {};
 
-  return <Table {...setProps}>{props.children}</Table>;
-};
+    let FilterForm;
+    if (filters) {
+      FilterForm = generateForm({
+        dataSources: filterDataSources,
+        fields: filters,
+        formOptions: ['tableKey', ...tableOptions],
+        handleSubmit:
+          ({ tableKey }) =>
+          values => {
+            dispatch('APPLY_FILTER_FORM', { tableKey, appliedFilters: values });
+            return { values };
+          },
+      });
+    }
+
+    const setProps = {
+      // Passed in to `generateTable`
+      columns,
+      dataSource,
+      onValidateFilters,
+      // Calculated from props and tableOptions.
+      tableOptions: { ...tableOptionProps },
+      // Add FilterForm to the components that are passed.
+      components: { ...props.components, FilterForm },
+      // Sortable can be enabled or disabled for an entire table.
+      sortable: typeof sortable !== 'undefined' ? sortable : props.sortable,
+      // Explicitly allowed props.
+      tableKey: props.tableKey,
+      filterFormKey: filterFormKey(props.tableKey),
+      addColumns: props.addColumns,
+      alterColumns: props.alterColumns,
+      alterFilters: mergeDeep(
+        props.alterFilters || {},
+        Map(props.initialFilterValues)
+          .map(initialValue => ({ initialValue }))
+          .toObject(),
+      ),
+      filterSet: props.filterSet,
+      filterAutoFocus: props.filterAutoFocus,
+      columnSet: props.columnSet,
+      columnSetOrder: props.columnSetOrder,
+      pageSize: props.pageSize,
+      defaultSortColumn: props.defaultSortColumn,
+      defaultSortDirection: props.defaultSortDirection,
+      omitHeader: props.omitHeader,
+      includeFooter: props.includeFooter,
+      refreshInterval: props.refreshInterval,
+      renderOptions: props.renderOptions,
+      uncontrolled: props.uncontrolled,
+      // For full client-side tables, with no datasource.
+      data: props.data,
+      filterForm: !!filters,
+      initialFilterValues: props.initialFilterValues || {},
+      onSearch: props.onSearch,
+      onFetch: props.onFetch,
+      onColumnSort: props.onColumnSort,
+      onColumnToggle: props.onColumnToggle,
+    };
+
+    return <Table {...setProps}>{props.children}</Table>;
+  };
 
 export class Table extends Component {
   constructor(props) {

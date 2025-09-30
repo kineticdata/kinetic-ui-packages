@@ -206,30 +206,28 @@ const orOperation = expressions => {
   return (object, filters) => some(fns, fn => fn(object, filters));
 };
 
-const betweenOperation = (options, lvalue, rvalueMin, rvalueMax) => (
-  object,
-  filters,
-) => {
-  const left = object[lvalue];
-  const right1 = get(filters, rvalueMin);
-  const right2 = get(filters, rvalueMax);
-  // If the filter value is empty and strict is not enabled we skip the filter
-  // by returning true.
-  if ((isNullOrEmpty(right1) || isNullOrEmpty(right2)) && !options.strict) {
-    return true;
-  }
-  if (compare(right1, right2, options, typeof left) <= 0) {
-    throw new Error(
-      `Invalid filter values for between operation of ${rvalueMin} and ` +
-        `${rvalueMax}. Min ${JSON.stringify(right1)} not less than max ` +
-        JSON.stringify(right2) +
-        (options.caseInsensitive ? ' (caseInsensitive)' : ''),
+const betweenOperation =
+  (options, lvalue, rvalueMin, rvalueMax) => (object, filters) => {
+    const left = object[lvalue];
+    const right1 = get(filters, rvalueMin);
+    const right2 = get(filters, rvalueMax);
+    // If the filter value is empty and strict is not enabled we skip the filter
+    // by returning true.
+    if ((isNullOrEmpty(right1) || isNullOrEmpty(right2)) && !options.strict) {
+      return true;
+    }
+    if (compare(right1, right2, options, typeof left) <= 0) {
+      throw new Error(
+        `Invalid filter values for between operation of ${rvalueMin} and ` +
+          `${rvalueMax}. Min ${JSON.stringify(right1)} not less than max ` +
+          JSON.stringify(right2) +
+          (options.caseInsensitive ? ' (caseInsensitive)' : ''),
+      );
+    }
+    return (
+      compare(left, right1, options) <= 0 && compare(left, right2, options) > 0
     );
-  }
-  return (
-    compare(left, right1, options) <= 0 && compare(left, right2, options) > 0
-  );
-};
+  };
 
 const equalsOperation = (options, lvalue, rvalue) => (object, filters) =>
   skip(get(filters, rvalue), options) ||
@@ -239,12 +237,10 @@ const greaterThanOperation = (options, lvalue, rvalue) => (object, filters) =>
   skip(get(filters, rvalue), options) ||
   compare(object[lvalue], get(filters, rvalue), options) < 0;
 
-const greaterThanOrEqualsOperation = (options, lvalue, rvalue) => (
-  object,
-  filters,
-) =>
-  skip(get(filters, rvalue), options) ||
-  compare(object[lvalue], get(filters, rvalue), options) <= 0;
+const greaterThanOrEqualsOperation =
+  (options, lvalue, rvalue) => (object, filters) =>
+    skip(get(filters, rvalue), options) ||
+    compare(object[lvalue], get(filters, rvalue), options) <= 0;
 
 const inOperation = (options, lvalue, rvalue) => (object, filters) => {
   // If the filter value is [], null, undefined then we check for the strict
@@ -273,12 +269,10 @@ const lessThanOperation = (options, lvalue, rvalue) => (object, filters) =>
   skip(get(filters, rvalue), options) ||
   compare(object[lvalue], get(filters, rvalue), options) > 0;
 
-const lessThanOrEqualsOperation = (options, lvalue, rvalue) => (
-  object,
-  filters,
-) =>
-  skip(get(filters, rvalue), options) ||
-  compare(object[lvalue], get(filters, rvalue), options) >= 0;
+const lessThanOrEqualsOperation =
+  (options, lvalue, rvalue) => (object, filters) =>
+    skip(get(filters, rvalue), options) ||
+    compare(object[lvalue], get(filters, rvalue), options) >= 0;
 
 const startsWithOperation = (options, lvalue, rvalue) => {
   const normalize = normalization(options);

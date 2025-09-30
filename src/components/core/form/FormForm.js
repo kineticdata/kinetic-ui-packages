@@ -59,18 +59,22 @@ const dataSources = ({ formSlug, kappSlug }) => ({
   },
 });
 
-const handleSubmit = ({ formSlug, kappSlug }) => values =>
-  (formSlug ? updateForm : createForm)({
-    kappSlug,
-    formSlug,
-    form: values.toJS(),
-  }).then(({ form, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the form';
-    }
-    return form;
-  });
+const handleSubmit =
+  ({ formSlug, kappSlug }) =>
+  values =>
+    (formSlug ? updateForm : createForm)({
+      kappSlug,
+      formSlug,
+      form: values.toJS(),
+    }).then(({ form, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the form'
+        );
+      }
+      return form;
+    });
 
 const buildLabel = ({ name, category, categories, loading }) => {
   let match = null;
@@ -121,200 +125,206 @@ const securityEndpoints = {
   },
 };
 
-const fields = ({ formSlug, kappSlug }) => ({ form, kapp }) =>
-  (!formSlug || form) &&
-  (!kappSlug || kapp) && [
-    !!kappSlug && {
-      name: 'anonymous',
-      label: 'Anonymous',
-      type: 'checkbox',
-      initialValue: get(form, 'anonymous', false),
-      helpText:
-        'This setting controls whether a submission is submitted with the user\'s login information or with "anonymous". Note that this does not actually control access. That is done with the Form Display setting.',
-    },
-    {
-      name: 'description',
-      label: 'Description',
-      type: 'text',
-      initialValue: get(form, 'description'),
-    },
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-      onChange: ({ values }, { setValue }) => {
-        if (values.get('linked')) {
-          setValue('slug', slugify(values.get('name')), false);
-        }
+const fields =
+  ({ formSlug, kappSlug }) =>
+  ({ form, kapp }) =>
+    (!formSlug || form) &&
+    (!kappSlug || kapp) && [
+      !!kappSlug && {
+        name: 'anonymous',
+        label: 'Anonymous',
+        type: 'checkbox',
+        initialValue: get(form, 'anonymous', false),
+        helpText:
+          'This setting controls whether a submission is submitted with the user\'s login information or with "anonymous". Note that this does not actually control access. That is done with the Form Display setting.',
       },
-      initialValue: get(form, 'name'),
-      helpText: 'User friendly name for the form.',
-    },
-    {
-      name: 'notes',
-      label: 'Notes',
-      type: 'text',
-      initialValue: get(form, 'notes') || '',
-    },
-    {
-      name: 'slug',
-      label: 'Slug',
-      type: 'text',
-      required: true,
-      onChange: (_bindings, { setValue }) => {
-        setValue('linked', false);
+      {
+        name: 'description',
+        label: 'Description',
+        type: 'text',
+        initialValue: get(form, 'description'),
       },
-      initialValue: get(form, 'slug'),
-      helpText: 'Unique name used in the form path.',
-    },
-    {
-      name: 'linked',
-      label: 'Linked',
-      type: 'checkbox',
-      transient: true,
-      initialValue: !form,
-      visible: false,
-    },
-    {
-      name: 'status',
-      label: 'Status',
-      type: 'select',
-      options: FORM_STATUSES.map(status => ({
-        value: status,
-        label: status,
-      })),
-      initialValue: get(form, 'status', 'New'),
-      helpText:
-        'Used to determine availability for submissions and presentations.',
-    },
-    {
-      name: 'submissionLabelExpression',
-      label: 'Submission Label',
-      type: 'code',
-      language: 'js-template',
-      initialValue: get(form, 'submissionLabelExpression') || '',
-      helpText:
-        // eslint-disable-next-line no-template-curly-in-string
-        "Custom label for form submissions. Click the </> button to see available values derived from each submission. Example: ${values('Customer Name')}",
-      options: ({ space, kapp, form, attributeDefinitions }) =>
-        buildCodeEditorBindings({
-          space: {
-            attributeDefinitions: space?.get('spaceAttributeDefinitions'),
-          },
-          kapp: { attributeDefinitions: kapp?.get('kappAttributeDefinitions') },
-          form: { attributeDefinitions },
-          submission: { detailed: true },
-          values: form?.get('fields').size > 0 && { data: form.get('fields') },
-        }),
-    },
-    !!kappSlug && {
-      name: 'type',
-      label: 'Type',
-      type: 'select',
-      options: ({ kapp }) =>
-        kapp
-          ? get(kapp, 'formTypes').map(type =>
-              Map({
-                value: type.get('name'),
-                label: type.get('name'),
-              }),
-            )
-          : [],
-      initialValue: get(form, 'type'),
-      helpText:
-        'Used for organizing and displaying forms. Values in the dropdown are defined under Form Types.',
-    },
-    ...(formSlug
-      ? Object.entries(securityEndpoints).map(
-          ([endpointFieldName, endpoint]) => ({
-            name: endpointFieldName,
-            label: endpoint.label,
-            type: 'select',
-            options: ({ securityPolicyDefinitions }) =>
-              securityPolicyDefinitions
-                ? securityPolicyDefinitions
-                    .filter(definition =>
-                      endpoint.types.includes(definition.get('type')),
-                    )
-                    .map(definition =>
-                      Map({
-                        value: definition.get('name'),
-                        label: definition.get('name'),
-                        type: definition.get('type'),
-                      }),
-                    )
-                : [],
-            initialValue: form
-              ? form
-                  .get('securityPolicies')
-                  .find(
-                    pol => pol.get('endpoint') === endpoint.endpoint,
-                    null,
-                    Map(), // If no Security Endpoints were ever set, we need to default to an empty map so the next line doesn't fail
-                  )
-                  .get('name', '')
-              : '',
-            transient: true,
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        onChange: ({ values }, { setValue }) => {
+          if (values.get('linked')) {
+            setValue('slug', slugify(values.get('name')), false);
+          }
+        },
+        initialValue: get(form, 'name'),
+        helpText: 'User friendly name for the form.',
+      },
+      {
+        name: 'notes',
+        label: 'Notes',
+        type: 'text',
+        initialValue: get(form, 'notes') || '',
+      },
+      {
+        name: 'slug',
+        label: 'Slug',
+        type: 'text',
+        required: true,
+        onChange: (_bindings, { setValue }) => {
+          setValue('linked', false);
+        },
+        initialValue: get(form, 'slug'),
+        helpText: 'Unique name used in the form path.',
+      },
+      {
+        name: 'linked',
+        label: 'Linked',
+        type: 'checkbox',
+        transient: true,
+        initialValue: !form,
+        visible: false,
+      },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        options: FORM_STATUSES.map(status => ({
+          value: status,
+          label: status,
+        })),
+        initialValue: get(form, 'status', 'New'),
+        helpText:
+          'Used to determine availability for submissions and presentations.',
+      },
+      {
+        name: 'submissionLabelExpression',
+        label: 'Submission Label',
+        type: 'code',
+        language: 'js-template',
+        initialValue: get(form, 'submissionLabelExpression') || '',
+        helpText:
+          // eslint-disable-next-line no-template-curly-in-string
+          "Custom label for form submissions. Click the </> button to see available values derived from each submission. Example: ${values('Customer Name')}",
+        options: ({ space, kapp, form, attributeDefinitions }) =>
+          buildCodeEditorBindings({
+            space: {
+              attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+            },
+            kapp: {
+              attributeDefinitions: kapp?.get('kappAttributeDefinitions'),
+            },
+            form: { attributeDefinitions },
+            submission: { detailed: true },
+            values: form?.get('fields').size > 0 && {
+              data: form.get('fields'),
+            },
           }),
-        )
-      : []),
-    {
-      name: 'securityPolicies',
-      label: 'Security Policies',
-      type: null,
-      visible: false,
-      serialize: ({ values }) =>
-        Object.entries(securityEndpoints)
-          .map(([endpointFieldName, policy]) => ({
-            endpoint: policy.endpoint,
-            name: values.get(endpointFieldName),
-          }))
-          .filter(endpoint => endpoint.name !== ''),
-      initialValue: get(form, 'securityPolicies'),
-    },
-    {
-      name: 'attributesMap',
-      label: 'Attributes',
-      type: 'attributes',
-      required: false,
-      options: ({ attributeDefinitions }) => attributeDefinitions,
-      initialValue: get(form, 'attributesMap'),
-    },
-    !!kappSlug && {
-      name: 'categorizations',
-      label: 'Categories',
-      type: 'select-multi',
-      options: ({ categories, form }) => {
-        // Until categories are fetched, use the data from the form's
-        // categories to build options to minimize the flash of the slug values
-        // changing to the names
-        const categoriesList =
-          categories ||
-          form?.get('categorizations').map(c => c.get('category'));
-        return categoriesList
-          ? categoriesList.map(category =>
-              Map({
-                label: buildLabel({
-                  name: category.get('name'),
-                  category,
-                  categories: categoriesList,
-                  loading: !categories,
-                }),
-                value: category.get('slug'),
-              }),
-            )
-          : [];
       },
-      initialValue: form
-        ? form
-            .get('categorizations')
-            .map(categorization => categorization.getIn(['category', 'slug']))
-        : [],
-      serialize: ({ values }) =>
-        values.get('categorizations').map(slug => ({ category: { slug } })),
-    },
-  ];
+      !!kappSlug && {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        options: ({ kapp }) =>
+          kapp
+            ? get(kapp, 'formTypes').map(type =>
+                Map({
+                  value: type.get('name'),
+                  label: type.get('name'),
+                }),
+              )
+            : [],
+        initialValue: get(form, 'type'),
+        helpText:
+          'Used for organizing and displaying forms. Values in the dropdown are defined under Form Types.',
+      },
+      ...(formSlug
+        ? Object.entries(securityEndpoints).map(
+            ([endpointFieldName, endpoint]) => ({
+              name: endpointFieldName,
+              label: endpoint.label,
+              type: 'select',
+              options: ({ securityPolicyDefinitions }) =>
+                securityPolicyDefinitions
+                  ? securityPolicyDefinitions
+                      .filter(definition =>
+                        endpoint.types.includes(definition.get('type')),
+                      )
+                      .map(definition =>
+                        Map({
+                          value: definition.get('name'),
+                          label: definition.get('name'),
+                          type: definition.get('type'),
+                        }),
+                      )
+                  : [],
+              initialValue: form
+                ? form
+                    .get('securityPolicies')
+                    .find(
+                      pol => pol.get('endpoint') === endpoint.endpoint,
+                      null,
+                      Map(), // If no Security Endpoints were ever set, we need to default to an empty map so the next line doesn't fail
+                    )
+                    .get('name', '')
+                : '',
+              transient: true,
+            }),
+          )
+        : []),
+      {
+        name: 'securityPolicies',
+        label: 'Security Policies',
+        type: null,
+        visible: false,
+        serialize: ({ values }) =>
+          Object.entries(securityEndpoints)
+            .map(([endpointFieldName, policy]) => ({
+              endpoint: policy.endpoint,
+              name: values.get(endpointFieldName),
+            }))
+            .filter(endpoint => endpoint.name !== ''),
+        initialValue: get(form, 'securityPolicies'),
+      },
+      {
+        name: 'attributesMap',
+        label: 'Attributes',
+        type: 'attributes',
+        required: false,
+        options: ({ attributeDefinitions }) => attributeDefinitions,
+        initialValue: get(form, 'attributesMap'),
+      },
+      !!kappSlug && {
+        name: 'categorizations',
+        label: 'Categories',
+        type: 'select-multi',
+        options: ({ categories, form }) => {
+          // Until categories are fetched, use the data from the form's
+          // categories to build options to minimize the flash of the slug values
+          // changing to the names
+          const categoriesList =
+            categories ||
+            form?.get('categorizations').map(c => c.get('category'));
+          return categoriesList
+            ? categoriesList.map(category =>
+                Map({
+                  label: buildLabel({
+                    name: category.get('name'),
+                    category,
+                    categories: categoriesList,
+                    loading: !categories,
+                  }),
+                  value: category.get('slug'),
+                }),
+              )
+            : [];
+        },
+        initialValue: form
+          ? form
+              .get('categorizations')
+              .map(categorization => categorization.getIn(['category', 'slug']))
+          : [],
+        serialize: ({ values }) =>
+          values.get('categorizations').map(slug => ({ category: { slug } })),
+      },
+    ];
 
 export const FormForm = generateForm({
   formOptions: ['formSlug', 'kappSlug'],

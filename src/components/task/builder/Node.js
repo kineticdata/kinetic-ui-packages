@@ -3,7 +3,7 @@ import { isArray, isFunction } from 'lodash-es';
 import classNames from 'classnames';
 import { dispatch } from '../../../store';
 import * as constants from './constants';
-import { getNodeType, isIE11 } from './helpers';
+import { getNodeType } from './helpers';
 import { Point } from './models';
 import { SvgText } from './SvgText';
 import plusIcon from '../../../../assets/task/icons/plus_small.svg';
@@ -111,7 +111,8 @@ export class Node extends Component {
       !this.props.node.equals(nextProps.node) ||
       this.props.primary !== nextProps.primary ||
       this.props.selected !== nextProps.selected ||
-      this.props.highlighted !== nextProps.highlighted
+      this.props.highlighted !== nextProps.highlighted ||
+      this.props.missingIntegration !== nextProps.missingIntegration
     );
   }
 
@@ -133,32 +134,14 @@ export class Node extends Component {
    ****************************************************************************/
 
   draw() {
-    // const attribute = isIE11 ? 'transform' : 'style';
-    // const value = isIE11
-    //   ? `translate(${this.position.x} ${this.position.y})`
-    //   : `transform: translate(${this.position.x}px,  ${this.position.y}px)`;
-    // this.el.current.setAttribute(attribute, value);
-
-    if (isIE11) {
-      this.el.current.transform = `translate(${this.position.x} ${
-        this.position.y
-      })`;
-    } else {
-      this.el.current.style.transform = `translate(${this.position.x}px,  ${
-        this.position.y
-      }px)`;
-    }
+    this.el.current.style.transform = `translate(${this.position.x}px,  ${
+      this.position.y
+    }px)`;
   }
 
   render() {
-    const {
-      node,
-      highlighted,
-      primary,
-      selected,
-      connections,
-      tasks,
-    } = this.props;
+    const { node, highlighted, primary, selected, missingIntegration, tasks } =
+      this.props;
     const { defers, definitionId, id, name } = node;
     const tempNode = typeof id !== 'number';
     const isRoutine =
@@ -172,10 +155,7 @@ export class Node extends Component {
         !tasks.has(node.definitionId) &&
         !node.definitionId.startsWith('system_tree_return_v') &&
         !node.definitionId.startsWith('system_start_v')) ||
-      (isIntegration &&
-        !connections.get(
-          node.parameters.find(p => p.id === 'connection')?.value,
-        ));
+      missingIntegration;
     const invalid =
       missing ||
       (!tempNode && !name) ||

@@ -75,15 +75,55 @@ export const deleteConnection = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const exportConnection = (options = {}) => {
+  validateOptions('exportConnection', ['id'], options);
+  const { id, ...params } = options;
+  return axios
+    .get(
+      `${bundle.spaceLocation()}/app/integrator/api/export/connections/${id}`,
+      {
+        params,
+      },
+    )
+    .then(response => ({ connection: response.data }))
+    .catch(handleErrors);
+};
+
+export const importConnection = (options = {}) => {
+  validateOptions('importConnection', ['connection'], options);
+  const { connection, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/import/connections`,
+      connection,
+      { params },
+    )
+    .then(response => ({ connection: response.data }))
+    .catch(handleErrors);
+};
+
 export const testConnection = (options = {}) => {
   validateOptions('testConnection', ['connection'], options);
-  const { connection, connectionId, ...params } = options;
+  const { connection, id, ...params } = options;
   return axios
     .post(
       `${bundle.spaceLocation()}/app/integrator/api${
-        connectionId ? `/connections/${connectionId}` : ''
+        id ? `/connections/${id}` : ''
       }/test`,
       connection,
+      { params },
+    )
+    .then(response => ({ data: response.data }))
+    .catch(handleErrors);
+};
+
+export const restartConnection = (options = {}) => {
+  validateOptions('restartConnection', ['id'], options);
+  const { id, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/connections/${id}/restart`,
+      null,
       { params },
     )
     .then(response => ({ data: response.data }))
@@ -164,6 +204,19 @@ export const deleteOperation = (options = {}) => {
     .catch(handleErrors);
 };
 
+export const importOperations = (options = {}) => {
+  validateOptions('importOperations', ['connectionId', 'operations'], options);
+  const { connectionId, operations, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/import/connections/${connectionId}/operations`,
+      operations,
+      { params },
+    )
+    .then(response => ({ connection: response.data }))
+    .catch(handleErrors);
+};
+
 export const fetchBulkOperations = (options = {}) => {
   validateOptions('fetchBulkOperations', ['ids'], options);
   const { ids, ...params } = options;
@@ -193,7 +246,10 @@ export const inspectOperation = (options = {}) => {
 export const executeOperation = (options = {}) => {
   validateOptions(
     'executeOperation',
-    [['connection', 'connectionId'], ['operation', 'operationId']],
+    [
+      ['connection', 'connectionId'],
+      ['operation', 'operationId'],
+    ],
     options,
   );
   const {
@@ -224,5 +280,18 @@ export const fetchIntegratorVersion = () => {
     .then(response => ({
       version: response.data.version,
     }))
+    .catch(handleErrors);
+};
+
+export const transformOutputs = (options = {}) => {
+  validateOptions('transformOutputs', ['outputs', 'raw'], options);
+  const { outputs, raw, ...params } = options;
+  return axios
+    .post(
+      `${bundle.spaceLocation()}/app/integrator/api/transform`,
+      { outputs, raw },
+      { params },
+    )
+    .then(response => ({ data: response.data }))
     .catch(handleErrors);
 };

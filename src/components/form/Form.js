@@ -149,11 +149,10 @@ const buildBindings = formState =>
 
 const evaluateDataSources = formState =>
   formState.update('dataSources', dataSources =>
-    dataSources.map(
-      dataSource =>
-        dataSource.paramsFn
-          ? dataSource.set('params', dataSource.paramsFn(formState.bindings))
-          : dataSource,
+    dataSources.map(dataSource =>
+      dataSource.paramsFn
+        ? dataSource.set('params', dataSource.paramsFn(formState.bindings))
+        : dataSource,
     ),
   );
 
@@ -220,12 +219,10 @@ regHandlers({
       touched: true,
     }),
   CALL_DATA_SOURCE: (state, { payload: { formKey, name } }) =>
-    state.updateIn(
-      ['forms', formKey, 'dataSources', name, 'status'],
-      status =>
-        status === DATA_SOURCE_STATUS.RESOLVED
-          ? DATA_SOURCE_STATUS.PENDING_RELOAD
-          : DATA_SOURCE_STATUS.PENDING,
+    state.updateIn(['forms', formKey, 'dataSources', name, 'status'], status =>
+      status === DATA_SOURCE_STATUS.RESOLVED
+        ? DATA_SOURCE_STATUS.PENDING_RELOAD
+        : DATA_SOURCE_STATUS.PENDING,
     ),
   RESOLVE_DATA_SOURCE: (state, { payload: { formKey, name, data, error } }) =>
     state
@@ -278,18 +275,14 @@ regHandlers({
       .setIn(['forms', formKey, 'submitting'], false)
       .setIn(['forms', formKey, 'error'], 'There are invalid fields')
       .updateIn(['forms', formKey, 'fields'], fields =>
-        fields.map(
-          field =>
-            fieldNames.includes(field.name)
-              ? field.set('touched', true)
-              : field,
+        fields.map(field =>
+          fieldNames.includes(field.name) ? field.set('touched', true) : field,
         ),
       ),
   VALIDATION_FIELD_ERRORS: (state, { payload: { formKey, fieldNames } }) =>
     state.updateIn(['forms', formKey, 'fields'], fields =>
-      fields.map(
-        field =>
-          fieldNames.includes(field.name) ? field.set('touched', true) : field,
+      fields.map(field =>
+        fieldNames.includes(field.name) ? field.set('touched', true) : field,
       ),
     ),
 });
@@ -298,9 +291,9 @@ const selectForm = formKey => state => state.getIn(['forms', formKey]);
 const selectDataSource = (formKey, name) => state =>
   selectForm(formKey)(state).getIn(['dataSources', name]);
 
-regSaga('CHECK_ON_LOAD', function*() {
+regSaga('CHECK_ON_LOAD', function* () {
   const checkActions = ['CONFIGURE_FORM', 'RESOLVE_DATA_SOURCE'];
-  yield takeEvery(checkActions, function*({ payload: { formKey } }) {
+  yield takeEvery(checkActions, function* ({ payload: { formKey } }) {
     try {
       const formState = yield select(selectForm(formKey));
       if (
@@ -317,7 +310,7 @@ regSaga('CHECK_ON_LOAD', function*() {
 });
 
 regSaga(
-  takeEvery('CONFIGURE_FORM', function*(action) {
+  takeEvery('CONFIGURE_FORM', function* (action) {
     const { formKey } = action.payload;
     const { dataSources } = yield select(selectForm(formKey));
     yield all(
@@ -330,7 +323,7 @@ regSaga(
 );
 
 regSaga(
-  takeEvery('RELOAD_DATA_SOURCES', function*(action) {
+  takeEvery('RELOAD_DATA_SOURCES', function* (action) {
     const { formKey, dataSourceNames } = action.payload;
     const formState = yield select(selectForm(formKey));
     // If form state exists, re-fetch the necessary dataSources
@@ -399,100 +392,105 @@ function* runDataSource(formKey, name, dataSource) {
 }
 
 regSaga(
-  takeEvery('CALL_DATA_SOURCE', function*({
-    payload: { formKey, name, params },
-  }) {
-    try {
-      const { fn, transform, errorTransform } = yield select(
-        selectDataSource(formKey, name),
-      );
-      const data = yield call(fn, ...params);
-      const timestamp = yield call(getTimestamp);
-      yield put(
-        action('RESOLVE_DATA_SOURCE', {
-          formKey,
-          name,
-          data: transform ? transform(data) : data,
-          error: errorTransform ? errorTransform(data) : null,
-          timestamp,
-        }),
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  }),
+  takeEvery(
+    'CALL_DATA_SOURCE',
+    function* ({ payload: { formKey, name, params } }) {
+      try {
+        const { fn, transform, errorTransform } = yield select(
+          selectDataSource(formKey, name),
+        );
+        const data = yield call(fn, ...params);
+        const timestamp = yield call(getTimestamp);
+        yield put(
+          action('RESOLVE_DATA_SOURCE', {
+            formKey,
+            name,
+            data: transform ? transform(data) : data,
+            error: errorTransform ? errorTransform(data) : null,
+            timestamp,
+          }),
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    },
+  ),
 );
 
-regSaga('HANDLE_SET_VALUE', function*() {
-  yield takeEvery(['SET_VALUE', 'TOGGLE_MULTI_VALUE'], function*({
-    payload: { formKey, name, triggerChange },
-  }) {
-    try {
-      if (triggerChange) {
-        const { bindings, fields } = yield select(selectForm(formKey));
-        const { onChange } = fields.get(name);
-        if (onChange) {
-          yield call(onChange, bindings, bindActions(formKey));
+regSaga('HANDLE_SET_VALUE', function* () {
+  yield takeEvery(
+    ['SET_VALUE', 'TOGGLE_MULTI_VALUE'],
+    function* ({ payload: { formKey, name, triggerChange } }) {
+      try {
+        if (triggerChange) {
+          const { bindings, fields } = yield select(selectForm(formKey));
+          const { onChange } = fields.get(name);
+          if (onChange) {
+            yield call(onChange, bindings, bindActions(formKey));
+          }
         }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  });
+    },
+  );
 });
 
 regSaga(
-  takeEvery('REJECT_DATA_SOURCE', function*({ payload }) {
+  takeEvery('REJECT_DATA_SOURCE', function* ({ payload }) {
     yield call(console.error, 'REJECT_DATA_SOURCE', payload);
   }),
 );
 
 regSaga(
-  takeEvery('SUBMIT', function*({
-    payload: { formKey, fieldSet, onInvalid, onSave: onSaveOverride },
-  }) {
-    try {
-      const { bindings, fields, onSubmit, onSave, onError } = yield select(
-        selectForm(formKey),
-      );
+  takeEvery(
+    'SUBMIT',
+    function* ({
+      payload: { formKey, fieldSet, onInvalid, onSave: onSaveOverride },
+    }) {
+      try {
+        const { bindings, fields, onSubmit, onSave, onError } = yield select(
+          selectForm(formKey),
+        );
 
-      const computedFieldSet = computeFieldSet(fields, fieldSet);
-      const values = serializeImpl({ bindings, fields }, fieldSet);
-      const errors = fields
-        .filter(field => computedFieldSet.contains(field.name))
-        .map(field => field.errors)
-        .filter(errors => !errors.isEmpty());
+        const computedFieldSet = computeFieldSet(fields, fieldSet);
+        const values = serializeImpl({ bindings, fields }, fieldSet);
+        const errors = fields
+          .filter(field => computedFieldSet.contains(field.name))
+          .map(field => field.errors)
+          .filter(errors => !errors.isEmpty());
 
-      if (errors.isEmpty()) {
-        try {
-          const result = yield call(onSubmit, values, bindings);
-          dispatch('SUBMIT_SUCCESS', { formKey });
-          if (onSaveOverride || onSave)
-            yield call(onSaveOverride || onSave, result);
-        } catch (error) {
-          dispatch('SUBMIT_ERROR', {
-            formKey,
-            error:
-              typeof error === 'string' ? error : 'Unexpected error occurred',
-          });
-          if (typeof error !== 'string') {
-            console.error('Error handling  form submit', error);
+        if (errors.isEmpty()) {
+          try {
+            const result = yield call(onSubmit, values, bindings);
+            dispatch('SUBMIT_SUCCESS', { formKey });
+            if (onSaveOverride || onSave)
+              yield call(onSaveOverride || onSave, result);
+          } catch (error) {
+            dispatch('SUBMIT_ERROR', {
+              formKey,
+              error:
+                typeof error === 'string' ? error : 'Unexpected error occurred',
+            });
+            if (typeof error !== 'string') {
+              console.error('Error handling  form submit', error);
+            }
+            if (onError) yield call(onError, error);
           }
-          if (onError) yield call(onError, error);
+        } else {
+          dispatch('SUBMIT_FIELD_ERRORS', {
+            formKey,
+            fieldNames: errors.keySeq(),
+          });
+          if (isFunction(onInvalid)) {
+            onInvalid(errors);
+          }
         }
-      } else {
-        dispatch('SUBMIT_FIELD_ERRORS', {
-          formKey,
-          fieldNames: errors.keySeq(),
-        });
-        if (isFunction(onInvalid)) {
-          onInvalid(errors);
-        }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  }),
+    },
+  ),
 );
 
 export const setValue = (formKey, name, value, triggerChange = true) => {
@@ -509,10 +507,14 @@ export const toggleMultiValue = (
 };
 
 const actions = {
-  setValue: formKey => (name, value, triggerChange = true) =>
-    dispatch('SET_VALUE', { formKey, name, value, triggerChange }),
-  toggleMultiValue: formKey => (name, value, triggerChange = true) =>
-    dispatch('TOGGLE_MULTI_VALUE', { formKey, name, value, triggerChange }),
+  setValue:
+    formKey =>
+    (name, value, triggerChange = true) =>
+      dispatch('SET_VALUE', { formKey, name, value, triggerChange }),
+  toggleMultiValue:
+    formKey =>
+    (name, value, triggerChange = true) =>
+      dispatch('TOGGLE_MULTI_VALUE', { formKey, name, value, triggerChange }),
 };
 
 const bindActions = formKey =>
@@ -521,42 +523,48 @@ const bindActions = formKey =>
     {},
   );
 
-export const onFocus = ({ formKey, name }) => () => {
-  dispatch('FOCUS_FIELD', { formKey, name });
-};
+export const onFocus =
+  ({ formKey, name }) =>
+  () => {
+    dispatch('FOCUS_FIELD', { formKey, name });
+  };
 
-export const onBlur = ({ formKey, name }) => () => {
-  dispatch('BLUR_FIELD', { formKey, name });
-};
+export const onBlur =
+  ({ formKey, name }) =>
+  () => {
+    dispatch('BLUR_FIELD', { formKey, name });
+  };
 
 const LIST_VALUE_TYPES = ['checkbox-multi'];
-export const onChange = ({ formKey, type, name }) => event => {
-  let value;
-  if (type === 'checkbox' && event && event.target) {
-    value = event.target.checked;
-  } else if (type === 'checkbox-multi') {
-    value = event.target.value;
-  } else if (
-    type === 'select-multi' &&
-    event &&
-    event.target &&
-    event.target.options
-  ) {
-    value = List(event.target.options)
-      .filter(o => o.selected)
-      .map(o => o.value);
-  } else if (event && event.target) {
-    value = event.target.value;
-  } else {
-    value = event;
-  }
+export const onChange =
+  ({ formKey, type, name }) =>
+  event => {
+    let value;
+    if (type === 'checkbox' && event && event.target) {
+      value = event.target.checked;
+    } else if (type === 'checkbox-multi') {
+      value = event.target.value;
+    } else if (
+      type === 'select-multi' &&
+      event &&
+      event.target &&
+      event.target.options
+    ) {
+      value = List(event.target.options)
+        .filter(o => o.selected)
+        .map(o => o.value);
+    } else if (event && event.target) {
+      value = event.target.value;
+    } else {
+      value = event;
+    }
 
-  if (LIST_VALUE_TYPES.includes(type)) {
-    actions.toggleMultiValue(formKey)(name, value);
-  } else {
-    actions.setValue(formKey)(name, value);
-  }
-};
+    if (LIST_VALUE_TYPES.includes(type)) {
+      actions.toggleMultiValue(formKey)(name, value);
+    } else {
+      actions.setValue(formKey)(name, value);
+    }
+  };
 
 export const onSubmit = (formKey, fieldSet) => event => {
   event && event.preventDefault && event.preventDefault();
@@ -665,7 +673,7 @@ const computeFieldSet = (fields, fieldSetProp) => {
       ? defaultFieldSet
       : typeof fieldSetProp === 'function'
         ? fieldSetProp(defaultFieldSet)
-        : fieldSetProp,
+        : fieldSetProp.filter(field => defaultFieldSet.has(field)),
   );
 };
 
@@ -727,6 +735,7 @@ class FormImplComponent extends Component {
       alterFields,
       autoFocus,
       components,
+      renderers,
       fields: fieldsFn,
       fieldSet,
       formKey,
@@ -783,10 +792,12 @@ class FormImplComponent extends Component {
               ) : null,
             ];
           })}
+          fieldSet={computedFieldSet.toJS()}
           dirty={dirty}
           error={
             error && <FormError error={error} clear={clearError(formKey)} />
           }
+          submit={onSubmit(formKey, fieldSet)}
           buttons={
             !readOnlyResult && (
               <FormButtons
@@ -805,10 +816,18 @@ class FormImplComponent extends Component {
           bindings={bindings}
           meta={fields.map(field =>
             Map({
+              label: field.label,
+              value:
+                (typeof field.serialize === 'function' &&
+                  field.serialize(bindings)) ||
+                field.value,
+              options: field.options,
+              type: field.type,
               visible: field.visible,
               hasErrors: field.errors?.size > 0,
             }),
           )}
+          renderers={renderers}
         />
       );
     }
@@ -824,30 +843,28 @@ export const mapStateToProps = (state, props) => ({
 
 const FormImpl = connect(mapStateToProps)(FormImplComponent);
 
-export const generateForm = ({
-  dataSources,
-  fields,
-  handleSubmit,
-  formOptions,
-}) => configurationProps => (
-  <Form
-    addDataSources={configurationProps.addDataSources}
-    addFields={configurationProps.addFields}
-    alterFields={configurationProps.alterFields}
-    autoFocus={configurationProps.autoFocus}
-    components={configurationProps.components}
-    dataSources={dataSources}
-    fields={fields}
-    fieldSet={configurationProps.fieldSet}
-    formKey={configurationProps.formKey}
-    formOptions={pick(configurationProps, formOptions)}
-    onSubmit={handleSubmit}
-    onSave={configurationProps.onSave}
-    onError={configurationProps.onError}
-    onLoad={configurationProps.onLoad}
-    uncontrolled={configurationProps.uncontrolled}
-    readOnly={configurationProps.readOnly}
-  >
-    {configurationProps.children}
-  </Form>
-);
+export const generateForm =
+  ({ dataSources, fields, handleSubmit, formOptions }) =>
+  configurationProps => (
+    <Form
+      addDataSources={configurationProps.addDataSources}
+      addFields={configurationProps.addFields}
+      alterFields={configurationProps.alterFields}
+      autoFocus={configurationProps.autoFocus}
+      components={configurationProps.components}
+      dataSources={dataSources}
+      fields={fields}
+      fieldSet={configurationProps.fieldSet}
+      formKey={configurationProps.formKey}
+      formOptions={pick(configurationProps, formOptions)}
+      onSubmit={handleSubmit}
+      onSave={configurationProps.onSave}
+      onError={configurationProps.onError}
+      onLoad={configurationProps.onLoad}
+      uncontrolled={configurationProps.uncontrolled}
+      readOnly={configurationProps.readOnly}
+      renderers={configurationProps.renderers}
+    >
+      {configurationProps.children}
+    </Form>
+  );

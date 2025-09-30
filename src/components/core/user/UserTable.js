@@ -41,13 +41,19 @@ const filters = () => () => [
     name: 'enabled',
     label: 'Enabled?',
     type: 'select',
-    options: [{ label: 'Yes', value: true }, { label: 'No', value: false }],
+    options: [
+      { label: 'Yes', value: 'true' },
+      { label: 'No', value: 'false' },
+    ],
   },
   {
     name: 'spaceAdmin',
     label: 'Space Admin?',
     type: 'select',
-    options: [{ label: 'Yes', value: true }, { label: 'No', value: false }],
+    options: [
+      { label: 'Yes', value: 'true' },
+      { label: 'No', value: 'false' },
+    ],
   },
 ];
 

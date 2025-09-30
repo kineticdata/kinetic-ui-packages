@@ -163,21 +163,25 @@ export class I18nTranslate extends React.Component {
   }
 }
 
-const translate = ({ context, locale, translations }) => key => {
-  trackKeys(context, key);
-  if (window.highlightTranslations) {
-    // Surround translated text with asterisks to easily see what's wrapped
-    return `*${translations.getIn([locale, context, key]) ||
-      translations.getIn([locale, 'shared', key]) ||
-      key}*`;
-  } else {
-    return (
-      translations.getIn([locale, context, key]) ||
-      translations.getIn([locale, 'shared', key]) ||
-      key
-    );
-  }
-};
+const translate =
+  ({ context, locale, translations }) =>
+  key => {
+    trackKeys(context, key);
+    if (window.highlightTranslations) {
+      // Surround translated text with asterisks to easily see what's wrapped
+      return `*${
+        translations.getIn([locale, context, key]) ||
+        translations.getIn([locale, 'shared', key]) ||
+        key
+      }*`;
+    } else {
+      return (
+        translations.getIn([locale, context, key]) ||
+        translations.getIn([locale, 'shared', key]) ||
+        key
+      );
+    }
+  };
 
 let trackedKeys = Map();
 const trackKeys = (context, key) => {

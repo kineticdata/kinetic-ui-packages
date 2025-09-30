@@ -59,108 +59,116 @@ const dataSources = ({ securityPolicyName, kappSlug }) => ({
   },
 });
 
-const handleSubmit = ({ securityPolicyName, kappSlug }) => values =>
-  (securityPolicyName
-    ? updateSecurityPolicyDefinition
-    : createSecurityPolicyDefinition)({
-    securityPolicyName,
-    securityPolicyDefinition: values.toJS(),
-    kappSlug,
-  }).then(({ securityPolicyDefinition, error }) => {
-    if (error) {
-      throw (error.statusCode === 400 && error.message) ||
-        'There was an error saving the security definition';
-    }
-    return securityPolicyDefinition;
-  });
+const handleSubmit =
+  ({ securityPolicyName, kappSlug }) =>
+  values =>
+    (securityPolicyName
+      ? updateSecurityPolicyDefinition
+      : createSecurityPolicyDefinition)({
+      securityPolicyName,
+      securityPolicyDefinition: values.toJS(),
+      kappSlug,
+    }).then(({ securityPolicyDefinition, error }) => {
+      if (error) {
+        throw (
+          (error.statusCode === 400 && error.message) ||
+          'There was an error saving the security definition'
+        );
+      }
+      return securityPolicyDefinition;
+    });
 
-const fields = ({ securityPolicyName, securityPolicyType, kappSlug }) => ({
-  securityPolicy,
-}) =>
-  (!securityPolicyName || securityPolicy) && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-      initialValue: securityPolicy ? securityPolicy.get('name') : '',
-      helpText: 'Will be displayed in security policy dropdowns.',
-    },
-    {
-      name: 'type',
-      label: 'Type',
-      type: 'select',
-      required: true,
-      options: (kappSlug
-        ? securityPolicyType &&
-          KAPP_SECURITY_DEFINITION_TYPES.includes(securityPolicyType)
-          ? KAPP_SECURITY_DEFINITION_TYPES_MAP[securityPolicyType]
-          : KAPP_SECURITY_DEFINITION_TYPES
-        : securityPolicyType &&
-          SPACE_SECURITY_DEFINITION_TYPES.includes(securityPolicyType)
-          ? SPACE_SECURITY_DEFINITION_TYPES_MAP[securityPolicyType]
-          : SPACE_SECURITY_DEFINITION_TYPES
-      ).map(ele => ({
-        value: ele,
-        label: ele,
-      })),
-      initialValue: securityPolicy
-        ? securityPolicy.get('type')
-        : kappSlug
-          ? 'Kapp'
-          : 'Space',
-      helpText:
-        'Determines what information is available to the definition rule, as well as what security policies the security definition can be applied to.',
-    },
-    {
-      name: 'message',
-      label: 'Message',
-      type: 'text',
-      required: true,
-      initialValue: securityPolicy ? securityPolicy.get('message') : '',
-      helpText: 'Returned to the user if permission is denied.',
-    },
-    {
-      name: 'rule',
-      label: 'Rule',
-      type: 'code',
-      language: 'js-expression',
-      required: true,
-      options: ({ space, kapp, values, profile }) =>
-        buildCodeEditorBindings({
-          identity: profile && {
-            attributeDefinitions: space?.get('userAttributeDefinitions'),
-            profileAttributeDefinitions: space?.get(
-              'userProfileAttributeDefinitions',
-            ),
-          },
-          space: {
-            attributeDefinitions: space?.get('spaceAttributeDefinitions'),
-          },
-          file: values.get('type') === 'File Resource' && {},
-          user: values.get('type') === 'User' && {
-            attributeDefinitions: space?.get('userAttributeDefinitions'),
-            profileAttributeDefinitions: space?.get(
-              'userProfileAttributeDefinitions',
-            ),
-          },
-          team: values.get('type') === 'Team' && {
-            attributeDefinitions: space?.get('teamAttributeDefinitions'),
-          },
-          kapp: ['Kapp', 'Form', 'Submission'].includes(values.get('type')) && {
-            attributeDefinitions: kapp?.get('kappAttributeDefinitions'),
-          },
-          form: ['Form', 'Submission'].includes(values.get('type')) && {
-            attributeDefinitions: kapp?.get('formAttributeDefinitions'),
-          },
-          submission: values.get('type') === 'Submission' && { detailed: true },
-          values: values.get('type') === 'Submission' &&
-            kapp?.get('fields').size > 0 && { data: kapp.get('fields') },
-        }),
-      initialValue: securityPolicy ? securityPolicy.get('rule') : '',
-      helpText: `Expression to evaluate to true or false. Click the </> button to see available values scoped to this Kapp or Space.`,
-    },
-  ];
+const fields =
+  ({ securityPolicyName, securityPolicyType, kappSlug }) =>
+  ({ securityPolicy }) =>
+    (!securityPolicyName || securityPolicy) && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        initialValue: securityPolicy ? securityPolicy.get('name') : '',
+        helpText: 'Will be displayed in security policy dropdowns.',
+      },
+      {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        required: true,
+        options: (kappSlug
+          ? securityPolicyType &&
+            KAPP_SECURITY_DEFINITION_TYPES.includes(securityPolicyType)
+            ? KAPP_SECURITY_DEFINITION_TYPES_MAP[securityPolicyType]
+            : KAPP_SECURITY_DEFINITION_TYPES
+          : securityPolicyType &&
+              SPACE_SECURITY_DEFINITION_TYPES.includes(securityPolicyType)
+            ? SPACE_SECURITY_DEFINITION_TYPES_MAP[securityPolicyType]
+            : SPACE_SECURITY_DEFINITION_TYPES
+        ).map(ele => ({
+          value: ele,
+          label: ele,
+        })),
+        initialValue: securityPolicy
+          ? securityPolicy.get('type')
+          : kappSlug
+            ? 'Kapp'
+            : 'Space',
+        helpText:
+          'Determines what information is available to the definition rule, as well as what security policies the security definition can be applied to.',
+      },
+      {
+        name: 'message',
+        label: 'Message',
+        type: 'text',
+        required: true,
+        initialValue: securityPolicy ? securityPolicy.get('message') : '',
+        helpText: 'Returned to the user if permission is denied.',
+      },
+      {
+        name: 'rule',
+        label: 'Rule',
+        type: 'code',
+        language: 'js-expression',
+        required: true,
+        options: ({ space, kapp, values, profile }) =>
+          buildCodeEditorBindings({
+            identity: profile && {
+              attributeDefinitions: space?.get('userAttributeDefinitions'),
+              profileAttributeDefinitions: space?.get(
+                'userProfileAttributeDefinitions',
+              ),
+            },
+            space: {
+              attributeDefinitions: space?.get('spaceAttributeDefinitions'),
+            },
+            file: values.get('type') === 'File Resource' && {},
+            user: values.get('type') === 'User' && {
+              attributeDefinitions: space?.get('userAttributeDefinitions'),
+              profileAttributeDefinitions: space?.get(
+                'userProfileAttributeDefinitions',
+              ),
+            },
+            team: values.get('type') === 'Team' && {
+              attributeDefinitions: space?.get('teamAttributeDefinitions'),
+            },
+            kapp: ['Kapp', 'Form', 'Submission'].includes(
+              values.get('type'),
+            ) && {
+              attributeDefinitions: kapp?.get('kappAttributeDefinitions'),
+            },
+            form: ['Form', 'Submission'].includes(values.get('type')) && {
+              attributeDefinitions: kapp?.get('formAttributeDefinitions'),
+            },
+            submission: values.get('type') === 'Submission' && {
+              detailed: true,
+            },
+            values: values.get('type') === 'Submission' &&
+              kapp?.get('fields').size > 0 && { data: kapp.get('fields') },
+          }),
+        initialValue: securityPolicy ? securityPolicy.get('rule') : '',
+        helpText: `Expression to evaluate to true or false. Click the </> button to see available values scoped to this Kapp or Space.`,
+      },
+    ];
 
 export const SecurityDefinitionForm = generateForm({
   formOptions: ['kappSlug', 'securityPolicyName', 'securityPolicyType'],

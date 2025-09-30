@@ -12,11 +12,11 @@ export const {
   plural: {
     requiredOptions: [],
     url: () => '/fileResources',
-    transform: response => ({ fileResources: response.data.fileResources }),
+    transform: response => response.data,
   },
   singular: {
     requiredOptions: ['fileResourceSlug'],
     url: ({ fileResourceSlug }) => `/fileResources/${fileResourceSlug}`,
-    transform: response => ({ fileResource: response.data.fileResource }),
+    transform: response => response.data,
   },
 });

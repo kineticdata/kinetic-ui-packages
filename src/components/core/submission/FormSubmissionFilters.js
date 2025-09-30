@@ -56,105 +56,113 @@ const getOrderPartIndex = name => {
   return match && parseInt(match[1]);
 };
 
-const operatorChangeFn = i => ({ values }, { setValue }) => {
-  const value = values.get(`op${i}-operator`);
+const operatorChangeFn =
+  i =>
+  ({ values }, { setValue }) => {
+    const value = values.get(`op${i}-operator`);
 
-  // If the operator was set to '' and the first operand is set, clear it.
-  if (!value && values.get(`op${i}-operand1`)) {
-    setValue(`op${i}-operand1`, '');
-  }
-  // If the operator is not 'bt' and the second operand is set, clear it.
-  if (value !== 'between' && values.get(`op${i}-operand2`)) {
-    setValue(`op${i}-operand2`, '');
-  }
-  // If the operator is not 'in and the third operand is set, clear it.
-  if (value !== 'in' && !values.get(`op${i}-operand3`).isEmpty()) {
-    setValue(`op${i}-operand3`, List());
-  }
-};
+    // If the operator was set to '' and the first operand is set, clear it.
+    if (!value && values.get(`op${i}-operand1`)) {
+      setValue(`op${i}-operand1`, '');
+    }
+    // If the operator is not 'bt' and the second operand is set, clear it.
+    if (value !== 'between' && values.get(`op${i}-operand2`)) {
+      setValue(`op${i}-operand2`, '');
+    }
+    // If the operator is not 'in and the third operand is set, clear it.
+    if (value !== 'in' && !values.get(`op${i}-operand3`).isEmpty()) {
+      setValue(`op${i}-operand3`, List());
+    }
+  };
 
-const partChangeFn = i => ({ values }, { setValue }) => {
-  // If the operator was set to something besides 'eq' or 'in' clear any
-  // operators after this. Their change events will then fire and clear the
-  // corresponding operands.
-  values
-    .filter((value, name) => getPartIndex(name) > i)
-    .forEach((_value, name) => setValue(name, '', false));
-  setValue('range-part', '', false);
-  Range(0, MAX_PART_LENGTH).forEach(i =>
-    setValue(`orderby${i}-part`, '', false),
-  );
-};
-
-const orderChangeFn = i => ({ values }, { setValue }) => {
-  const value = values.get(`orderby${i}-part`);
-
-  if (!value || TIMELINES.includes(value)) {
+const partChangeFn =
+  i =>
+  ({ values }, { setValue }) => {
+    // If the operator was set to something besides 'eq' or 'in' clear any
+    // operators after this. Their change events will then fire and clear the
+    // corresponding operands.
     values
-      .filter((value, name) => getOrderPartIndex(name) > i)
+      .filter((value, name) => getPartIndex(name) > i)
       .forEach((_value, name) => setValue(name, '', false));
-  }
-};
+    setValue('range-part', '', false);
+    Range(0, MAX_PART_LENGTH).forEach(i =>
+      setValue(`orderby${i}-part`, '', false),
+    );
+  };
 
-const enabledFn = i => ({ values }) =>
-  Range(0, i, -1)
-    .map(i => values.get(`op${i}-part`))
-    .every(value => value);
+const orderChangeFn =
+  i =>
+  ({ values }, { setValue }) => {
+    const value = values.get(`orderby${i}-part`);
 
-const rangeVisibleFn = (operatorType, timeline = false) => ({
-  values,
-  indexDefinitions,
-}) => {
-  const usedFields = getUsedFields(values, -1, 'range');
-  const partsAvailable = availableParts(
-    values,
-    indexDefinitions,
-    usedFields,
-    'range',
-  );
+    if (!value || TIMELINES.includes(value)) {
+      values
+        .filter((value, name) => getOrderPartIndex(name) > i)
+        .forEach((_value, name) => setValue(name, '', false));
+    }
+  };
 
-  const isOperandValid = operatorType
-    ? !timeline
-      ? operatorType === 'between'
-        ? !TIMELINES.includes(values.get('range-part')) &&
-          values.get('range-operator') === 'between'
-        : !TIMELINES.includes(values.get('range-part'))
-      : operatorType === 'between'
-        ? TIMELINES.includes(values.get('range-part')) &&
-          values.get('range-operator') === 'between'
-        : TIMELINES.includes(values.get('range-part'))
-    : true;
+const enabledFn =
+  i =>
+  ({ values }) =>
+    Range(0, i, -1)
+      .map(i => values.get(`op${i}-part`))
+      .every(value => value);
 
-  return isOperandValid && partsAvailable.size > 0;
-};
-const visibleFn = (currentPart, i, operatorType) => ({
-  values,
-  indexDefinitions,
-}) => {
-  const hasRange = values.get('range-part') !== '';
-  const hasOrderBy =
-    Range(0, MAX_PART_LENGTH)
-      .map(i => values.get(`orderby${i}-part`))
-      .filter(v => v !== '')
-      .toList().size > 0;
-  const usedFields = getUsedFields(values, i, 'eq');
-  const partsAvailable = availableParts(
-    values,
-    indexDefinitions,
-    usedFields,
-    'eq',
-  );
+const rangeVisibleFn =
+  (operatorType, timeline = false) =>
+  ({ values, indexDefinitions }) => {
+    const usedFields = getUsedFields(values, -1, 'range');
+    const partsAvailable = availableParts(
+      values,
+      indexDefinitions,
+      usedFields,
+      'range',
+    );
 
-  // If this equality has this operator type selected.
-  if (operatorType) return values.get(`op${i}-operator`) === operatorType;
+    const isOperandValid = operatorType
+      ? !timeline
+        ? operatorType === 'between'
+          ? !TIMELINES.includes(values.get('range-part')) &&
+            values.get('range-operator') === 'between'
+          : !TIMELINES.includes(values.get('range-part'))
+        : operatorType === 'between'
+          ? TIMELINES.includes(values.get('range-part')) &&
+            values.get('range-operator') === 'between'
+          : TIMELINES.includes(values.get('range-part'))
+      : true;
 
-  // If there's a range value set and this equality is not.
-  if ((hasRange || hasOrderBy) && !values.get(`op${i}-part`)) return false;
+    return isOperandValid && partsAvailable.size > 0;
+  };
+const visibleFn =
+  (currentPart, i, operatorType) =>
+  ({ values, indexDefinitions }) => {
+    const hasRange = values.get('range-part') !== '';
+    const hasOrderBy =
+      Range(0, MAX_PART_LENGTH)
+        .map(i => values.get(`orderby${i}-part`))
+        .filter(v => v !== '')
+        .toList().size > 0;
+    const usedFields = getUsedFields(values, i, 'eq');
+    const partsAvailable = availableParts(
+      values,
+      indexDefinitions,
+      usedFields,
+      'eq',
+    );
 
-  // If it is the first equality or the previous equality has a value set and
-  // this equality has available options.
-  return (i === 0 || values.get(`op${i - 1}-part`)) && partsAvailable.size > 0;
-};
+    // If this equality has this operator type selected.
+    if (operatorType) return values.get(`op${i}-operator`) === operatorType;
+
+    // If there's a range value set and this equality is not.
+    if ((hasRange || hasOrderBy) && !values.get(`op${i}-part`)) return false;
+
+    // If it is the first equality or the previous equality has a value set and
+    // this equality has available options.
+    return (
+      (i === 0 || values.get(`op${i - 1}-part`)) && partsAvailable.size > 0
+    );
+  };
 
 const orderVisibleFn = partIndex => bindings => {
   const { values } = bindings;
@@ -252,11 +260,10 @@ const serializeQuery = ({ values }) => {
       }, defineKqlQuery())
       .end()(
       values
-        .map(
-          (v, k) =>
-            ['range-operand3', 'range-operand4'].includes(k) && v
-              ? moment(v).toISOString()
-              : v,
+        .map((v, k) =>
+          ['range-operand3', 'range-operand4'].includes(k) && v
+            ? moment(v).toISOString()
+            : v,
         )
         .toJS(),
     ),
@@ -268,134 +275,136 @@ const serializeQuery = ({ values }) => {
   };
 };
 
-export const filters = () => ({ form, indexDefinitions }) =>
-  form &&
-  indexDefinitions && [
-    ...Range(0, MAX_PART_LENGTH)
-      .flatMap(i => [
-        {
-          enabled: enabledFn(i),
-          name: `op${i}-part`,
-          type: 'select',
-          visible: visibleFn(`op${i}-part`, i),
-          onChange: partChangeFn(i),
-          options: availableOptions('eq', i),
-          transient: true,
-        },
-        {
-          enabled: enabledFn(i),
-          name: `op${i}-operator`,
-          type: 'select',
-          visible: visibleFn(`op${i}-part`, i),
-          onChange: operatorChangeFn(i),
-          options: [
-            { label: '=', value: 'equals' },
-            { label: 'in', value: 'in' },
-          ],
-          initialValue: 'equals',
-          transient: true,
-        },
+export const filters =
+  () =>
+  ({ form, indexDefinitions }) =>
+    form &&
+    indexDefinitions && [
+      ...Range(0, MAX_PART_LENGTH)
+        .flatMap(i => [
+          {
+            enabled: enabledFn(i),
+            name: `op${i}-part`,
+            type: 'select',
+            visible: visibleFn(`op${i}-part`, i),
+            onChange: partChangeFn(i),
+            options: availableOptions('eq', i),
+            transient: true,
+          },
+          {
+            enabled: enabledFn(i),
+            name: `op${i}-operator`,
+            type: 'select',
+            visible: visibleFn(`op${i}-part`, i),
+            onChange: operatorChangeFn(i),
+            options: [
+              { label: '=', value: 'equals' },
+              { label: 'in', value: 'in' },
+            ],
+            initialValue: 'equals',
+            transient: true,
+          },
 
-        {
-          enabled: enabledFn(i),
-          name: `op${i}-operand1`,
-          transient: true,
-          type: 'text',
-          visible: visibleFn(`op${i}-part`, i),
-        },
-        {
-          enabled: enabledFn(i),
-          name: `op${i}-operand2`,
-          transient: true,
-          type: 'text',
-          visible: visibleFn(`op${i}-part`, i, 'between'),
-        },
-        {
-          enabled: enabledFn(i),
-          name: `op${i}-operand3`,
-          transient: true,
-          type: 'text-multi',
-          visible: visibleFn(`op${i}-part`, i, 'in'),
-        },
-      ])
-      .toArray(),
-    {
-      name: 'range-part',
-      type: 'select',
-      visible: rangeVisibleFn(),
-      options: availableOptions('range'),
-      onChange: ({ values }, { setValue }) => {
-        // Recalculate order by.
-        const value = values.get('range-part');
+          {
+            enabled: enabledFn(i),
+            name: `op${i}-operand1`,
+            transient: true,
+            type: 'text',
+            visible: visibleFn(`op${i}-part`, i),
+          },
+          {
+            enabled: enabledFn(i),
+            name: `op${i}-operand2`,
+            transient: true,
+            type: 'text',
+            visible: visibleFn(`op${i}-part`, i, 'between'),
+          },
+          {
+            enabled: enabledFn(i),
+            name: `op${i}-operand3`,
+            transient: true,
+            type: 'text-multi',
+            visible: visibleFn(`op${i}-part`, i, 'in'),
+          },
+        ])
+        .toArray(),
+      {
+        name: 'range-part',
+        type: 'select',
+        visible: rangeVisibleFn(),
+        options: availableOptions('range'),
+        onChange: ({ values }, { setValue }) => {
+          // Recalculate order by.
+          const value = values.get('range-part');
 
-        // Clear out all of the order by values, range supersedes.
-        setValue('orderby0-part', value);
-        Range(1, MAX_PART_LENGTH).forEach(i =>
-          setValue(`orderby${i}-part`, ''),
-        );
+          // Clear out all of the order by values, range supersedes.
+          setValue('orderby0-part', value);
+          Range(1, MAX_PART_LENGTH).forEach(i =>
+            setValue(`orderby${i}-part`, ''),
+          );
+        },
+        transient: true,
       },
-      transient: true,
-    },
-    {
-      name: 'range-operator',
-      type: 'select',
-      visible: rangeVisibleFn(),
-      options: [
-        { label: '>', value: 'greaterThan' },
-        { label: '>=', value: 'greaterThanOrEquals' },
-        { label: '<', value: 'lessThan' },
-        { label: '<=', value: 'lessThanOrEquals' },
-        { label: 'between', value: 'between' },
-        { label: 'startsWith', value: 'startsWith' },
-      ],
-      transient: true,
-    },
-    {
-      name: 'range-operand1',
-      transient: true,
-      type: 'text',
-      visible: rangeVisibleFn('eq', false),
-    },
-    {
-      name: 'range-operand2',
-      transient: true,
-      type: 'text',
-      visible: rangeVisibleFn('between', false),
-    },
-    {
-      name: 'range-operand3',
-      transient: true,
-      type: 'datetime',
-      visible: rangeVisibleFn('eq', true),
-    },
-    {
-      name: 'range-operand4',
-      transient: true,
-      type: 'datetime',
-      visible: rangeVisibleFn('between', true),
-    },
-    {
-      name: 'orderDirection',
-      type: 'select',
-      options: [
-        { label: 'ASC', value: 'ASC' },
-        { label: 'DESC', value: 'DESC' },
-      ],
-      initialValue: 'DESC',
-      required: true,
-    },
-    ...Range(0, MAX_PART_LENGTH)
-      .flatMap(i => [
-        {
-          name: `orderby${i}-part`,
-          transient: true,
-          type: 'select',
-          onChange: orderChangeFn(i),
-          enabled: ({ values }) => !values.get('range-part'),
-          options: availableOptions('orderBy', i),
-          visible: orderVisibleFn(i),
-        },
-      ])
-      .toArray(),
-    { name: 'query', type: null, serialize: serializeQuery },
-  ];
+      {
+        name: 'range-operator',
+        type: 'select',
+        visible: rangeVisibleFn(),
+        options: [
+          { label: '>', value: 'greaterThan' },
+          { label: '>=', value: 'greaterThanOrEquals' },
+          { label: '<', value: 'lessThan' },
+          { label: '<=', value: 'lessThanOrEquals' },
+          { label: 'between', value: 'between' },
+          { label: 'startsWith', value: 'startsWith' },
+        ],
+        transient: true,
+      },
+      {
+        name: 'range-operand1',
+        transient: true,
+        type: 'text',
+        visible: rangeVisibleFn('eq', false),
+      },
+      {
+        name: 'range-operand2',
+        transient: true,
+        type: 'text',
+        visible: rangeVisibleFn('between', false),
+      },
+      {
+        name: 'range-operand3',
+        transient: true,
+        type: 'datetime',
+        visible: rangeVisibleFn('eq', true),
+      },
+      {
+        name: 'range-operand4',
+        transient: true,
+        type: 'datetime',
+        visible: rangeVisibleFn('between', true),
+      },
+      {
+        name: 'orderDirection',
+        type: 'select',
+        options: [
+          { label: 'ASC', value: 'ASC' },
+          { label: 'DESC', value: 'DESC' },
+        ],
+        initialValue: 'DESC',
+        required: true,
+      },
+      ...Range(0, MAX_PART_LENGTH)
+        .flatMap(i => [
+          {
+            name: `orderby${i}-part`,
+            transient: true,
+            type: 'select',
+            onChange: orderChangeFn(i),
+            enabled: ({ values }) => !values.get('range-part'),
+            options: availableOptions('orderBy', i),
+            visible: orderVisibleFn(i),
+          },
+        ])
+        .toArray(),
+      { name: 'query', type: null, serialize: serializeQuery },
+    ];

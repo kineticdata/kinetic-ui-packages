@@ -36,23 +36,23 @@ const dataSources = ({ modelName, qualificationName }) => ({
   },
 });
 
-const handleSubmit = ({ modelName, qualificationName }) => (
-  values,
-  { bridgeModel },
-) => {
-  const mappingName = bridgeModel.get('activeMappingName');
-  const name = values.get('name');
-  const resultType = values.get('resultType');
-  const query = values.get('query');
-  return (qualificationName
-    ? updateBridgeModelQualification
-    : createBridgeModelQualification)({
-    modelName,
-    qualificationName,
-    bridgeModelQualification: { name, resultType },
-  })
-    .then(
-      result =>
+const handleSubmit =
+  ({ modelName, qualificationName }) =>
+  (values, { bridgeModel }) => {
+    const mappingName = bridgeModel.get('activeMappingName');
+    const name = values.get('name');
+    const resultType = values.get('resultType');
+    const query = values.get('query');
+    return (
+      qualificationName
+        ? updateBridgeModelQualification
+        : createBridgeModelQualification
+    )({
+      modelName,
+      qualificationName,
+      bridgeModelQualification: { name, resultType },
+    })
+      .then(result =>
         result.error
           ? result
           : (qualificationName
@@ -71,64 +71,65 @@ const handleSubmit = ({ modelName, qualificationName }) => (
               }
               return result;
             }),
-    )
-    .then(({ bridgeModelQualificationMapping, error }) => {
-      if (error) {
-        throw (error.statusCode === 400 && error.message) ||
-          'There was an error saving the qualification';
-      }
-      return bridgeModelQualificationMapping;
-    });
-};
+      )
+      .then(({ bridgeModelQualificationMapping, error }) => {
+        if (error) {
+          throw (
+            (error.statusCode === 400 && error.message) ||
+            'There was an error saving the qualification'
+          );
+        }
+        return bridgeModelQualificationMapping;
+      });
+  };
 
-const fields = ({ modelName, qualificationName }) => ({
-  bridgeModelQualification,
-  bridgeModelQualificationMapping,
-}) =>
-  (!qualificationName ||
-    (bridgeModelQualification && bridgeModelQualificationMapping)) && [
-    {
-      name: 'name',
-      label: 'Name',
-      type: 'text',
-      required: true,
-      initialValue: bridgeModelQualification
-        ? bridgeModelQualification.get('name')
-        : '',
-    },
-    {
-      name: 'resultType',
-      label: 'Result Type',
-      type: 'select',
-      required: true,
-      initialValue: bridgeModelQualification
-        ? bridgeModelQualification.get('resultType')
-        : '',
-      options: [
-        { label: 'Single', value: 'Single' },
-        { label: 'Multiple', value: 'Multiple' },
-      ],
-    },
-    {
-      name: 'query',
-      label: 'Query',
-      type: 'code',
-      language: 'text',
-      required: false,
-      initialValue:
-        (bridgeModelQualificationMapping &&
-          bridgeModelQualificationMapping.get('query')) ||
-        '',
-      options: [
-        {
-          label: 'parameters',
-          type: 'function',
-          quoteType: 'double',
-          detail: 'Add Parameter',
-        },
-      ],
-    },
-  ];
+const fields =
+  ({ modelName, qualificationName }) =>
+  ({ bridgeModelQualification, bridgeModelQualificationMapping }) =>
+    (!qualificationName ||
+      (bridgeModelQualification && bridgeModelQualificationMapping)) && [
+      {
+        name: 'name',
+        label: 'Name',
+        type: 'text',
+        required: true,
+        initialValue: bridgeModelQualification
+          ? bridgeModelQualification.get('name')
+          : '',
+      },
+      {
+        name: 'resultType',
+        label: 'Result Type',
+        type: 'select',
+        required: true,
+        initialValue: bridgeModelQualification
+          ? bridgeModelQualification.get('resultType')
+          : '',
+        options: [
+          { label: 'Single', value: 'Single' },
+          { label: 'Multiple', value: 'Multiple' },
+        ],
+      },
+      {
+        name: 'query',
+        label: 'Query',
+        type: 'code',
+        language: 'text',
+        required: false,
+        initialValue:
+          (bridgeModelQualificationMapping &&
+            bridgeModelQualificationMapping.get('query')) ||
+          '',
+        options: [
+          {
+            label: 'parameters',
+            type: 'function',
+            quoteType: 'double',
+            detail: 'Add Parameter',
+          },
+        ],
+      },
+    ];
 
 export const BridgeModelQualificationForm = generateForm({
   formOptions: ['modelName', 'qualificationName'],

@@ -21,8 +21,6 @@ import {
   NEW_TASK_DY,
 } from './constants';
 
-export const isIE11 = document.documentMode === 11;
-
 export const getRectIntersections = ({
   dragging,
   head,
@@ -48,9 +46,12 @@ export const getRectIntersections = ({
   const tailShape = getNodeShape(tailType, tail);
   const headIntersection = Intersection.intersect(headShape, line).points[0];
   const tailIntersection = Intersection.intersect(tailShape, line).points[0];
+  const nodeIntersection = Intersection.intersect(headShape, tailShape);
   return [
     dragging === 'tail' ? tail : tailIntersection || tailCenter,
     dragging === 'head' ? head : headIntersection || headCenter,
+    // Return a boolean for whether the two nodes overlap
+    dragging ? false : nodeIntersection?.points?.length > 0,
   ];
 };
 
@@ -160,7 +161,7 @@ const flattenBindings = data =>
 
 // Parses each flattened bindings string to an array of its parts
 const parseBinding = (binding, parsedSoFar) => {
-  const match = binding?.match(/^(?:(@\w+)|\[\'((?:\w|\s|-)+)\'\])(.*)$/i);
+  const match = binding?.match(/^(?:(@\w+)|\[\'(.+?)\'\])(.*)$/i);
   if (match) {
     const parsedNext = [...(parsedSoFar || []), match[1] || match[2]].filter(
       Boolean,
@@ -190,11 +191,10 @@ const groupBindings = flatBindings =>
 // code editor
 const finalizeBindings = bindingsMap =>
   bindingsMap
-    .map(
-      (children, label) =>
-        !!children
-          ? Map({ label, type: 'object', children: finalizeBindings(children) })
-          : Map({ label }),
+    .map((children, label) =>
+      !!children
+        ? Map({ label, type: 'object', children: finalizeBindings(children) })
+        : Map({ label }),
     )
     .toList();
 
@@ -324,15 +324,23 @@ const addNewTaskNext = ({
       if (
         node.definitionId.startsWith(`${ADVANCED_HANDLER_NAME_INTEGRATION}_v`)
       ) {
-        const operationId = node.parameters.find(p => p.id === 'operation')
-          ?.value;
+        const operationId = node.parameters.find(
+          p => p.id === 'operation',
+        )?.value;
         if (operationId) {
           dispatch('TREE_LOAD_OPERATIONS', {
             treeKey,
-            operationIds: [operationId],
+            operations: [
+              {
+                id: operationId,
+                connectionId: node.parameters.find(p => p.id === 'connection')
+                  ?.value,
+              },
+            ],
           });
         }
       }
+
       return dispatch('TREE_UPDATE', {
         treeKey,
         tree: stagedTree
@@ -426,18 +434,20 @@ export const replace = (dependency, newName) => value =>
   newName +
   value.slice(dependency.index + dependency.name.length);
 
-export const renameDependencies = (dependencies = List(), newName) => tree =>
-  dependencies
-    // sort the dependencies by index and reverse so that replacements made in
-    // the same value will not affect each other (renaming Fooo to Foo would
-    // change the index of following dependencies)
-    .sortBy(dep => dep.index)
-    .reverse()
-    .reduce(
-      (tree, dependency) =>
-        tree.updateIn(dependency.context, replace(dependency, newName)),
-      tree,
-    );
+export const renameDependencies =
+  (dependencies = List(), newName) =>
+  tree =>
+    dependencies
+      // sort the dependencies by index and reverse so that replacements made in
+      // the same value will not affect each other (renaming Fooo to Foo would
+      // change the index of following dependencies)
+      .sortBy(dep => dep.index)
+      .reverse()
+      .reduce(
+        (tree, dependency) =>
+          tree.updateIn(dependency.context, replace(dependency, newName)),
+        tree,
+      );
 
 // routines have `inputs` and handlers have `parameters` with slightly different
 // properties so this is a helper function to take one or the other and return
@@ -502,13 +512,12 @@ export const generateSubmissionCreateTaskDefinition = (task, { form }) => ({
     ...task.parameters
       // Remove previous form's field parameters
       .filter(parameter => !parameter.id.startsWith('values.'))
-      .map(
-        parameter =>
-          parameter.id === 'kappSlug'
-            ? { ...parameter, defaultValue: form?.kapp?.slug }
-            : parameter.id === 'formSlug'
-              ? { ...parameter, defaultValue: form?.slug }
-              : parameter,
+      .map(parameter =>
+        parameter.id === 'kappSlug'
+          ? { ...parameter, defaultValue: form?.kapp?.slug }
+          : parameter.id === 'formSlug'
+            ? { ...parameter, defaultValue: form?.slug }
+            : parameter,
       ),
     ...form?.fields?.map(field => ({
       name: field.name,
@@ -531,13 +540,12 @@ export const generateIntegrationTaskDefinition = (
     ...task.parameters
       // Remove previous operation's parameters
       .filter(parameter => !parameter.id.startsWith('parameters.'))
-      .map(
-        parameter =>
-          parameter.id === 'connection'
-            ? { ...parameter, defaultValue: connection.id }
-            : parameter.id === 'operation'
-              ? { ...parameter, defaultValue: operation.id }
-              : parameter,
+      .map(parameter =>
+        parameter.id === 'connection'
+          ? { ...parameter, defaultValue: connection.id }
+          : parameter.id === 'operation'
+            ? { ...parameter, defaultValue: operation.id }
+            : parameter,
       ),
     ...detectedInputs.map(input => ({
       name: input,
@@ -563,4 +571,26 @@ export const checkOmittedParametersForAdvancedHandlers = (node, parameter) => {
   } else {
     return true;
   }
+};
+
+export const isNodeMissingIntegration = (node, connections) => {
+  // Only check integration data if the node is an integration node
+  if (node.definitionId.startsWith(`${ADVANCED_HANDLER_NAME_INTEGRATION}_v`)) {
+    // If connection doesn't exist in the list, return true
+    if (
+      connections &&
+      !connections.has(node.parameters.find(p => p.id === 'connection')?.value)
+    ) {
+      return true;
+    }
+    // If operation is null, return true. Undefined is fine because it means
+    // the data has not yet been fetched, so we don't want to error yet.
+    const operation = connections?.getIn([
+      node.parameters.find(p => p.id === 'connection')?.value,
+      'operations',
+      node.parameters.find(p => p.id === 'operation')?.value,
+    ]);
+    return operation === null;
+  }
+  return false;
 };

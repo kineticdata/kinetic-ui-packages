@@ -30,89 +30,91 @@ const correctRenderValue = (
 const convertFieldsToMap = fields =>
   OrderedMap(fields.filter(Boolean).map(field => [field.name, field]));
 
-export const createFieldState = formKey => ({
-  bindings,
-  constraint,
-  constraintMessage,
-  enabled,
-  form,
-  helpText,
-  label,
-  language,
-  name,
-  onFocus,
-  onChange,
-  onBlur,
-  options,
-  pattern,
-  patternMessage,
-  placeholder,
-  renderAttributes,
-  required,
-  requiredMessage,
-  search,
-  serialize,
-  transient,
-  type,
-  visible,
-}) =>
-  SimpleFieldState({
-    // Derived options
-    id: btoa(`${formKey} ${name}`).replace(/=+$/, ''),
-    renderAttributes: fromJS(renderAttributes),
-    // Options supporting conditional expressions,
-    enabled: typeof enabled === 'function' ? false : enabled,
-    label: typeof label === 'function' ? '' : label,
-    options: typeof options === 'function' ? List() : fromJS(options),
-    placeholder: typeof placeholder === 'function' ? '' : placeholder,
-    required: typeof required === 'function' ? false : required,
-    search: typeof search === 'function' ? Map() : fromJS(search),
-    transient: typeof transient === 'function' ? false : transient,
-    visible: typeof visible === 'function' ? false : visible,
-    language: typeof language === 'function' ? null : language,
-    bindings: typeof bindings === 'function' ? null : bindings,
-    functions: Map({
-      enabled: typeof enabled === 'function' ? enabled : null,
-      label: typeof label === 'function' ? label : null,
-      options: typeof options === 'function' ? options : null,
-      placeholder: typeof placeholder === 'function' ? placeholder : null,
-      required: typeof required === 'function' ? required : null,
-      search: typeof search === 'function' ? search : null,
-      transient: typeof transient === 'function' ? transient : null,
-      visible: typeof visible === 'function' ? visible : null,
-      language: typeof language === 'function' ? language : null,
-      bindings: typeof bindings === 'function' ? bindings : null,
-    }),
-    // Event handlers
-    eventHandlers: Map({
-      onBlur: null,
-      onChange: null,
-      onFocus: null,
-    }),
-    eventHandlerFunctions: Map({
-      onBlur: onBlurHandler({ formKey, name }),
-      onChange: onChangeHandler({
-        formKey,
-        type,
-        name,
-      }),
-      onFocus: onFocusHandler({ formKey, name }),
-    }),
-    // Pass-through options
+export const createFieldState =
+  formKey =>
+  ({
+    bindings,
     constraint,
     constraintMessage,
+    enabled,
     form,
     helpText,
+    label,
+    language,
     name,
     onFocus,
     onChange,
     onBlur,
+    options,
     pattern,
     patternMessage,
+    placeholder,
+    renderAttributes,
+    required,
     requiredMessage,
+    search,
     serialize,
+    transient,
     type,
-  });
+    visible,
+  }) =>
+    SimpleFieldState({
+      // Derived options
+      id: btoa(`${formKey} ${name}`).replace(/=+$/, ''),
+      renderAttributes: fromJS(renderAttributes),
+      // Options supporting conditional expressions,
+      enabled: typeof enabled === 'function' ? false : enabled,
+      label: typeof label === 'function' ? '' : label,
+      options: typeof options === 'function' ? List() : fromJS(options),
+      placeholder: typeof placeholder === 'function' ? '' : placeholder,
+      required: typeof required === 'function' ? false : required,
+      search: typeof search === 'function' ? Map() : fromJS(search),
+      transient: typeof transient === 'function' ? false : transient,
+      visible: typeof visible === 'function' ? false : visible,
+      language: typeof language === 'function' ? null : language,
+      bindings: typeof bindings === 'function' ? null : bindings,
+      functions: Map({
+        enabled: typeof enabled === 'function' ? enabled : null,
+        label: typeof label === 'function' ? label : null,
+        options: typeof options === 'function' ? options : null,
+        placeholder: typeof placeholder === 'function' ? placeholder : null,
+        required: typeof required === 'function' ? required : null,
+        search: typeof search === 'function' ? search : null,
+        transient: typeof transient === 'function' ? transient : null,
+        visible: typeof visible === 'function' ? visible : null,
+        language: typeof language === 'function' ? language : null,
+        bindings: typeof bindings === 'function' ? bindings : null,
+      }),
+      // Event handlers
+      eventHandlers: Map({
+        onBlur: null,
+        onChange: null,
+        onFocus: null,
+      }),
+      eventHandlerFunctions: Map({
+        onBlur: onBlurHandler({ formKey, name }),
+        onChange: onChangeHandler({
+          formKey,
+          type,
+          name,
+        }),
+        onFocus: onFocusHandler({ formKey, name }),
+      }),
+      // Pass-through options
+      constraint,
+      constraintMessage,
+      form,
+      helpText,
+      name,
+      onFocus,
+      onChange,
+      onBlur,
+      pattern,
+      patternMessage,
+      requiredMessage,
+      serialize,
+      type,
+    });
 
 export const createFormState = ({
   fields,
@@ -177,23 +179,21 @@ const checkConstraint = bindings => field => {
 };
 
 // Validate the field
-const validateField = (bindings, validateOnLoad = false) => (
-  field,
-  name,
-  fields,
-) => {
-  const errors = List([
-    checkRequired,
-    checkPattern({ ...bindings, fields: fields.map(SimpleFieldBinding) }),
-    checkConstraint({ ...bindings, fields: fields.map(SimpleFieldBinding) }),
-  ]).flatMap(fn => fn(field));
-  return field.set('errors', errors).update(
-    'touched',
-    // Set touched to true if there are errors and the validateOnLoad flag is
-    // true to allow for showing errors on load of the form
-    touched => (errors.isEmpty() ? touched : touched || validateOnLoad),
-  );
-};
+const validateField =
+  (bindings, validateOnLoad = false) =>
+  (field, name, fields) => {
+    const errors = List([
+      checkRequired,
+      checkPattern({ ...bindings, fields: fields.map(SimpleFieldBinding) }),
+      checkConstraint({ ...bindings, fields: fields.map(SimpleFieldBinding) }),
+    ]).flatMap(fn => fn(field));
+    return field.set('errors', errors).update(
+      'touched',
+      // Set touched to true if there are errors and the validateOnLoad flag is
+      // true to allow for showing errors on load of the form
+      touched => (errors.isEmpty() ? touched : touched || validateOnLoad),
+    );
+  };
 
 // Resolve function props of the field
 const evaluateFieldProps = bindings => (field, name, fields) =>

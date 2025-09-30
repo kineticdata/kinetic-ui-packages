@@ -36,38 +36,40 @@ const filterDataSources = ({ kappSlug }) => ({
   },
 });
 
-const filters = () => ({ events, values }) =>
-  events && [
-    { name: 'name', label: 'Name', type: 'text' },
-    {
-      name: 'type',
-      label: 'Type',
-      type: 'select',
-      options: ({ events }) =>
-        events
-          ? events
-              .keySeq()
-              .sort()
-              .map(type => Map({ label: type, value: type }))
-          : List(),
-      onChange: ({ values }, { setValue }) => {
-        if (values.get('event')) {
-          setValue('event', '');
-        }
+const filters =
+  () =>
+  ({ events, values }) =>
+    events && [
+      { name: 'name', label: 'Name', type: 'text' },
+      {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        options: ({ events }) =>
+          events
+            ? events
+                .keySeq()
+                .sort()
+                .map(type => Map({ label: type, value: type }))
+            : List(),
+        onChange: ({ values }, { setValue }) => {
+          if (values.get('event')) {
+            setValue('event', '');
+          }
+        },
       },
-    },
-    {
-      name: 'event',
-      label: 'Event',
-      type: 'select',
-      options: ({ values, events }) =>
-        values && events
-          ? events
-              .get(values.get('type'), List())
-              .map(event => Map({ label: event, value: event }))
-          : List(),
-    },
-  ];
+      {
+        name: 'event',
+        label: 'Event',
+        type: 'select',
+        options: ({ values, events }) =>
+          values && events
+            ? events
+                .get(values.get('type'), List())
+                .map(event => Map({ label: event, value: event }))
+            : List(),
+      },
+    ];
 
 const columns = [
   {

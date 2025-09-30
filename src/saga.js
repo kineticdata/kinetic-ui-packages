@@ -5,11 +5,11 @@ import { IO } from '@redux-saga/symbols';
 // The list of saga effects that we support using as a single argument to the
 // regSaga function.
 const supportedEffects = [
-  effects.takeEvery('NOOP', function*() {}).payload.fn,
-  effects.takeLatest('NOOP', function*() {}).payload.fn,
-  effects.takeLeading('NOOP', function*() {}).payload.fn,
-  effects.throttle(0, 'NOOP', function*() {}).payload.fn,
-  effects.debounce(0, 'NOOP', function*() {}).payload.fn,
+  effects.takeEvery('NOOP', function* () {}).payload.fn,
+  effects.takeLatest('NOOP', function* () {}).payload.fn,
+  effects.takeLeading('NOOP', function* () {}).payload.fn,
+  effects.throttle(0, 'NOOP', function* () {}).payload.fn,
+  effects.debounce(0, 'NOOP', function* () {}).payload.fn,
 ];
 
 const parseSagaEffect = sagaEffect => {
@@ -54,7 +54,7 @@ export const regSaga = (arg0, arg1) => {
     generatorFns[arg0] = arg1;
   } else {
     const { name, genFn } = parseSagaEffect(arg0);
-    pendingTasks[name] = function*() {
+    pendingTasks[name] = function* () {
       yield arg0;
     };
     generatorFns[name] = genFn;

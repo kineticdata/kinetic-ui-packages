@@ -213,10 +213,7 @@ export class CodeInput extends Component {
     if (
       this.props.value !== prevProps.value &&
       this.props.value !==
-        this.state.editorState
-          .getCurrentContent()
-          .getFirstBlock()
-          .getText()
+        this.state.editorState.getCurrentContent().getFirstBlock().getText()
     ) {
       this.onChange(
         EditorState.push(
@@ -249,14 +246,8 @@ export class CodeInput extends Component {
     );
     const entities = getEntities(nextEditorState);
     const valueChanged =
-      this.state.editorState
-        .getCurrentContent()
-        .getFirstBlock()
-        .getText() !==
-      nextEditorState
-        .getCurrentContent()
-        .getFirstBlock()
-        .getText();
+      this.state.editorState.getCurrentContent().getFirstBlock().getText() !==
+      nextEditorState.getCurrentContent().getFirstBlock().getText();
     this.setState(
       {
         editorState: nextEditorState,
@@ -266,10 +257,7 @@ export class CodeInput extends Component {
       () => {
         if (valueChanged && typeof this.props.onChange === 'function') {
           this.props.onChange(
-            nextEditorState
-              .getCurrentContent()
-              .getFirstBlock()
-              .getText(),
+            nextEditorState.getCurrentContent().getFirstBlock().getText(),
           );
         }
       },
@@ -310,9 +298,8 @@ export class CodeInput extends Component {
       );
     }
     if (command === 'select-typeahead-option') {
-      const { options, active } = getEntities(
-        this.state.editorState,
-      ).last().data;
+      const { options, active } = getEntities(this.state.editorState).last()
+        .data;
       const activeOption = options.get(active);
       if (activeOption) {
         const { label, value, selection } = activeOption;

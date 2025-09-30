@@ -8,12 +8,12 @@ const STATUS_OPTIONS = ['Active', 'Inactive', 'Paused'].map(v => ({
 }));
 
 const clientSide = defineFilter(true)
-  .equals('name', 'name')
+  // .equals('name', 'name')
   .startsWith('name', 'nameFragment')
   .equals('sourceName', 'source')
-  .equals('sourceGroup', 'sourceGroup')
+  // .equals('sourceGroup', 'sourceGroup')
   .startsWith('sourceGroup', 'sourceGroupFragment')
-  .startsWith('ownerEmail', 'ownerEmail')
+  // .startsWith('ownerEmail', 'ownerEmail')
   .equals('status', 'status')
   .end();
 
@@ -51,33 +51,42 @@ const filterDataSources = () => ({
     fn: fetchSources,
     params: [],
     transform: result =>
-      result.sources.filter(s => s.name !== '-').map(s => ({
-        label: s.name,
-        value: s.name,
-      })),
+      result.sources
+        .filter(s => s.name !== '-')
+        .map(s => ({
+          label: s.name,
+          value: s.name,
+        })),
   },
 });
 
-const filters = () => ({ sourceTypes }) =>
-  sourceTypes && [
-    { name: 'name', label: 'Name', type: 'text' },
-    { name: 'nameFragment', label: 'Name', type: 'text' },
-    {
-      name: 'sourceName',
-      label: 'Source Name',
-      type: 'select',
-      options: sourceTypes,
-    },
-    { name: 'sourceGroup', label: 'Source Group', type: 'text' },
-    { name: 'sourceGroupFragment', label: 'Source Group', type: 'text' },
-    { name: 'ownerEmail', label: 'Owner Email', type: 'text' },
-    {
-      name: 'status',
-      label: 'Status',
-      type: 'select',
-      options: STATUS_OPTIONS,
-    },
-  ];
+const filters =
+  ({ workflowType }) =>
+  ({ sourceTypes }) =>
+    sourceTypes &&
+    [
+      // { name: 'name', label: 'Name', type: 'text' },
+      { name: 'nameFragment', label: 'Name', type: 'text' },
+      // { name: 'sourceGroup', label: 'Source Group', type: 'text' },
+      workflowType === 'Tree' && {
+        name: 'sourceGroupFragment',
+        label: 'Source Group',
+        type: 'text',
+      },
+      workflowType === 'Tree' && {
+        name: 'sourceName',
+        label: 'Source Name',
+        type: 'select',
+        options: sourceTypes,
+      },
+      // { name: 'ownerEmail', label: 'Owner Email', type: 'text' },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'select',
+        options: STATUS_OPTIONS,
+      },
+    ].filter(Boolean);
 
 const columns = [
   {

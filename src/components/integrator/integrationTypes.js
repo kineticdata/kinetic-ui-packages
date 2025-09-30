@@ -3,7 +3,8 @@ import { getIn } from 'immutable';
 export const integrationTypes = [
   { label: 'HTTP', value: 'http' },
   // { label: 'SMTP', value: 'smtp' },
-  // { label: 'SQL', value: 'sql' },
+  { label: 'PostgreSQL', value: 'postgres', group: 'sql', groupLabel: 'SQL' },
+  { label: 'SQL Server', value: 'mssql', group: 'sql', groupLabel: 'SQL' },
 ];
 
 // Helper function for getting the label for a given type value
@@ -20,6 +21,7 @@ export const getConnectionMetadata = connection => {
       return {
         // Details content to render for each option in a list of connections
         optionDetail: getIn(connection, ['config', 'baseUrl']),
+        optionDetailLabel: 'Base URL',
         // Documentation link
         docsLink: getIn(connection, ['documentationLink']),
         // Properties to list in page/modal headings
@@ -33,7 +35,7 @@ export const getConnectionMetadata = connection => {
             value:
               {
                 basic: 'Basic',
-                client_credentials: 'Client Credentials',
+                client_credentials: 'OAuth 2.0',
                 http_bearer_token: 'HTTP Bearer Token',
                 raw_bearer_token: 'Raw Bearer Token',
               }[getIn(connection, ['config', 'auth', 'authType'])] || 'None',
@@ -41,7 +43,7 @@ export const getConnectionMetadata = connection => {
         ].filter(o => o.value),
         // Table columns for the operations table of this type of connection.
         // Objects define columns to add, and strings define default columns to
-        // show. The order of the items is defines the order of the columns.
+        // show. The order of the items defines the order of the columns.
         operationColumns: [
           {
             value: 'method',
@@ -54,6 +56,8 @@ export const getConnectionMetadata = connection => {
           'actions',
         ],
       };
+    case 'postgres':
+    case 'mssql':
     default:
       return {
         headingData: [],
@@ -70,6 +74,8 @@ export const getOperationMetadata = operation => {
       return {
         // Details content to render for each option in a list of operations
         optionDetail: getIn(operation, ['config', 'method']),
+        optionDetailLabel: 'Method',
+        optionDetailComponent: HTTPMethod,
         // Documentation link
         docsLink: getIn(operation, ['documentationLink']),
         // Properties to list in page/modal headings
@@ -84,6 +90,8 @@ export const getOperationMetadata = operation => {
           },
         ].filter(o => o.value),
       };
+    case 'postgres':
+    case 'mssql':
     default:
       return { headingData: [] };
   }
@@ -93,4 +101,7 @@ const HTTPMethodCell = ({ row }) => (
   <td>
     <span className="badge badge-info">{row.getIn(['config', 'method'])}</span>
   </td>
+);
+const HTTPMethod = ({ value }) => (
+  <span className="badge badge-info">{value}</span>
 );

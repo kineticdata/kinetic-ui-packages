@@ -6,6 +6,19 @@ When upgrading `@kineticdata/react` to a newer version, remember that all `@kine
 
 Remember to always run `yarn install` after upgrading any dependency versions.
 
+## 6.1.1 (September 16, 2025)
+
+- Updated auth code to auto-retry fetching the JWT token when a timeout occurs. This will seamlessly refetch the JWT token when it expires without the session expiring.  
+- Upgraded `axios` and `prismjs` versions to resolve vulnerabilities
+- Added new API functions for Connections
+  - `restartConnection`, `exportConnection`, `importConnection`
+- Added new API functions for Operations
+  - `transformOutputs`, `importOperations`
+- Added new API functions for Submission Activities
+  - `fetchSubmissionActivities`, `fetchSubmissionActivity`, `createSubmissionActivity`, `updateSubmissionActivity`, `deleteSubmissionActivity`
+- Added new API functions for WebAPIs
+  - `exportWebApi`, `importWebApi`
+
 ## 6.1.0 (February 7, 2025)
 
 - Upgraded `axios` version to resolve vulnerabilities

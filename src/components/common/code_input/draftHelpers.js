@@ -140,8 +140,8 @@ export const closeTypeahead = editorState => {
     entities.size === 1
       ? entities.first().text
       : entities.size === 2
-      ? `${entities.first().text}${entities.last().text}`
-      : '';
+        ? `${entities.first().text}${entities.last().text}`
+        : '';
   return apply(
     editorState,
     select({ anchor: start, focus: end }),
@@ -156,16 +156,16 @@ export const selectTypeaheadItem = self => (label, value, selection) => () => {
     self.props.language === 'js-template'
       ? `\${${value}}`
       : self.props.language === 'erb'
-      ? `<%= ${value} %>`
-      : value;
+        ? `<%= ${value} %>`
+        : value;
   // when a selection is passed with a value we need to accommodate for the
   // number of characters we add when we wrap the value
   const templateOffset =
     self.props.language === 'js-template'
       ? 2
       : self.props.language === 'erb'
-      ? 4
-      : 0;
+        ? 4
+        : 0;
 
   const entities = getEntities(self.state.editorState);
   if (!value) {
@@ -248,90 +248,86 @@ export const apply = (editorState, ...operations) =>
     .filter(op => !!op)
     .reduce((reduction, op) => op(reduction), editorState);
 
-export const select = ({ anchor, focus }) => editorState => {
-  const selection0 = editorState.getSelection();
-  const selection1 = selection0.set(
-    'anchorOffset',
-    typeof anchor === 'number'
-      ? anchor
-      : typeof anchor === 'function'
-      ? anchor(selection0.getAnchorOffset())
-      : selection0.getAnchorOffset(),
-  );
-  const selection2 = selection1.set(
-    'focusOffset',
-    typeof focus === 'number'
-      ? focus
-      : typeof focus === 'function'
-      ? focus(selection1.getFocusOffset())
-      : selection1.getFocusOffset(),
-  );
-  return EditorState.forceSelection(editorState, selection2);
-};
+export const select =
+  ({ anchor, focus }) =>
+  editorState => {
+    const selection0 = editorState.getSelection();
+    const selection1 = selection0.set(
+      'anchorOffset',
+      typeof anchor === 'number'
+        ? anchor
+        : typeof anchor === 'function'
+          ? anchor(selection0.getAnchorOffset())
+          : selection0.getAnchorOffset(),
+    );
+    const selection2 = selection1.set(
+      'focusOffset',
+      typeof focus === 'number'
+        ? focus
+        : typeof focus === 'function'
+          ? focus(selection1.getFocusOffset())
+          : selection1.getFocusOffset(),
+    );
+    return EditorState.forceSelection(editorState, selection2);
+  };
 
-export const insertText = ({ text, entity }) => editorState => {
-  const modifier = editorState.getSelection().isCollapsed()
-    ? Modifier.insertText
-    : Modifier.replaceText;
-  const contentState0 = editorState.getCurrentContent();
-  const contentState1 = entity
-    ? contentState0.createEntity(entity.type, entity.mutability, entity.data)
-    : contentState0;
-  const contentState2 = modifier(
-    contentState1,
-    editorState.getSelection(),
-    text,
-    null,
-    entity ? contentState1.getLastCreatedEntityKey() : null,
-  );
-  return EditorState.push(
-    editorState,
-    contentState2,
-    'insert-characters',
-    true,
-  );
-};
+export const insertText =
+  ({ text, entity }) =>
+  editorState => {
+    const modifier = editorState.getSelection().isCollapsed()
+      ? Modifier.insertText
+      : Modifier.replaceText;
+    const contentState0 = editorState.getCurrentContent();
+    const contentState1 = entity
+      ? contentState0.createEntity(entity.type, entity.mutability, entity.data)
+      : contentState0;
+    const contentState2 = modifier(
+      contentState1,
+      editorState.getSelection(),
+      text,
+      null,
+      entity ? contentState1.getLastCreatedEntityKey() : null,
+    );
+    return EditorState.push(
+      editorState,
+      contentState2,
+      'insert-characters',
+      true,
+    );
+  };
 
-export const applyEntity = ({
-  data,
-  end,
-  key,
-  mutability,
-  start,
-  type,
-}) => editorState => {
-  const contentState0 = editorState.getCurrentContent();
-  const contentState1 = key
-    ? contentState0
-    : contentState0.createEntity(type, mutability, data);
-  const entityKey = key || contentState1.getLastCreatedEntityKey();
-  const selection = editorState
-    .getSelection()
-    .set('anchorOffset', start)
-    .set('focusOffset', end);
-  const contentState2 = Modifier.applyEntity(
-    contentState1,
-    selection,
-    entityKey,
-  );
-  return EditorState.forceSelection(
-    EditorState.push(editorState, contentState2, 'apply-entity'),
-    editorState.getSelection(),
-  );
-};
+export const applyEntity =
+  ({ data, end, key, mutability, start, type }) =>
+  editorState => {
+    const contentState0 = editorState.getCurrentContent();
+    const contentState1 = key
+      ? contentState0
+      : contentState0.createEntity(type, mutability, data);
+    const entityKey = key || contentState1.getLastCreatedEntityKey();
+    const selection = editorState
+      .getSelection()
+      .set('anchorOffset', start)
+      .set('focusOffset', end);
+    const contentState2 = Modifier.applyEntity(
+      contentState1,
+      selection,
+      entityKey,
+    );
+    return EditorState.forceSelection(
+      EditorState.push(editorState, contentState2, 'apply-entity'),
+      editorState.getSelection(),
+    );
+  };
 
-export const findByEntityType = type => (
-  contentBlock,
-  callback,
-  contentState,
-) =>
-  contentBlock.findEntityRanges(
-    char =>
-      char.getEntity()
-        ? contentState.getEntity(char.getEntity()).getType() === type
-        : false,
-    callback,
-  );
+export const findByEntityType =
+  type => (contentBlock, callback, contentState) =>
+    contentBlock.findEntityRanges(
+      char =>
+        char.getEntity()
+          ? contentState.getEntity(char.getEntity()).getType() === type
+          : false,
+      callback,
+    );
 
 export const getCurrentIndentation = (newLine, editorState) => {
   const text = editorState

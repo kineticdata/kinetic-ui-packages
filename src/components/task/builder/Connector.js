@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { is } from 'immutable';
 import { dispatch } from '../../../store';
 import * as constants from './constants';
-import { getNodeType, getRectIntersections, isIE11 } from './helpers';
+import { getNodeType, getRectIntersections } from './helpers';
 import { SvgText } from './SvgText';
 import filter from '../../../../assets/task/icons/filter.svg';
 import { isNumber } from 'lodash-es';
@@ -172,49 +172,43 @@ export class Connector extends Component {
 
   draw = () => {
     this.connector.current.parentElement.style.display = '';
-    const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = getRectIntersections(this);
+    const [{ x: x1, y: y1 }, { x: x2, y: y2 }, nodesOverlap] =
+      getRectIntersections(this);
     const dx = x2 - x1;
     const dy = y2 - y1;
     const length = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
     const angle = (Math.atan2(dy, dx) * 180) / Math.PI + 180;
-    const connectorValue = isIE11
-      ? `translate(${x2} ${y2}) rotate(${angle})`
-      : `translate(${x2}px, ${y2}px) rotate(${angle}deg)`;
-    const connectorLabelValue = isIE11
-      ? `translate(${x1 + dx / 2} ${y1 + dy / 2})`
-      : `translate(${x1 + dx / 2}px, ${y1 + dy / 2}px)`;
+    const connectorValue = `translate(${x2}px, ${y2}px) rotate(${angle}deg)`;
+    const connectorLabelValue = `translate(${x1 + dx / 2}px, ${y1 + dy / 2}px)`;
 
-    if (isIE11) {
-      this.connector.current.transform = connectorValue;
-      if (this.connectorLabel.current) {
-        this.connectorLabel.current.transform = connectorLabelValue;
-      }
+    // If the nodes overlap, hide the connector line
+    if (nodesOverlap) {
+      this.connector.current.style.display = 'none';
     } else {
-      this.connector.current.style.transform = connectorValue;
-      if (this.connectorLabel.current) {
-        this.connectorLabel.current.style.transform = connectorLabelValue;
+      this.connector.current.style.display = '';
+    }
+
+    this.connector.current.style.transform = connectorValue;
+    if (this.connectorLabel.current) {
+      this.connectorLabel.current.style.transform = connectorLabelValue;
+      // If the nodes overlap or the connector has an id, show the label
+      if (nodesOverlap || this.props.connector?.id !== null) {
+        this.connectorLabel.current.style.display = '';
+      } else {
+        // If nodes don't overlap for a new connector, hide the label
+        this.connectorLabel.current.style.display = 'none';
       }
     }
 
-    // this.connector.current.setAttribute(attribute, connectorValue);
     if (this.connectorTail.current) {
       this.connectorTail.current.setAttribute('cx', length);
     }
     this.connectorBody.current.setAttribute('x2', length);
-    // if (this.connectorLabel.current) {
-    //   this.connectorLabel.current.setAttribute(attribute, connectorLabelValue);
-    // }
   };
 
   render() {
-    const {
-      connector,
-      headNode,
-      highlighted,
-      primary,
-      selected,
-      tailNode,
-    } = this.props;
+    const { connector, headNode, highlighted, primary, selected, tailNode } =
+      this.props;
     const { condition, id, label, type } = connector;
     const invalid = condition && !label;
     const loop =
@@ -260,7 +254,7 @@ export class Connector extends Component {
             />
           )}
         </g>
-        {id !== null && (
+        {id !== null ? (
           <g
             ref={this.connectorLabel}
             className="connector-button"
@@ -322,6 +316,14 @@ export class Connector extends Component {
               </Fragment>
             )}
           </g>
+        ) : (
+          <circle
+            ref={this.connectorLabel}
+            className="connector-placeholder"
+            r={constants.CONNECTOR_TAIL_RADIUS}
+            cx="0"
+            cy="0"
+          />
         )}
       </g>
     );

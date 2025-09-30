@@ -153,19 +153,15 @@ export const deserializeConnector = ({ from, label, to, type, value }, id) => {
   });
 };
 
-export const serializeConnector = nodes => ({
-  condition,
-  headId,
-  label,
-  tailId,
-  type,
-}) => ({
-  from: serializeNodeId(nodes.get(tailId)),
-  label,
-  to: serializeNodeId(nodes.get(headId)),
-  type,
-  value: condition,
-});
+export const serializeConnector =
+  nodes =>
+  ({ condition, headId, label, tailId, type }) => ({
+    from: serializeNodeId(nodes.get(tailId)),
+    label,
+    to: serializeNodeId(nodes.get(headId)),
+    type,
+    value: condition,
+  });
 
 export const deserializeTree = ({
   bindings,
@@ -256,15 +252,9 @@ export const serializeTree = (
   sourceName,
   status,
   treeJson: {
-    connectors: connectors
-      .toList()
-      .map(serializeConnector(nodes))
-      .toJS(),
+    connectors: connectors.toList().map(serializeConnector(nodes)).toJS(),
     lastId: nextNodeId - 1,
-    nodes: nodes
-      .toList()
-      .map(serializeNode)
-      .toJS(),
+    nodes: nodes.toList().map(serializeNode).toJS(),
     schemaVersion,
   },
   versionId: overwrite ? null : versionId,
