@@ -179,17 +179,23 @@ const getSubmissionData = (submission, column) =>
         moment(submission[column.name]).format(Constants.TIME_FORMAT)
       : submission[column.name];
 
-const handleClone = ({ cloneSubmission, fetchSubmissions }) => id => () =>
-  cloneSubmission({ id: id, callback: fetchSubmissions });
+const handleClone =
+  ({ cloneSubmission, fetchSubmissions }) =>
+  id =>
+  () =>
+    cloneSubmission({ id: id, callback: fetchSubmissions });
 
-const handleDelete = ({ deleteSubmission, fetchSubmissions }) => id => () =>
-  deleteSubmission({ id: id, callback: fetchSubmissions });
+const handleDelete =
+  ({ deleteSubmission, fetchSubmissions }) =>
+  id =>
+  () =>
+    deleteSubmission({ id: id, callback: fetchSubmissions });
 
-const toggleDropdown = ({
-  setOpenDropdown,
-  openDropdown,
-}) => dropdownSlug => () =>
-  setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug);
+const toggleDropdown =
+  ({ setOpenDropdown, openDropdown }) =>
+  dropdownSlug =>
+  () =>
+    setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug);
 
 export const SubmissionListItem = compose(
   withState('openDropdown', 'setOpenDropdown', ''),

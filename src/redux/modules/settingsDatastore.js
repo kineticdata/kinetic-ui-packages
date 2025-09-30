@@ -452,13 +452,12 @@ export const reducer = (state = State(), { type, payload }) => {
               }),
             ),
           )
-          .map(
-            (part, index) =>
-              index > partIndex && operation !== 'Is Equal To'
-                ? part
-                    .set('operation', 'All')
-                    .set('value', IndexValues({ values: List() }))
-                : part,
+          .map((part, index) =>
+            index > partIndex && operation !== 'Is Equal To'
+              ? part
+                  .set('operation', 'All')
+                  .set('value', IndexValues({ values: List() }))
+              : part,
           ),
       );
     }
@@ -466,16 +465,19 @@ export const reducer = (state = State(), { type, payload }) => {
       const { part, input } = payload;
 
       return state.updateIn(['searchParams', 'indexParts'], indexParts =>
-        indexParts.update(indexParts.findIndex(p => part.name === p.name), p =>
-          p.updateIn(['value', 'input'], () => input),
+        indexParts.update(
+          indexParts.findIndex(p => part.name === p.name),
+          p => p.updateIn(['value', 'input'], () => input),
         ),
       );
     }
     case types.SET_INDEX_PART_BETWEEN: {
       const { part, field, value } = payload;
       return state.updateIn(['searchParams', 'indexParts'], indexParts =>
-        indexParts.update(indexParts.findIndex(p => part.name === p.name), p =>
-          p.updateIn(['value', 'values'], values => values.set(field, value)),
+        indexParts.update(
+          indexParts.findIndex(p => part.name === p.name),
+          p =>
+            p.updateIn(['value', 'values'], values => values.set(field, value)),
         ),
       );
     }
@@ -561,9 +563,7 @@ export const reducer = (state = State(), { type, payload }) => {
     case types.SET_SUBMISSION:
       return state.set('submissionLoading', false).set('submission', payload);
     case types.RESET_SUBMISSION:
-      return state
-        .set('submissionLoading', true)
-        .set('submission', null);
+      return state.set('submissionLoading', true).set('submission', null);
     case types.SET_FORM_CHANGES:
       return state.setIn(['currentFormChanges', payload.type], payload.value);
     case types.OPEN_MODAL:

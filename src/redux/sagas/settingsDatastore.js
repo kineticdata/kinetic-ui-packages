@@ -233,10 +233,15 @@ export function* fetchSubmissionsSimpleSaga() {
     }
     query.pageToken(pageToken);
 
-    const { submissions, nextPageToken = null, error } = yield call(
-      searchSubmissions,
-      { search: query.build(), datastore: true, form: form.slug },
-    );
+    const {
+      submissions,
+      nextPageToken = null,
+      error,
+    } = yield call(searchSubmissions, {
+      search: query.build(),
+      datastore: true,
+      form: form.slug,
+    });
 
     if (error) {
       yield put(actions.setSubmissionsError(error));
@@ -255,10 +260,15 @@ export function* fetchSubmissionsSimpleSaga() {
     query.limit(DATASTORE_LIMIT);
     query.sortDirection(sortDirection === 'DESC' ? sortDirection : 'ASC');
 
-    const { submissions, nextPageToken = null, error } = yield call(
-      searchSubmissions,
-      { search: query.build(), datastore: true, form: form.slug },
-    );
+    const {
+      submissions,
+      nextPageToken = null,
+      error,
+    } = yield call(searchSubmissions, {
+      search: query.build(),
+      datastore: true,
+      form: form.slug,
+    });
 
     if (error) {
       yield put(actions.setSubmissionsError(error));
@@ -343,10 +353,7 @@ export function* fetchSubmissionsSimpleSaga() {
       );
       yield put(
         actions.setSubmissions(
-          responsesWithPageTokens
-            .first()
-            .get('submissions')
-            .toJS(),
+          responsesWithPageTokens.first().get('submissions').toJS(),
         ),
       );
     } else {
@@ -361,9 +368,8 @@ export function* fetchSubmissionsSimpleSaga() {
 }
 
 export function* fetchSubmissionsAdvancedSaga() {
-  const { searchParams, sortDirection, form, pageToken } = yield select(
-    selectSearchParams,
-  );
+  const { searchParams, sortDirection, form, pageToken } =
+    yield select(selectSearchParams);
 
   const searcher = new SubmissionSearch(true);
 
@@ -419,10 +425,15 @@ export function* fetchSubmissionsAdvancedSaga() {
     }
   });
 
-  const { submissions, nextPageToken = null, error } = yield call(
-    searchSubmissions,
-    { search: searcher.build(), datastore: true, form: form.slug },
-  );
+  const {
+    submissions,
+    nextPageToken = null,
+    error,
+  } = yield call(searchSubmissions, {
+    search: searcher.build(),
+    datastore: true,
+    form: form.slug,
+  });
 
   if (error) {
     yield put(actions.setSubmissionsError(error));
@@ -539,14 +550,15 @@ export function* fetchAllSubmissionsSaga(action) {
     searcher.pageToken(pageToken);
   }
 
-  const { submissions, nextPageToken = null, error } = yield call(
-    searchSubmissions,
-    {
-      search: searcher.build(),
-      datastore: true,
-      form: formSlug,
-    },
-  );
+  const {
+    submissions,
+    nextPageToken = null,
+    error,
+  } = yield call(searchSubmissions, {
+    search: searcher.build(),
+    datastore: true,
+    form: formSlug,
+  });
 
   // Update the action with the new results
   action = {
@@ -621,20 +633,19 @@ export function* executeImportSaga(action) {
 
   const responses = yield all(
     head
-      .map(
-        record =>
-          record.id
-            ? call(updateSubmission, {
-                datastore: true,
-                formSlug: form.slug,
-                values: record.values,
-                id: record.id,
-              })
-            : call(createSubmission, {
-                datastore: true,
-                formSlug: form.slug,
-                values: record.values,
-              }),
+      .map(record =>
+        record.id
+          ? call(updateSubmission, {
+              datastore: true,
+              formSlug: form.slug,
+              values: record.values,
+              id: record.id,
+            })
+          : call(createSubmission, {
+              datastore: true,
+              formSlug: form.slug,
+              values: record.values,
+            }),
       )
       .toJS(),
   );

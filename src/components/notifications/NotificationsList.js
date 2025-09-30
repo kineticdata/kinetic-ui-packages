@@ -277,45 +277,46 @@ const mapDispatchToProps = {
   deleteNotification: actions.deleteNotificationRequest,
 };
 
-const toggleDropdown = ({
-  setOpenDropdown,
-  openDropdown,
-}) => dropdownSlug => () =>
-  setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug);
+const toggleDropdown =
+  ({ setOpenDropdown, openDropdown }) =>
+  dropdownSlug =>
+  () =>
+    setOpenDropdown(dropdownSlug === openDropdown ? '' : dropdownSlug);
 
-const handleClone = ({
-  cloneNotification,
-  type,
-  tableKey,
-  navigate,
-}) => id => () =>
-  cloneNotification({
-    id,
-    success: submission => {
-      addToast(`${type} cloned successfully`);
-      refetchTable(tableKey);
-      navigate(submission.id);
-    },
-    failure: error =>
-      addToastAlert({ title: 'Clone Failed', message: error.message }),
-  });
+const handleClone =
+  ({ cloneNotification, type, tableKey, navigate }) =>
+  id =>
+  () =>
+    cloneNotification({
+      id,
+      success: submission => {
+        addToast(`${type} cloned successfully`);
+        refetchTable(tableKey);
+        navigate(submission.id);
+      },
+      failure: error =>
+        addToastAlert({ title: 'Clone Failed', message: error.message }),
+    });
 
-const handleDelete = ({ deleteNotification, tableKey, type }) => id => () =>
-  openConfirm({
-    title: `Delete ${type}`,
-    body: `Are you sure you want to delete this ${type.toLowerCase()}?`,
-    actionName: 'Delete',
-    ok: () =>
-      deleteNotification({
-        id: id,
-        success: () => {
-          addToast(`${type} deleted successfully`);
-          refetchTable(tableKey);
-        },
-        failure: error =>
-          addToastAlert({ title: 'Delete Failed', message: error.message }),
-      }),
-  });
+const handleDelete =
+  ({ deleteNotification, tableKey, type }) =>
+  id =>
+  () =>
+    openConfirm({
+      title: `Delete ${type}`,
+      body: `Are you sure you want to delete this ${type.toLowerCase()}?`,
+      actionName: 'Delete',
+      ok: () =>
+        deleteNotification({
+          id: id,
+          success: () => {
+            addToast(`${type} deleted successfully`);
+            refetchTable(tableKey);
+          },
+          failure: error =>
+            addToastAlert({ title: 'Delete Failed', message: error.message }),
+        }),
+    });
 
 const handlePreview = props => notification => () => {
   let values = notification.values;
@@ -334,10 +335,7 @@ const handlePreview = props => notification => () => {
 };
 
 export const NotificationsList = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('openDropdown', 'setOpenDropdown', ''),
   withState('previewModal', 'setPreviewModal', null),
   withProps(props => {

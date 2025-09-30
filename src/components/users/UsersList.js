@@ -120,40 +120,42 @@ const NameCell = ({ value, row }) => (
   </td>
 );
 
-const ActionsCell = ({ toggleModal, handleDelete }) => ({ row }) => (
-  <td className="text-right" style={{ width: '1%' }}>
-    <UncontrolledDropdown className="more-actions">
-      <DropdownToggle tag="button" className="btn btn-sm btn-link">
-        <span className="sr-only">More Actions</span>
-        <span className="fa fa-chevron-down fa-fw" />
-      </DropdownToggle>
-      <DropdownMenu right positionFixed>
-        <Link
-          to={`/profile/${encodeURIComponent(row.get('username'))}`}
-          className="dropdown-item"
-        >
-          <I18n>View</I18n>
-        </Link>
-        <Link
-          to={encodeURIComponent(row.get('username'))}
-          className="dropdown-item"
-        >
-          <I18n>Edit</I18n>
-        </Link>
-        <DropdownItem onClick={() => toggleModal(row.get('username'))}>
-          <I18n>Clone</I18n>
-        </DropdownItem>
-        <DropdownItem divider />
-        <DropdownItem
-          onClick={handleDelete(row.get('username'))}
-          className="text-danger"
-        >
-          <I18n>Delete</I18n>
-        </DropdownItem>
-      </DropdownMenu>
-    </UncontrolledDropdown>
-  </td>
-);
+const ActionsCell =
+  ({ toggleModal, handleDelete }) =>
+  ({ row }) => (
+    <td className="text-right" style={{ width: '1%' }}>
+      <UncontrolledDropdown className="more-actions">
+        <DropdownToggle tag="button" className="btn btn-sm btn-link">
+          <span className="sr-only">More Actions</span>
+          <span className="fa fa-chevron-down fa-fw" />
+        </DropdownToggle>
+        <DropdownMenu right positionFixed>
+          <Link
+            to={`/profile/${encodeURIComponent(row.get('username'))}`}
+            className="dropdown-item"
+          >
+            <I18n>View</I18n>
+          </Link>
+          <Link
+            to={encodeURIComponent(row.get('username'))}
+            className="dropdown-item"
+          >
+            <I18n>Edit</I18n>
+          </Link>
+          <DropdownItem onClick={() => toggleModal(row.get('username'))}>
+            <I18n>Clone</I18n>
+          </DropdownItem>
+          <DropdownItem divider />
+          <DropdownItem
+            onClick={handleDelete(row.get('username'))}
+            className="text-danger"
+          >
+            <I18n>Delete</I18n>
+          </DropdownItem>
+        </DropdownMenu>
+      </UncontrolledDropdown>
+    </td>
+  );
 
 const EmptyBodyRow = TableComponents.generateEmptyBodyRow({
   loadingMessage: 'Loading Users...',

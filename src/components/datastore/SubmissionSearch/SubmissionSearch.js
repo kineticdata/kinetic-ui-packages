@@ -79,12 +79,7 @@ export const mapDispatchToProps = {
 };
 
 export const SubmissionSearch = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { context },
-  ),
+  connect(mapStateToProps, mapDispatchToProps, null, { context }),
   withState('optionsOpen', 'setOptionsOpen', false),
   lifecycle({
     componentWillMount() {

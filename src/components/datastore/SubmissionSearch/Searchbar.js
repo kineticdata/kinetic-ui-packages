@@ -68,10 +68,13 @@ const EqualsOperation = compose(
 
     return {
       registerComponent: () => ref => (input = ref),
-      handleAdd: ({ handleAddIndexPartInput }) => part => e => {
-        handleAddIndexPartInput(part)(e);
-        input.focus();
-      },
+      handleAdd:
+        ({ handleAddIndexPartInput }) =>
+        part =>
+        e => {
+          handleAddIndexPartInput(part)(e);
+          input.focus();
+        },
     };
   }),
 )(EqualsOperationComponent);
@@ -442,123 +445,137 @@ export const mapDispatchToProps = {
   clearPageTokens: actions.clearPageTokens,
 };
 
-const handleSearchSubmissions = ({
-  fetchSubmissionsSimple,
-  fetchSubmissionsAdvanced,
-  simpleSearchActive,
-  clearPageTokens,
-}) => e => {
-  e.preventDefault();
-  clearPageTokens();
-  if (simpleSearchActive) {
-    fetchSubmissionsSimple();
-  } else {
-    fetchSubmissionsAdvanced();
-  }
-};
-
-const handleInputKeypress = ({
-  fetchSubmissions,
-  fetchSubmissionsSimple,
-  fetchSubmissionsAdvanced,
-  simpleSearchActive,
-}) => e => {
-  if (e.key === 'Enter') {
+const handleSearchSubmissions =
+  ({
+    fetchSubmissionsSimple,
+    fetchSubmissionsAdvanced,
+    simpleSearchActive,
+    clearPageTokens,
+  }) =>
+  e => {
     e.preventDefault();
+    clearPageTokens();
     if (simpleSearchActive) {
       fetchSubmissionsSimple();
     } else {
       fetchSubmissionsAdvanced();
     }
-  }
-};
+  };
 
-const toggleAdvancedSearchOpen = ({
-  advancedSearchOpen,
-  setAdvancedSearchOpen,
-}) => () => setAdvancedSearchOpen(!advancedSearchOpen);
+const handleInputKeypress =
+  ({
+    fetchSubmissions,
+    fetchSubmissionsSimple,
+    fetchSubmissionsAdvanced,
+    simpleSearchActive,
+  }) =>
+  e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (simpleSearchActive) {
+        fetchSubmissionsSimple();
+      } else {
+        fetchSubmissionsAdvanced();
+      }
+    }
+  };
 
-const setIndexHandler = ({
-  setIndex,
-  setIndexLookup,
-  setIndexParts,
-  form,
-  indexDefinitions,
-  setAdvancedSearchOpen,
-  setSimpleSearch,
-  simpleSearchActive,
-  resetSearchParams,
-  setPlaceholderText,
-}) => val => {
-  resetSearchParams();
-  setIndexLookup('');
+const toggleAdvancedSearchOpen =
+  ({ advancedSearchOpen, setAdvancedSearchOpen }) =>
+  () =>
+    setAdvancedSearchOpen(!advancedSearchOpen);
 
-  if (val === 'all-fields') {
-    setSimpleSearch(true);
-    setPlaceholderText(DEFAULT_PLACEHOLDER);
-  } else {
-    setSimpleSearch(false);
-    const index = indexDefinitions.find(indexDef => indexDef.name === val);
-    const parts = List(
-      index.parts.map((part, i) =>
-        IndexPart({
-          name: part,
-          operation: i === 0 ? 'Equal To' : 'All',
-        }),
-      ),
-    );
-    setPlaceholderText(`Searching by ${index.name}...`);
-    setIndex(index);
-    setIndexLookup(val);
-    setIndexParts(parts);
-  }
-};
+const setIndexHandler =
+  ({
+    setIndex,
+    setIndexLookup,
+    setIndexParts,
+    form,
+    indexDefinitions,
+    setAdvancedSearchOpen,
+    setSimpleSearch,
+    simpleSearchActive,
+    resetSearchParams,
+    setPlaceholderText,
+  }) =>
+  val => {
+    resetSearchParams();
+    setIndexLookup('');
 
-const handleIndexPartOperation = ({ setIndexPartOperation }) => (
-  part,
-  operation,
-) => setIndexPartOperation(part, operation);
+    if (val === 'all-fields') {
+      setSimpleSearch(true);
+      setPlaceholderText(DEFAULT_PLACEHOLDER);
+    } else {
+      setSimpleSearch(false);
+      const index = indexDefinitions.find(indexDef => indexDef.name === val);
+      const parts = List(
+        index.parts.map((part, i) =>
+          IndexPart({
+            name: part,
+            operation: i === 0 ? 'Equal To' : 'All',
+          }),
+        ),
+      );
+      setPlaceholderText(`Searching by ${index.name}...`);
+      setIndex(index);
+      setIndexLookup(val);
+      setIndexParts(parts);
+    }
+  };
 
-const handleIndexPartInput = ({ setIndexPartInput }) => part => e =>
-  setIndexPartInput(part, e.target.value);
+const handleIndexPartOperation =
+  ({ setIndexPartOperation }) =>
+  (part, operation) =>
+    setIndexPartOperation(part, operation);
 
-const handleIndexPartBetween = ({ setIndexPartBetween }) => (
-  part,
-  field,
-) => e => setIndexPartBetween(part, field, e.target.value);
+const handleIndexPartInput =
+  ({ setIndexPartInput }) =>
+  part =>
+  e =>
+    setIndexPartInput(part, e.target.value);
 
-const handleAddIndexPartEnter = ({ addIndexPartInput }) => part => e => {
-  if (e.key === 'Enter') {
+const handleIndexPartBetween =
+  ({ setIndexPartBetween }) =>
+  (part, field) =>
+  e =>
+    setIndexPartBetween(part, field, e.target.value);
+
+const handleAddIndexPartEnter =
+  ({ addIndexPartInput }) =>
+  part =>
+  e => {
+    if (e.key === 'Enter') {
+      addIndexPartInput(part);
+    }
+  };
+const handleAddIndexPartInput =
+  ({ addIndexPartInput }) =>
+  part =>
+  () =>
     addIndexPartInput(part);
-  }
-};
-const handleAddIndexPartInput = ({ addIndexPartInput }) => part => () =>
-  addIndexPartInput(part);
 
-const handleRemoveIndexPartInput = ({ removeIndexPartInput }) => (
-  part,
-  value,
-) => () => removeIndexPartInput({ part, value: value });
+const handleRemoveIndexPartInput =
+  ({ removeIndexPartInput }) =>
+  (part, value) =>
+  () =>
+    removeIndexPartInput({ part, value: value });
 
-const handleResetSearch = ({
-  resetSearchParams,
-  setIndexLookup,
-  setAdvancedSearchOpen,
-  setPlaceholderText,
-}) => () => {
-  setPlaceholderText(DEFAULT_PLACEHOLDER);
-  resetSearchParams();
-  setIndexLookup('');
-  setAdvancedSearchOpen(false);
-};
+const handleResetSearch =
+  ({
+    resetSearchParams,
+    setIndexLookup,
+    setAdvancedSearchOpen,
+    setPlaceholderText,
+  }) =>
+  () => {
+    setPlaceholderText(DEFAULT_PLACEHOLDER);
+    resetSearchParams();
+    setIndexLookup('');
+    setAdvancedSearchOpen(false);
+  };
 
 export const Searchbar = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { context },
-  ),
+  connect(mapStateToProps, mapDispatchToProps, null, { context }),
   withState('indexLookup', 'setIndexLookup', ''),
   withState('placeholderText', 'setPlaceholderText', DEFAULT_PLACEHOLDER),
   withHandlers({

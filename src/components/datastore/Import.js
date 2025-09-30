@@ -31,7 +31,11 @@ export const FailedImportTable = ({ records }) => (
       },
       {
         renderBodyCell: ({ value }) => (
-          <td>{value.map((val, idx) => <span key={idx}>{val}</span>)}</td>
+          <td>
+            {value.map((val, idx) => (
+              <span key={idx}>{val}</span>
+            ))}
+          </td>
         ),
         value: 'errors',
         title: 'Failed Reason',
@@ -62,8 +66,9 @@ export const PostResults = ({ attemptedRecords, failedCalls, handleReset }) => (
                   attemptedRecords !== 1
                     ? translate('records')
                     : translate('record')
-                } ${translate('attempted to be posted')} ${attemptedRecords -
-                  failedCalls.size} ${translate('successful')}`}
+                } ${translate('attempted to be posted')} ${
+                  attemptedRecords - failedCalls.size
+                } ${translate('successful')}`}
               </h4>
             )}
           />
@@ -373,42 +378,41 @@ export class ImportComponent extends Component {
       <Fragment>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {/* // Upload CSV */}
-          {!this.readFile &&
-            !this.state.postResult && (
-              <Fragment>
-                <div className="text-center">
-                  <h2>
-                    <I18n>Only .csv files are permitted to be uploaded.</I18n>
-                  </h2>
-                  <h4>
-                    <I18n>Size is limited to 20mb</I18n>
-                  </h4>
-                </div>
-                <div className="dropzone">
-                  <I18n
-                    render={translate => (
-                      <Dropzone
-                        onDrop={this.handleChange}
-                        className="dropzone__area"
-                        acceptClassName="dropzone__area--active"
-                        rejectClassName="dropzone__area--disabled"
-                      >
-                        {({ isDragActive, isDragReject }) => {
-                          if (isDragReject) {
-                            return translate('Only .csv files are vaild');
-                          }
-                          if (isDragActive) {
-                            return <DropzoneContent />;
-                          }
-
+          {!this.readFile && !this.state.postResult && (
+            <Fragment>
+              <div className="text-center">
+                <h2>
+                  <I18n>Only .csv files are permitted to be uploaded.</I18n>
+                </h2>
+                <h4>
+                  <I18n>Size is limited to 20mb</I18n>
+                </h4>
+              </div>
+              <div className="dropzone">
+                <I18n
+                  render={translate => (
+                    <Dropzone
+                      onDrop={this.handleChange}
+                      className="dropzone__area"
+                      acceptClassName="dropzone__area--active"
+                      rejectClassName="dropzone__area--disabled"
+                    >
+                      {({ isDragActive, isDragReject }) => {
+                        if (isDragReject) {
+                          return translate('Only .csv files are vaild');
+                        }
+                        if (isDragActive) {
                           return <DropzoneContent />;
-                        }}
-                      </Dropzone>
-                    )}
-                  />
-                </div>
-              </Fragment>
-            )}
+                        }
+
+                        return <DropzoneContent />;
+                      }}
+                    </Dropzone>
+                  )}
+                />
+              </div>
+            </Fragment>
+          )}
 
           {/* // Missing Fields */}
           {this.state.missingFields.size > 0 && (
@@ -534,16 +538,15 @@ export class ImportComponent extends Component {
           )}
 
           {/* // Reset or upload a new file */}
-          {this.readFile &&
-            !this.state.postResult && (
-              <button
-                className="btn btn-link"
-                style={{ alignSelf: 'flex-end' }}
-                onClick={this.handleReset}
-              >
-                <I18n>Upload a new file</I18n>
-              </button>
-            )}
+          {this.readFile && !this.state.postResult && (
+            <button
+              className="btn btn-link"
+              style={{ alignSelf: 'flex-end' }}
+              onClick={this.handleReset}
+            >
+              <I18n>Upload a new file</I18n>
+            </button>
+          )}
 
           {/* // Review records that match */}
           {!this.props.processing &&
@@ -620,12 +623,7 @@ export const mapDispatchToProps = {
 };
 
 export const Import = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    null,
-    { context },
-  ),
+  connect(mapStateToProps, mapDispatchToProps, null, { context }),
   lifecycle({
     componentWillUnmount() {
       this.props.resetImportFailedCall();

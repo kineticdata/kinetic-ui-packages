@@ -69,11 +69,10 @@ export function* importUsersSaga({ payload }) {
     yield put(actions.importUsersReset());
   } else {
     const results = yield all(
-      importUsers.map(
-        ({ _update, ...user }) =>
-          _update
-            ? call(updateUser, { username: user.username, user })
-            : call(createUser, { user }),
+      importUsers.map(({ _update, ...user }) =>
+        _update
+          ? call(updateUser, { username: user.username, user })
+          : call(createUser, { user }),
       ),
     );
 
@@ -124,16 +123,14 @@ function* checkExistingUsers({ importUsers, pageToken } = {}) {
       (map, user) => ({ ...map, [user.username]: true }),
       {},
     );
-    const updatedImportUsers = importUsers.map(
-      user => (userMap[user.username] ? { ...user, _update: true } : user),
+    const updatedImportUsers = importUsers.map(user =>
+      userMap[user.username] ? { ...user, _update: true } : user,
     );
     if (nextPageToken) {
-      return yield call(
-        checkExistingUsers, {
-          importUsers: updatedImportUsers,
-          pageToken: nextPageToken,
-        },
-      );
+      return yield call(checkExistingUsers, {
+        importUsers: updatedImportUsers,
+        pageToken: nextPageToken,
+      });
     } else {
       return { importUsers: updatedImportUsers };
     }

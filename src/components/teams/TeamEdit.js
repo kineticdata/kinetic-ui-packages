@@ -53,23 +53,25 @@ const TeamEditComponent = ({
         }),
         FormLayout,
       }}
-      addFields={() => ({ team }) =>
-        team && [
-          {
-            name: 'assignable',
-            label: 'Assignable',
-            type: 'select',
-            initialValue: team.getIn(['attributesMap', 'Assignable', 0]),
-            options: ['True', 'False'].map(el => ({ label: el, value: el })),
-          },
-          {
-            name: 'icon',
-            label: 'Icon',
-            type: 'text',
-            initialValue: team.getIn(['attributesMap', 'Icon', 0]),
-            component: FormComponents.IconField,
-          },
-        ]}
+      addFields={() =>
+        ({ team }) =>
+          team && [
+            {
+              name: 'assignable',
+              label: 'Assignable',
+              type: 'select',
+              initialValue: team.getIn(['attributesMap', 'Assignable', 0]),
+              options: ['True', 'False'].map(el => ({ label: el, value: el })),
+            },
+            {
+              name: 'icon',
+              label: 'Icon',
+              type: 'text',
+              initialValue: team.getIn(['attributesMap', 'Icon', 0]),
+              component: FormComponents.IconField,
+            },
+          ]
+        }
       alterFields={{
         description: {
           component: FormComponents.TextAreaField,
